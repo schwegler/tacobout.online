@@ -230,7 +230,7 @@ body::before {
 }
 
 /* Each post in the grid */
-.tacobout-magazine-grid>.wp-block-post {
+.tacobout-magazine-grid .wp-block-post {
 	break-inside: avoid-column;
 	margin-bottom: 2rem;
 	overflow: hidden;
@@ -248,26 +248,26 @@ body::before {
 	flex-direction: column;
 }
 
-.tacobout-magazine-grid>.wp-block-post:hover {
+.tacobout-magazine-grid .wp-block-post:hover {
 	transform: translateY(-4px) scale(1.01);
 	box-shadow: 0 15px 35px rgba(0, 102, 255, 0.1), 0 5px 15px rgba(0, 0, 0, 0.05);
 	border-color: rgba(255, 255, 255, 0.8);
 }
 
 @media (prefers-color-scheme: dark) {
-	.tacobout-magazine-grid>.wp-block-post {
+	.tacobout-magazine-grid .wp-block-post {
 		background: rgba(24, 24, 27, 0.6);
 		border-color: rgba(255, 255, 255, 0.08);
 	}
 
-	.tacobout-magazine-grid>.wp-block-post:hover {
+	.tacobout-magazine-grid .wp-block-post:hover {
 		box-shadow: 0 15px 35px rgba(59, 130, 246, 0.15), 0 5px 15px rgba(0, 0, 0, 0.2);
 		border-color: rgba(255, 255, 255, 0.15);
 	}
 }
 
 /* Fix inner group spacing since card now has padding */
-.tacobout-magazine-grid>.wp-block-post>.wp-block-group {
+.tacobout-magazine-grid .wp-block-post .wp-block-group {
 	height: 100%;
 	display: flex;
 	flex-direction: column;
@@ -276,7 +276,7 @@ body::before {
 /* ============================
    HERO: ADAPTIVE FIRST POST
    ============================ */
-body.home:not(.paged) .tacobout-magazine-grid>.wp-block-post:first-child {
+body.home:not(.paged) .tacobout-magazine-grid .wp-block-post:first-child {
 	column-span: all;
 	padding: 3rem;
 	margin-bottom: 2.5rem;
@@ -286,7 +286,7 @@ body.home:not(.paged) .tacobout-magazine-grid>.wp-block-post:first-child {
 }
 
 /* Latest Badge */
-body.home:not(.paged) .tacobout-magazine-grid>.wp-block-post:first-child::before {
+body.home:not(.paged) .tacobout-magazine-grid .wp-block-post:first-child::before {
 	content: "LATEST";
 	position: absolute;
 	top: 1.5rem;
@@ -317,7 +317,7 @@ body.home:not(.paged) .tacobout-magazine-grid>.wp-block-post:first-child::before
 	}
 }
 
-body.home:not(.paged) .tacobout-magazine-grid>.wp-block-post:first-child .wp-block-post-title {
+body.home:not(.paged) .tacobout-magazine-grid .wp-block-post:first-child .wp-block-post-title {
 	font-size: clamp(2.5rem, 6vw, 4.5rem) !important;
 	line-height: 1.05 !important;
 	letter-spacing: -0.04em !important;
@@ -327,7 +327,7 @@ body.home:not(.paged) .tacobout-magazine-grid>.wp-block-post:first-child .wp-blo
 	margin-bottom: 1.5rem !important;
 }
 
-body.home:not(.paged) .tacobout-magazine-grid>.wp-block-post:first-child .wp-block-post-excerpt {
+body.home:not(.paged) .tacobout-magazine-grid .wp-block-post:first-child .wp-block-post-excerpt {
 	font-size: 1.25rem;
 	max-width: 800px;
 }
