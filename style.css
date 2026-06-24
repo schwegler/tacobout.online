@@ -249,7 +249,6 @@ body::before {
 }
 
 .tacobout-magazine-grid .wp-block-post:hover {
-	transform: translateY(-4px) scale(1.01);
 	box-shadow: 0 15px 35px rgba(0, 102, 255, 0.1), 0 5px 15px rgba(0, 0, 0, 0.05);
 	border-color: rgba(255, 255, 255, 0.8);
 }
@@ -646,7 +645,7 @@ body.home .tacobout-magazine-grid #activitypub-reactions {
    ============================ */
 @media (prefers-reduced-motion: no-preference) {
 	.tacobout-magazine-grid .wp-block-post {
-		animation: fadeInUp 0.4s ease both;
+		animation: fadeIn 0.4s ease both;
 	}
 
 	.tacobout-magazine-grid .wp-block-post:nth-child(1) {
@@ -673,15 +672,13 @@ body.home .tacobout-magazine-grid #activitypub-reactions {
 		animation-delay: 0.25s;
 	}
 
-	@keyframes fadeInUp {
+	@keyframes fadeIn {
 		from {
 			opacity: 0;
-			transform: translateY(16px);
 		}
 
 		to {
 			opacity: 1;
-			transform: translateY(0);
 		}
 	}
 }
