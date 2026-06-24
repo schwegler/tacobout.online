@@ -16,22 +16,22 @@ Tags: full-site-editing, block-theme, dark-mode, responsive-layout, microblog, p
 
 /* OS Dark Mode Variables */
 :root {
-	--wp--custom--color--background: #f8fafc;
-	--wp--custom--color--foreground: #0f172a;
-	--wp--custom--color--primary: #3b82f6;
-	--wp--custom--color--secondary: #64748b;
-    --wp--custom--color--border: #e2e8f0;
-    --wp--custom--color--surface: #ffffff;
+	--wp--custom--color--background: #ffffff;
+	--wp--custom--color--foreground: #111111;
+	--wp--custom--color--primary: #2563eb;
+	--wp--custom--color--secondary: #666666;
+    --wp--custom--color--border: #000000;
+    --wp--custom--color--surface: #f3f4f6;
 }
 
 @media (prefers-color-scheme: dark) {
 	:root {
-		--wp--custom--color--background: #0f172a;
-		--wp--custom--color--foreground: #f8fafc;
-		--wp--custom--color--primary: #60a5fa;
-		--wp--custom--color--secondary: #94a3b8;
-        --wp--custom--color--border: #334155;
-        --wp--custom--color--surface: #1e293b;
+		--wp--custom--color--background: #0a0a0a;
+		--wp--custom--color--foreground: #ffffff;
+		--wp--custom--color--primary: #3b82f6;
+		--wp--custom--color--secondary: #a3a3a3;
+        --wp--custom--color--border: #ffffff;
+        --wp--custom--color--surface: #171717;
 	}
 }
 
@@ -42,13 +42,13 @@ body {
     transition: background-color 0.3s ease, color 0.3s ease;
 }
 
-/* ActivityPub / Social Tweaks */
+/* ActivityPub / Social Tweaks - Brutalist Style */
 .comment-body {
     background-color: var(--wp--custom--color--surface);
-    border: 1px solid var(--wp--custom--color--border);
-    border-radius: 8px;
+    border: 2px solid var(--wp--custom--color--border);
     padding: 1.5rem;
     margin-bottom: 1.5rem;
+    box-shadow: 4px 4px 0px var(--wp--custom--color--border);
 }
 
 /* Fluid responsive tweaks */
@@ -56,4 +56,62 @@ body {
     max-width: var(--wp--style--global--content-size);
     margin-left: auto !important;
     margin-right: auto !important;
+}
+
+/* 
+ * The "Schwegler" Hero Grid Logic 
+ * Creates a CSS grid and makes the first post on the home page span full width.
+ */
+.tacobout-hero-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 3rem 2rem;
+}
+
+/* Target the FIRST post, ONLY on the front page, ONLY when not paginated (page 1) */
+body.home:not(.paged) .tacobout-hero-grid > .wp-block-post:first-child {
+    grid-column: 1 / -1;
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 2rem;
+    padding-bottom: 3rem;
+    border-bottom: 4px solid var(--wp--custom--color--border);
+}
+
+/* Make the title massive for the hero post */
+body.home:not(.paged) .tacobout-hero-grid > .wp-block-post:first-child .wp-block-post-title {
+    font-size: clamp(2.5rem, 5vw, 4.5rem) !important;
+    line-height: 1.1;
+    margin-bottom: 1rem;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+}
+
+/* Make the excerpt a bit larger for the hero */
+body.home:not(.paged) .tacobout-hero-grid > .wp-block-post:first-child .wp-block-post-excerpt {
+    font-size: 1.25rem;
+}
+
+/*
+ * Post Formats (Tumblog Style) in Feeds
+ * In feeds, standard posts show an excerpt. Video/Audio/Status posts show the full content so embeds work!
+ */
+.tacobout-feed-item .wp-block-post-content {
+    display: none; /* Hide full content by default in feeds */
+}
+
+/* For Media/Status formats, hide excerpt and featured image, show full content */
+.format-video.tacobout-feed-item .wp-block-post-excerpt,
+.format-video.tacobout-feed-item .wp-block-post-featured-image,
+.format-audio.tacobout-feed-item .wp-block-post-excerpt,
+.format-audio.tacobout-feed-item .wp-block-post-featured-image,
+.format-status.tacobout-feed-item .wp-block-post-excerpt,
+.format-status.tacobout-feed-item .wp-block-post-featured-image {
+    display: none !important;
+}
+
+.format-video.tacobout-feed-item .wp-block-post-content,
+.format-audio.tacobout-feed-item .wp-block-post-content,
+.format-status.tacobout-feed-item .wp-block-post-content {
+    display: block !important;
 }
