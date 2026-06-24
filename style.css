@@ -269,7 +269,6 @@ body::before {
 .embed-youtube iframe {
 	max-width: 100% !important;
 	width: 100% !important;
-	height: auto !important;
 }
 
 /* Fix inner group spacing since card now has padding */
