@@ -1,12 +1,24 @@
 <!-- wp:template-part {"slug":"header","tagName":"header"} /-->
 <!-- wp:group {"tagName":"main","layout":{"type":"constrained"},"style":{"spacing":{"padding":{"top":"3rem","bottom":"3rem"}}}} -->
 <main class="wp-block-group" style="padding-top:3rem;padding-bottom:3rem">
-    <!-- wp:post-title {"level":1} /-->
+    <!-- wp:post-title {"level":1,"style":{"typography":{"fontSize":"var(--wp--preset--font-size--xx-large)"}}} /-->
     <!-- wp:template-part {"slug":"post-meta"} /-->
     <!-- wp:spacer {"height":"2rem"} -->
     <div style="height:2rem" aria-hidden="true" class="wp-block-spacer"></div>
     <!-- /wp:spacer -->
     <!-- wp:post-content {"layout":{"type":"constrained"}} /-->
+    <!-- wp:spacer {"height":"3rem"} -->
+    <div style="height:3rem" aria-hidden="true" class="wp-block-spacer"></div>
+    <!-- /wp:spacer -->
+    
+    <!-- Author Bio Box -->
+    <!-- wp:group {"layout":{"type":"flex","flexWrap":"nowrap"},"style":{"spacing":{"padding":{"top":"2rem","right":"2rem","bottom":"2rem","left":"2rem"}},"border":{"radius":"8px"}},"backgroundColor":"surface"} -->
+    <div class="wp-block-group has-surface-background-color has-background" style="border-radius:8px;padding-top:2rem;padding-right:2rem;padding-bottom:2rem;padding-left:2rem">
+        <!-- wp:post-author {"showAvatar":true,"avatarSize":96,"showBio":false,"byline":"Written by"} /-->
+        <!-- wp:post-author-biography /-->
+    </div>
+    <!-- /wp:group -->
+
     <!-- wp:spacer {"height":"3rem"} -->
     <div style="height:3rem" aria-hidden="true" class="wp-block-spacer"></div>
     <!-- /wp:spacer -->

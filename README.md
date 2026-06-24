@@ -6,8 +6,9 @@ A modern, dynamic, and fully responsive WordPress Block Theme built specifically
 
 - **Full Site Editing (FSE)**: Customize every aspect of your site—headers, footers, and templates—directly in the WordPress Site Editor.
 - **Dynamic Dark Mode**: Seamlessly adapts to your device's preferred color scheme.
+- **Trendy Magazine Layout**: A dynamic home page featuring a Hero section for the latest post and a grid layout for recent articles, designed specifically to highlight guest writers.
 - **Fediverse Ready**: Optimized comment sections and reply contexts for ActivityPub (Mastodon) and ATmosphere (Bluesky) interactions.
-- **Tumblog Post Formats**: Native block patterns for creating specialized layouts for text updates, photos, and videos.
+- **Tumblog Post Formats**: Native block patterns for creating specialized layouts for text updates, photos, videos, and podcasts.
 
 ## Installation
 
@@ -28,6 +29,7 @@ When creating a new post:
    - **Status Post**: For short-form microblogging (perfect for ActivityPub/ATProto updates). No title needed!
    - **Image Post**: A photo-centric layout for sharing images and galleries.
    - **Video Post**: A layout designed to focus on a central video element.
+   - **Podcast Episode**: A layout specifically designed for audio podcasts, featuring a media player, host/guest information, and structured show notes.
 
 ### Social Integration (ActivityPub / ATmosphere)
 
