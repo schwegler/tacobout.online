@@ -114,12 +114,20 @@ body {
 	display: grid;
 	grid-template-columns: repeat(2, 1fr);
 	gap: 2.5rem 2rem;
+	list-style: none;
+	padding: 0;
 }
 
 @media (max-width: 768px) {
 	.tacobout-magazine-grid {
 		grid-template-columns: 1fr;
 	}
+}
+
+/* Each post in the grid */
+.tacobout-magazine-grid > .wp-block-post {
+	overflow: hidden;
+	min-width: 0;
 }
 
 /* Hero: first post on page 1 spans full width */
@@ -141,17 +149,23 @@ body.home:not(.paged) .tacobout-magazine-grid > .wp-block-post:first-child .wp-b
 	max-width: 640px;
 }
 
-/* Card styling for each post in the grid */
-.tacobout-magazine-grid .wp-block-post {
-	display: flex;
-	flex-direction: column;
-}
-
 /* ============================
    POST FORMAT CARDS
    The tacobout_post_class filter in functions.php
    adds .tacobout-format-{type} to each post.
+
+   STRATEGY: All formats render ALL blocks (featured-image,
+   post-meta, post-title, post-excerpt, post-content).
+   We use display:none to hide what we don't want per format.
+   For STANDARD: hide post-content.
+   For VIDEO/AUDIO/STATUS/QUOTE/LINK: hide excerpt and/or image,
+   show post-content instead.
    ============================ */
+
+/* --- STANDARD FORMAT — hide full content, show excerpt --- */
+.tacobout-format-standard .wp-block-post-content {
+	display: none !important;
+}
 
 /* --- VIDEO FORMAT --- */
 .tacobout-format-video .wp-block-post-featured-image,
@@ -160,11 +174,7 @@ body.home:not(.paged) .tacobout-magazine-grid > .wp-block-post:first-child .wp-b
 }
 
 .tacobout-format-video .wp-block-post-content {
-	display: block !important;
-	order: -1;
 	margin-bottom: 1rem;
-	border-radius: var(--taco-radius);
-	overflow: hidden;
 }
 
 .tacobout-format-video .wp-block-post-content .wp-block-embed {
@@ -177,17 +187,16 @@ body.home:not(.paged) .tacobout-magazine-grid > .wp-block-post:first-child .wp-b
 }
 
 /* --- AUDIO FORMAT --- */
-.tacobout-format-audio .wp-block-post-featured-image {
+.tacobout-format-audio .wp-block-post-featured-image,
+.tacobout-format-audio .wp-block-post-excerpt {
 	display: none !important;
 }
 
 .tacobout-format-audio .wp-block-post-content {
-	display: block !important;
-	order: -1;
-	margin-bottom: 1rem;
 	background: var(--taco-surface);
 	border-radius: var(--taco-radius);
 	padding: 1.5rem;
+	margin-bottom: 1rem;
 }
 
 /* --- STATUS FORMAT (microblog) --- */
@@ -198,7 +207,6 @@ body.home:not(.paged) .tacobout-magazine-grid > .wp-block-post:first-child .wp-b
 }
 
 .tacobout-format-status .wp-block-post-content {
-	display: block !important;
 	font-size: 1.15rem;
 	line-height: 1.6;
 }
@@ -215,6 +223,10 @@ body.home:not(.paged) .tacobout-magazine-grid > .wp-block-post:first-child .wp-b
 	display: none !important;
 }
 
+.tacobout-format-image .wp-block-post-content {
+	display: none !important;
+}
+
 .tacobout-format-image .wp-block-post-featured-image img {
 	border-radius: var(--taco-radius);
 }
@@ -223,10 +235,6 @@ body.home:not(.paged) .tacobout-magazine-grid > .wp-block-post:first-child .wp-b
 .tacobout-format-quote .wp-block-post-featured-image,
 .tacobout-format-quote .wp-block-post-excerpt {
 	display: none !important;
-}
-
-.tacobout-format-quote .wp-block-post-content {
-	display: block !important;
 }
 
 .tacobout-format-quote {
@@ -239,10 +247,6 @@ body.home:not(.paged) .tacobout-magazine-grid > .wp-block-post:first-child .wp-b
 /* --- LINK FORMAT --- */
 .tacobout-format-link .wp-block-post-featured-image {
 	display: none !important;
-}
-
-.tacobout-format-link .wp-block-post-content {
-	display: block !important;
 }
 
 .tacobout-format-link {
