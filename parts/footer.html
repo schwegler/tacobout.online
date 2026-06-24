@@ -1,7 +1,19 @@
-<!-- wp:group {"layout":{"type":"flex","flexWrap":"wrap","justifyContent":"center"},"style":{"spacing":{"padding":{"top":"3rem","bottom":"3rem"}}},"backgroundColor":"surface"} -->
-<div class="wp-block-group has-surface-background-color has-background" style="padding-top:3rem;padding-bottom:3rem">
-    <!-- wp:paragraph {"align":"center"} -->
-    <p class="has-text-align-center">© <!-- wp:site-title {"level":0,"isLink":false} /--> - Proudly powered by WordPress & Fediverse</p>
-    <!-- /wp:paragraph -->
+<!-- wp:group {"className":"tacobout-footer","layout":{"type":"constrained"},"style":{"spacing":{"padding":{"top":"3rem","bottom":"3rem"}}}} -->
+<div class="wp-block-group tacobout-footer" style="padding-top:3rem;padding-bottom:3rem">
+	<!-- wp:group {"layout":{"type":"flex","flexWrap":"wrap","justifyContent":"space-between"},"style":{"spacing":{"blockGap":"1rem"}}} -->
+	<div class="wp-block-group">
+		<!-- wp:paragraph {"style":{"typography":{"fontSize":"0.875rem"}},"textColor":"muted"} -->
+		<p class="has-muted-color has-text-color" style="font-size:0.875rem">© 2026 schwegler · Built on the open web</p>
+		<!-- /wp:paragraph -->
+
+		<!-- wp:social-links {"iconColor":"muted","iconColorValue":"#71717a","size":"has-small-icon-size","className":"is-style-logos-only","layout":{"type":"flex","justifyContent":"right"}} -->
+		<ul class="wp-block-social-links has-small-icon-size has-icon-color is-style-logos-only">
+			<!-- wp:social-link {"url":"https://bsky.app/profile/schwegler.lol","service":"bluesky"} /-->
+			<!-- wp:social-link {"url":"https://tacobout.online/@schwegler","service":"mastodon"} /-->
+			<!-- wp:social-link {"url":"/feed/","service":"feed"} /-->
+		</ul>
+		<!-- /wp:social-links -->
+	</div>
+	<!-- /wp:group -->
 </div>
 <!-- /wp:group -->

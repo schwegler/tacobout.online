@@ -1,45 +1,70 @@
-# Tacobout Social - FSE Theme
+# Tacobout Social — WordPress Theme
 
-A modern, dynamic, and fully responsive WordPress Block Theme built specifically for the `tacobout.online` blog. This theme deeply integrates with the fediverse via ActivityPub and ATProto, featuring OS-level light/dark mode support and Tumblog-style post layouts.
+A personal magazine theme for **schwegler** at [tacobout.online](https://tacobout.online). Ultra-modern tumblog with deep Bluesky/ATProto and ActivityPub integration.
 
 ## Features
 
-- **Full Site Editing (FSE)**: Customize every aspect of your site—headers, footers, and templates—directly in the WordPress Site Editor.
-- **Dynamic Dark Mode**: Seamlessly adapts to your device's preferred color scheme.
-- **Trendy Magazine Layout**: A dynamic home page featuring a Hero section for the latest post and a grid layout for recent articles, designed specifically to highlight guest writers.
-- **Fediverse Ready**: Optimized comment sections and reply contexts for ActivityPub (Mastodon) and ATmosphere (Bluesky) interactions.
-- **Tumblog Post Formats**: Native block patterns for creating specialized layouts for text updates, photos, videos, and podcasts.
+- **Full Site Editing (FSE)** — Customize headers, footers, and templates in the Site Editor
+- **Post Format-Aware Feed** — Video posts show embeds, audio shows players, statuses show inline text, standard posts show excerpts with featured images. Fully automatic.
+- **Magazine Grid** — 2-column responsive grid with the latest post spanning full width as a hero (only on page 1)
+- **Dark Mode** — Automatic via `prefers-color-scheme`, no toggle needed
+- **Glassmorphic Header** — Sticky, blurred header that stays visible while scrolling
+- **Bluesky + Mastodon Integration** — Works with ActivityPub, Nodeinfo, and WebFinger plugins. Footer links to your Bluesky and Mastodon profiles.
+- **Modern Typography** — Space Grotesk for headings, Instrument Sans for body (loaded from Google Fonts)
+- **Micro-Animations** — Staggered fade-in for feed items (respects `prefers-reduced-motion`)
 
 ## Installation
 
-1. Copy the `tacobout.online` directory to your WordPress `wp-content/themes/` folder.
-2. In your WordPress admin, go to **Appearance > Themes**.
-3. Locate **Tacobout Social** and click **Activate**.
+1. Copy the `tacobout.online` folder to `wp-content/themes/`
+2. Go to **Appearance → Themes** and activate **Tacobout Social**
+3. Go to **Appearance → Editor** to customize
 
-## Usage Guide
+## Post Formats
 
-### Creating Different Post Types (Tumblog Style)
+This theme uses WordPress **Post Formats** (not categories) to control how posts appear in feeds:
 
-This theme includes custom block patterns to help you create distinct layouts based on the type of content you are sharing (similar to old Tumblr formats).
+| Format | How to Set | Feed Behavior |
+|--------|-----------|---------------|
+| **Standard** | Default | Featured image + excerpt + "Read more" |
+| **Video** | Post sidebar → Format → Video | YouTube/Vimeo embed shown inline, no featured image |
+| **Audio** | Post sidebar → Format → Audio | Audio player shown inline |
+| **Status** | Post sidebar → Format → Status | Full text shown, no title or image (microblog style) |
+| **Image** | Post sidebar → Format → Image | Featured image prominent, no excerpt |
+| **Quote** | Post sidebar → Format → Quote | Full content shown with accent border |
+| **Link** | Post sidebar → Format → Link | Full content shown in a card |
 
-When creating a new post:
-1. Click the **+** (Add Block) button.
-2. Navigate to the **Patterns** tab.
-3. You will find specific patterns under standard categories (like Text, Gallery, Media) or you can search for "Tacobout":
-   - **Status Post**: For short-form microblogging (perfect for ActivityPub/ATProto updates). No title needed!
-   - **Image Post**: A photo-centric layout for sharing images and galleries.
-   - **Video Post**: A layout designed to focus on a central video element.
-   - **Podcast Episode**: A layout specifically designed for audio podcasts, featuring a media player, host/guest information, and structured show notes.
+### How to Set the Post Format
 
-### Social Integration (ActivityPub / ATmosphere)
+1. Open a post in the Block Editor
+2. In the **right sidebar**, click **Post** (not Block)
+3. Expand the **Format** section (it may be under "Status & visibility" or listed directly)
+4. Select the desired format
 
-- **Comments**: The theme includes a highly optimized `comments.html` template part that natively supports WordPress comments. Since ActivityPub federates replies back to WordPress as comments, they will seamlessly appear threaded and styled in a modern format.
-- **Author Profiles**: Ensure your users have filled out their bios in the WordPress dashboard. Fediverse handles provided by plugins will automatically integrate if the plugins use standard hooks.
-- **Microblogging**: Use the **Status Post** pattern when you want to federate a short thought without a standard WordPress title, ensuring it looks like a native toot/skeet on the fediverse.
+> **Important**: If you don't see the Format option, make sure you're editing a **Post** (not a Page). Post Formats only apply to Posts.
 
-### Customization via Site Editor
+## Social Integration
 
-To change colors, typography, or layouts:
-1. Go to **Appearance > Editor**.
-2. Click on **Styles** (the half-moon icon).
-3. From here, you can tweak the dynamic color palette or adjust the default padding and typography settings. The OS dark mode will respect the base variables set in `style.css`, but you can override specific FSE elements here.
+This theme is designed to work with:
+
+- **[ActivityPub](https://wordpress.org/plugins/activitypub/)** — Federate posts to Mastodon and the fediverse
+- **[Enable Mastodon Apps](https://wordpress.org/plugins/enable-mastodon-apps/)** — Use Mastodon apps with your blog
+- **[Jetstrea/Atmosphere](https://wordpress.org/plugins/jetstrea/)** — Sync posts to Bluesky/ATProto
+
+## Customization
+
+### Header Categories
+
+The header ships with links to Writing, Scrapbook, Links, and Podcast categories. To change:
+
+1. Go to **Appearance → Editor → Navigation**
+2. Edit the navigation menu
+3. Replace the links with your actual category URLs
+
+### Footer Social Links
+
+Edit the footer template part to update your Bluesky and Mastodon profile URLs.
+
+## Requirements
+
+- WordPress 6.4+
+- PHP 8.0+

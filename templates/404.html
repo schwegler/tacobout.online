@@ -1,13 +1,23 @@
 <!-- wp:template-part {"slug":"header","tagName":"header"} /-->
-<!-- wp:group {"tagName":"main","layout":{"type":"constrained"},"style":{"spacing":{"padding":{"top":"3rem","bottom":"3rem"}}}} -->
-<main class="wp-block-group" style="padding-top:3rem;padding-bottom:3rem">
-    <!-- wp:heading {"level":1,"textAlign":"center"} -->
-    <h1 class="has-text-align-center">404 - Not Found</h1>
-    <!-- /wp:heading -->
-    <!-- wp:paragraph {"align":"center"} -->
-    <p class="has-text-align-center">The page you are looking for does not exist.</p>
-    <!-- /wp:paragraph -->
-    <!-- wp:search {"showLabel":false,"buttonText":"Search"} /-->
+
+<!-- wp:group {"tagName":"main","layout":{"type":"constrained"},"style":{"spacing":{"padding":{"top":"var:preset|spacing|70","bottom":"var:preset|spacing|70"}}}} -->
+<main class="wp-block-group" style="padding-top:var(--wp--preset--spacing--70);padding-bottom:var(--wp--preset--spacing--70)">
+
+	<!-- wp:heading {"level":1,"style":{"typography":{"fontSize":"clamp(4rem, 10vw, 8rem)","fontWeight":"700","letterSpacing":"-0.04em","lineHeight":"1"}},"fontFamily":"heading"} -->
+	<h1 class="has-heading-font-family" style="font-size:clamp(4rem, 10vw, 8rem);font-weight:700;letter-spacing:-0.04em;line-height:1">404</h1>
+	<!-- /wp:heading -->
+
+	<!-- wp:paragraph {"style":{"typography":{"fontSize":"1.25rem"}},"textColor":"muted"} -->
+	<p class="has-muted-color has-text-color" style="font-size:1.25rem">This page doesn't exist. Maybe it was federated to another dimension.</p>
+	<!-- /wp:paragraph -->
+
+	<!-- wp:spacer {"height":"var:preset|spacing|40"} -->
+	<div style="height:var(--wp--preset--spacing--40)" aria-hidden="true" class="wp-block-spacer"></div>
+	<!-- /wp:spacer -->
+
+	<!-- wp:search {"label":"Search","showLabel":false,"placeholder":"Search the scrapbook...","buttonText":"Search","buttonPosition":"button-inside","buttonUseIcon":true} /-->
+
 </main>
 <!-- /wp:group -->
+
 <!-- wp:template-part {"slug":"footer","tagName":"footer"} /-->

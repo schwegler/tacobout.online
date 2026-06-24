@@ -1,19 +1,21 @@
-<!-- wp:group {"layout":{"type":"flex","flexWrap":"wrap","justifyContent":"space-between"},"style":{"spacing":{"padding":{"top":"1.5rem","bottom":"1.5rem","left":"2rem","right":"2rem"}},"border":{"bottom":{"color":"var(--wp--preset--color--border)","width":"2px"}}},"backgroundColor":"background"} -->
-<div class="wp-block-group has-background-background-color has-background" style="border-bottom-color:var(--wp--preset--color--border);border-bottom-width:2px;padding-top:1.5rem;padding-right:2rem;padding-bottom:1.5rem;padding-left:2rem">
-    
-    <!-- wp:group {"layout":{"type":"flex","flexWrap":"nowrap"}} -->
-    <div class="wp-block-group">
-        <!-- wp:site-logo {"width":60,"shouldSyncIcon":true} /-->
-        <!-- wp:site-title {"level":0,"style":{"typography":{"fontStyle":"normal","fontWeight":"900"}}} /-->
-    </div>
-    <!-- /wp:group -->
+<!-- wp:group {"className":"tacobout-header","layout":{"type":"constrained"},"style":{"spacing":{"padding":{"top":"1rem","bottom":"1rem"}}}} -->
+<div class="wp-block-group tacobout-header" style="padding-top:1rem;padding-bottom:1rem">
+	<!-- wp:group {"layout":{"type":"flex","flexWrap":"wrap","justifyContent":"space-between"},"style":{"spacing":{"blockGap":"1rem"}}} -->
+	<div class="wp-block-group">
+		<!-- wp:group {"layout":{"type":"flex","flexWrap":"nowrap"},"style":{"spacing":{"blockGap":"0.75rem"}}} -->
+		<div class="wp-block-group">
+			<!-- wp:site-logo {"width":40,"shouldSyncIcon":true} /-->
+			<!-- wp:site-title {"level":0} /-->
+		</div>
+		<!-- /wp:group -->
 
-    <!-- wp:navigation {"layout":{"type":"flex","setCascadingProperties":true,"justifyContent":"right"}} -->
-        <!-- wp:navigation-link {"label":"Writing","url":"/?cat=writing"} /-->
-        <!-- wp:navigation-link {"label":"Scrapbook","url":"/?cat=scrapbook"} /-->
-        <!-- wp:navigation-link {"label":"Links","url":"/?cat=links"} /-->
-        <!-- wp:navigation-link {"label":"Podcast","url":"/?cat=podcast"} /-->
-    <!-- /wp:navigation -->
-
+		<!-- wp:navigation {"layout":{"type":"flex","setCascadingProperties":true,"justifyContent":"right"},"style":{"spacing":{"blockGap":"1.5rem"}}} -->
+			<!-- wp:navigation-link {"label":"Writing","url":"/category/writing/","kind":"taxonomy","isTopLevelLink":true} /-->
+			<!-- wp:navigation-link {"label":"Scrapbook","url":"/category/scrapbook/","kind":"taxonomy","isTopLevelLink":true} /-->
+			<!-- wp:navigation-link {"label":"Links","url":"/category/links/","kind":"taxonomy","isTopLevelLink":true} /-->
+			<!-- wp:navigation-link {"label":"Podcast","url":"/category/podcast/","kind":"taxonomy","isTopLevelLink":true} /-->
+		<!-- /wp:navigation -->
+	</div>
+	<!-- /wp:group -->
 </div>
 <!-- /wp:group -->

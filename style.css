@@ -1,153 +1,418 @@
 /*
 Theme Name: Tacobout Social
 Theme URI: https://tacobout.online
-Author: You
+Author: schwegler
 Author URI: https://tacobout.online
-Description: A modern, dynamic, and fully responsive block theme with deep social integration (ActivityPub/ATProto) and Tumblog-style post formats.
-Version: 1.1.0
-Requires at least: 6.2
-Tested up to: 6.4
-Requires PHP: 7.4
+Description: A personal magazine theme for schwegler — ultra-modern tumblog with deep Bluesky/ATProto & ActivityPub integration. Format-aware feeds, dark mode, and 2026 design language.
+Version: 2.0.0
+Requires at least: 6.4
+Tested up to: 6.8
+Requires PHP: 8.0
 License: GNU General Public License v2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 Text Domain: tacobout
-Tags: full-site-editing, block-theme, dark-mode, responsive-layout, microblog, post-formats
+Tags: full-site-editing, block-theme, blog, dark-mode, post-formats, one-column, wide-blocks
 */
 
-/* OS Dark Mode Variables */
+/* ============================
+   DESIGN TOKENS — DARK MODE
+   ============================ */
 :root {
-	--wp--custom--color--background: #ffffff;
-	--wp--custom--color--foreground: #111111;
-	--wp--custom--color--primary: #2563eb;
-	--wp--custom--color--secondary: #666666;
-    --wp--custom--color--border: #000000;
-    --wp--custom--color--surface: #f3f4f6;
+	--taco-bg: #fafafa;
+	--taco-fg: #0f0f0f;
+	--taco-accent: #0066ff;
+	--taco-accent-2: #ff3366;
+	--taco-muted: #71717a;
+	--taco-surface: #f4f4f5;
+	--taco-surface-2: #e4e4e7;
+	--taco-border: #d4d4d8;
+	--taco-radius: 12px;
+	--taco-shadow: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+	--taco-shadow-lg: 0 10px 30px rgba(0,0,0,0.08);
+	--taco-transition: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 @media (prefers-color-scheme: dark) {
 	:root {
-		--wp--custom--color--background: #0a0a0a;
-		--wp--custom--color--foreground: #ffffff;
-		--wp--custom--color--primary: #3b82f6;
-		--wp--custom--color--secondary: #a3a3a3;
-        --wp--custom--color--border: #ffffff;
-        --wp--custom--color--surface: #171717;
+		--taco-bg: #09090b;
+		--taco-fg: #fafafa;
+		--taco-accent: #3b82f6;
+		--taco-accent-2: #f472b6;
+		--taco-muted: #a1a1aa;
+		--taco-surface: #18181b;
+		--taco-surface-2: #27272a;
+		--taco-border: #3f3f46;
+		--taco-shadow: 0 1px 3px rgba(0,0,0,0.3);
+		--taco-shadow-lg: 0 10px 30px rgba(0,0,0,0.4);
+	}
+
+	/* Override WP theme.json colors for dark mode */
+	body {
+		background-color: var(--taco-bg) !important;
+		color: var(--taco-fg) !important;
+	}
+
+	/* Fix all surfaces */
+	.has-base-background-color { background-color: var(--taco-bg) !important; }
+	.has-contrast-color { color: var(--taco-fg) !important; }
+	.has-contrast-background-color { background-color: var(--taco-fg) !important; color: var(--taco-bg) !important; }
+	.has-surface-background-color { background-color: var(--taco-surface) !important; }
+	.has-surface-2-background-color { background-color: var(--taco-surface-2) !important; }
+	.has-muted-color { color: var(--taco-muted) !important; }
+	.has-accent-color { color: var(--taco-accent) !important; }
+
+	a { color: var(--taco-accent); }
+	a:hover { color: var(--taco-accent-2); }
+}
+
+/* ============================
+   BASE
+   ============================ */
+body {
+	background-color: var(--taco-bg);
+	color: var(--taco-fg);
+	transition: background-color var(--taco-transition), color var(--taco-transition);
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+}
+
+/* ============================
+   HEADER
+   ============================ */
+.tacobout-header {
+	border-bottom: 1px solid var(--taco-border);
+	backdrop-filter: blur(12px);
+	-webkit-backdrop-filter: blur(12px);
+	background: rgba(250, 250, 250, 0.85);
+	position: sticky;
+	top: 0;
+	z-index: 100;
+}
+
+@media (prefers-color-scheme: dark) {
+	.tacobout-header {
+		background: rgba(9, 9, 11, 0.85);
+		border-bottom-color: var(--taco-border);
 	}
 }
 
-/* Base resets that FSE might miss */
-body {
-    background-color: var(--wp--custom--color--background);
-    color: var(--wp--custom--color--foreground);
-    transition: background-color 0.3s ease, color 0.3s ease;
+/* When WP admin bar is showing */
+.admin-bar .tacobout-header {
+	top: 32px;
 }
 
-/* ActivityPub / Social Tweaks - Brutalist Style */
+@media screen and (max-width: 782px) {
+	.admin-bar .tacobout-header {
+		top: 46px;
+	}
+}
+
+/* ============================
+   MAGAZINE GRID — THE FEED
+   ============================ */
+.tacobout-magazine-grid {
+	display: grid;
+	grid-template-columns: repeat(2, 1fr);
+	gap: 2.5rem 2rem;
+}
+
+@media (max-width: 768px) {
+	.tacobout-magazine-grid {
+		grid-template-columns: 1fr;
+	}
+}
+
+/* Hero: first post on page 1 spans full width */
+body.home:not(.paged) .tacobout-magazine-grid > .wp-block-post:first-child {
+	grid-column: 1 / -1;
+	padding-bottom: 2.5rem;
+	border-bottom: 1px solid var(--taco-border);
+	margin-bottom: 0.5rem;
+}
+
+body.home:not(.paged) .tacobout-magazine-grid > .wp-block-post:first-child .wp-block-post-title {
+	font-size: clamp(2rem, 5vw, 3.5rem) !important;
+	line-height: 1.08 !important;
+	letter-spacing: -0.03em !important;
+}
+
+body.home:not(.paged) .tacobout-magazine-grid > .wp-block-post:first-child .wp-block-post-excerpt {
+	font-size: 1.15rem;
+	max-width: 640px;
+}
+
+/* Card styling for each post in the grid */
+.tacobout-magazine-grid .wp-block-post {
+	display: flex;
+	flex-direction: column;
+}
+
+/* ============================
+   POST FORMAT CARDS
+   The tacobout_post_class filter in functions.php
+   adds .tacobout-format-{type} to each post.
+   ============================ */
+
+/* --- VIDEO FORMAT --- */
+.tacobout-format-video .wp-block-post-featured-image,
+.tacobout-format-video .wp-block-post-excerpt {
+	display: none !important;
+}
+
+.tacobout-format-video .wp-block-post-content {
+	display: block !important;
+	order: -1;
+	margin-bottom: 1rem;
+	border-radius: var(--taco-radius);
+	overflow: hidden;
+}
+
+.tacobout-format-video .wp-block-post-content .wp-block-embed {
+	margin: 0;
+}
+
+.tacobout-format-video .wp-block-post-content .wp-block-embed__wrapper {
+	border-radius: var(--taco-radius);
+	overflow: hidden;
+}
+
+/* --- AUDIO FORMAT --- */
+.tacobout-format-audio .wp-block-post-featured-image {
+	display: none !important;
+}
+
+.tacobout-format-audio .wp-block-post-content {
+	display: block !important;
+	order: -1;
+	margin-bottom: 1rem;
+	background: var(--taco-surface);
+	border-radius: var(--taco-radius);
+	padding: 1.5rem;
+}
+
+/* --- STATUS FORMAT (microblog) --- */
+.tacobout-format-status .wp-block-post-featured-image,
+.tacobout-format-status .wp-block-post-excerpt,
+.tacobout-format-status .wp-block-post-title {
+	display: none !important;
+}
+
+.tacobout-format-status .wp-block-post-content {
+	display: block !important;
+	font-size: 1.15rem;
+	line-height: 1.6;
+}
+
+.tacobout-format-status {
+	background: var(--taco-surface);
+	border-radius: var(--taco-radius);
+	padding: 1.5rem !important;
+	border: 1px solid var(--taco-border);
+}
+
+/* --- IMAGE FORMAT --- */
+.tacobout-format-image .wp-block-post-excerpt {
+	display: none !important;
+}
+
+.tacobout-format-image .wp-block-post-featured-image img {
+	border-radius: var(--taco-radius);
+}
+
+/* --- QUOTE FORMAT --- */
+.tacobout-format-quote .wp-block-post-featured-image,
+.tacobout-format-quote .wp-block-post-excerpt {
+	display: none !important;
+}
+
+.tacobout-format-quote .wp-block-post-content {
+	display: block !important;
+}
+
+.tacobout-format-quote {
+	background: var(--taco-surface);
+	border-left: 4px solid var(--taco-accent);
+	border-radius: 0 var(--taco-radius) var(--taco-radius) 0;
+	padding: 1.5rem 2rem !important;
+}
+
+/* --- LINK FORMAT --- */
+.tacobout-format-link .wp-block-post-featured-image {
+	display: none !important;
+}
+
+.tacobout-format-link .wp-block-post-content {
+	display: block !important;
+}
+
+.tacobout-format-link {
+	background: var(--taco-surface);
+	border-radius: var(--taco-radius);
+	padding: 1.5rem !important;
+	border: 1px solid var(--taco-border);
+}
+
+/* --- STANDARD FORMAT — always hide full content in feeds --- */
+.tacobout-format-standard .wp-block-post-content {
+	display: none !important;
+}
+
+/* ============================
+   FEATURED IMAGE
+   ============================ */
+.wp-block-post-featured-image img {
+	border-radius: var(--taco-radius);
+	transition: transform var(--taco-transition), box-shadow var(--taco-transition);
+}
+
+.wp-block-post-featured-image:hover img {
+	transform: scale(1.02);
+	box-shadow: var(--taco-shadow-lg);
+}
+
+/* ============================
+   POST META — CATEGORY PILLS
+   ============================ */
+.tacobout-post-meta {
+	display: flex;
+	align-items: center;
+	gap: 0.75rem;
+	flex-wrap: wrap;
+}
+
+.wp-block-post-terms a {
+	background: var(--taco-surface);
+	padding: 0.2rem 0.6rem;
+	border-radius: 100px;
+	border: 1px solid var(--taco-border);
+	transition: all var(--taco-transition);
+	text-decoration: none !important;
+	color: var(--taco-muted) !important;
+}
+
+.wp-block-post-terms a:hover {
+	background: var(--taco-accent);
+	color: white !important;
+	border-color: var(--taco-accent);
+}
+
+/* ============================
+   READ MORE LINK
+   ============================ */
+.wp-block-post-excerpt__more-link {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.35rem;
+	font-family: 'Space Grotesk', system-ui, sans-serif;
+	font-weight: 600;
+	font-size: 0.875rem;
+	color: var(--taco-accent) !important;
+	text-decoration: none !important;
+	transition: gap var(--taco-transition);
+}
+
+.wp-block-post-excerpt__more-link:hover {
+	gap: 0.6rem;
+	color: var(--taco-accent-2) !important;
+}
+
+/* ============================
+   COMMENTS — Fediverse-aware
+   ============================ */
+.wp-block-comments {
+	border-top: 1px solid var(--taco-border);
+	padding-top: 2rem;
+}
+
 .comment-body {
-    background-color: var(--wp--custom--color--surface);
-    border: 2px solid var(--wp--custom--color--border);
-    padding: 1.5rem;
-    margin-bottom: 1.5rem;
-    box-shadow: 4px 4px 0px var(--wp--custom--color--border);
+	background: var(--taco-surface);
+	border: 1px solid var(--taco-border);
+	border-radius: var(--taco-radius);
+	padding: 1.25rem;
+	margin-bottom: 1rem;
+	transition: box-shadow var(--taco-transition);
 }
 
-/* Fluid responsive tweaks */
-.is-layout-constrained > * {
-    max-width: var(--wp--style--global--content-size);
-    margin-left: auto !important;
-    margin-right: auto !important;
+.comment-body:hover {
+	box-shadow: var(--taco-shadow);
 }
 
-/* 
- * The "Schwegler" Hero Grid Logic 
- * Creates a CSS grid and makes the first post on the home page span full width.
- */
-.tacobout-hero-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 3rem 2rem;
+/* ============================
+   AUTHOR BIO CARD
+   ============================ */
+.tacobout-author-card {
+	background: var(--taco-surface);
+	border: 1px solid var(--taco-border);
+	border-radius: var(--taco-radius);
+	padding: 2rem;
+	transition: box-shadow var(--taco-transition);
 }
 
-/* Target the FIRST post, ONLY on the front page, ONLY when not paginated (page 1) */
-body.home:not(.paged) .tacobout-hero-grid > .wp-block-post:first-child {
-    grid-column: 1 / -1;
-    display: flex;
-    flex-direction: column;
-    margin-bottom: 2rem;
-    padding-bottom: 3rem;
-    border-bottom: 4px solid var(--wp--custom--color--border);
+.tacobout-author-card:hover {
+	box-shadow: var(--taco-shadow);
 }
 
-/* Make the title massive for the hero post */
-body.home:not(.paged) .tacobout-hero-grid > .wp-block-post:first-child .wp-block-post-title {
-    font-size: clamp(2.5rem, 5vw, 4.5rem) !important;
-    line-height: 1.1;
-    margin-bottom: 1rem;
-    font-weight: 800;
-    letter-spacing: -0.02em;
+/* ============================
+   FOOTER
+   ============================ */
+.tacobout-footer {
+	border-top: 1px solid var(--taco-border);
 }
 
-/* Make the excerpt a bit larger for the hero */
-body.home:not(.paged) .tacobout-hero-grid > .wp-block-post:first-child .wp-block-post-excerpt {
-    font-size: 1.25rem;
+/* ============================
+   PAGINATION
+   ============================ */
+.wp-block-query-pagination {
+	gap: 0.5rem;
 }
 
-/*
- * Post Formats (Tumblog Style) in Feeds
- * In feeds, standard posts show an excerpt. Video/Audio/Status posts show the full content so embeds work!
- */
-.tacobout-feed-item .wp-block-post-content {
-    display: none; /* Hide full content by default in feeds */
+.wp-block-query-pagination-numbers .page-numbers {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	min-width: 2.25rem;
+	height: 2.25rem;
+	padding: 0.25rem 0.75rem;
+	border-radius: 100px;
+	border: 1px solid var(--taco-border);
+	background: transparent;
+	text-decoration: none;
+	font-weight: 500;
+	font-size: 0.875rem;
+	color: var(--taco-fg);
+	transition: all var(--taco-transition);
 }
 
-/* For Media/Status formats, hide excerpt and featured image, show full content */
-.tacobout-feed-item .format-video .wp-block-post-excerpt,
-.tacobout-feed-item .format-video .wp-block-post-featured-image,
-.tacobout-feed-item .category-video .wp-block-post-excerpt,
-.tacobout-feed-item .category-video .wp-block-post-featured-image,
-.tacobout-feed-item .format-audio .wp-block-post-excerpt,
-.tacobout-feed-item .format-audio .wp-block-post-featured-image,
-.tacobout-feed-item .category-audio .wp-block-post-excerpt,
-.tacobout-feed-item .category-audio .wp-block-post-featured-image,
-.tacobout-feed-item .format-status .wp-block-post-excerpt,
-.tacobout-feed-item .format-status .wp-block-post-featured-image,
-.tacobout-feed-item .category-status .wp-block-post-excerpt,
-.tacobout-feed-item .category-status .wp-block-post-featured-image,
-.tacobout-feed-item .wp-block-post:has(.wp-block-embed) .wp-block-post-excerpt,
-.tacobout-feed-item .wp-block-post:has(.wp-block-embed) .wp-block-post-featured-image,
-.tacobout-feed-item .wp-block-post:has(.wp-block-video) .wp-block-post-excerpt,
-.tacobout-feed-item .wp-block-post:has(.wp-block-video) .wp-block-post-featured-image {
-    display: none !important;
+.wp-block-query-pagination-numbers .page-numbers:hover,
+.wp-block-query-pagination-numbers .page-numbers.current {
+	background: var(--taco-accent);
+	border-color: var(--taco-accent);
+	color: white;
 }
 
-.tacobout-feed-item .format-video .wp-block-post-content,
-.tacobout-feed-item .category-video .wp-block-post-content,
-.tacobout-feed-item .format-audio .wp-block-post-content,
-.tacobout-feed-item .category-audio .wp-block-post-content,
-.tacobout-feed-item .format-status .wp-block-post-content,
-.tacobout-feed-item .category-status .wp-block-post-content,
-.tacobout-feed-item .wp-block-post:has(.wp-block-embed) .wp-block-post-content,
-.tacobout-feed-item .wp-block-post:has(.wp-block-video) .wp-block-post-content {
-    display: block !important;
-}
+/* ============================
+   MICRO ANIMATIONS
+   ============================ */
+@media (prefers-reduced-motion: no-preference) {
+	.tacobout-magazine-grid .wp-block-post {
+		animation: fadeInUp 0.4s ease both;
+	}
 
-/* Reorder Content for Video/Audio so the embed is ABOVE the title */
-.tacobout-feed-item .format-video .tacobout-post-inner,
-.tacobout-feed-item .category-video .tacobout-post-inner,
-.tacobout-feed-item .format-audio .tacobout-post-inner,
-.tacobout-feed-item .category-audio .tacobout-post-inner,
-.tacobout-feed-item .wp-block-post:has(.wp-block-embed) .tacobout-post-inner,
-.tacobout-feed-item .wp-block-post:has(.wp-block-video) .tacobout-post-inner {
-    display: flex;
-    flex-direction: column;
-}
+	.tacobout-magazine-grid .wp-block-post:nth-child(1) { animation-delay: 0s; }
+	.tacobout-magazine-grid .wp-block-post:nth-child(2) { animation-delay: 0.05s; }
+	.tacobout-magazine-grid .wp-block-post:nth-child(3) { animation-delay: 0.1s; }
+	.tacobout-magazine-grid .wp-block-post:nth-child(4) { animation-delay: 0.15s; }
+	.tacobout-magazine-grid .wp-block-post:nth-child(5) { animation-delay: 0.2s; }
+	.tacobout-magazine-grid .wp-block-post:nth-child(6) { animation-delay: 0.25s; }
 
-.tacobout-feed-item .format-video .tacobout-post-inner > .wp-block-post-content,
-.tacobout-feed-item .category-video .tacobout-post-inner > .wp-block-post-content,
-.tacobout-feed-item .format-audio .tacobout-post-inner > .wp-block-post-content,
-.tacobout-feed-item .category-audio .tacobout-post-inner > .wp-block-post-content,
-.tacobout-feed-item .wp-block-post:has(.wp-block-embed) .tacobout-post-inner > .wp-block-post-content,
-.tacobout-feed-item .wp-block-post:has(.wp-block-video) .tacobout-post-inner > .wp-block-post-content {
-    order: -2; /* Move to the top */
-    margin-bottom: 1.5rem;
+	@keyframes fadeInUp {
+		from {
+			opacity: 0;
+			transform: translateY(16px);
+		}
+		to {
+			opacity: 1;
+			transform: translateY(0);
+		}
+	}
 }
