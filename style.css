@@ -289,7 +289,7 @@ body.home:not(.paged) .tacobout-magazine-grid .wp-block-post:first-child {
 body.home:not(.paged) .tacobout-magazine-grid .wp-block-post:first-child::before {
 	content: "LATEST";
 	position: absolute;
-	top: 1.5rem;
+	top: 1rem;
 	left: 1.5rem;
 	background: var(--taco-accent);
 	color: white;
@@ -497,6 +497,7 @@ body.home:not(.paged) .tacobout-magazine-grid .wp-block-post:first-child .wp-blo
 }
 
 /* --- HIDE ACTIVITYPUB / FEDIVERSE REACTIONS ON HOMEPAGE FEED --- */
+body.home .tacobout-magazine-grid .wp-block-activitypub-reactions,
 body.home .tacobout-magazine-grid .activitypub-reactions,
 body.home .tacobout-magazine-grid .fediverse-reactions,
 body.home .tacobout-magazine-grid #activitypub-reactions {
@@ -684,11 +685,17 @@ body.home .tacobout-magazine-grid #activitypub-reactions {
 /* ============================
    EMBEDS (YOUTUBE ETC)
    ============================ */
+.wp-block-embed,
+.wp-block-embed__wrapper {
+	max-width: 100%;
+	width: 100%;
+}
+
 .wp-block-embed iframe,
 .wp-block-embed object,
 .wp-block-embed embed {
-	max-width: 100%;
-	width: 100%;
-	aspect-ratio: 16 / 9;
-	height: auto;
+	max-width: 100% !important;
+	width: 100% !important;
+	aspect-ratio: 16 / 9 !important;
+	height: auto !important;
 }
