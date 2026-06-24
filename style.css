@@ -266,8 +266,14 @@ body::before {
 	}
 }
 
+.embed-youtube iframe {
+	max-width: 100% !important;
+	width: 100% !important;
+	height: auto !important;
+}
+
 /* Fix inner group spacing since card now has padding */
-.tacobout-magazine-grid .wp-block-post .wp-block-group {
+.tacobout-magazine-grid .tacobout-card-inner {
 	height: 100%;
 	display: flex;
 	flex-direction: column;
