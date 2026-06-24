@@ -101,17 +101,30 @@ body.home:not(.paged) .tacobout-hero-grid > .wp-block-post:first-child .wp-block
 }
 
 /* For Media/Status formats, hide excerpt and featured image, show full content */
-.format-video.tacobout-feed-item .wp-block-post-excerpt,
-.format-video.tacobout-feed-item .wp-block-post-featured-image,
-.format-audio.tacobout-feed-item .wp-block-post-excerpt,
-.format-audio.tacobout-feed-item .wp-block-post-featured-image,
-.format-status.tacobout-feed-item .wp-block-post-excerpt,
-.format-status.tacobout-feed-item .wp-block-post-featured-image {
+.tacobout-feed-item .format-video .wp-block-post-excerpt,
+.tacobout-feed-item .format-video .wp-block-post-featured-image,
+.tacobout-feed-item .format-audio .wp-block-post-excerpt,
+.tacobout-feed-item .format-audio .wp-block-post-featured-image,
+.tacobout-feed-item .format-status .wp-block-post-excerpt,
+.tacobout-feed-item .format-status .wp-block-post-featured-image {
     display: none !important;
 }
 
-.format-video.tacobout-feed-item .wp-block-post-content,
-.format-audio.tacobout-feed-item .wp-block-post-content,
-.format-status.tacobout-feed-item .wp-block-post-content {
+.tacobout-feed-item .format-video .wp-block-post-content,
+.tacobout-feed-item .format-audio .wp-block-post-content,
+.tacobout-feed-item .format-status .wp-block-post-content {
     display: block !important;
+}
+
+/* Reorder Content for Video/Audio so the embed is ABOVE the title */
+.tacobout-feed-item .format-video .tacobout-post-inner,
+.tacobout-feed-item .format-audio .tacobout-post-inner {
+    display: flex;
+    flex-direction: column;
+}
+
+.tacobout-feed-item .format-video .tacobout-post-inner > .wp-block-post-content,
+.tacobout-feed-item .format-audio .tacobout-post-inner > .wp-block-post-content {
+    order: -2; /* Move to the top */
+    margin-bottom: 1.5rem;
 }
