@@ -4,7 +4,7 @@ Theme URI: https://tacobout.online
 Author: schwegler
 Author URI: https://tacobout.online
 Description: A personal magazine theme for schwegler — ultra-modern tumblog with deep Bluesky/ATProto & ActivityPub integration. Format-aware feeds, dark mode, and 2026 design language.
-Version: 3.0.0
+Version: 3.1.0
 Requires at least: 6.4
 Tested up to: 6.8
 Requires PHP: 8.0
@@ -111,10 +111,10 @@ body::before {
 	height: 100vh;
 	z-index: -2;
 	background-image:
-		radial-gradient(at 0% 0%, rgba(0, 102, 255, 0.08) 0px, transparent 50%),
-		radial-gradient(at 100% 0%, rgba(255, 51, 102, 0.08) 0px, transparent 50%),
-		radial-gradient(at 100% 100%, rgba(0, 102, 255, 0.08) 0px, transparent 50%),
-		radial-gradient(at 0% 100%, rgba(255, 51, 102, 0.08) 0px, transparent 50%);
+		radial-gradient(at 0% 0%, rgba(139, 92, 246, 0.08) 0px, transparent 50%),
+		radial-gradient(at 100% 0%, rgba(217, 70, 239, 0.08) 0px, transparent 50%),
+		radial-gradient(at 100% 100%, rgba(139, 92, 246, 0.08) 0px, transparent 50%),
+		radial-gradient(at 0% 100%, rgba(217, 70, 239, 0.08) 0px, transparent 50%);
 	background-size: 200% 200%;
 	animation: meshMovement 20s ease-in-out infinite alternate;
 }
@@ -261,7 +261,7 @@ body::before {
 	}
 
 	.tacobout-magazine-grid .wp-block-post:hover {
-		box-shadow: 0 15px 35px rgba(59, 130, 246, 0.15), 0 5px 15px rgba(0, 0, 0, 0.2);
+		box-shadow: 0 15px 35px rgba(139, 92, 246, 0.15), 0 5px 15px rgba(0, 0, 0, 0.2);
 		border-color: rgba(255, 255, 255, 0.15);
 	}
 }
@@ -287,7 +287,7 @@ body.home:not(.paged) .tacobout-magazine-grid .wp-block-post:first-child {
 	padding: 3rem 2rem 0rem 2rem;
 	position: relative;
 	border: 1px solid var(--taco-accent);
-	box-shadow: 0 0 40px rgba(0, 102, 255, 0.15);
+	box-shadow: 0 0 40px rgba(139, 92, 246, 0.15);
 }
 
 /* Latest Badge */
