@@ -103,10 +103,16 @@ body.home:not(.paged) .tacobout-hero-grid > .wp-block-post:first-child .wp-block
 /* For Media/Status formats, hide excerpt and featured image, show full content */
 .tacobout-feed-item .format-video .wp-block-post-excerpt,
 .tacobout-feed-item .format-video .wp-block-post-featured-image,
+.tacobout-feed-item .category-video .wp-block-post-excerpt,
+.tacobout-feed-item .category-video .wp-block-post-featured-image,
 .tacobout-feed-item .format-audio .wp-block-post-excerpt,
 .tacobout-feed-item .format-audio .wp-block-post-featured-image,
+.tacobout-feed-item .category-audio .wp-block-post-excerpt,
+.tacobout-feed-item .category-audio .wp-block-post-featured-image,
 .tacobout-feed-item .format-status .wp-block-post-excerpt,
 .tacobout-feed-item .format-status .wp-block-post-featured-image,
+.tacobout-feed-item .category-status .wp-block-post-excerpt,
+.tacobout-feed-item .category-status .wp-block-post-featured-image,
 .tacobout-feed-item .wp-block-post:has(.wp-block-embed) .wp-block-post-excerpt,
 .tacobout-feed-item .wp-block-post:has(.wp-block-embed) .wp-block-post-featured-image,
 .tacobout-feed-item .wp-block-post:has(.wp-block-video) .wp-block-post-excerpt,
@@ -115,8 +121,11 @@ body.home:not(.paged) .tacobout-hero-grid > .wp-block-post:first-child .wp-block
 }
 
 .tacobout-feed-item .format-video .wp-block-post-content,
+.tacobout-feed-item .category-video .wp-block-post-content,
 .tacobout-feed-item .format-audio .wp-block-post-content,
+.tacobout-feed-item .category-audio .wp-block-post-content,
 .tacobout-feed-item .format-status .wp-block-post-content,
+.tacobout-feed-item .category-status .wp-block-post-content,
 .tacobout-feed-item .wp-block-post:has(.wp-block-embed) .wp-block-post-content,
 .tacobout-feed-item .wp-block-post:has(.wp-block-video) .wp-block-post-content {
     display: block !important;
@@ -124,7 +133,9 @@ body.home:not(.paged) .tacobout-hero-grid > .wp-block-post:first-child .wp-block
 
 /* Reorder Content for Video/Audio so the embed is ABOVE the title */
 .tacobout-feed-item .format-video .tacobout-post-inner,
+.tacobout-feed-item .category-video .tacobout-post-inner,
 .tacobout-feed-item .format-audio .tacobout-post-inner,
+.tacobout-feed-item .category-audio .tacobout-post-inner,
 .tacobout-feed-item .wp-block-post:has(.wp-block-embed) .tacobout-post-inner,
 .tacobout-feed-item .wp-block-post:has(.wp-block-video) .tacobout-post-inner {
     display: flex;
@@ -132,7 +143,9 @@ body.home:not(.paged) .tacobout-hero-grid > .wp-block-post:first-child .wp-block
 }
 
 .tacobout-feed-item .format-video .tacobout-post-inner > .wp-block-post-content,
+.tacobout-feed-item .category-video .tacobout-post-inner > .wp-block-post-content,
 .tacobout-feed-item .format-audio .tacobout-post-inner > .wp-block-post-content,
+.tacobout-feed-item .category-audio .tacobout-post-inner > .wp-block-post-content,
 .tacobout-feed-item .wp-block-post:has(.wp-block-embed) .tacobout-post-inner > .wp-block-post-content,
 .tacobout-feed-item .wp-block-post:has(.wp-block-video) .tacobout-post-inner > .wp-block-post-content {
     order: -2; /* Move to the top */
