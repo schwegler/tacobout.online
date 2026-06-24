@@ -284,8 +284,7 @@ body::before {
    ============================ */
 body.home:not(.paged) .tacobout-magazine-grid .wp-block-post:first-child {
 	column-span: all;
-	padding: 3rem;
-	margin-bottom: 2.5rem;
+	padding: 3rem 2rem 0rem 2rem;
 	position: relative;
 	border: 1px solid var(--taco-accent);
 	box-shadow: 0 0 40px rgba(0, 102, 255, 0.15);
@@ -529,7 +528,7 @@ body.home .tacobout-magazine-grid #activitypub-reactions {
 .tacobout-post-meta {
 	display: flex;
 	align-items: center;
-	gap: 0.75rem;
+	justify-content: space-between;
 	flex-wrap: wrap;
 }
 
