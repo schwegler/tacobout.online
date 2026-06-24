@@ -160,18 +160,28 @@ body {
    ============================ */
 .tacobout-header {
 	border-bottom: 1px solid var(--taco-border);
-	backdrop-filter: blur(12px);
-	-webkit-backdrop-filter: blur(12px);
-	background: rgba(250, 250, 250, 0.85);
 	position: sticky;
 	top: 0;
 	z-index: 100;
 }
 
+/* Move the blur effect to a pseudo-element so it doesn't trap the fixed mobile menu */
+.tacobout-header::before {
+	content: "";
+	position: absolute;
+	inset: 0;
+	backdrop-filter: blur(12px);
+	-webkit-backdrop-filter: blur(12px);
+	background: rgba(250, 250, 250, 0.85);
+	z-index: -1;
+}
+
 @media (prefers-color-scheme: dark) {
 	.tacobout-header {
-		background: rgba(9, 9, 11, 0.85);
 		border-bottom-color: var(--taco-border);
+	}
+	.tacobout-header::before {
+		background: rgba(9, 9, 11, 0.85);
 	}
 }
 
@@ -266,11 +276,11 @@ body.home:not(.paged) .tacobout-magazine-grid>.wp-block-post:first-child {
 }
 
 /* Latest Badge */
-body.home:not(.paged) .tacobout-magazine-grid>.wp-block-post:first-child::before {
+body.home:not(.paged) .tacobout-magazine-grid > .wp-block-post:first-child::before {
 	content: "LATEST";
 	position: absolute;
-	top: -12px;
-	left: 3rem;
+	top: 1.5rem;
+	left: 1.5rem;
 	background: var(--taco-accent);
 	color: white;
 	padding: 4px 12px;
@@ -280,6 +290,7 @@ body.home:not(.paged) .tacobout-magazine-grid>.wp-block-post:first-child::before
 	letter-spacing: 0.1em;
 	box-shadow: 0 0 10px var(--taco-accent);
 	animation: pulse 2s infinite;
+	z-index: 10;
 }
 
 @keyframes pulse {
