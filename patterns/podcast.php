@@ -6,7 +6,7 @@
  * Description: A layout designed for podcast episodes with an audio player, host/guest info, and show notes.
  */
 ?>
-<!-- wp:group {"layout":{"type":"constrained"},"style":{"spacing":{"padding":{"top":"2rem","right":"2rem","bottom":"2rem","left":"2rem"}},"border":{"radius":"8px"}},"backgroundColor":"surface"} -->
+<!-- wp:group {"style":{"spacing":{"padding":{"top":"2rem","right":"2rem","bottom":"2rem","left":"2rem"}},"border":{"radius":"8px"}},"backgroundColor":"surface"} -->
 <div class="wp-block-group has-surface-background-color has-background" style="border-radius:8px;padding-top:2rem;padding-right:2rem;padding-bottom:2rem;padding-left:2rem">
     
     <!-- wp:heading {"level":2} -->

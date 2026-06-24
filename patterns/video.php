@@ -6,7 +6,7 @@
  * Description: A video-centric layout.
  */
 ?>
-<!-- wp:group {"layout":{"type":"constrained"},"style":{"spacing":{"padding":{"bottom":"2rem"}},"border":{"radius":"8px"}},"backgroundColor":"surface"} -->
+<!-- wp:group {"style":{"spacing":{"padding":{"bottom":"2rem"}},"border":{"radius":"8px"}},"backgroundColor":"surface"} -->
 <div class="wp-block-group has-surface-background-color has-background" style="border-radius:8px;padding-bottom:2rem">
     <!-- wp:video {"align":"center"} -->
     <figure class="wp-block-video aligncenter"><video controls src=""></video></figure>
