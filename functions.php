@@ -48,6 +48,26 @@ function tacobout_enqueue_styles() {
 add_action( 'wp_enqueue_scripts', 'tacobout_enqueue_styles' );
 
 /**
+ * Add preconnect resource hints for Google Fonts.
+ * This optimization reduces DNS lookup, TCP handshake, and TLS negotiation time for the font files,
+ * resulting in faster text rendering and reducing layout shifts.
+ */
+function tacobout_resource_hints( $urls, $relation_type ) {
+	if ( wp_style_is( 'tacobout-google-fonts', 'queue' ) && 'preconnect' === $relation_type ) {
+		$urls[] = array(
+			'href'        => 'https://fonts.googleapis.com',
+			'crossorigin',
+		);
+		$urls[] = array(
+			'href'        => 'https://fonts.gstatic.com',
+			'crossorigin',
+		);
+	}
+	return $urls;
+}
+add_filter( 'wp_resource_hints', 'tacobout_resource_hints', 10, 2 );
+
+/**
  * CRITICAL: Add post format classes to the post wrapper in Query Loops.
  * WordPress FSE does NOT add format-{type} classes to posts in query loops.
  * This filter fixes that, which is why the CSS was being "ignored" before.
