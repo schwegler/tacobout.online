@@ -94,6 +94,13 @@ Tags: full-site-editing, block-theme, blog, dark-mode, post-formats, one-column,
 /* ============================
    BASE
    ============================ */
+/* Global Focus Styles */
+*:focus-visible {
+	outline: 2px solid var(--taco-accent);
+	outline-offset: 2px;
+	border-radius: 2px;
+}
+
 body {
 	background-color: var(--taco-bg);
 	color: var(--taco-fg);
@@ -248,7 +255,8 @@ body::before {
 	flex-direction: column;
 }
 
-.tacobout-magazine-grid .wp-block-post:hover {
+.tacobout-magazine-grid .wp-block-post:hover,
+.tacobout-magazine-grid .wp-block-post:focus-within {
 	box-shadow: 0 15px 35px rgba(0, 102, 255, 0.1), 0 5px 15px rgba(0, 0, 0, 0.05);
 	border-color: rgba(255, 255, 255, 0.8);
 }
@@ -259,7 +267,8 @@ body::before {
 		border-color: rgba(255, 255, 255, 0.08);
 	}
 
-	.tacobout-magazine-grid .wp-block-post:hover {
+	.tacobout-magazine-grid .wp-block-post:hover,
+	.tacobout-magazine-grid .wp-block-post:focus-within {
 		box-shadow: 0 15px 35px rgba(139, 92, 246, 0.15), 0 5px 15px rgba(0, 0, 0, 0.2);
 		border-color: rgba(255, 255, 255, 0.15);
 	}
@@ -540,7 +549,8 @@ body.home .tacobout-magazine-grid #activitypub-reactions {
 	color: var(--taco-muted) !important;
 }
 
-.wp-block-post-terms a:hover {
+.wp-block-post-terms a:hover,
+.wp-block-post-terms a:focus-visible {
 	background: var(--taco-accent);
 	color: white !important;
 	border-color: var(--taco-accent);
@@ -561,7 +571,8 @@ body.home .tacobout-magazine-grid #activitypub-reactions {
 	transition: gap var(--taco-transition);
 }
 
-.wp-block-post-excerpt__more-link:hover {
+.wp-block-post-excerpt__more-link:hover,
+.wp-block-post-excerpt__more-link:focus-visible {
 	gap: 0.6rem;
 	color: var(--taco-accent-2) !important;
 }
@@ -583,7 +594,8 @@ body.home .tacobout-magazine-grid #activitypub-reactions {
 	transition: box-shadow var(--taco-transition);
 }
 
-.comment-body:hover {
+.comment-body:hover,
+.comment-body:focus-within {
 	box-shadow: var(--taco-shadow);
 }
 
@@ -598,7 +610,8 @@ body.home .tacobout-magazine-grid #activitypub-reactions {
 	transition: box-shadow var(--taco-transition);
 }
 
-.tacobout-author-card:hover {
+.tacobout-author-card:hover,
+.tacobout-author-card:focus-within {
 	box-shadow: var(--taco-shadow);
 }
 
