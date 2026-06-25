@@ -450,15 +450,21 @@ body.home:not(.paged) .tacobout-magazine-grid .wp-block-post:first-child .wp-blo
 /* --- IMAGE FORMAT --- */
 .tacobout-format-image {}
 
+.tacobout-format-image .wp-block-post-featured-image,
 .tacobout-format-image .wp-block-post-excerpt {
 	display: none !important;
 }
 
 .tacobout-format-image .wp-block-post-content {
-	display: none !important;
+	margin-bottom: 1rem;
+	order: -1;
 }
 
-.tacobout-format-image .wp-block-post-featured-image img {
+.tacobout-format-image .wp-block-post-title {
+	font-size: 1.5rem !important;
+}
+
+.tacobout-format-image .wp-block-post-content img {
 	border-radius: var(--taco-radius);
 }
 
