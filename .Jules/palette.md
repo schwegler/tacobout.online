@@ -1,0 +1,3 @@
+## 2023-10-27 - Enhance Keyboard Focus in Card Components
+**Learning:** Keyboard users often miss out on the elevation/highlight effects that mouse users see when hovering over card-like components (like blog posts or author cards). While `a:focus` highlights the specific link, the card itself doesn't react.
+**Action:** Use `:focus-within` on the parent card container (e.g., `.wp-block-post`, `.tacobout-author-card`) alongside `:hover` to ensure that when a user tabs into *any* link inside the card, the entire card visually reacts as if it were hovered, providing equal context and delight for keyboard navigation.
