@@ -140,3 +140,18 @@ function tacobout_pagination_body_class( $classes ) {
 	return $classes;
 }
 add_filter( 'body_class', 'tacobout_pagination_body_class' );
+
+/**
+ * Add security headers to responses
+ * This improves defense in depth by preventing MIME-type sniffing,
+ * clickjacking, and cross-site scripting (XSS) attacks.
+ */
+function tacobout_security_headers() {
+	if ( ! is_admin() ) {
+		header( 'X-Content-Type-Options: nosniff' );
+		header( 'X-Frame-Options: SAMEORIGIN' );
+		header( 'X-XSS-Protection: 1; mode=block' );
+		header( 'Referrer-Policy: strict-origin-when-cross-origin' );
+	}
+}
+add_action( 'send_headers', 'tacobout_security_headers' );
