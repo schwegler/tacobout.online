@@ -493,9 +493,11 @@ body.home:not(.paged) .tacobout-magazine-grid .wp-block-post:first-child .wp-blo
 }
 
 /* --- LINK FORMAT --- */
-.tacobout-format-link {}
-
 .tacobout-format-link .wp-block-post-featured-image {
+	display: none !important;
+}
+
+.tacobout-format-link .wp-block-post-excerpt {
 	display: none !important;
 }
 
