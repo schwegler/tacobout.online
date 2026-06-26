@@ -720,6 +720,4 @@ body.home .tacobout-magazine-grid #activitypub-reactions {
 .wp-block-embed embed {
 	max-width: 100% !important;
 	width: 100% !important;
-	aspect-ratio: 16 / 9 !important;
-	height: auto !important;
 }
