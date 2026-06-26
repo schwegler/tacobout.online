@@ -172,6 +172,18 @@ function tacobout_security_headers() {
 		header( 'X-Frame-Options: SAMEORIGIN' );
 		header( 'X-XSS-Protection: 1; mode=block' );
 		header( 'Referrer-Policy: strict-origin-when-cross-origin' );
+		header( 'Strict-Transport-Security: max-age=31536000; includeSubDomains' );
 	}
 }
 add_action( 'send_headers', 'tacobout_security_headers' );
+
+/**
+ * Disable XML-RPC to mitigate brute-force and DDoS attacks.
+ * XML-RPC is a legacy feature often abused by attackers.
+ */
+add_filter( 'xmlrpc_enabled', '__return_false' );
+
+/**
+ * Remove WordPress version generator meta tag to reduce information leakage.
+ */
+remove_action( 'wp_head', 'wp_generator' );
