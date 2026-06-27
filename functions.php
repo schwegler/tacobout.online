@@ -4,6 +4,11 @@
  * A personal magazine theme with deep Bluesky/ATProto integration.
  */
 
+// 🛡️ Sentinel: Prevent direct access to file to mitigate Full Path Disclosure (FPD)
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 if ( ! function_exists( 'tacobout_support' ) ) :
 	function tacobout_support() {
 		add_editor_style( 'style.css' );
