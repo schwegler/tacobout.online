@@ -187,3 +187,46 @@ add_filter( 'xmlrpc_enabled', '__return_false' );
  * Remove WordPress version generator meta tag to reduce information leakage.
  */
 remove_action( 'wp_head', 'wp_generator' );
+
+/**
+ * ⚡ Bolt: Optimize Query Loop Performance
+ *
+ * Prevent rendering of blocks that are visually hidden via CSS in the magazine grid.
+ * By default, WordPress renders ALL blocks (content, excerpt, image) for EVERY post
+ * in the query loop, even if they are display:none in CSS.
+ *
+ * This filter intercepts block rendering and returns an empty string for blocks
+ * we know will be hidden based on the post format.
+ *
+ * Impact: Prevents expensive shortcode/embed processing and reduces HTML payload size.
+ */
+function tacobout_optimize_post_format_blocks( $pre_render, $parsed_block, $block_instance ) {
+	// Only apply inside Query Loops (where queryId is set) and where we know the post
+	if ( empty( $block_instance->context['queryId'] ) || empty( $block_instance->context['postId'] ) ) {
+		return $pre_render;
+	}
+
+	$block_name = $parsed_block['blockName'];
+	$post_id    = $block_instance->context['postId'];
+	$format     = get_post_format( $post_id );
+
+	if ( ! $format ) {
+		$format = 'standard';
+	}
+
+	// For Standard format, the content is hidden, so skip rendering it
+	if ( 'core/post-content' === $block_name && 'standard' === $format ) {
+		return ''; // Return empty string to short-circuit rendering
+	}
+
+	// For microblog / media formats, excerpt and featured image are hidden
+	$hide_excerpt_image = array( 'video', 'audio', 'status', 'aside', 'image', 'quote', 'link' );
+	if ( in_array( $format, $hide_excerpt_image, true ) ) {
+		if ( 'core/post-excerpt' === $block_name || 'core/post-featured-image' === $block_name ) {
+			return '';
+		}
+	}
+
+	return $pre_render;
+}
+add_filter( 'pre_render_block', 'tacobout_optimize_post_format_blocks', 10, 3 );
