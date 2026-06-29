@@ -256,3 +256,113 @@ function tacobout_pre_render_hidden_blocks( $pre_render, $parsed_block, $parent_
 	return $pre_render;
 }
 add_filter( 'pre_render_block', 'tacobout_pre_render_hidden_blocks', 10, 3 );
+
+/**
+ * Inject an interaction badge into each post card in query loops.
+ * Shows total comments (WP + ActivityPub + Atmosphere — all stored as WP comments).
+ * Badge is hidden when count is 0.
+ */
+function tacobout_interaction_badge( $block_content, $block ) {
+	// Only target the post template items (each <li> in the query loop)
+	if ( empty( $block['blockName'] ) || 'core/post-template' !== $block['blockName'] ) {
+		return $block_content;
+	}
+
+	// Use regex to find each <li...class="...wp-block-post..."> and inject the badge
+	$block_content = preg_replace_callback(
+		'/<li\s[^>]*class="[^"]*wp-block-post[^"]*"[^>]*>/i',
+		function ( $matches ) {
+			// Extract post ID from the wp-post-{id} class
+			if ( preg_match( '/wp-post-(\d+)/', $matches[0], $id_match ) ) {
+				$post_id = intval( $id_match[1] );
+			} else {
+				return $matches[0];
+			}
+
+			$count = intval( get_comments_number( $post_id ) );
+			if ( $count < 1 ) {
+				return $matches[0];
+			}
+
+			$label = sprintf(
+				/* translators: %d: interaction count */
+				_n( '%d interaction', '%d interactions', $count, 'tacobout' ),
+				$count
+			);
+
+			$badge = sprintf(
+				'<span class="tacobout-interaction-badge" aria-label="%s" title="%s">💬 %d</span>',
+				esc_attr( $label ),
+				esc_attr( $label ),
+				$count
+			);
+
+			return $matches[0] . $badge;
+		},
+		$block_content
+	);
+
+	return $block_content;
+}
+add_filter( 'render_block', 'tacobout_interaction_badge', 10, 2 );
+
+/**
+ * Register custom REST API fields for infinite scroll.
+ * Exposes post_format and interaction_count on the posts endpoint.
+ */
+function tacobout_register_rest_fields() {
+	register_rest_field( 'post', 'post_format', array(
+		'get_callback' => function ( $post ) {
+			$format = get_post_format( $post['id'] );
+			return $format ? $format : 'standard';
+		},
+		'schema' => array(
+			'description' => 'Post format (standard, video, audio, etc.)',
+			'type'        => 'string',
+			'context'     => array( 'view' ),
+		),
+	) );
+
+	register_rest_field( 'post', 'interaction_count', array(
+		'get_callback' => function ( $post ) {
+			return intval( get_comments_number( $post['id'] ) );
+		},
+		'schema' => array(
+			'description' => 'Total interaction count (comments + fediverse + bluesky)',
+			'type'        => 'integer',
+			'context'     => array( 'view' ),
+		),
+	) );
+}
+add_action( 'rest_api_init', 'tacobout_register_rest_fields' );
+
+/**
+ * Enqueue infinite scroll + scroll-to-top script on the home page.
+ */
+function tacobout_enqueue_infinite_scroll() {
+	if ( ! is_home() && ! is_front_page() ) {
+		return;
+	}
+
+	wp_enqueue_script(
+		'tacobout-infinite-scroll',
+		get_template_directory_uri() . '/tacobout-infinite-scroll.js',
+		array(),
+		wp_get_theme()->get( 'Version' ),
+		true // Load in footer
+	);
+
+	// Calculate total pages
+	$per_page    = 9;
+	$total_posts = wp_count_posts()->publish;
+	$total_pages = ceil( $total_posts / $per_page );
+
+	wp_localize_script( 'tacobout-infinite-scroll', 'tacoboutScroll', array(
+		'restUrl'    => esc_url_raw( rest_url( 'wp/v2/posts' ) ),
+		'nonce'      => wp_create_nonce( 'wp_rest' ),
+		'perPage'    => $per_page,
+		'totalPages' => $total_pages,
+		'siteUrl'    => esc_url( home_url() ),
+	) );
+}
+add_action( 'wp_enqueue_scripts', 'tacobout_enqueue_infinite_scroll' );

@@ -925,3 +925,202 @@ body.home .tacobout-magazine-grid #activitypub-reactions {
 .tacobout-format-standard .tacobout-post-meta {
 	margin: 0.5rem 0 !important;
 }
+
+/* ============================
+   INTERACTION BADGE
+   ============================ */
+.tacobout-interaction-badge {
+	position: absolute;
+	top: 0.75rem;
+	right: 0.75rem;
+	z-index: 10;
+	display: inline-flex;
+	align-items: center;
+	gap: 0.25rem;
+	padding: 0.3rem 0.65rem;
+	font-size: 0.75rem;
+	font-weight: 600;
+	font-family: 'Space Grotesk', system-ui, sans-serif;
+	line-height: 1;
+	color: var(--taco-fg);
+	background: rgba(255, 255, 255, 0.7);
+	backdrop-filter: blur(12px);
+	-webkit-backdrop-filter: blur(12px);
+	border: 1px solid rgba(255, 255, 255, 0.5);
+	border-radius: 100px;
+	box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+	transition: transform var(--taco-transition), box-shadow var(--taco-transition), background var(--taco-transition);
+	pointer-events: auto;
+	cursor: default;
+}
+
+.tacobout-interaction-badge:hover {
+	transform: scale(1.08);
+	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+	background: rgba(255, 255, 255, 0.9);
+}
+
+@media (prefers-color-scheme: dark) {
+	.tacobout-interaction-badge {
+		background: rgba(39, 39, 42, 0.75);
+		border-color: rgba(255, 255, 255, 0.1);
+		box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+	}
+
+	.tacobout-interaction-badge:hover {
+		background: rgba(39, 39, 42, 0.9);
+		box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+	}
+}
+
+/* Card needs position:relative for the badge */
+.tacobout-magazine-grid .wp-block-post {
+	position: relative;
+}
+
+/* Avoid badge overlapping the LATEST badge on hero card */
+body.home:not(.paged) .tacobout-magazine-grid .wp-block-post:first-child .tacobout-interaction-badge {
+	top: 1rem;
+	right: 1.5rem;
+}
+
+@media (max-width: 600px) {
+	.tacobout-interaction-badge {
+		top: 0.5rem;
+		right: 0.5rem;
+		font-size: 0.65rem;
+		padding: 0.25rem 0.5rem;
+	}
+
+	body.home:not(.paged) .tacobout-magazine-grid .wp-block-post:first-child .tacobout-interaction-badge {
+		top: 0.75rem;
+		right: 1rem;
+	}
+}
+
+/* ============================
+   INFINITE SCROLL
+   ============================ */
+/* Hide traditional pagination when JS infinite scroll is active */
+.tacobout-infinite-scroll-active .wp-block-query-pagination,
+.tacobout-infinite-scroll-active .wp-block-query .wp-block-spacer {
+	display: none !important;
+}
+
+/* Scroll sentinel — invisible trigger */
+.tacobout-scroll-sentinel {
+	height: 1px;
+	width: 100%;
+}
+
+/* Loading spinner */
+.tacobout-infinite-scroll-spinner {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	padding: 2rem 0;
+}
+
+.tacobout-spinner-dots {
+	display: flex;
+	gap: 0.5rem;
+}
+
+.tacobout-spinner-dots span {
+	width: 10px;
+	height: 10px;
+	border-radius: 50%;
+	background: var(--taco-accent);
+	animation: tacoboutBounce 1.4s ease-in-out infinite both;
+}
+
+.tacobout-spinner-dots span:nth-child(1) {
+	animation-delay: -0.32s;
+}
+
+.tacobout-spinner-dots span:nth-child(2) {
+	animation-delay: -0.16s;
+}
+
+.tacobout-spinner-dots span:nth-child(3) {
+	animation-delay: 0s;
+}
+
+@keyframes tacoboutBounce {
+	0%, 80%, 100% {
+		transform: scale(0.4);
+		opacity: 0.4;
+	}
+
+	40% {
+		transform: scale(1);
+		opacity: 1;
+	}
+}
+
+/* ============================
+   SCROLL-TO-TOP FAB
+   ============================ */
+.tacobout-scroll-top {
+	position: fixed;
+	bottom: 2rem;
+	right: 2rem;
+	z-index: 999;
+	width: 48px;
+	height: 48px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	border: 1px solid rgba(255, 255, 255, 0.4);
+	border-radius: 50%;
+	background: rgba(255, 255, 255, 0.7);
+	backdrop-filter: blur(16px);
+	-webkit-backdrop-filter: blur(16px);
+	box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+	color: var(--taco-fg);
+	cursor: pointer;
+	opacity: 0;
+	visibility: hidden;
+	transform: translateY(16px);
+	transition: opacity 0.3s ease, visibility 0.3s ease, transform 0.3s ease, background 0.2s ease, box-shadow 0.2s ease;
+}
+
+.tacobout-scroll-top.is-visible {
+	opacity: 1;
+	visibility: visible;
+	transform: translateY(0);
+}
+
+.tacobout-scroll-top:hover {
+	background: var(--taco-accent);
+	color: white;
+	border-color: var(--taco-accent);
+	box-shadow: 0 6px 20px rgba(0, 102, 255, 0.3);
+}
+
+.tacobout-scroll-top:active {
+	transform: translateY(-2px) scale(0.95);
+}
+
+@media (prefers-color-scheme: dark) {
+	.tacobout-scroll-top {
+		background: rgba(24, 24, 27, 0.75);
+		border-color: rgba(255, 255, 255, 0.1);
+		box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+	}
+
+	.tacobout-scroll-top:hover {
+		background: var(--taco-accent);
+		border-color: var(--taco-accent);
+		box-shadow: 0 6px 20px rgba(59, 130, 246, 0.4);
+	}
+}
+
+@media (max-width: 600px) {
+	.tacobout-scroll-top {
+		bottom: 1.25rem;
+		right: 1.25rem;
+		width: 42px;
+		height: 42px;
+	}
+}
