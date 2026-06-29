@@ -5,6 +5,7 @@
  * Categories: gallery
  * Description: A photo-centric layout for Tumblog style posts.
  */
+if ( ! defined( 'ABSPATH' ) ) { exit; }
 ?>
 <!-- wp:group {"style":{"spacing":{"padding":{"bottom":"2rem"}}}} -->
 <div class="wp-block-group" style="padding-bottom:2rem">
