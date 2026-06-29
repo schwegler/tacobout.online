@@ -235,6 +235,180 @@ body::before {
 @media (max-width: 900px) {
 	.tacobout-magazine-grid {
 		column-count: 1;
+		column-gap: 1.25rem;
+	}
+
+	/* Tighter card padding + margin on tablet/mobile */
+	.tacobout-magazine-grid .wp-block-post {
+		padding: 1.25rem;
+		margin-bottom: 1.25rem;
+	}
+
+	/* Scale down the hero first-post */
+	body.home:not(.paged) .tacobout-magazine-grid .wp-block-post:first-child {
+		padding: 2.5rem 1.5rem 1.5rem 1.5rem !important;
+	}
+
+	/* Slightly smaller hero title on tablet */
+	body.home:not(.paged) .tacobout-magazine-grid .wp-block-post:first-child .wp-block-post-title {
+		font-size: clamp(2rem, 5vw, 3.5rem) !important;
+	}
+
+	body.home:not(.paged) .tacobout-magazine-grid .wp-block-post:first-child .wp-block-post-excerpt {
+		font-size: 1.1rem;
+	}
+
+	/* Format-specific cards: tighter padding */
+	.tacobout-format-status,
+	.tacobout-format-aside {
+		padding: 1.25rem !important;
+	}
+
+	.tacobout-format-quote {
+		padding: 1.25rem 1.5rem !important;
+	}
+
+	.tacobout-format-link {
+		padding: 1.25rem !important;
+	}
+
+	.tacobout-format-audio .wp-block-post-content {
+		padding: 1.25rem;
+	}
+
+	/* Reinforce flex context on card-inner so order works on mobile */
+	.tacobout-magazine-grid .tacobout-card-inner,
+	.tacobout-magazine-grid .tacobout-card-inner.is-layout-flow,
+	.tacobout-magazine-grid .tacobout-card-inner.wp-block-group-is-layout-flow {
+		display: flex !important;
+		flex-direction: column !important;
+	}
+
+	.tacobout-magazine-grid .tacobout-card-inner > .wp-block-template-part,
+	.tacobout-magazine-grid .tacobout-card-inner > .wp-block-template-part.is-layout-flow {
+		display: contents !important;
+	}
+
+	/* Re-assert order values inside mobile breakpoint */
+	.tacobout-format-video .wp-block-post-content,
+	.tacobout-format-audio .wp-block-post-content,
+	.tacobout-format-status .wp-block-post-content,
+	.tacobout-format-aside .wp-block-post-content,
+	.tacobout-format-image .wp-block-post-content,
+	.tacobout-format-quote .wp-block-post-content,
+	.tacobout-format-link .wp-block-post-content {
+		order: -1 !important;
+	}
+
+	.tacobout-format-video .tacobout-post-meta,
+	.tacobout-format-audio .tacobout-post-meta,
+	.tacobout-format-status .tacobout-post-meta,
+	.tacobout-format-aside .tacobout-post-meta,
+	.tacobout-format-image .tacobout-post-meta,
+	.tacobout-format-quote .tacobout-post-meta,
+	.tacobout-format-link .tacobout-post-meta {
+		order: 2 !important;
+	}
+
+	/* Post meta row — tighter spacing */
+	.tacobout-post-meta {
+		gap: 0.5rem;
+	}
+
+	.tacobout-format-standard .tacobout-post-meta {
+		margin: 0.25rem 0 !important;
+	}
+}
+
+/* Phone-specific refinements */
+@media (max-width: 600px) {
+	.tacobout-magazine-grid .wp-block-post {
+		padding: 1rem;
+		margin-bottom: 1rem;
+	}
+
+	/* Compact hero on small phones */
+	body.home:not(.paged) .tacobout-magazine-grid .wp-block-post:first-child {
+		padding: 2.25rem 1.25rem 1.25rem 1.25rem !important;
+	}
+
+	body.home:not(.paged) .tacobout-magazine-grid .wp-block-post:first-child .wp-block-post-title {
+		font-size: clamp(1.75rem, 7vw, 2.5rem) !important;
+	}
+
+	body.home:not(.paged) .tacobout-magazine-grid .wp-block-post:first-child .wp-block-post-excerpt {
+		font-size: 1rem;
+	}
+
+	/* LATEST badge — slightly smaller on phones */
+	body.home:not(.paged) .tacobout-magazine-grid .wp-block-post:first-child::before {
+		top: 0.75rem;
+		left: 1rem;
+		font-size: 0.65rem;
+		padding: 3px 10px;
+	}
+
+	/* Reinforce flex context on phones */
+	.tacobout-magazine-grid .tacobout-card-inner,
+	.tacobout-magazine-grid .tacobout-card-inner.is-layout-flow,
+	.tacobout-magazine-grid .tacobout-card-inner.wp-block-group-is-layout-flow {
+		display: flex !important;
+		flex-direction: column !important;
+	}
+
+	.tacobout-magazine-grid .tacobout-card-inner > .wp-block-template-part,
+	.tacobout-magazine-grid .tacobout-card-inner > .wp-block-template-part.is-layout-flow {
+		display: contents !important;
+	}
+
+	/* Re-assert order values on phones */
+	.tacobout-format-video .wp-block-post-content,
+	.tacobout-format-audio .wp-block-post-content,
+	.tacobout-format-status .wp-block-post-content,
+	.tacobout-format-aside .wp-block-post-content,
+	.tacobout-format-image .wp-block-post-content,
+	.tacobout-format-quote .wp-block-post-content,
+	.tacobout-format-link .wp-block-post-content {
+		order: -1 !important;
+	}
+
+	.tacobout-format-video .tacobout-post-meta,
+	.tacobout-format-audio .tacobout-post-meta,
+	.tacobout-format-status .tacobout-post-meta,
+	.tacobout-format-aside .tacobout-post-meta,
+	.tacobout-format-image .tacobout-post-meta,
+	.tacobout-format-quote .tacobout-post-meta,
+	.tacobout-format-link .tacobout-post-meta {
+		order: 2 !important;
+	}
+
+	/* Format cards */
+	.tacobout-format-status,
+	.tacobout-format-aside {
+		padding: 1rem !important;
+	}
+
+	.tacobout-format-quote {
+		padding: 1rem 1.25rem !important;
+	}
+
+	.tacobout-format-link {
+		padding: 1rem !important;
+	}
+
+	.tacobout-format-audio .wp-block-post-content {
+		padding: 1rem;
+	}
+
+	/* Tighter meta on phones */
+	.tacobout-format-video .tacobout-post-meta,
+	.tacobout-format-audio .tacobout-post-meta,
+	.tacobout-format-status .tacobout-post-meta,
+	.tacobout-format-aside .tacobout-post-meta,
+	.tacobout-format-image .tacobout-post-meta,
+	.tacobout-format-quote .tacobout-post-meta,
+	.tacobout-format-link .tacobout-post-meta {
+		margin-top: 0.75rem !important;
 	}
 }
 
@@ -722,14 +896,17 @@ body.home .tacobout-magazine-grid #activitypub-reactions {
 }
 
 /* 2. force the card inner to actually be flex and ignore WP's layout-flow */
-.tacobout-magazine-grid .tacobout-card-inner {
+.tacobout-magazine-grid .tacobout-card-inner,
+.tacobout-magazine-grid .tacobout-card-inner.is-layout-flow,
+.tacobout-magazine-grid .tacobout-card-inner.wp-block-group-is-layout-flow {
 	height: 100%;
 	display: flex !important;
 	flex-direction: column !important;
 }
 
 /* 3. vaporize the template part wrapper so the meta becomes a direct child */
-.tacobout-magazine-grid .tacobout-card-inner>.wp-block-template-part {
+.tacobout-magazine-grid .tacobout-card-inner > .wp-block-template-part,
+.tacobout-magazine-grid .tacobout-card-inner > .wp-block-template-part.is-layout-flow {
 	display: contents !important;
 }
 
