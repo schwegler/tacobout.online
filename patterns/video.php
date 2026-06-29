@@ -5,6 +5,7 @@
  * Categories: media
  * Description: A video-centric layout.
  */
+if ( ! defined( 'ABSPATH' ) ) { exit; }
 ?>
 <!-- wp:group {"style":{"spacing":{"padding":{"bottom":"2rem"}},"border":{"radius":"8px"}},"backgroundColor":"surface"} -->
 <div class="wp-block-group has-surface-background-color has-background" style="border-radius:8px;padding-bottom:2rem">
