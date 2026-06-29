@@ -70,6 +70,26 @@ function tacobout_resource_hints( $urls, $relation_type ) {
 add_filter( 'wp_resource_hints', 'tacobout_resource_hints', 10, 2 );
 
 /**
+ * Load Google Fonts asynchronously.
+ * This optimization prevents the external font stylesheet from blocking the initial page render,
+ * significantly improving First Contentful Paint (FCP) and overall page load speed.
+ */
+function tacobout_async_google_fonts( $tag, $handle, $href, $media ) {
+	if ( 'tacobout-google-fonts' === $handle ) {
+		$tag = sprintf(
+			'<link rel="stylesheet" id="%s-css" href="%s" media="print" onload="this.media=\'all\'" />' . "\n" .
+			'<noscript><link rel="stylesheet" href="%s" media="%s" /></noscript>' . "\n",
+			esc_attr( $handle ),
+			esc_url( $href ),
+			esc_url( $href ),
+			esc_attr( $media )
+		);
+	}
+	return $tag;
+}
+add_filter( 'style_loader_tag', 'tacobout_async_google_fonts', 10, 4 );
+
+/**
  * CRITICAL: Add post format classes to the post wrapper in Query Loops.
  * WordPress FSE does NOT add format-{type} classes to posts in query loops.
  * This filter fixes that, which is why the CSS was being "ignored" before.
