@@ -4,7 +4,7 @@ Theme URI: https://tacobout.online
 Author: schwegler
 Author URI: https://tacobout.online
 Description: A personal magazine theme for schwegler — ultra-modern tumblog with deep Bluesky/ATProto & ActivityPub integration. Format-aware feeds, dark mode, and 2026 design language.
-Version: 3.3.0
+Version: 3.4.0
 Requires at least: 6.4
 Tested up to: 6.8
 Requires PHP: 8.0
@@ -288,7 +288,7 @@ body::before {
    ============================ */
 body.home:not(.paged) .tacobout-magazine-grid .wp-block-post:first-child {
 	column-span: all;
-	padding: 3rem 2rem 0rem 2rem;
+	padding: 3rem 2rem 2rem 2rem !important;
 	position: relative;
 	border: 1px solid var(--taco-accent);
 	box-shadow: 0 0 40px rgba(139, 92, 246, 0.15);
@@ -312,6 +312,10 @@ body.home:not(.paged) .tacobout-magazine-grid .wp-block-post:first-child::before
 	z-index: 10;
 }
 
+body.home:not(.paged) .tacobout-magazine-grid .wp-block-post:first-child .entry-content:last-child {
+	margin-bottom: 0;
+}
+
 @keyframes pulse {
 	0% {
 		box-shadow: 0 0 0 0 rgba(0, 102, 255, 0.7);
@@ -333,7 +337,6 @@ body.home:not(.paged) .tacobout-magazine-grid .wp-block-post:first-child .wp-blo
 	background: linear-gradient(135deg, var(--taco-accent), var(--taco-accent-2));
 	-webkit-background-clip: text;
 	-webkit-text-fill-color: transparent;
-	margin-bottom: 1.5rem !important;
 }
 
 body.home:not(.paged) .tacobout-magazine-grid .wp-block-post:first-child .wp-block-post-excerpt {
@@ -715,23 +718,19 @@ body.home .tacobout-magazine-grid #activitypub-reactions {
 .wp-block-embed embed {
 	max-width: 100% !important;
 	width: 100% !important;
-}
-
-/* 1. fix the hero padding so the content doesn't clip the bottom */
-body.home:not(.paged) .tacobout-magazine-grid .wp-block-post:first-child {
-    padding: 3rem 2rem 3rem 2rem; 
+	height: revert-layer;
 }
 
 /* 2. force the card inner to actually be flex and ignore WP's layout-flow */
 .tacobout-magazine-grid .tacobout-card-inner {
-    height: 100%;
-    display: flex !important;
-    flex-direction: column !important;
+	height: 100%;
+	display: flex !important;
+	flex-direction: column !important;
 }
 
 /* 3. vaporize the template part wrapper so the meta becomes a direct child */
-.tacobout-magazine-grid .tacobout-card-inner > .wp-block-template-part {
-    display: contents !important;
+.tacobout-magazine-grid .tacobout-card-inner>.wp-block-template-part {
+	display: contents !important;
 }
 
 /* 4. shove the meta down below the title */
@@ -742,11 +741,10 @@ body.home:not(.paged) .tacobout-magazine-grid .wp-block-post:first-child {
 .tacobout-format-image .tacobout-post-meta,
 .tacobout-format-quote .tacobout-post-meta,
 .tacobout-format-link .tacobout-post-meta {
-    order: 2 !important;
-    margin-top: 1rem !important; 
+	order: 2 !important;
+	margin-top: 1rem !important;
 }
 
 .tacobout-format-standard .tacobout-post-meta {
 	margin: 0.5rem 0 !important;
-}
 }
