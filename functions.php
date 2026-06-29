@@ -189,3 +189,50 @@ add_filter( 'xmlrpc_enabled', '__return_false' );
  * Remove WordPress version generator meta tag to reduce information leakage.
  */
 remove_action( 'wp_head', 'wp_generator' );
+
+/**
+ * ⚡ Bolt: Short-circuit block rendering for blocks hidden by CSS
+ * In query loops, certain post formats have their content, excerpt, or featured image
+ * hidden via CSS (display: none). Rendering these blocks only to hide them wastes
+ * backend CPU time and increases the HTML payload size.
+ * This filter intercepts the rendering and returns an empty string for those blocks.
+ */
+function tacobout_pre_render_hidden_blocks( $pre_render, $parsed_block, $parent_block ) {
+	$block_name = $parsed_block['blockName'] ?? '';
+
+	// Only target specific blocks that might be hidden
+	$target_blocks = array( 'core/post-content', 'core/post-featured-image', 'core/post-excerpt' );
+	if ( ! in_array( $block_name, $target_blocks, true ) ) {
+		return $pre_render;
+	}
+
+	// Only apply inside a query loop to avoid affecting single post templates unexpectedly
+	if ( ! $parent_block || empty( $parent_block->context['queryId'] ) ) {
+		return $pre_render;
+	}
+
+	$post_id = $parent_block->context['postId'] ?? 0;
+	if ( ! $post_id ) {
+		return $pre_render;
+	}
+
+	$format = get_post_format( $post_id ) ?: 'standard';
+	$should_hide = false;
+
+	// Check logic based on style.css rules
+	if ( 'core/post-content' === $block_name && 'standard' === $format ) {
+		$should_hide = true;
+	} elseif ( in_array( $block_name, array( 'core/post-featured-image', 'core/post-excerpt' ), true ) ) {
+		$hidden_formats = array( 'video', 'audio', 'status', 'aside', 'image', 'quote', 'link' );
+		if ( in_array( $format, $hidden_formats, true ) ) {
+			$should_hide = true;
+		}
+	}
+
+	if ( $should_hide ) {
+		return ''; // Short-circuit render
+	}
+
+	return $pre_render;
+}
+add_filter( 'pre_render_block', 'tacobout_pre_render_hidden_blocks', 10, 3 );
