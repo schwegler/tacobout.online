@@ -239,17 +239,19 @@ body::before {
    MAGAZINE GRID — MASONRY
    ============================ */
 .tacobout-magazine-grid {
-	column-count: 2;
-	column-gap: 2rem;
-	display: block;
+	display: grid;
+	grid-template-columns: repeat(2, 1fr);
+	gap: 2rem;
+	align-items: start;
+
 	list-style: none;
 	padding: 0;
 }
 
 @media (max-width: 900px) {
 	.tacobout-magazine-grid {
-		column-count: 1;
-		column-gap: 1.25rem;
+		grid-template-columns: 1fr;
+		gap: 1.25rem;
 	}
 
 	/* Tighter card padding + margin on tablet/mobile */
@@ -428,7 +430,7 @@ body::before {
 
 /* Each post in the grid */
 .tacobout-magazine-grid .wp-block-post {
-	break-inside: avoid-column;
+
 	margin-bottom: 2rem;
 	overflow: hidden;
 	min-width: 0;
@@ -475,7 +477,7 @@ body::before {
    HERO: ADAPTIVE FIRST POST
    ============================ */
 body.home:not(.paged) .tacobout-magazine-grid .wp-block-post:first-child {
-	column-span: all;
+	grid-column: 1 / -1;
 	padding: 3rem 2rem 2rem 2rem !important;
 	position: relative;
 	border: 1px solid var(--taco-accent);
@@ -1159,23 +1161,25 @@ body.home:not(.paged) .tacobout-magazine-grid .wp-block-post:first-child .tacobo
    AUTHOR ARCHIVE & ACTIVITYPUB
    ============================ */
 body.author .wp-block-post-template {
-	column-count: 2;
-	column-gap: 2rem;
-	display: block;
+	display: grid;
+	grid-template-columns: repeat(2, 1fr);
+	gap: 2rem;
+	align-items: start;
+
 	list-style: none;
 	padding: 0;
 }
 
 @media (max-width: 900px) {
 	body.author .wp-block-post-template {
-		column-count: 1;
-		column-gap: 1.25rem;
+		grid-template-columns: 1fr;
+		gap: 1.25rem;
 	}
 }
 
 body.author .wp-block-post {
 	position: relative;
-	break-inside: avoid-column;
+
 	margin-bottom: 2rem;
 	overflow: hidden;
 	min-width: 0;
