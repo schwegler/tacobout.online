@@ -546,14 +546,12 @@ body.home:not(.paged) .tacobout-magazine-grid .wp-block-post:first-child .wp-blo
    ============================ */
 
 /* --- STANDARD FORMAT — hide full content, show excerpt --- */
-.tacobout-format-standard {}
 
 .tacobout-format-standard .wp-block-post-content {
 	display: none !important;
 }
 
 /* --- VIDEO FORMAT --- */
-.tacobout-format-video {}
 
 .tacobout-format-video .wp-block-post-featured-image,
 .tacobout-format-video .wp-block-post-excerpt {
@@ -581,7 +579,6 @@ body.home:not(.paged) .tacobout-magazine-grid .wp-block-post:first-child .wp-blo
 }
 
 /* --- AUDIO FORMAT --- */
-.tacobout-format-audio {}
 
 .tacobout-format-audio .wp-block-post-featured-image,
 .tacobout-format-audio .wp-block-post-excerpt {
@@ -603,8 +600,6 @@ body.home:not(.paged) .tacobout-magazine-grid .wp-block-post:first-child .wp-blo
 }
 
 /* --- STATUS & ASIDE FORMATS (microblog) --- */
-.tacobout-format-status,
-.tacobout-format-aside {}
 
 .tacobout-format-status .wp-block-post-featured-image,
 .tacobout-format-status .wp-block-post-excerpt,
@@ -636,7 +631,6 @@ body.home:not(.paged) .tacobout-magazine-grid .wp-block-post:first-child .wp-blo
 }
 
 /* --- IMAGE FORMAT --- */
-.tacobout-format-image {}
 
 .tacobout-format-image .wp-block-post-featured-image,
 .tacobout-format-image .wp-block-post-excerpt {
@@ -657,7 +651,6 @@ body.home:not(.paged) .tacobout-magazine-grid .wp-block-post:first-child .wp-blo
 }
 
 /* --- QUOTE FORMAT --- */
-.tacobout-format-quote {}
 
 .tacobout-format-quote .wp-block-post-featured-image,
 .tacobout-format-quote .wp-block-post-excerpt {
