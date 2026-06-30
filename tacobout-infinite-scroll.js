@@ -147,7 +147,7 @@
 			const label = interactionCount === 1
 				? '1 interaction'
 				: interactionCount + ' interactions';
-			badgeHtml = `<a href="${post.link}" class="tacobout-interaction-badge" aria-label="${escHtml(label)}" title="${escHtml(label)}">💬 ${interactionCount}</a>`;
+			badgeHtml = `<a href="${escHtml(post.link)}" class="tacobout-interaction-badge" aria-label="${escHtml(label)}" title="${escHtml(label)}">💬 ${interactionCount}</a>`;
 		}
 
 		// Assemble card
@@ -170,9 +170,12 @@
 
 	function escHtml(str) {
 		if (!str) return '';
-		const div = document.createElement('div');
-		div.textContent = str;
-		return div.innerHTML;
+		return String(str)
+			.replace(/&/g, '&amp;')
+			.replace(/</g, '&lt;')
+			.replace(/>/g, '&gt;')
+			.replace(/"/g, '&quot;')
+			.replace(/'/g, '&#39;');
 	}
 
 	/* ============================================

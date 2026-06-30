@@ -1,9 +1,4 @@
-## 2024-06-25 - CSS Rules Display
-**Vulnerability:** None. Small UI defect.
-**Learning:** Understanding CSS specificity and post-format rendering.
-**Prevention:** Proper testing of CSS classes.
-
-## 2024-08-16 - Prevent Direct File Access
-**Vulnerability:** Full Path Disclosure via direct access to PHP files.
-**Learning:** WordPress themes require ABSPATH checks in all PHP files, including block patterns, but for block patterns it must be placed *after* the WordPress header block comment.
-**Prevention:** Always add the ABSPATH check to new PHP files.
+## 2024-05-30 - Fix XSS in `escHtml` function
+**Vulnerability:** DOM-based escaping function used for HTML generation.
+**Learning:** `div.innerHTML` escapes `<`, `>`, and `&`, but leaves quotes (`"`, `'`) unescaped, enabling attribute injection.
+**Prevention:** Use explicit Regex string replacements `(str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;'))` to escape content destined for HTML string interpolation.
