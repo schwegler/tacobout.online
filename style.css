@@ -4,7 +4,7 @@ Theme URI: https://tacobout.online
 Author: schwegler
 Author URI: https://tacobout.online
 Description: A personal magazine theme for schwegler — ultra-modern tumblog with deep Bluesky/ATProto & ActivityPub integration. Format-aware feeds, dark mode, and 2026 design language.
-Version: 3.5.0
+Version: 3.6.0
 Requires at least: 6.4
 Tested up to: 6.8
 Requires PHP: 8.0
@@ -113,6 +113,14 @@ body {
 	transition: background-color var(--taco-transition), color var(--taco-transition);
 	-webkit-font-smoothing: antialiased;
 	-moz-osx-font-smoothing: grayscale;
+}
+
+p, li, figcaption, .wp-block-post-excerpt {
+	text-wrap: pretty;
+}
+
+h1, h2, h3, h4, h5, h6, .wp-block-post-title {
+	text-wrap: balance;
 }
 
 body::before {
