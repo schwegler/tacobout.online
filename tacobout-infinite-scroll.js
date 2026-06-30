@@ -192,6 +192,10 @@
 			url.searchParams.set('order', 'desc');
 			url.searchParams.set('_embed', 'wp:featuredmedia,wp:term');
 
+			// ⚡ Bolt Optimization: Limit JSON payload size and avoid expensive server-side
+			// computations for unused fields. We must include _links and _embedded for _embed to work.
+			url.searchParams.set('_fields', 'id,date,link,title,excerpt,content,post_format,interaction_count,_links,_embedded');
+
 			const resp = await fetch(url.toString(), {
 				headers: { 'X-WP-Nonce': config.nonce }
 			});
