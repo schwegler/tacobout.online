@@ -1,0 +1,13 @@
+{
+    "name": "schwegler/tacobout",
+    "require-dev": {
+        "phpunit/phpunit": "^10",
+        "brain/monkey": "^2.7"
+    },
+    "authors": [
+        {
+            "name": "Schwegler",
+            "email": "schwegler@example.com"
+        }
+    ]
+}
