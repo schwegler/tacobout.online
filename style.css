@@ -53,34 +53,33 @@ Tags: full-site-editing, block-theme, blog, dark-mode, post-formats, one-column,
 	}
 
 	/* Fix all surfaces */
-	.has-base-background-color {
-		background-color: var(--taco-bg) !important;
-	}
+	/* Base */
+	.has-base-color { color: var(--taco-bg) !important; }
+	.has-base-background-color { background-color: var(--taco-bg) !important; }
 
-	.has-contrast-color {
-		color: var(--taco-fg) !important;
-	}
+	/* Contrast */
+	.has-contrast-color { color: var(--taco-fg) !important; }
+	.has-contrast-background-color { background-color: var(--taco-fg) !important; }
 
-	.has-contrast-background-color {
-		background-color: var(--taco-fg) !important;
-		color: var(--taco-bg) !important;
-	}
+	/* Accent */
+	.has-accent-color { color: var(--taco-accent) !important; }
+	.has-accent-background-color { background-color: var(--taco-accent) !important; }
 
-	.has-surface-background-color {
-		background-color: var(--taco-surface) !important;
-	}
+	/* Accent 2 */
+	.has-accent-2-color { color: var(--taco-accent-2) !important; }
+	.has-accent-2-background-color { background-color: var(--taco-accent-2) !important; }
 
-	.has-surface-2-background-color {
-		background-color: var(--taco-surface-2) !important;
-	}
+	/* Muted */
+	.has-muted-color { color: var(--taco-muted) !important; }
+	.has-muted-background-color { background-color: var(--taco-muted) !important; }
 
-	.has-muted-color {
-		color: var(--taco-muted) !important;
-	}
+	/* Surface */
+	.has-surface-color { color: var(--taco-surface) !important; }
+	.has-surface-background-color { background-color: var(--taco-surface) !important; }
 
-	.has-accent-color {
-		color: var(--taco-accent) !important;
-	}
+	/* Surface 2 */
+	.has-surface-2-color { color: var(--taco-surface-2) !important; }
+	.has-surface-2-background-color { background-color: var(--taco-surface-2) !important; }
 
 	a {
 		color: var(--taco-accent);
