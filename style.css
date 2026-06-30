@@ -284,8 +284,8 @@ body::before {
 		flex-direction: column !important;
 	}
 
-	.tacobout-magazine-grid .tacobout-card-inner > .wp-block-template-part,
-	.tacobout-magazine-grid .tacobout-card-inner > .wp-block-template-part.is-layout-flow {
+	.tacobout-magazine-grid .tacobout-card-inner>.wp-block-template-part,
+	.tacobout-magazine-grid .tacobout-card-inner>.wp-block-template-part.is-layout-flow {
 		display: contents !important;
 	}
 
@@ -356,8 +356,8 @@ body::before {
 		flex-direction: column !important;
 	}
 
-	.tacobout-magazine-grid .tacobout-card-inner > .wp-block-template-part,
-	.tacobout-magazine-grid .tacobout-card-inner > .wp-block-template-part.is-layout-flow {
+	.tacobout-magazine-grid .tacobout-card-inner>.wp-block-template-part,
+	.tacobout-magazine-grid .tacobout-card-inner>.wp-block-template-part.is-layout-flow {
 		display: contents !important;
 	}
 
@@ -690,11 +690,11 @@ body.home:not(.paged) .tacobout-magazine-grid .wp-block-post:first-child .wp-blo
 	border: 1px solid var(--taco-border);
 }
 
-/* --- HIDE ACTIVITYPUB / FEDIVERSE REACTIONS ON HOMEPAGE FEED --- */
-body.home .tacobout-magazine-grid .wp-block-activitypub-reactions,
-body.home .tacobout-magazine-grid .activitypub-reactions,
-body.home .tacobout-magazine-grid .fediverse-reactions,
-body.home .tacobout-magazine-grid #activitypub-reactions {
+/* --- HIDE ACTIVITYPUB / FEDIVERSE REACTIONS IN ALL FEEDS (badge replaces them) --- */
+.tacobout-magazine-grid .wp-block-activitypub-reactions,
+.tacobout-magazine-grid .activitypub-reactions,
+.tacobout-magazine-grid .fediverse-reactions,
+.tacobout-magazine-grid #activitypub-reactions {
 	display: none !important;
 }
 
@@ -905,8 +905,8 @@ body.home .tacobout-magazine-grid #activitypub-reactions {
 }
 
 /* 3. vaporize the template part wrapper so the meta becomes a direct child */
-.tacobout-magazine-grid .tacobout-card-inner > .wp-block-template-part,
-.tacobout-magazine-grid .tacobout-card-inner > .wp-block-template-part.is-layout-flow {
+.tacobout-magazine-grid .tacobout-card-inner>.wp-block-template-part,
+.tacobout-magazine-grid .tacobout-card-inner>.wp-block-template-part.is-layout-flow {
 	display: contents !important;
 }
 
@@ -1047,7 +1047,10 @@ body.home:not(.paged) .tacobout-magazine-grid .wp-block-post:first-child .tacobo
 }
 
 @keyframes tacoboutBounce {
-	0%, 80%, 100% {
+
+	0%,
+	80%,
+	100% {
 		transform: scale(0.4);
 		opacity: 0.4;
 	}

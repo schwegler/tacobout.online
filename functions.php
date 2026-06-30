@@ -272,8 +272,8 @@ function tacobout_interaction_badge( $block_content, $block ) {
 	$block_content = preg_replace_callback(
 		'/<li\s[^>]*class="[^"]*wp-block-post[^"]*"[^>]*>/i',
 		function ( $matches ) {
-			// Extract post ID from the wp-post-{id} class
-			if ( preg_match( '/wp-post-(\d+)/', $matches[0], $id_match ) ) {
+		// Extract post ID from the post-{id} class (WordPress's get_post_class format)
+			if ( preg_match( '/[ "]post-([0-9]+)[ "]/', $matches[0], $id_match ) ) {
 				$post_id = intval( $id_match[1] );
 			} else {
 				return $matches[0];
