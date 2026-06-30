@@ -147,7 +147,7 @@
 			const label = interactionCount === 1
 				? '1 interaction'
 				: interactionCount + ' interactions';
-			badgeHtml = `<span class="tacobout-interaction-badge" aria-label="${escHtml(label)}" title="${escHtml(label)}">💬 ${interactionCount}</span>`;
+			badgeHtml = `<a href="${post.link}" class="tacobout-interaction-badge" aria-label="${escHtml(label)}" title="${escHtml(label)}">💬 ${interactionCount}</a>`;
 		}
 
 		// Assemble card

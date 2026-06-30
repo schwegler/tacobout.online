@@ -291,7 +291,8 @@ function tacobout_interaction_badge( $block_content, $block ) {
 			);
 
 			$badge = sprintf(
-				'<span class="tacobout-interaction-badge" aria-label="%s" title="%s">💬 %d</span>',
+				'<a href="%s" class="tacobout-interaction-badge" aria-label="%s" title="%s">💬 %d</a>',
+				esc_url( get_permalink( $post_id ) ),
 				esc_attr( $label ),
 				esc_attr( $label ),
 				$count
