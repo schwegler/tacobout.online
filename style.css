@@ -4,7 +4,7 @@ Theme URI: https://tacobout.online
 Author: schwegler
 Author URI: https://tacobout.online
 Description: A personal magazine theme for schwegler — ultra-modern tumblog with deep Bluesky/ATProto & ActivityPub integration. Format-aware feeds, dark mode, and 2026 design language.
-Version: 3.5.0
+Version: 3.6.0
 Requires at least: 6.4
 Tested up to: 6.8
 Requires PHP: 8.0
@@ -89,6 +89,12 @@ Tags: full-site-editing, block-theme, blog, dark-mode, post-formats, one-column,
 	a:hover {
 		color: var(--taco-accent-2);
 	}
+
+	.wp-block-site-title a,
+	.wp-block-post-title,
+	.wp-block-post-title a {
+		color: var(--taco-fg) !important;
+	}
 }
 
 /* ============================
@@ -107,6 +113,14 @@ body {
 	transition: background-color var(--taco-transition), color var(--taco-transition);
 	-webkit-font-smoothing: antialiased;
 	-moz-osx-font-smoothing: grayscale;
+}
+
+p, li, figcaption, .wp-block-post-excerpt {
+	text-wrap: pretty;
+}
+
+h1, h2, h3, h4, h5, h6, .wp-block-post-title {
+	text-wrap: balance;
 }
 
 body::before {
@@ -439,8 +453,8 @@ body::before {
 
 @media (prefers-color-scheme: dark) {
 	.tacobout-magazine-grid .wp-block-post {
-		background: rgba(24, 24, 27, 0.6);
-		border-color: rgba(255, 255, 255, 0.08);
+		background: rgba(255, 255, 255, 0.05);
+		border-color: rgba(255, 255, 255, 0.1);
 	}
 
 	.tacobout-magazine-grid .wp-block-post:hover,
@@ -779,6 +793,18 @@ body.home:not(.paged) .tacobout-magazine-grid .wp-block-post:first-child .wp-blo
 .comment-body:hover,
 .comment-body:focus-within {
 	box-shadow: var(--taco-shadow);
+}
+
+.comment-body .comment-reply-link,
+.comment-body a.activitypub-interaction-link,
+.comment-body .activitypub-like,
+.comment-body .activitypub-reply {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.25rem;
+	line-height: normal !important;
+	overflow: visible !important;
+	padding-bottom: 2px;
 }
 
 /* ============================
@@ -1127,4 +1153,65 @@ body.home:not(.paged) .tacobout-magazine-grid .wp-block-post:first-child .tacobo
 		width: 42px;
 		height: 42px;
 	}
+}
+
+/* ============================
+   AUTHOR ARCHIVE & ACTIVITYPUB
+   ============================ */
+body.author .wp-block-post-template {
+	column-count: 2;
+	column-gap: 2rem;
+	display: block;
+	list-style: none;
+	padding: 0;
+}
+
+@media (max-width: 900px) {
+	body.author .wp-block-post-template {
+		column-count: 1;
+		column-gap: 1.25rem;
+	}
+}
+
+body.author .wp-block-post {
+	position: relative;
+	break-inside: avoid-column;
+	margin-bottom: 2rem;
+	overflow: hidden;
+	min-width: 0;
+	background: rgba(255, 255, 255, 0.5);
+	backdrop-filter: blur(20px);
+	-webkit-backdrop-filter: blur(20px);
+	border: 1px solid rgba(255, 255, 255, 0.4);
+	border-radius: var(--taco-radius);
+	padding: 1.5rem;
+	box-shadow: var(--taco-shadow);
+	transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.4s ease, border-color 0.4s ease;
+	display: flex;
+	flex-direction: column;
+}
+
+body.author .wp-block-post:hover,
+body.author .wp-block-post:focus-within {
+	box-shadow: 0 15px 35px rgba(0, 102, 255, 0.1), 0 5px 15px rgba(0, 0, 0, 0.05);
+	border-color: rgba(255, 255, 255, 0.8);
+}
+
+@media (prefers-color-scheme: dark) {
+	body.author .wp-block-post {
+		background: rgba(255, 255, 255, 0.05);
+		border-color: rgba(255, 255, 255, 0.1);
+	}
+
+	body.author .wp-block-post:hover,
+	body.author .wp-block-post:focus-within {
+		box-shadow: 0 15px 35px rgba(139, 92, 246, 0.15), 0 5px 15px rgba(0, 0, 0, 0.2);
+		border-color: rgba(255, 255, 255, 0.15);
+	}
+}
+
+body.author .tacobout-card-inner {
+	height: 100%;
+	display: flex;
+	flex-direction: column;
 }
