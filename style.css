@@ -85,7 +85,8 @@ Tags: full-site-editing, block-theme, blog, dark-mode, post-formats, one-column,
 		color: var(--taco-accent);
 	}
 
-	a:hover {
+	a:hover,
+	a:focus-visible {
 		color: var(--taco-accent-2);
 	}
 
@@ -712,7 +713,8 @@ body.home:not(.paged) .tacobout-magazine-grid .wp-block-post:first-child .wp-blo
 	transition: transform var(--taco-transition), box-shadow var(--taco-transition);
 }
 
-.wp-block-post-featured-image:hover img {
+.wp-block-post-featured-image:hover img,
+.wp-block-post-featured-image:focus-within img {
 	transform: scale(1.02);
 	box-shadow: var(--taco-shadow-lg);
 }
@@ -847,7 +849,8 @@ body.home:not(.paged) .tacobout-magazine-grid .wp-block-post:first-child .wp-blo
 }
 
 .wp-block-query-pagination-numbers .page-numbers:hover,
-.wp-block-query-pagination-numbers .page-numbers.current {
+.wp-block-query-pagination-numbers .page-numbers.current,
+.wp-block-query-pagination-numbers .page-numbers:focus-visible {
 	background: var(--taco-accent);
 	border-color: var(--taco-accent);
 	color: white;
@@ -973,7 +976,8 @@ body.home:not(.paged) .tacobout-magazine-grid .wp-block-post:first-child .wp-blo
 	text-decoration: none;
 }
 
-.tacobout-interaction-badge:hover {
+.tacobout-interaction-badge:hover,
+.tacobout-interaction-badge:focus-visible {
 	transform: scale(1.08);
 	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 	background: rgba(255, 255, 255, 0.9);
@@ -986,7 +990,8 @@ body.home:not(.paged) .tacobout-magazine-grid .wp-block-post:first-child .wp-blo
 		box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
 	}
 
-	.tacobout-interaction-badge:hover {
+	.tacobout-interaction-badge:hover,
+	.tacobout-interaction-badge:focus-visible {
 		background: rgba(39, 39, 42, 0.9);
 		box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
 	}
@@ -1113,7 +1118,8 @@ body.home:not(.paged) .tacobout-magazine-grid .wp-block-post:first-child .tacobo
 	transform: translateY(0);
 }
 
-.tacobout-scroll-top:hover {
+.tacobout-scroll-top:hover,
+.tacobout-scroll-top:focus-visible {
 	background: var(--taco-accent);
 	color: white;
 	border-color: var(--taco-accent);
@@ -1131,7 +1137,8 @@ body.home:not(.paged) .tacobout-magazine-grid .wp-block-post:first-child .tacobo
 		box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
 	}
 
-	.tacobout-scroll-top:hover {
+	.tacobout-scroll-top:hover,
+	.tacobout-scroll-top:focus-visible {
 		background: var(--taco-accent);
 		border-color: var(--taco-accent);
 		box-shadow: 0 6px 20px rgba(59, 130, 246, 0.4);
