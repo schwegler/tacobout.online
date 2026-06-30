@@ -23,11 +23,69 @@
 	/* ============================================
 	   DOM REFS
 	   ============================================ */
-	const grid = document.querySelector('.tacobout-magazine-grid');
+	const grid = document.querySelector('.tacobout-magazine-grid, body.author .wp-block-post-template');
 	if (!grid) return;
 
 	// Mark body so CSS can hide pagination
 	document.body.classList.add('tacobout-infinite-scroll-active');
+
+	// Optional JS-based masonry fallback if CSS grid-template-rows: masonry isn't supported yet
+	function layoutMasonryGrid() {
+		// Only run fallback if CSS grid masonry isn't supported natively
+		if (CSS.supports && CSS.supports('grid-template-rows', 'masonry')) return;
+
+		const rowHeight = 10; // Use 10px instead of 1px to avoid the 10000 limit
+		grid.style.gridAutoRows = rowHeight + 'px';
+		grid.style.rowGap = '0px'; // Disable CSS grid row gaps, we use margin instead
+
+		const items = grid.querySelectorAll('.wp-block-post');
+
+		// Phase 1: Reset styles (writes)
+		items.forEach(item => {
+			item.style.gridRowEnd = 'auto';
+		});
+
+		// Force reflow once
+		grid.offsetHeight;
+
+		// Phase 2: Measure elements (reads)
+		const measurements = Array.from(items).map(item => {
+			const style = window.getComputedStyle(item);
+			const marginTop = parseFloat(style.marginTop) || 0;
+			const marginBottom = parseFloat(style.marginBottom) || 0;
+			const height = item.getBoundingClientRect().height;
+			return {
+				item,
+				span: Math.ceil((height + marginTop + marginBottom) / rowHeight)
+			};
+		});
+
+		// Phase 3: Apply spans (writes)
+		measurements.forEach(({ item, span }) => {
+			item.style.gridRowEnd = 'span ' + span;
+		});
+	}
+
+	// Make it global so author page can use it
+	window.layoutMasonryGrid = layoutMasonryGrid;
+
+	window.addEventListener('load', layoutMasonryGrid);
+
+	function debounce(func, wait) {
+		let timeout;
+		return function executedFunction(...args) {
+			const later = () => {
+				clearTimeout(timeout);
+				func(...args);
+			};
+			clearTimeout(timeout);
+			timeout = setTimeout(later, wait);
+		};
+	}
+
+	window.addEventListener('resize', debounce(layoutMasonryGrid, 150));
+	setTimeout(layoutMasonryGrid, 100);
+
 
 	/* ============================================
 	   SENTINEL + SPINNER
@@ -224,6 +282,8 @@
 				fragment.appendChild(card);
 			});
 			grid.appendChild(fragment);
+			// Re-layout masonry if needed
+			setTimeout(layoutMasonryGrid, 100);
 
 			currentPage = nextPage;
 

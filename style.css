@@ -240,6 +240,7 @@ body::before {
    ============================ */
 .tacobout-magazine-grid {
 	display: grid;
+	grid-template-rows: masonry;
 	grid-template-columns: repeat(2, 1fr);
 	gap: 2rem;
 	align-items: start;
@@ -1162,6 +1163,7 @@ body.home:not(.paged) .tacobout-magazine-grid .wp-block-post:first-child .tacobo
    ============================ */
 body.author .wp-block-post-template {
 	display: grid;
+	grid-template-rows: masonry;
 	grid-template-columns: repeat(2, 1fr);
 	gap: 2rem;
 	align-items: start;

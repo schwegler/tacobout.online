@@ -341,9 +341,7 @@ add_action( 'rest_api_init', 'tacobout_register_rest_fields' );
  * Enqueue infinite scroll + scroll-to-top script on the home page.
  */
 function tacobout_enqueue_infinite_scroll() {
-	if ( ! is_home() && ! is_front_page() ) {
-		return;
-	}
+
 
 	wp_enqueue_script(
 		'tacobout-infinite-scroll',
