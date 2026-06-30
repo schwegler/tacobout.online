@@ -90,7 +90,9 @@ Tags: full-site-editing, block-theme, blog, dark-mode, post-formats, one-column,
 		color: var(--taco-accent-2);
 	}
 
-	.wp-block-site-title a {
+	.wp-block-site-title a,
+	.wp-block-post-title,
+	.wp-block-post-title a {
 		color: var(--taco-fg) !important;
 	}
 }
