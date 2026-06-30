@@ -89,6 +89,10 @@ Tags: full-site-editing, block-theme, blog, dark-mode, post-formats, one-column,
 	a:hover {
 		color: var(--taco-accent-2);
 	}
+
+	.wp-block-site-title a {
+		color: var(--taco-fg) !important;
+	}
 }
 
 /* ============================
