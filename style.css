@@ -732,7 +732,18 @@ body.home:not(.paged) .tacobout-magazine-grid .wp-block-post:first-child .wp-blo
 	flex-wrap: wrap;
 }
 
+.wp-block-post-terms {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.5rem;
+}
+
+.wp-block-post-terms .wp-block-post-terms__separator {
+	display: none;
+}
+
 .wp-block-post-terms a {
+	display: inline-flex;
 	background: var(--taco-surface);
 	padding: 0.2rem 0.6rem;
 	border-radius: 100px;
