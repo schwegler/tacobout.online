@@ -1,0 +1,11 @@
+🧪 [testing improvement] Add tests for tacobout_clear_saved_templates
+
+🎯 **What:** The testing gap addressed
+The `tacobout_clear_saved_templates` function lacked test coverage. This function handles an important setup task of deleting template customizations for the theme, and short-circuits via a database option flag if it has already been executed.
+
+📊 **Coverage:** What scenarios are now tested
+1. **Early Return:** We verified that if `get_option('tacobout_templates_cleared_v2')` returns true, it effectively short circuits - meaning `get_posts`, `wp_delete_post`, and `update_option` are never called.
+2. **Template Clearance:** We verified that when the option flag isn't set, the function accurately queries both `wp_template` and `wp_template_part`, iterates through to call `wp_delete_post` using the fetched post IDs, and correctly sets the option flag by calling `update_option`.
+
+✨ **Result:** The improvement in test coverage
+We've successfully created tests for these workflows utilizing `Brain\Monkey` to mock WordPress specific functionalities, establishing robust coverage and preventing future regressions within `tacobout_clear_saved_templates`.
