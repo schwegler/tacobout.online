@@ -367,3 +367,18 @@ function tacobout_enqueue_infinite_scroll() {
 	) );
 }
 add_action( 'wp_enqueue_scripts', 'tacobout_enqueue_infinite_scroll' );
+
+
+/**
+ * Enqueue script for ALT text badges on images
+ */
+function tacobout_enqueue_alt_badge() {
+	wp_enqueue_script(
+		'tacobout-alt-badge',
+		get_template_directory_uri() . '/tacobout-alt-badge.js',
+		array(),
+		wp_get_theme()->get( 'Version' ),
+		true // Load in footer
+	);
+}
+add_action( 'wp_enqueue_scripts', 'tacobout_enqueue_alt_badge' );
