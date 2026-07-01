@@ -59,18 +59,13 @@ class FunctionsTest extends \PHPUnit\Framework\TestCase {
             ->andReturn(false);
 
         \Brain\Monkey\Functions\expect('get_stylesheet')
-            ->twice()
+            ->once()
             ->andReturn('tacobout');
 
         // We mock get_posts to return an array of mock posts
-        $post1 = new \stdClass();
-        $post1->ID = 10;
-
-        $post2 = new \stdClass();
-        $post2->ID = 20;
-
-        $post3 = new \stdClass();
-        $post3->ID = 30;
+        $post1 = 10;
+        $post2 = 20;
+        $post3 = 30;
 
         // Mock get_posts to return different results based on the arguments
         \Brain\Monkey\Functions\expect('get_posts')

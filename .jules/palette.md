@@ -10,3 +10,6 @@
 ## 2024-07-20 - Scroll-to-Top Keyboard Focus Management
 **Learning:** Adding a scroll-to-top floating action button (FAB) improves mouse usability, but when clicked via keyboard, focus remains trapped at the bottom of the page (on the FAB). The user has visually scrolled to the top but their keyboard context hasn't moved, meaning their next Tab press will start from the end of the page.
 **Action:** When implementing scroll-to-top actions via JS, always imperatively move focus back to the top of the document (e.g., to a skip-to-content link, `document.body` if appropriately tab-indexed, or the main header) to ensure keyboard users' context follows the visual scroll.
+## 2024-07-25 - Surfacing Alt Text
+**Learning:** Alt text is crucial for screen reader users, but it's often hidden from sighted users unless an image fails to load. This misses an opportunity to provide context, humor, or additional information that the author included in the alt text to all users.
+**Action:** Expose alt text via a visual badge or toggle on images, ensuring the implementation is accessible (using `aria-label`, `<button>`, and managing `aria-hidden` on the tooltip).
