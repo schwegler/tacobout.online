@@ -49,3 +49,6 @@ wp-config.php
 
 .phpunit.result.cache
 vendor/
+vendor/
+composer.lock
+.phpunit.cache/
