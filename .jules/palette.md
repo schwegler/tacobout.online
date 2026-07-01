@@ -7,3 +7,6 @@
 ## 2024-06-30 - Focus Visibility Parity for Interactive Elements
 **Learning:** Many interactive components (like custom FAB buttons, interaction badges, and pagination links) have robust `:hover` states but lack equivalent `:focus-visible` or `:focus-within` states. This creates a disjointed experience where keyboard users navigate past elements without receiving visual cues or delightful micro-interactions (like scaling or shadow changes).
 **Action:** Always audit interactive elements with `:hover` states and add comma-separated `:focus-visible` or `:focus-within` selectors to ensure feature parity for keyboard users, adhering to the "good UX is invisible - it just works" philosophy.
+## 2024-07-20 - Scroll-to-Top Keyboard Focus Management
+**Learning:** Adding a scroll-to-top floating action button (FAB) improves mouse usability, but when clicked via keyboard, focus remains trapped at the bottom of the page (on the FAB). The user has visually scrolled to the top but their keyboard context hasn't moved, meaning their next Tab press will start from the end of the page.
+**Action:** When implementing scroll-to-top actions via JS, always imperatively move focus back to the top of the document (e.g., to a skip-to-content link, `document.body` if appropriately tab-indexed, or the main header) to ensure keyboard users' context follows the visual scroll.
