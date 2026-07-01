@@ -54,3 +54,6 @@ composer.lock
 .phpunit.cache/
 activitypub/
 activitypub.zip
+vendor/
+composer.lock
+.phpunit.cache/
