@@ -263,11 +263,6 @@ add_filter( 'pre_render_block', 'tacobout_pre_render_hidden_blocks', 10, 3 );
  * Badge is hidden when count is 0.
  */
 function tacobout_interaction_badge( $block_content, $block ) {
-	// Only target the post template items (each <li> in the query loop)
-	if ( empty( $block['blockName'] ) || 'core/post-template' !== $block['blockName'] ) {
-		return $block_content;
-	}
-
 	// Use regex to find each <li...class="...wp-block-post..."> and inject the badge
 	$block_content = preg_replace_callback(
 		'/<li\s[^>]*class="[^"]*wp-block-post[^"]*"[^>]*>/i',
@@ -305,7 +300,7 @@ function tacobout_interaction_badge( $block_content, $block ) {
 
 	return $block_content;
 }
-add_filter( 'render_block', 'tacobout_interaction_badge', 10, 2 );
+add_filter( 'render_block_core/post-template', 'tacobout_interaction_badge', 10, 2 );
 
 /**
  * Register custom REST API fields for infinite scroll.
