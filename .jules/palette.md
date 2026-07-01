@@ -13,3 +13,6 @@
 ## 2024-07-25 - Surfacing Alt Text
 **Learning:** Alt text is crucial for screen reader users, but it's often hidden from sighted users unless an image fails to load. This misses an opportunity to provide context, humor, or additional information that the author included in the alt text to all users.
 **Action:** Expose alt text via a visual badge or toggle on images, ensuring the implementation is accessible (using `aria-label`, `<button>`, and managing `aria-hidden` on the tooltip).
+## 2026-07-01 - Hide admin bar elements on mobile
+**Learning:** When hiding elements added by third-party plugins in WordPress, you must hide the parent list item (e.g. `li#wp-admin-bar-plugin-name`) rather than just its child spans, otherwise the list item padding/icons will still take up horizontal space and cause overflow.
+**Action:** Always target the uppermost parent container of the UI component to ensure it is completely removed from the layout.

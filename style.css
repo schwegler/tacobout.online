@@ -231,14 +231,14 @@ body::before {
 		top: 46px;
 	}
 	/* Admin bar overflow fixes */
-	#wpadminbar #wp-admin-bar-friends-menu .ab-label,
-	#wpadminbar #wp-admin-bar-hack-guardian .hackguardian-title,
-	#wpadminbar #wp-admin-bar-wpnceasywp-admin-menu .desktop-clearcache {
+	#wpadminbar #wp-admin-bar-friends-menu .ab-label {
 		display: none !important;
 	}
 
 	#wpadminbar #wp-admin-bar-command-palette,
-	#wpadminbar #wp-admin-bar-stats {
+	#wpadminbar #wp-admin-bar-stats,
+	#wpadminbar #wp-admin-bar-hack-guardian,
+	#wpadminbar #wp-admin-bar-wpnceasywp-admin-menu {
 		display: none !important;
 	}
 }
