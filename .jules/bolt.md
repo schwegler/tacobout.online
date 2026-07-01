@@ -17,3 +17,7 @@
 ## 2024-07-27 - [WordPress REST API Payload Optimization]
 **Learning:** When using `_fields` to limit the JSON payload size in the WordPress REST API, if you are also using `_embed` (e.g., `_embed=wp:featuredmedia,wp:term`), you MUST include `_links` and `_embedded` in the `_fields` list. If you don't include them, the API will successfully filter the fields but the embedding engine will silently fail, leaving you without the related resources you requested.
 **Action:** Always include `_links,_embedded` in the `_fields` parameter list whenever using `_embed` simultaneously in WordPress REST API requests to ensure the payload is minimized without breaking embeddings.
+
+## 2024-07-28 - [WordPress FSE Render Block Filter]
+**Learning:** In WordPress Full Site Editing (FSE) block themes, the generic `render_block` filter hook fires for every single block on the page, resulting in hundreds of unnecessary callback invocations and wasted CPU cycles. The `render_block_{$block_name}` filter should be used instead to target specific blocks.
+**Action:** Use `render_block_{$block_name}` (e.g. `render_block_core/post-template`) instead of `render_block` when modifying specific block output to optimize performance and prevent excessive filter runs.
