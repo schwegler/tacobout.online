@@ -226,23 +226,24 @@ function tacobout_pre_render_hidden_blocks( $pre_render, $parsed_block, $parent_
 		return $pre_render;
 	}
 
-	// Only apply inside a query loop to avoid affecting single post templates unexpectedly
-	if ( ! $parent_block || empty( $parent_block->context['queryId'] ) ) {
-		return $pre_render;
-	}
-
-	$post_id = $parent_block->context['postId'] ?? 0;
+	$post_id = $parent_block->context['postId'] ?? get_the_ID();
 	if ( ! $post_id ) {
 		return $pre_render;
 	}
 
-	$format = get_post_format( $post_id ) ?: 'standard';
-	$should_hide = false;
+	$is_in_query_loop = $parent_block && ! empty( $parent_block->context['queryId'] );
+	$format           = get_post_format( $post_id ) ?: 'standard';
+	$should_hide      = false;
 
-	// Check logic based on style.css rules
-	if ( 'core/post-content' === $block_name && 'standard' === $format ) {
+	if ( 'core/post-content' === $block_name && 'standard' === $format && $is_in_query_loop ) {
 		$should_hide = true;
-	} elseif ( in_array( $block_name, array( 'core/post-featured-image', 'core/post-excerpt' ), true ) ) {
+	} elseif ( 'core/post-excerpt' === $block_name && $is_in_query_loop ) {
+		$hidden_formats = array( 'video', 'audio', 'status', 'aside', 'image', 'quote', 'link' );
+		if ( in_array( $format, $hidden_formats, true ) ) {
+			$should_hide = true;
+		}
+	} elseif ( 'core/post-featured-image' === $block_name ) {
+		// Hide featured image for non-standard formats BOTH in query loops AND single posts
 		$hidden_formats = array( 'video', 'audio', 'status', 'aside', 'image', 'quote', 'link' );
 		if ( in_array( $format, $hidden_formats, true ) ) {
 			$should_hide = true;
