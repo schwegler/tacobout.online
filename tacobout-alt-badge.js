@@ -8,6 +8,11 @@
             // Check if we already wrapped this image
             if (img.closest('.tacobout-alt-wrapper')) return;
 
+            // Skip if the alt text is just an emoji
+            const altText = img.getAttribute('alt');
+            const emojiRegex = /^[\p{Extended_Pictographic}\u{1F3FB}-\u{1F3FF}\u{200D}\u{FE0F}]+$/u;
+            if (emojiRegex.test(altText)) return;
+
             const wrapper = document.createElement('div');
             wrapper.className = 'tacobout-alt-wrapper';
 
