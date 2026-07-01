@@ -62,19 +62,15 @@ class FunctionsTest extends \PHPUnit\Framework\TestCase {
             ->once()
             ->andReturn('tacobout');
 
-        // We mock get_posts to return an array of mock posts
-        $post1 = 10;
-        $post2 = 20;
-        $post3 = 30;
-
         // Mock get_posts to return different results based on the arguments
+        // Since functions.php uses 'fields' => 'ids', we return an array of IDs
         \Brain\Monkey\Functions\expect('get_posts')
             ->twice()
-            ->andReturnUsing(function($args) use ($post1, $post2, $post3) {
+            ->andReturnUsing(function($args) {
                 if ($args['post_type'] === 'wp_template') {
-                    return [$post1, $post2];
+                    return [10, 20];
                 } elseif ($args['post_type'] === 'wp_template_part') {
-                    return [$post3];
+                    return [30];
                 }
                 return [];
             });
