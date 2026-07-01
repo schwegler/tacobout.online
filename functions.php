@@ -156,9 +156,10 @@ function tacobout_clear_saved_templates() {
 					'terms'    => $stylesheet,
 				),
 			),
+			'fields'      => 'ids',
 		) );
-		foreach ( $posts as $post ) {
-			wp_delete_post( $post->ID, true );
+		foreach ( $posts as $post_id ) {
+			wp_delete_post( $post_id, true );
 		}
 	}
 
