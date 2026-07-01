@@ -23,13 +23,71 @@
   /* ============================================
 	   DOM REFS
 	   ============================================ */
-  const grid = document.querySelector(".tacobout-magazine-grid");
-  if (!grid) return;
+	const grid = document.querySelector('.tacobout-magazine-grid, body.author .wp-block-post-template');
+	if (!grid) return;
 
   // Mark body so CSS can hide pagination
   document.body.classList.add("tacobout-infinite-scroll-active");
 
-  /* ============================================
+	// Optional JS-based masonry fallback if CSS grid-template-rows: masonry isn't supported yet
+	function layoutMasonryGrid() {
+		// Only run fallback if CSS grid masonry isn't supported natively
+		if (CSS.supports && CSS.supports('grid-template-rows', 'masonry')) return;
+
+		const rowHeight = 10; // Use 10px instead of 1px to avoid the 10000 limit
+		grid.style.gridAutoRows = rowHeight + 'px';
+		grid.style.rowGap = '0px'; // Disable CSS grid row gaps, we use margin instead
+
+		const items = grid.querySelectorAll('.wp-block-post');
+
+		// Phase 1: Reset styles (writes)
+		items.forEach(item => {
+			item.style.gridRowEnd = 'auto';
+		});
+
+		// Force reflow once
+		grid.offsetHeight;
+
+		// Phase 2: Measure elements (reads)
+		const measurements = Array.from(items).map(item => {
+			const style = window.getComputedStyle(item);
+			const marginTop = parseFloat(style.marginTop) || 0;
+			const marginBottom = parseFloat(style.marginBottom) || 0;
+			const height = item.getBoundingClientRect().height;
+			return {
+				item,
+				span: Math.ceil((height + marginTop + marginBottom) / rowHeight)
+			};
+		});
+
+		// Phase 3: Apply spans (writes)
+		measurements.forEach(({ item, span }) => {
+			item.style.gridRowEnd = 'span ' + span;
+		});
+	}
+
+	// Make it global so author page can use it
+	window.layoutMasonryGrid = layoutMasonryGrid;
+
+	window.addEventListener('load', layoutMasonryGrid);
+
+	function debounce(func, wait) {
+		let timeout;
+		return function executedFunction(...args) {
+			const later = () => {
+				clearTimeout(timeout);
+				func(...args);
+			};
+			clearTimeout(timeout);
+			timeout = setTimeout(later, wait);
+		};
+	}
+
+	window.addEventListener('resize', debounce(layoutMasonryGrid, 150));
+	setTimeout(layoutMasonryGrid, 100);
+
+
+	/* ============================================
 	   SENTINEL + SPINNER
 	   ============================================ */
   const sentinel = document.createElement("div");
@@ -205,74 +263,68 @@
   /* ============================================
 	   FETCH + APPEND
 	   ============================================ */
-  async function loadMorePosts() {
-    if (isLoading || allLoaded) return;
-    isLoading = true;
-    spinner.style.display = "flex";
+	async function loadMorePosts() {
+		if (isLoading || allLoaded) return;
+		isLoading = true;
+		spinner.style.display = 'flex';
 
-    try {
-      const nextPage = currentPage + 1;
-      const url = new URL(config.restUrl);
-      url.searchParams.set("page", nextPage);
-      url.searchParams.set("per_page", perPage);
-      url.searchParams.set("orderby", "date");
-      url.searchParams.set("order", "desc");
-      url.searchParams.set("_embed", "wp:featuredmedia,wp:term");
+		try {
+			const nextPage = currentPage + 1;
+			const url = new URL(config.restUrl);
+			url.searchParams.set('page', nextPage);
+			url.searchParams.set('per_page', perPage);
+			url.searchParams.set('orderby', 'date');
+			url.searchParams.set('order', 'desc');
+			url.searchParams.set('_embed', 'wp:featuredmedia,wp:term');
 
-      // ⚡ Bolt Optimization: Limit JSON payload size and avoid expensive server-side
-      // computations for unused fields. We must include _links and _embedded for _embed to work.
-      url.searchParams.set(
-        "_fields",
-        "id,date,link,title,excerpt,content,post_format,interaction_count,_links,_embedded",
-      );
+			const resp = await fetch(url.toString(), {
+				headers: { 'X-WP-Nonce': config.nonce }
+			});
 
-      const resp = await fetch(url.toString(), {
-        headers: { "X-WP-Nonce": config.nonce },
-      });
+			if (!resp.ok) {
+				if (resp.status === 400) {
+					// No more pages
+					allLoaded = true;
+					observer.disconnect();
+					return;
+				}
+				throw new Error('HTTP ' + resp.status);
+			}
 
-      if (!resp.ok) {
-        if (resp.status === 400) {
-          // No more pages
-          allLoaded = true;
-          observer.disconnect();
-          return;
-        }
-        throw new Error("HTTP " + resp.status);
-      }
+			const posts = await resp.json();
+			const totalPagesHeader = resp.headers.get('X-WP-TotalPages');
+			if (totalPagesHeader) {
+				const serverTotalPages = parseInt(totalPagesHeader, 10);
+				if (nextPage >= serverTotalPages) {
+					allLoaded = true;
+					observer.disconnect();
+				}
+			}
 
-      const posts = await resp.json();
-      const totalPagesHeader = resp.headers.get("X-WP-TotalPages");
-      if (totalPagesHeader) {
-        const serverTotalPages = parseInt(totalPagesHeader, 10);
-        if (nextPage >= serverTotalPages) {
-          allLoaded = true;
-          observer.disconnect();
-          endMessage.style.display = "block";
-        }
-      }
+			// Append cards with staggered animation
+			const fragment = document.createDocumentFragment();
+			posts.forEach((post, i) => {
+				const card = buildCard(post);
+				card.style.animationDelay = (i * 0.05) + 's';
+				fragment.appendChild(card);
+			});
+			grid.appendChild(fragment);
+			// Re-layout masonry if needed
+			setTimeout(layoutMasonryGrid, 100);
 
-      // Append cards with staggered animation
-      const fragment = document.createDocumentFragment();
-      posts.forEach((post, i) => {
-        const card = buildCard(post);
-        card.style.animationDelay = i * 0.05 + "s";
-        fragment.appendChild(card);
-      });
-      grid.appendChild(fragment);
+			currentPage = nextPage;
 
-      currentPage = nextPage;
-    } catch (err) {
-      console.error("[tacobout] Failed to load posts:", err);
-      allLoaded = true;
-      observer.disconnect();
-      endMessage.style.display = "block";
-    } finally {
-      isLoading = false;
-      spinner.style.display = "none";
-    }
-  }
+		} catch (err) {
+			console.error('[tacobout] Failed to load posts:', err);
+			allLoaded = true;
+			observer.disconnect();
+		} finally {
+			isLoading = false;
+			spinner.style.display = 'none';
+		}
+	}
 
-  /* ============================================
+	/* ============================================
 	   INTERSECTION OBSERVER
 	   ============================================ */
   const observer = new IntersectionObserver(
