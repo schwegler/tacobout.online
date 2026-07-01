@@ -281,7 +281,7 @@ function tacobout_interaction_badge( $block_content, $block ) {
 				return $matches[0];
 			}
 
-			$count = intval( get_comments_number( $post_id ) );
+			$count = (int) get_comments( array( 'post_id' => $post_id, 'status' => 'approve', 'count' => true, 'type' => 'all' ) );
 			if ( $count < 1 ) {
 				return $matches[0];
 			}
@@ -293,7 +293,7 @@ function tacobout_interaction_badge( $block_content, $block ) {
 			);
 
 			$badge = sprintf(
-				'<a href="%s" class="tacobout-interaction-badge" aria-label="%s" title="%s">💬 %d</a>',
+				'<a href="%s" class="tacobout-interaction-badge" aria-label="%s" title="%s"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg> %d</a>',
 				esc_url( get_permalink( $post_id ) ),
 				esc_attr( $label ),
 				esc_attr( $label ),
@@ -328,7 +328,7 @@ function tacobout_register_rest_fields() {
 
 	register_rest_field( 'post', 'interaction_count', array(
 		'get_callback' => function ( $post ) {
-			return intval( get_comments_number( $post['id'] ) );
+			return (int) get_comments( array( 'post_id' => $post['id'], 'status' => 'approve', 'count' => true, 'type' => 'all' ) );
 		},
 		'schema' => array(
 			'description' => 'Total interaction count (comments + fediverse + bluesky)',
