@@ -175,9 +175,13 @@ add_action( 'after_setup_theme', 'tacobout_clear_saved_templates' );
 function tacobout_pagination_body_class( $classes ) {
 	// Check for query block pagination params
 	foreach ( $_GET as $key => $value ) {
-		if ( preg_match( '/^query(?:-\d+)?-page$/', $key ) && intval( $value ) > 1 ) {
-			$classes[] = 'paged';
-			break;
+		if ( str_starts_with( $key, 'query' ) && str_ends_with( $key, 'page' ) ) {
+			if ( $key === 'query-page' || preg_match( '/^query-\d+-page$/', $key ) ) {
+				if ( intval( $value ) > 1 ) {
+					$classes[] = 'paged';
+					break;
+				}
+			}
 		}
 	}
 	return $classes;
