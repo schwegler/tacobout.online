@@ -21,3 +21,6 @@
 ## 2024-07-28 - [WordPress FSE Render Block Filter]
 **Learning:** In WordPress Full Site Editing (FSE) block themes, the generic `render_block` filter hook fires for every single block on the page, resulting in hundreds of unnecessary callback invocations and wasted CPU cycles. The `render_block_{$block_name}` filter should be used instead to target specific blocks.
 **Action:** Use `render_block_{$block_name}` (e.g. `render_block_core/post-template`) instead of `render_block` when modifying specific block output to optimize performance and prevent excessive filter runs.
+## 2024-07-01 - Prevent repetitive function calls inside loops
+**Learning:** Calling `get_stylesheet()` inside a `foreach` loop results in the same function being called redundantly for each iteration.
+**Action:** Extract the function call to a variable before the loop and use the variable inside the loop to avoid unnecessary re-evaluations.
