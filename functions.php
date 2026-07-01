@@ -143,6 +143,7 @@ function tacobout_clear_saved_templates() {
 
 	// Delete all saved template customizations for this theme
 	$template_types = array( 'wp_template', 'wp_template_part' );
+	$stylesheet     = get_stylesheet();
 	foreach ( $template_types as $post_type ) {
 		$posts = get_posts( array(
 			'post_type'   => $post_type,
@@ -152,7 +153,7 @@ function tacobout_clear_saved_templates() {
 				array(
 					'taxonomy' => 'wp_theme',
 					'field'    => 'slug',
-					'terms'    => get_stylesheet(),
+					'terms'    => $stylesheet,
 				),
 			),
 			'fields'      => 'ids',
@@ -175,9 +176,13 @@ add_action( 'after_setup_theme', 'tacobout_clear_saved_templates' );
 function tacobout_pagination_body_class( $classes ) {
 	// Check for query block pagination params
 	foreach ( $_GET as $key => $value ) {
-		if ( preg_match( '/^query(?:-\d+)?-page$/', $key ) && intval( $value ) > 1 ) {
-			$classes[] = 'paged';
-			break;
+		if ( str_starts_with( $key, 'query' ) && str_ends_with( $key, 'page' ) ) {
+			if ( $key === 'query-page' || preg_match( '/^query-\d+-page$/', $key ) ) {
+				if ( intval( $value ) > 1 ) {
+					$classes[] = 'paged';
+					break;
+				}
+			}
 		}
 	}
 	return $classes;

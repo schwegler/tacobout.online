@@ -25,3 +25,11 @@
 ## 2024-07-01 - Optimize WordPress Bulk Delete Memory Usage
 **Learning:** Hydrating full post objects with `get_posts()` when only the ID is needed for bulk operations (like `wp_delete_post()`) creates massive memory overhead and N+1 query inefficiencies.
 **Action:** Always use `'fields' => 'ids'` in `get_posts()` or `WP_Query` when only post IDs are required for subsequent hook-based processing.
+
+## 2024-07-01 - Prevent repetitive function calls inside loops
+**Learning:** Calling `get_stylesheet()` inside a `foreach` loop results in the same function being called redundantly for each iteration.
+**Action:** Extract the function call to a variable before the loop and use the variable inside the loop to avoid unnecessary re-evaluations.
+
+## 2024-07-01 - Avoid regex compilation in loops
+**Learning:** Even though PHP PCRE caches regex, running `preg_match` in loops (especially over user input like `$_GET`) is slower than simple string functions.
+**Action:** When evaluating strings for prefixes or suffixes inside loops, default to `str_starts_with` and `str_ends_with` first as a fast-path check to avoid or limit regex execution.
