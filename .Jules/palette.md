@@ -1,3 +1,3 @@
-## 2026-06-30 - CSS Grid vs Columns for Infinite Scroll
-**Learning:** Using CSS Multi-column layout (`column-count`) with infinite scroll causes dynamically appended items to flow vertically, breaking chronological reading order. Replacing it with CSS Grid achieves left-to-right flow. To maintain the masonry look, use `grid-template-rows: masonry` with a JS fallback that carefully avoids browser grid-track limits (by using larger `grid-auto-rows`) and layout thrashing (by batching DOM reads and writes).
-**Action:** Always prefer CSS Grid for appending elements sequentially, and test JS fallbacks for extreme scales.
+## 2026-07-01 - Fix Mobile Admin Bar Overflow
+**Learning:** WordPress admin bar (`#wpadminbar`) can easily overflow horizontally on mobile (screen widths < 782px) when multiple plugins inject custom menu items with large labels or imagery (like Jetpack stats).
+**Action:** When designing a theme or troubleshooting WP UI, proactively scope `.admin-bar` media queries (`max-width: 782px`) to target `#wpadminbar` and apply `display: none !important` to non-essential textual labels (`.ab-label`, custom plugin text) or large elements to ensure the critical admin functions (menu, profile, edit) remain accessible without horizontal scrolling.
