@@ -16,3 +16,6 @@
 ## 2026-07-01 - Hide admin bar elements on mobile
 **Learning:** When hiding elements added by third-party plugins in WordPress, you must hide the parent list item (e.g. `li#wp-admin-bar-plugin-name`) rather than just its child spans, otherwise the list item padding/icons will still take up horizontal space and cause overflow.
 **Action:** Always target the uppermost parent container of the UI component to ensure it is completely removed from the layout.
+## 2026-07-01 - Fix Mobile Admin Bar Overflow
+**Learning:** WordPress admin bar (`#wpadminbar`) can easily overflow horizontally on mobile (screen widths < 782px) when multiple plugins inject custom menu items with large labels or imagery (like Jetpack stats).
+**Action:** When designing a theme or troubleshooting WP UI, proactively scope `.admin-bar` media queries (`max-width: 782px`) to target `#wpadminbar` and apply `display: none !important` to non-essential textual labels (`.ab-label`, custom plugin text) or large elements to ensure the critical admin functions (menu, profile, edit) remain accessible without horizontal scrolling.

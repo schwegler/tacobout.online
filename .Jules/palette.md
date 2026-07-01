@@ -1,3 +1,0 @@
-## 2026-07-01 - Fix Mobile Admin Bar Overflow
-**Learning:** WordPress admin bar (`#wpadminbar`) can easily overflow horizontally on mobile (screen widths < 782px) when multiple plugins inject custom menu items with large labels or imagery (like Jetpack stats).
-**Action:** When designing a theme or troubleshooting WP UI, proactively scope `.admin-bar` media queries (`max-width: 782px`) to target `#wpadminbar` and apply `display: none !important` to non-essential textual labels (`.ab-label`, custom plugin text) or large elements to ensure the critical admin functions (menu, profile, edit) remain accessible without horizontal scrolling.
