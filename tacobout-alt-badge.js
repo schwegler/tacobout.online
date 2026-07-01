@@ -2,7 +2,7 @@
     "use strict";
 
     function attachAltBadges() {
-        const images = document.querySelectorAll('img[alt]:not([alt=""])');
+        const images = document.querySelectorAll('.wp-block-post-content img[alt]:not([alt=""])');
 
         images.forEach(img => {
             // Check if we already wrapped this image
