@@ -1,14 +1,6 @@
-Update the interaction badge on posts to correctly sum up all comments and "Fediverse reactions" (like reposts, likes, and quotes from ActivityPub), replacing the previous emoji with a flat SVG icon.
+Fixes the integration with the Enable Mastodon Apps plugin when using modern native clients (like Mastodon for iOS or Ivory).
 
-**What:**
-- Changed the comment count logic from `get_comments_number()` (which ignores custom comment types) to `get_comments()` with `type=all` and `count=true` to properly include ActivityPub interactions.
-- Replaced the hardcoded `💬` emoji with a clean SVG icon.
-- Applied these changes to both the PHP backend render function (`functions.php`) and the infinite scroll script (`tacobout-infinite-scroll.js`).
-
-**Why:**
-- The ActivityPub plugin registers "Fediverse reactions" as comments using custom types. Using `get_comments_number()` resulted in these interactions being excluded from the badge total.
-- The user specifically requested a flat icon instead of an emoji.
-
-**Impact:**
-- The interaction badge now displays accurate combined totals of both standard comments and Fediverse reactions.
-- The visual style matches the request (SVG instead of emoji).
+**What was changed:**
+1. Added a `login_redirect` hook to prevent third-party SSO/login redirection plugins from overriding the OAuth flow's `redirect_to` parameter. This ensures users are properly redirected back to the OAuth authorization screen instead of the WP Admin dashboard.
+2. Added mock REST API endpoints for `/api/v2/filters` and `/api/v2/notifications/policy` and their corresponding rewrite rules. Native apps request these v2 endpoints, and if the plugin doesn't handle them, WordPress returns a full HTML 404 page, causing the JSON parser in the app to crash. The mock endpoints return safe, empty JSON.
+3. Added a version-gated call to `flush_rewrite_rules()` on `init` to ensure the new `/api/v2/...` URLs are routed correctly.

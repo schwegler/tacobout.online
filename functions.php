@@ -382,3 +382,74 @@ function tacobout_enqueue_alt_badge() {
 	);
 }
 add_action( 'wp_enqueue_scripts', 'tacobout_enqueue_alt_badge' );
+
+/**
+ * Prevent login redirection plugins from breaking the Enable Mastodon Apps OAuth flow.
+ */
+function tacobout_enable_mastodon_apps_login_redirect( $redirect_to, $requested_redirect_to ) {
+	if ( isset( $_REQUEST['action'] ) && 'enable-mastodon-apps-authenticate' === $_REQUEST['action'] ) {
+		return $requested_redirect_to;
+	}
+	return $redirect_to;
+}
+add_filter( 'login_redirect', 'tacobout_enable_mastodon_apps_login_redirect', 999, 2 );
+
+/**
+ * Register stub REST endpoints and rewrite rules for the Mastodon Apps v2 API.
+ * This fixes crashes in Mastodon clients like Ivory or Mastodon for iOS when they hit
+ * these endpoints and receive a full HTML 404 response instead of JSON.
+ */
+function tacobout_enable_mastodon_apps_v2_stubs() {
+	// Add rewrite rules to map the /api/v2/... URLs directly to the REST API routes.
+	add_rewrite_rule( '^api/v2/filters/?$', 'index.php?rest_route=/enable-mastodon-apps/api/v2/filters', 'top' );
+	add_rewrite_rule( '^api/v2/notifications/policy/?$', 'index.php?rest_route=/enable-mastodon-apps/api/v2/notifications/policy', 'top' );
+}
+add_action( 'init', 'tacobout_enable_mastodon_apps_v2_stubs' );
+
+function tacobout_enable_mastodon_apps_v2_rest_routes() {
+	register_rest_route(
+		'enable-mastodon-apps',
+		'/api/v2/filters',
+		array(
+			'methods'             => 'GET',
+			'callback'            => '__return_empty_array',
+			'permission_callback' => '__return_true', // Allows app to fetch an empty filter list without crashing
+		)
+	);
+
+	register_rest_route(
+		'enable-mastodon-apps',
+		'/api/v2/notifications/policy',
+		array(
+			'methods'             => 'GET',
+			'callback'            => function () {
+				return array(
+					'for_not_following'    => 'accept',
+					'for_not_followers'    => 'accept',
+					'for_new_accounts'     => 'accept',
+					'for_private_mentions' => 'accept',
+					'for_limited_accounts' => 'accept',
+					'summary'              => array(
+						'pending_requests_count'      => 0,
+						'pending_notifications_count' => 0,
+					),
+				);
+			},
+			'permission_callback' => '__return_true', // Allows app to fetch policy without crashing
+		)
+	);
+}
+add_action( 'rest_api_init', 'tacobout_enable_mastodon_apps_v2_rest_routes' );
+
+/**
+ * Flush rewrite rules to ensure the Mastodon app v2 endpoints work.
+ * This runs once per theme version.
+ */
+function tacobout_flush_rewrite_rules() {
+	$version_flag = 'tacobout_rewrite_rules_flushed_v2';
+	if ( ! get_option( $version_flag ) ) {
+		flush_rewrite_rules();
+		update_option( $version_flag, true );
+	}
+}
+add_action( 'init', 'tacobout_flush_rewrite_rules', 999 );
