@@ -1,6 +1,13 @@
 {
     "require-dev": {
         "phpunit/phpunit": "^12.5",
-        "brain/monkey": "^2.7"
+        "brain/monkey": "^2.7",
+        "wp-coding-standards/wpcs": "*",
+        "squizlabs/php_codesniffer": "*"
+    },
+    "config": {
+        "allow-plugins": {
+            "dealerdirect/phpcodesniffer-composer-installer": true
+        }
     }
 }
