@@ -277,6 +277,11 @@
 			url.searchParams.set('order', 'desc');
 			url.searchParams.set('_embed', 'wp:featuredmedia,wp:term');
 
+			// ⚡ Bolt Optimization: Limit the REST API payload to only required fields.
+			// This reduces JSON download size and parsing time. _links and _embedded
+			// are required for the _embed parameter to work correctly.
+			url.searchParams.set('_fields', 'id,date,link,title,excerpt,content,post_format,interaction_count,_links,_embedded');
+
 			const resp = await fetch(url.toString(), {
 				headers: { 'X-WP-Nonce': config.nonce }
 			});
