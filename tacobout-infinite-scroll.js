@@ -71,6 +71,18 @@
 
 	window.addEventListener('load', layoutMasonryGrid);
 
+	// Ensure layout is recalculated when fonts load (prevent text wrapping from shifting heights)
+	if (document.fonts) {
+		document.fonts.ready.then(layoutMasonryGrid);
+	}
+
+	// Capture phase image load listener to recalculate layout after specific images finish loading in the grid
+	grid.addEventListener('load', (e) => {
+		if (e.target.tagName && e.target.tagName.toLowerCase() === 'img') {
+			layoutMasonryGrid();
+		}
+	}, true);
+
 	function debounce(func, wait) {
 		let timeout;
 		return function executedFunction(...args) {
