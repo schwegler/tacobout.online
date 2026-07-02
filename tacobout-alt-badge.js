@@ -24,8 +24,13 @@
             badge.className = 'tacobout-alt-badge';
             badge.textContent = 'ALT';
             badge.setAttribute('aria-label', 'Toggle ALT text');
+            badge.setAttribute('aria-expanded', 'false');
+
+            const tooltipId = 'alt-tooltip-' + Math.random().toString(36).substr(2, 9);
+            badge.setAttribute('aria-controls', tooltipId);
 
             const tooltip = document.createElement('div');
+            tooltip.id = tooltipId;
             tooltip.className = 'tacobout-alt-tooltip';
             tooltip.textContent = img.getAttribute('alt');
             tooltip.setAttribute('hidden', 'true');
@@ -39,9 +44,11 @@
                 if (isHidden) {
                     tooltip.removeAttribute('hidden');
                     tooltip.setAttribute('aria-hidden', 'false');
+                    badge.setAttribute('aria-expanded', 'true');
                 } else {
                     tooltip.setAttribute('hidden', 'true');
                     tooltip.setAttribute('aria-hidden', 'true');
+                    badge.setAttribute('aria-expanded', 'false');
                 }
             });
 
@@ -50,6 +57,17 @@
                 if (!wrapper.contains(e.target) && !tooltip.hasAttribute('hidden')) {
                     tooltip.setAttribute('hidden', 'true');
                     tooltip.setAttribute('aria-hidden', 'true');
+                    badge.setAttribute('aria-expanded', 'false');
+                }
+            });
+
+            // Close tooltip with Escape key
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape' && !tooltip.hasAttribute('hidden')) {
+                    tooltip.setAttribute('hidden', 'true');
+                    tooltip.setAttribute('aria-hidden', 'true');
+                    badge.setAttribute('aria-expanded', 'false');
+                    badge.focus();
                 }
             });
 
