@@ -19,3 +19,6 @@
 ## 2026-07-01 - Fix Mobile Admin Bar Overflow
 **Learning:** WordPress admin bar (`#wpadminbar`) can easily overflow horizontally on mobile (screen widths < 782px) when multiple plugins inject custom menu items with large labels or imagery (like Jetpack stats).
 **Action:** When designing a theme or troubleshooting WP UI, proactively scope `.admin-bar` media queries (`max-width: 782px`) to target `#wpadminbar` and apply `display: none !important` to non-essential textual labels (`.ab-label`, custom plugin text) or large elements to ensure the critical admin functions (menu, profile, edit) remain accessible without horizontal scrolling.
+## 2026-07-02 - Accessible Custom Tooltips and Popovers
+**Learning:** Custom tooltips or popovers revealed via a button click require specific ARIA attributes (`aria-expanded` and `aria-controls`) to inform screen readers of their state and relationship. Additionally, they must support keyboard dismissal (Escape key) and focus management (returning focus to the trigger button when dismissed) so keyboard users don't lose context.
+**Action:** When implementing custom tooltips or popovers, ensure the trigger button uses `aria-expanded` (toggling between true/false), references the tooltip via `aria-controls` with a unique ID, and includes an Escape key listener that closes the tooltip and calls `.focus()` on the trigger.
