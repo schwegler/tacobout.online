@@ -120,6 +120,7 @@
 
   const endMessage = document.createElement("p");
   endMessage.className = "has-muted-color has-text-color";
+  endMessage.setAttribute("aria-live", "polite");
   endMessage.style.cssText =
     "text-align: center; padding: 2rem 0; font-size: 0.875rem; display: none;";
   endMessage.textContent = "You have reached the end of the feed.";
@@ -302,6 +303,7 @@
 				if (resp.status === 400) {
 					// No more pages
 					allLoaded = true;
+					endMessage.style.display = "block";
 					observer.disconnect();
 					return;
 				}
@@ -314,6 +316,7 @@
 				const serverTotalPages = parseInt(totalPagesHeader, 10);
 				if (nextPage >= serverTotalPages) {
 					allLoaded = true;
+					endMessage.style.display = "block";
 					observer.disconnect();
 				}
 			}
@@ -334,6 +337,7 @@
 		} catch (err) {
 			console.error('[tacobout] Failed to load posts:', err);
 			allLoaded = true;
+			endMessage.style.display = "block";
 			observer.disconnect();
 		} finally {
 			isLoading = false;
@@ -361,10 +365,11 @@
 	   SCROLL-TO-TOP FAB
 	   ============================================ */
   const fab = document.createElement("button");
+  fab.setAttribute("type", "button");
   fab.className = "tacobout-scroll-top";
   fab.setAttribute("aria-label", "Scroll to top");
   fab.setAttribute("title", "Scroll to top");
-  fab.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"></polyline></svg>`;
+  fab.innerHTML = `<svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"></polyline></svg>`;
   document.body.appendChild(fab);
 
   fab.addEventListener("click", () => {
