@@ -76,13 +76,6 @@
 		document.fonts.ready.then(layoutMasonryGrid);
 	}
 
-	// Capture phase image load listener to recalculate layout after specific images finish loading in the grid
-	grid.addEventListener('load', (e) => {
-		if (e.target.tagName && e.target.tagName.toLowerCase() === 'img') {
-			layoutMasonryGrid();
-		}
-	}, true);
-
 	function debounce(func, wait) {
 		let timeout;
 		return function executedFunction(...args) {
@@ -94,6 +87,15 @@
 			timeout = setTimeout(later, wait);
 		};
 	}
+
+	// Capture phase image load listener to recalculate layout after specific images finish loading in the grid
+	// ⚡ Bolt Optimization: Debounce layout recalculation to prevent layout thrashing (forced reflows) when multiple images load simultaneously
+	const debouncedLayoutMasonryGrid = debounce(layoutMasonryGrid, 150);
+	grid.addEventListener('load', (e) => {
+		if (e.target.tagName && e.target.tagName.toLowerCase() === 'img') {
+			debouncedLayoutMasonryGrid();
+		}
+	}, true);
 
 	window.addEventListener('resize', debounce(layoutMasonryGrid, 150));
 	setTimeout(layoutMasonryGrid, 100);

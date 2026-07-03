@@ -83,6 +83,22 @@
         attachAltBadges();
     }
 
+    // Debounce function to prevent rapid successive calls from blocking the main thread
+    function debounce(func, wait) {
+        let timeout;
+        return function (...args) {
+            const later = () => {
+                clearTimeout(timeout);
+                func(...args);
+            };
+            clearTimeout(timeout);
+            timeout = setTimeout(later, wait);
+        };
+    }
+
+    // ⚡ Bolt Optimization: Debounce attachAltBadges to prevent main-thread blocking when multiple nodes are rapidly injected (e.g., infinite scroll)
+    const debouncedAttachAltBadges = debounce(attachAltBadges, 150);
+
     // Create an observer to watch for new images added to the DOM (like via infinite scroll)
     const observer = new MutationObserver((mutations) => {
         let shouldRun = false;
@@ -93,7 +109,7 @@
             }
         }
         if (shouldRun) {
-            attachAltBadges();
+            debouncedAttachAltBadges();
         }
     });
 
