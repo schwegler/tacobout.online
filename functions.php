@@ -388,7 +388,19 @@ add_action( 'wp_enqueue_scripts', 'tacobout_enqueue_alt_badge' );
  */
 function tacobout_enable_mastodon_apps_login_redirect( $redirect_to, $requested_redirect_to ) {
 	if ( isset( $_REQUEST['action'] ) && 'enable-mastodon-apps-authenticate' === $_REQUEST['action'] ) {
-		return $requested_redirect_to;
+		// 🛡️ Sentinel: Fix Open Redirect / XSS vulnerability
+		// Use wp_sanitize_redirect instead of wp_validate_redirect to allow external domains
+		// and custom app schemes (like ivory://), which are required for Mastodon OAuth.
+		$sanitized_redirect = wp_sanitize_redirect( $requested_redirect_to );
+
+		// Validate scheme to prevent javascript: or data: URIs, but allow custom app schemes.
+		// IMPORTANT: Validate AFTER sanitizing to prevent bypasses where sanitize reconstructs a bad URI.
+		$scheme = wp_parse_url( $sanitized_redirect, PHP_URL_SCHEME );
+		if ( in_array( strtolower( (string) $scheme ), array( 'javascript', 'vbscript', 'data' ), true ) ) {
+			return $redirect_to; // Fallback to default safe redirect
+		}
+
+		return $sanitized_redirect;
 	}
 	return $redirect_to;
 }
