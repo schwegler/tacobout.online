@@ -22,3 +22,6 @@
 ## 2026-07-02 - Accessible Custom Tooltips and Popovers
 **Learning:** Custom tooltips or popovers revealed via a button click require specific ARIA attributes (`aria-expanded` and `aria-controls`) to inform screen readers of their state and relationship. Additionally, they must support keyboard dismissal (Escape key) and focus management (returning focus to the trigger button when dismissed) so keyboard users don't lose context.
 **Action:** When implementing custom tooltips or popovers, ensure the trigger button uses `aria-expanded` (toggling between true/false), references the tooltip via `aria-controls` with a unique ID, and includes an Escape key listener that closes the tooltip and calls `.focus()` on the trigger.
+## 2024-05-24 - Provide feedback when infinite scroll completes
+**Learning:** For infinite scroll layouts, when a user reaches the end of the content feed without any feedback, it is unclear if more posts are simply failing to load or if the feed is genuinely exhausted. This is particularly problematic for screen reader users who cannot visually determine the end of the scroll container.
+**Action:** Always provide explicit visual and audible (via `aria-live="polite"`) feedback when the feed reaches its conclusion to assure users that they have seen all available content.
