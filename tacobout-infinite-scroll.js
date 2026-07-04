@@ -76,13 +76,6 @@
 		document.fonts.ready.then(layoutMasonryGrid);
 	}
 
-	// Capture phase image load listener to recalculate layout after specific images finish loading in the grid
-	grid.addEventListener('load', (e) => {
-		if (e.target.tagName && e.target.tagName.toLowerCase() === 'img') {
-			layoutMasonryGrid();
-		}
-	}, true);
-
 	function debounce(func, wait) {
 		let timeout;
 		return function executedFunction(...args) {
@@ -95,7 +88,18 @@
 		};
 	}
 
-	window.addEventListener('resize', debounce(layoutMasonryGrid, 150));
+	const debouncedLayoutMasonryGrid = debounce(layoutMasonryGrid, 150);
+
+	// Capture phase image load listener to recalculate layout after specific images finish loading in the grid
+	grid.addEventListener('load', (e) => {
+		if (e.target.tagName && e.target.tagName.toLowerCase() === 'img') {
+			// ⚡ Bolt Optimization: Debounce layout recalculations to prevent layout thrashing
+			// when multiple images load simultaneously
+			debouncedLayoutMasonryGrid();
+		}
+	}, true);
+
+	window.addEventListener('resize', debouncedLayoutMasonryGrid);
 	setTimeout(layoutMasonryGrid, 100);
 
 

@@ -33,3 +33,6 @@
 ## 2024-07-01 - Avoid regex compilation in loops
 **Learning:** Even though PHP PCRE caches regex, running `preg_match` in loops (especially over user input like `$_GET`) is slower than simple string functions.
 **Action:** When evaluating strings for prefixes or suffixes inside loops, default to `str_starts_with` and `str_ends_with` first as a fast-path check to avoid or limit regex execution.
+## 2026-07-04 - [Debounce frequent DOM events]
+**Learning:** In JavaScript performance optimization, wrap expensive DOM operation callbacks triggered by frequent events (like `MutationObserver` with `subtree: true` or rapid image `load` events) in a debounce function to batch updates and prevent main-thread blocking and layout thrashing.
+**Action:** Apply debouncing using `setTimeout` to frequent event listeners and observers to optimize performance.
