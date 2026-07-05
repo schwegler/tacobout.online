@@ -123,6 +123,11 @@
   endMessage.style.cssText =
     "text-align: center; padding: 2rem 0; font-size: 0.875rem; display: none;";
   endMessage.textContent = "You have reached the end of the feed.";
+  endMessage.setAttribute("aria-live", "polite");
+
+  function showEndMessage() {
+    endMessage.style.display = "block";
+  }
 
   // Insert sentinel, spinner, and end message after the grid's parent query block
   const queryBlock = grid.closest(".wp-block-query");
@@ -134,6 +139,10 @@
     grid.parentNode.insertBefore(endMessage, grid.nextSibling);
     grid.parentNode.insertBefore(spinner, endMessage);
     grid.parentNode.insertBefore(sentinel, spinner);
+  }
+
+  if (allLoaded) {
+    showEndMessage();
   }
 
   /* ============================================
@@ -302,6 +311,7 @@
 				if (resp.status === 400) {
 					// No more pages
 					allLoaded = true;
+					showEndMessage();
 					observer.disconnect();
 					return;
 				}
@@ -314,6 +324,7 @@
 				const serverTotalPages = parseInt(totalPagesHeader, 10);
 				if (nextPage >= serverTotalPages) {
 					allLoaded = true;
+					showEndMessage();
 					observer.disconnect();
 				}
 			}
@@ -334,6 +345,7 @@
 		} catch (err) {
 			console.error('[tacobout] Failed to load posts:', err);
 			allLoaded = true;
+			showEndMessage();
 			observer.disconnect();
 		} finally {
 			isLoading = false;
