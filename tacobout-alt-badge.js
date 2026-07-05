@@ -83,6 +83,10 @@
         attachAltBadges();
     }
 
+    // ⚡ Bolt Optimization: Batch DOM updates using setTimeout
+    // Prevents expensive querySelectorAll calls on every individual DOM mutation
+    let timeoutId = null;
+
     // Create an observer to watch for new images added to the DOM (like via infinite scroll)
     const observer = new MutationObserver((mutations) => {
         let shouldRun = false;
@@ -93,7 +97,12 @@
             }
         }
         if (shouldRun) {
-            attachAltBadges();
+            if (timeoutId) {
+                clearTimeout(timeoutId);
+            }
+            timeoutId = setTimeout(() => {
+                attachAltBadges();
+            }, 100);
         }
     });
 

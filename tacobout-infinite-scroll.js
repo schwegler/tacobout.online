@@ -69,20 +69,6 @@
 	// Make it global so author page can use it
 	window.layoutMasonryGrid = layoutMasonryGrid;
 
-	window.addEventListener('load', layoutMasonryGrid);
-
-	// Ensure layout is recalculated when fonts load (prevent text wrapping from shifting heights)
-	if (document.fonts) {
-		document.fonts.ready.then(layoutMasonryGrid);
-	}
-
-	// Capture phase image load listener to recalculate layout after specific images finish loading in the grid
-	grid.addEventListener('load', (e) => {
-		if (e.target.tagName && e.target.tagName.toLowerCase() === 'img') {
-			layoutMasonryGrid();
-		}
-	}, true);
-
 	function debounce(func, wait) {
 		let timeout;
 		return function executedFunction(...args) {
@@ -95,7 +81,25 @@
 		};
 	}
 
-	window.addEventListener('resize', debounce(layoutMasonryGrid, 150));
+	const debouncedLayout = debounce(layoutMasonryGrid, 150);
+
+	window.addEventListener('load', layoutMasonryGrid);
+
+	// Ensure layout is recalculated when fonts load (prevent text wrapping from shifting heights)
+	if (document.fonts) {
+		document.fonts.ready.then(layoutMasonryGrid);
+	}
+
+	// ⚡ Bolt Optimization: Use debounced layout recalculation on image load
+	// Prevents main-thread blocking and layout thrashing when multiple images load simultaneously
+	// Capture phase image load listener to recalculate layout after specific images finish loading in the grid
+	grid.addEventListener('load', (e) => {
+		if (e.target.tagName && e.target.tagName.toLowerCase() === 'img') {
+			debouncedLayout();
+		}
+	}, true);
+
+	window.addEventListener('resize', debouncedLayout);
 	setTimeout(layoutMasonryGrid, 100);
 
 
