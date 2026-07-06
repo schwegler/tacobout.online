@@ -165,6 +165,17 @@
 		measurements.forEach(({ item, span }) => {
 			item.style.gridRowEnd = 'span ' + span;
 		});
+
+		// If the sentinel is still in view after layout, trigger another fetch
+		// so the infinite scroll doesn't stall on large screens.
+		setTimeout(() => {
+			const sentinel = document.querySelector('.tacobout-scroll-sentinel');
+			if (!sentinel) return;
+			const rect = sentinel.getBoundingClientRect();
+			if (rect.top < window.innerHeight + 400 && !isLoading && !allLoaded) {
+				loadMorePosts();
+			}
+		}, 50);
 	}
 
 	// Make it global so author page can use it
