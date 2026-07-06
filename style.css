@@ -133,6 +133,123 @@ Tags: full-site-editing, block-theme, blog, dark-mode, post-formats, one-column,
 }
 
 /* ============================
+   MANUAL DARK MODE OVERRIDE
+   Applied when data-theme="dark" is set on <html> by the theme toggle JS.
+   Setting variables here propagates to all child elements automatically.
+   Hardcoded rgba values (non-variable) need explicit selectors below.
+   ============================ */
+[data-theme="dark"] {
+	--taco-bg: #09090b;
+	--taco-fg: #fafafa;
+	--taco-accent: #3b82f6;
+	--taco-accent-2: #f472b6;
+	--taco-muted: #a1a1aa;
+	--taco-surface: #18181b;
+	--taco-surface-2: #27272a;
+	--taco-border: #3f3f46;
+	--taco-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+	--taco-shadow-lg: 0 10px 30px rgba(0, 0, 0, 0.4);
+}
+
+[data-theme="dark"] body {
+	background-color: var(--taco-bg) !important;
+	color: var(--taco-fg) !important;
+}
+
+[data-theme="dark"] .has-base-color { color: var(--taco-bg) !important; }
+[data-theme="dark"] .has-base-background-color { background-color: var(--taco-bg) !important; }
+[data-theme="dark"] .has-contrast-color { color: var(--taco-fg) !important; }
+[data-theme="dark"] .has-contrast-background-color { background-color: var(--taco-fg) !important; }
+[data-theme="dark"] .has-accent-color { color: var(--taco-accent) !important; }
+[data-theme="dark"] .has-accent-background-color { background-color: var(--taco-accent) !important; }
+[data-theme="dark"] .has-accent-2-color { color: var(--taco-accent-2) !important; }
+[data-theme="dark"] .has-accent-2-background-color { background-color: var(--taco-accent-2) !important; }
+[data-theme="dark"] .has-muted-color { color: var(--taco-muted) !important; }
+[data-theme="dark"] .has-muted-background-color { background-color: var(--taco-muted) !important; }
+[data-theme="dark"] .has-surface-color { color: var(--taco-surface) !important; }
+[data-theme="dark"] .has-surface-background-color { background-color: var(--taco-surface) !important; }
+[data-theme="dark"] .has-surface-2-color { color: var(--taco-surface-2) !important; }
+[data-theme="dark"] .has-surface-2-background-color { background-color: var(--taco-surface-2) !important; }
+[data-theme="dark"] a { color: var(--taco-accent); }
+[data-theme="dark"] a:hover,
+[data-theme="dark"] a:focus-visible { color: var(--taco-accent-2); }
+[data-theme="dark"] .wp-block-site-title a,
+[data-theme="dark"] .wp-block-post-title,
+[data-theme="dark"] .wp-block-post-title a { color: var(--taco-fg) !important; }
+
+[data-theme="dark"] body::before {
+	background-image:
+		radial-gradient(at 0% 0%, rgba(59, 130, 246, 0.25) 0px, transparent 50%),
+		radial-gradient(at 100% 0%, rgba(244, 114, 182, 0.25) 0px, transparent 50%),
+		radial-gradient(at 100% 100%, rgba(59, 130, 246, 0.25) 0px, transparent 50%),
+		radial-gradient(at 0% 100%, rgba(244, 114, 182, 0.25) 0px, transparent 50%);
+}
+
+[data-theme="dark"] .tacobout-header::before {
+	background: rgba(9, 9, 11, 0.85);
+}
+
+[data-theme="dark"] .tacobout-magazine-grid .wp-block-post {
+	background: rgba(255, 255, 255, 0.05);
+	border-color: rgba(255, 255, 255, 0.1);
+}
+
+[data-theme="dark"] .tacobout-magazine-grid .wp-block-post:hover,
+[data-theme="dark"] .tacobout-magazine-grid .wp-block-post:focus-within {
+	box-shadow: 0 15px 35px rgba(139, 92, 246, 0.15), 0 5px 15px rgba(0, 0, 0, 0.2);
+	border-color: rgba(255, 255, 255, 0.15);
+}
+
+[data-theme="dark"] .tacobout-interaction-badge {
+	background: rgba(39, 39, 42, 0.75);
+	border-color: rgba(255, 255, 255, 0.1);
+	box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+[data-theme="dark"] .tacobout-interaction-badge:hover,
+[data-theme="dark"] .tacobout-interaction-badge:focus-visible {
+	background: rgba(39, 39, 42, 0.9);
+	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+}
+
+[data-theme="dark"] .tacobout-scroll-top {
+	background: rgba(24, 24, 27, 0.75);
+	border-color: rgba(255, 255, 255, 0.1);
+	box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+}
+
+[data-theme="dark"] .tacobout-scroll-top:hover,
+[data-theme="dark"] .tacobout-scroll-top:focus-visible {
+	background: var(--taco-accent);
+	border-color: var(--taco-accent);
+	box-shadow: 0 6px 20px rgba(59, 130, 246, 0.4);
+}
+
+[data-theme="dark"] .tacobout-theme-toggle {
+	background: rgba(24, 24, 27, 0.75);
+	border-color: rgba(255, 255, 255, 0.1);
+	box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+}
+
+[data-theme="dark"] .tacobout-theme-toggle:hover,
+[data-theme="dark"] .tacobout-theme-toggle:focus-visible {
+	background: var(--taco-accent);
+	border-color: var(--taco-accent);
+	box-shadow: 0 6px 20px rgba(59, 130, 246, 0.4);
+}
+
+[data-theme="dark"] body.author .wp-block-post {
+	background: rgba(255, 255, 255, 0.05);
+	border-color: rgba(255, 255, 255, 0.1);
+}
+
+[data-theme="dark"] body.author .wp-block-post:hover,
+[data-theme="dark"] body.author .wp-block-post:focus-within {
+	box-shadow: 0 15px 35px rgba(139, 92, 246, 0.15), 0 5px 15px rgba(0, 0, 0, 0.2);
+	border-color: rgba(255, 255, 255, 0.15);
+}
+
+/* ============================
    BASE
    ============================ */
 /* Global Focus Styles */
@@ -234,6 +351,7 @@ body::before {
 	}
 }
 
+
 /* ============================
    HEADER
    ============================ */
@@ -264,6 +382,7 @@ body::before {
 		background: rgba(9, 9, 11, 0.85);
 	}
 }
+
 
 /* When WP admin bar is showing */
 .admin-bar .tacobout-header {
@@ -583,6 +702,7 @@ body.home:not(.paged) .tacobout-magazine-grid .wp-block-post:first-child .wp-blo
 	letter-spacing: -0.04em !important;
 	background: linear-gradient(135deg, var(--taco-accent), var(--taco-accent-2));
 	-webkit-background-clip: text;
+	background-clip: text;
 	-webkit-text-fill-color: transparent;
 }
 
@@ -1215,6 +1335,69 @@ body.home:not(.paged) .tacobout-magazine-grid .wp-block-post:first-child .tacobo
 	}
 }
 
+/* ============================
+   THEME TOGGLE FAB
+   ============================ */
+.tacobout-theme-toggle {
+	position: fixed;
+	bottom: 5.5rem;
+	right: 2rem;
+	z-index: 999;
+	width: 48px;
+	height: 48px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	border: 1px solid rgba(0, 0, 0, 0.12);
+	border-radius: 50%;
+	background: rgba(255, 255, 255, 0.7);
+	backdrop-filter: blur(16px);
+	-webkit-backdrop-filter: blur(16px);
+	box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+	color: var(--taco-fg);
+	cursor: pointer;
+	transition: background 0.2s ease, box-shadow 0.2s ease, transform 0.15s ease, border-color 0.2s ease;
+	font-size: 1.1rem;
+	line-height: 1;
+}
+
+.tacobout-theme-toggle:hover,
+.tacobout-theme-toggle:focus-visible {
+	background: var(--taco-accent);
+	color: white;
+	border-color: var(--taco-accent);
+	box-shadow: 0 6px 20px rgba(0, 102, 255, 0.3);
+}
+
+.tacobout-theme-toggle:active {
+	transform: scale(0.92);
+}
+
+@media (prefers-color-scheme: dark) {
+	.tacobout-theme-toggle {
+		background: rgba(24, 24, 27, 0.75);
+		border-color: rgba(255, 255, 255, 0.1);
+		box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+	}
+
+	.tacobout-theme-toggle:hover,
+	.tacobout-theme-toggle:focus-visible {
+		background: var(--taco-accent);
+		border-color: var(--taco-accent);
+		box-shadow: 0 6px 20px rgba(59, 130, 246, 0.4);
+	}
+}
+
+@media (max-width: 600px) {
+	.tacobout-theme-toggle {
+		bottom: 4.75rem;
+		right: 1.25rem;
+		width: 42px;
+		height: 42px;
+		font-size: 1rem;
+	}
+}
+
 @media (max-width: 600px) {
 	.tacobout-scroll-top {
 		bottom: 1.25rem;
@@ -1280,6 +1463,139 @@ body.author .wp-block-post:focus-within {
 		box-shadow: 0 15px 35px rgba(139, 92, 246, 0.15), 0 5px 15px rgba(0, 0, 0, 0.2);
 		border-color: rgba(255, 255, 255, 0.15);
 	}
+}
+
+/* ============================
+   COMMENT FORM
+   ============================ */
+#respond {
+	background: var(--taco-surface);
+	border: 1px solid var(--taco-border);
+	border-radius: var(--taco-radius);
+	padding: 1.5rem;
+	margin-top: 1.5rem;
+}
+
+#respond .comment-reply-title {
+	font-size: 1.5rem;
+	font-weight: 700;
+	margin: 0 0 1rem;
+	color: var(--taco-fg);
+}
+
+#respond .logged-in-as,
+#respond .comment-notes {
+	color: var(--taco-muted);
+	font-size: 0.875rem;
+	margin-bottom: 1rem;
+}
+
+#respond .comment-form label {
+	color: var(--taco-fg);
+	font-size: 0.875rem;
+	font-weight: 500;
+	display: block;
+	margin-bottom: 0.375rem;
+}
+
+#respond .comment-form textarea,
+#respond .comment-form input[type="text"],
+#respond .comment-form input[type="email"],
+#respond .comment-form input[type="url"] {
+	background: var(--taco-surface-2);
+	color: var(--taco-fg);
+	border: 1px solid var(--taco-border);
+	border-radius: 8px;
+	padding: 0.625rem 0.875rem;
+	width: 100%;
+	box-sizing: border-box;
+	font-size: 0.9375rem;
+	font-family: inherit;
+	transition: border-color 0.2s ease, box-shadow 0.2s ease;
+	outline: none;
+}
+
+#respond .comment-form textarea {
+	min-height: 120px;
+	resize: vertical;
+}
+
+#respond .comment-form textarea:focus,
+#respond .comment-form input[type="text"]:focus,
+#respond .comment-form input[type="email"]:focus,
+#respond .comment-form input[type="url"]:focus {
+	border-color: var(--taco-accent);
+	box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+}
+
+#respond .comment-form textarea::placeholder {
+	color: var(--taco-muted);
+}
+
+#respond .form-submit #submit,
+#respond .form-submit input[type="submit"] {
+	background: var(--taco-accent);
+	color: white;
+	border: none;
+	border-radius: 8px;
+	padding: 0.625rem 1.5rem;
+	font-size: 0.9375rem;
+	font-weight: 600;
+	font-family: inherit;
+	cursor: pointer;
+	transition: background 0.2s ease, box-shadow 0.2s ease, transform 0.15s ease;
+}
+
+#respond .form-submit #submit:hover,
+#respond .form-submit input[type="submit"]:hover {
+	background: var(--taco-accent-2);
+	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+#respond .form-submit #submit:active,
+#respond .form-submit input[type="submit"]:active {
+	transform: scale(0.97);
+}
+
+/* ============================
+   OVERFLOW SEPARATOR
+   ============================ */
+.tacobout-overflow-separator {
+	grid-column: 1 / -1;
+	display: flex;
+	align-items: center;
+	gap: 1rem;
+	padding: 1.5rem 0 0.5rem;
+	animation: tacobout-fade-in 0.5s ease;
+}
+
+.tacobout-overflow-separator::before,
+.tacobout-overflow-separator::after {
+	content: "";
+	flex: 1;
+	height: 1px;
+	background: var(--taco-border);
+}
+
+.tacobout-overflow-separator-label {
+	display: flex;
+	align-items: center;
+	gap: 0.5rem;
+	white-space: nowrap;
+	background: var(--taco-surface);
+	border: 1px solid var(--taco-border);
+	border-radius: 100px;
+	padding: 0.375rem 1rem;
+	font-size: 0.8rem;
+	font-weight: 600;
+	letter-spacing: 0.03em;
+	color: var(--taco-muted);
+	box-shadow: var(--taco-shadow);
+}
+
+.tacobout-overflow-separator-label svg {
+	color: var(--taco-accent);
+	flex-shrink: 0;
 }
 
 body.author .tacobout-card-inner {

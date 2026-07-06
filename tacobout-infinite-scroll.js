@@ -1,12 +1,24 @@
 /**
- * Tacobout Infinite Scroll + Scroll-to-Top
+ * Tacobout Infinite Scroll + Scroll-to-Top + Theme Toggle
  *
  * - IntersectionObserver-based infinite scroll using the WP REST API
+ * - Two-phase fetch on taxonomy pages: filtered posts → separator → global feed
  * - Floating scroll-to-top button
+ * - Theme toggle (dark/light) with localStorage persistence
  * - Progressive enhancement: pagination remains functional without JS
  */
 (function () {
   "use strict";
+
+  /* ============================================
+	   THEME TOGGLE — run before any layout to avoid flash
+	   ============================================ */
+  (function applyThemePreference() {
+    const stored = localStorage.getItem('tacobout-theme');
+    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    const theme = stored || (prefersDark ? 'dark' : 'light');
+    document.documentElement.setAttribute('data-theme', theme);
+  })();
 
   /* ============================================
 	   CONFIG
@@ -14,11 +26,18 @@
   const config = window.tacoboutScroll;
   if (!config) return;
 
+  // Two-phase fetch state for taxonomy archives
+  const hasTerm = !!(config.termId && config.termType);
+  let termPhase = hasTerm; // true = still fetching filtered term posts
+  let termCurrentPage = 1;
+  const termTotalPages = hasTerm ? parseInt(config.termTotalPages, 10) || 1 : 0;
+  let separatorInserted = false;
+
   let currentPage = 1;
   const totalPages = parseInt(config.totalPages, 10);
   const perPage = parseInt(config.perPage, 10);
   let isLoading = false;
-  let allLoaded = currentPage >= totalPages;
+  let allLoaded = hasTerm ? false : (currentPage >= totalPages);
 
   /* ============================================
 	   DOM REFS
@@ -28,6 +47,7 @@
 
   // Mark body so CSS can hide pagination
   document.body.classList.add("tacobout-infinite-scroll-active");
+
 
 	// Optional JS-based masonry fallback if CSS grid-template-rows: masonry isn't supported yet
 	let initialLayoutDone = false;
@@ -375,24 +395,54 @@
   /* ============================================
 	   FETCH + APPEND
 	   ============================================ */
+
+	/**
+	 * Build and insert the overflow separator between taxonomy posts and the
+	 * global "everything else" feed.
+	 */
+	function insertOverflowSeparator() {
+		if (separatorInserted) return;
+		separatorInserted = true;
+
+		const sep = document.createElement('li');
+		sep.className = 'tacobout-overflow-separator';
+		sep.setAttribute('aria-hidden', 'true');
+		sep.innerHTML = `
+			<span class="tacobout-overflow-separator-label">
+				<svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+				You've seen all <strong>${escHtml(config.termName)}</strong> posts &mdash; here's everything else
+			</span>
+		`;
+		grid.appendChild(sep);
+		// Separator spans both columns — trigger a layout pass
+		setTimeout(layoutMasonryGrid, 50);
+	}
+
 	async function loadMorePosts() {
 		if (isLoading || allLoaded) return;
 		isLoading = true;
 		spinner.style.display = 'flex';
 
 		try {
-			const nextPage = currentPage + 1;
 			const url = new URL(config.restUrl);
-			url.searchParams.set('page', nextPage);
 			url.searchParams.set('per_page', perPage);
 			url.searchParams.set('orderby', 'date');
 			url.searchParams.set('order', 'desc');
 			url.searchParams.set('_embed', 'wp:featuredmedia,wp:term');
-
-			// ⚡ Bolt Optimization: Limit the REST API payload to only required fields.
-			// This reduces JSON download size and parsing time. _links and _embedded
-			// are required for the _embed parameter to work correctly.
 			url.searchParams.set('_fields', 'id,date,link,title,excerpt,content,post_format,interaction_count,_links,_embedded');
+
+			let nextPage;
+
+			if (termPhase) {
+				// Phase 1: fetch only posts matching the current taxonomy term
+				nextPage = termCurrentPage + 1;
+				url.searchParams.set('page', nextPage);
+				url.searchParams.set(config.termType, config.termId);
+			} else {
+				// Phase 2: fetch global feed (no term filter)
+				nextPage = currentPage + 1;
+				url.searchParams.set('page', nextPage);
+			}
 
 			const resp = await fetch(url.toString(), {
 				headers: { 'X-WP-Nonce': config.nonce }
@@ -400,7 +450,15 @@
 
 			if (!resp.ok) {
 				if (resp.status === 400) {
-					// No more pages
+					if (termPhase) {
+						// Term posts exhausted — switch to global feed
+						termPhase = false;
+						insertOverflowSeparator();
+						isLoading = false;
+						spinner.style.display = 'none';
+						return;
+					}
+					// Global feed exhausted
 					allLoaded = true;
 					observer.disconnect();
 					return;
@@ -410,35 +468,33 @@
 
 			const posts = await resp.json();
 			const totalPagesHeader = resp.headers.get('X-WP-TotalPages');
-			if (totalPagesHeader) {
-				const serverTotalPages = parseInt(totalPagesHeader, 10);
-				if (nextPage >= serverTotalPages) {
-					allLoaded = true;
-					observer.disconnect();
+
+			if (termPhase) {
+				termCurrentPage = nextPage;
+				// Check if this is the last term page
+				const serverTermPages = totalPagesHeader ? parseInt(totalPagesHeader, 10) : termTotalPages;
+				if (nextPage >= serverTermPages) {
+					// This batch is the last of the term posts.
+					// After appending, switch phase and insert separator.
+					const newCards = appendCards(posts);
+					termPhase = false;
+					insertOverflowSeparator();
+					if (window._tacoboutObserveCards) window._tacoboutObserveCards(newCards);
+					return;
+				}
+			} else {
+				currentPage = nextPage;
+				if (totalPagesHeader) {
+					const serverTotalPages = parseInt(totalPagesHeader, 10);
+					if (nextPage >= serverTotalPages) {
+						allLoaded = true;
+						observer.disconnect();
+					}
 				}
 			}
 
-			// Append cards with staggered animation
-			const newCards = [];
-			const fragment = document.createDocumentFragment();
-			posts.forEach((post, i) => {
-				const card = buildCard(post);
-				card.style.animationDelay = (i * 0.05) + 's';
-				// Give each new card a large provisional span immediately so it
-				// stacks below existing content and doesn't overlap while we wait
-				// for the measured span to be applied.
-				card.style.gridRowEnd = 'span 200';
-				fragment.appendChild(card);
-				newCards.push(card);
-			});
-			grid.appendChild(fragment);
-			// Re-layout only the newly added cards so existing cards (and the
-			// scroll position) are never disturbed.
-			setTimeout(() => layoutNewItems(newCards), 100);
-			// Watch new cards for future height changes (iframes, embeds, etc.)
+			const newCards = appendCards(posts);
 			if (window._tacoboutObserveCards) window._tacoboutObserveCards(newCards);
-
-			currentPage = nextPage;
 
 		} catch (err) {
 			console.error('[tacobout] Failed to load posts:', err);
@@ -449,6 +505,30 @@
 			spinner.style.display = 'none';
 		}
 	}
+
+	/**
+	 * Append an array of post objects to the grid and return the new card elements.
+	 */
+	function appendCards(posts) {
+		const newCards = [];
+		const fragment = document.createDocumentFragment();
+		posts.forEach((post, i) => {
+			const card = buildCard(post);
+			card.style.animationDelay = (i * 0.05) + 's';
+			// Give each new card a large provisional span immediately so it
+			// stacks below existing content and doesn't overlap while we wait
+			// for the measured span to be applied.
+			card.style.gridRowEnd = 'span 200';
+			fragment.appendChild(card);
+			newCards.push(card);
+		});
+		grid.appendChild(fragment);
+		// Re-layout only the newly added cards so existing cards (and the
+		// scroll position) are never disturbed.
+		setTimeout(() => layoutNewItems(newCards), 100);
+		return newCards;
+	}
+
 
 	/* ============================================
 	   INTERSECTION OBSERVER
@@ -513,4 +593,43 @@
 
   // Initial check
   updateFab();
+
+  /* ============================================
+	   THEME TOGGLE FAB
+	   ============================================ */
+  const THEME_KEY = 'tacobout-theme';
+  const SUN_ICON = `<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>`;
+  const MOON_ICON = `<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>`;
+
+  const themeFab = document.createElement('button');
+  themeFab.className = 'tacobout-theme-toggle';
+  themeFab.id = 'tacobout-theme-toggle';
+  document.body.appendChild(themeFab);
+
+  function getCurrentTheme() {
+    return document.documentElement.getAttribute('data-theme') || 'light';
+  }
+
+  function applyTheme(theme) {
+    document.documentElement.setAttribute('data-theme', theme);
+    localStorage.setItem(THEME_KEY, theme);
+    const isDark = theme === 'dark';
+    themeFab.innerHTML = isDark ? SUN_ICON : MOON_ICON;
+    themeFab.setAttribute('aria-label', isDark ? 'Switch to light mode' : 'Switch to dark mode');
+    themeFab.setAttribute('title', isDark ? 'Switch to light mode' : 'Switch to dark mode');
+  }
+
+  // Set initial state based on what was already applied by the early script
+  applyTheme(getCurrentTheme());
+
+  themeFab.addEventListener('click', () => {
+    applyTheme(getCurrentTheme() === 'dark' ? 'light' : 'dark');
+  });
+
+  // Keep in sync if system preference changes and user hasn't set a manual override
+  window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
+    if (!localStorage.getItem(THEME_KEY)) {
+      applyTheme(e.matches ? 'dark' : 'light');
+    }
+  });
 })();
