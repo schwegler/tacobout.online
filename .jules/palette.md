@@ -22,3 +22,6 @@
 ## 2026-07-02 - Accessible Custom Tooltips and Popovers
 **Learning:** Custom tooltips or popovers revealed via a button click require specific ARIA attributes (`aria-expanded` and `aria-controls`) to inform screen readers of their state and relationship. Additionally, they must support keyboard dismissal (Escape key) and focus management (returning focus to the trigger button when dismissed) so keyboard users don't lose context.
 **Action:** When implementing custom tooltips or popovers, ensure the trigger button uses `aria-expanded` (toggling between true/false), references the tooltip via `aria-controls` with a unique ID, and includes an Escape key listener that closes the tooltip and calls `.focus()` on the trigger.
+## 2024-07-26 - Explicit UI State on Feed Exhaustion
+**Learning:** Infinite scroll implementations often gracefully handle end-of-feed from a network perspective but fail to visually update the UI, leaving users wondering if the app is broken or if there is simply no more content.
+**Action:** Always provide an explicit visual indicator (like a "You have reached the end" message) and pair it with `role="status"` and `aria-live="polite"` so screen readers are also informed when scrolling actions no longer yield new content.
