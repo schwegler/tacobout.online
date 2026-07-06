@@ -40,6 +40,20 @@
 
 		const items = grid.querySelectorAll('.wp-block-post');
 
+		// Anchor scroll position to a visible element so the reset below doesn't
+		// cause the browser to jump the viewport. Pick the last item that is
+		// currently above (or at) the top of the viewport as the anchor.
+		let anchorEl = null;
+		let anchorOffsetBefore = 0;
+		const viewportTop = window.scrollY;
+		Array.from(items).forEach(item => {
+			const rect = item.getBoundingClientRect();
+			if (rect.top <= 0) {
+				anchorEl = item;
+				anchorOffsetBefore = rect.top; // negative when scrolled past
+			}
+		});
+
 		// Phase 1: Reset styles (writes)
 		items.forEach(item => {
 			item.style.gridRowEnd = 'auto';
@@ -50,6 +64,53 @@
 
 		// Phase 2: Measure elements (reads)
 		const measurements = Array.from(items).map(item => {
+			const style = window.getComputedStyle(item);
+			const marginTop = parseFloat(style.marginTop) || 0;
+			const marginBottom = parseFloat(style.marginBottom) || 0;
+			const height = item.getBoundingClientRect().height;
+			return {
+				item,
+				span: Math.ceil((height + marginTop + marginBottom) / rowHeight)
+			};
+		});
+
+		// Phase 3: Apply spans (writes)
+		measurements.forEach(({ item, span }) => {
+			item.style.gridRowEnd = 'span ' + span;
+		});
+
+		// Restore scroll position relative to the anchor element so the page
+		// doesn't jump after spans are re-applied.
+		if (anchorEl) {
+			const anchorOffsetAfter = anchorEl.getBoundingClientRect().top;
+			const drift = anchorOffsetAfter - anchorOffsetBefore;
+			if (Math.abs(drift) > 1) {
+				window.scrollBy({ top: drift, behavior: 'instant' });
+			}
+		}
+	}
+
+	/**
+	 * Lightweight variant used after infinite-scroll appends new cards.
+	 * Only measures and sets spans for the provided new items — existing
+	 * cards are never reset, so the viewport never jumps.
+	 */
+	function layoutNewItems(newItems) {
+		if (CSS.supports && CSS.supports('grid-template-rows', 'masonry')) return;
+		if (!newItems || newItems.length === 0) return;
+
+		const rowHeight = 10;
+
+		// Phase 1: Reset only the new items (writes)
+		newItems.forEach(item => {
+			item.style.gridRowEnd = 'auto';
+		});
+
+		// Force reflow once
+		grid.offsetHeight;
+
+		// Phase 2: Measure new items (reads)
+		const measurements = newItems.map(item => {
 			const style = window.getComputedStyle(item);
 			const marginTop = parseFloat(style.marginTop) || 0;
 			const marginBottom = parseFloat(style.marginBottom) || 0;
@@ -319,15 +380,18 @@
 			}
 
 			// Append cards with staggered animation
+			const newCards = [];
 			const fragment = document.createDocumentFragment();
 			posts.forEach((post, i) => {
 				const card = buildCard(post);
 				card.style.animationDelay = (i * 0.05) + 's';
 				fragment.appendChild(card);
+				newCards.push(card);
 			});
 			grid.appendChild(fragment);
-			// Re-layout masonry if needed
-			setTimeout(layoutMasonryGrid, 100);
+			// Re-layout only the newly added cards so existing cards (and the
+			// scroll position) are never disturbed.
+			setTimeout(() => layoutNewItems(newCards), 100);
 
 			currentPage = nextPage;
 
