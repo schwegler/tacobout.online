@@ -33,17 +33,27 @@
   const termTotalPages = hasTerm ? parseInt(config.termTotalPages, 10) || 1 : 0;
   let separatorInserted = false;
 
-  let currentPage = 1;
+  let currentPage = hasTerm ? 0 : 1;
   const totalPages = parseInt(config.totalPages, 10);
   const perPage = parseInt(config.perPage, 10);
   let isLoading = false;
   let allLoaded = hasTerm ? false : (currentPage >= totalPages);
+
+
 
   /* ============================================
 	   DOM REFS
 	   ============================================ */
 	const grid = document.querySelector('.tacobout-magazine-grid, body.author .wp-block-post-template');
 	if (!grid) return;
+
+  // Keep track of posts we've already displayed to prevent duplicates
+  // (especially when transitioning from a term-filtered fetch to a global fetch)
+  const seenPostIds = new Set();
+  grid.querySelectorAll('.wp-block-post').forEach(el => {
+    const classMatch = el.className.match(/\bpost-(\d+)\b/);
+    if (classMatch) seenPostIds.add(parseInt(classMatch[1], 10));
+  });
 
   // Mark body so CSS can hide pagination
   document.body.classList.add("tacobout-infinite-scroll-active");
@@ -60,7 +70,7 @@
 		grid.style.gridAutoRows = rowHeight + 'px';
 		grid.style.rowGap = '0px'; // Disable CSS grid row gaps, we use margin instead
 
-		const items = grid.querySelectorAll('.wp-block-post');
+		const items = grid.querySelectorAll('.wp-block-post, .tacobout-overflow-separator');
 
 		// Anchor scroll position to a visible element so the reset below doesn't
 		// cause the browser to jump the viewport. Pick the last item that is
@@ -424,78 +434,87 @@
 		spinner.style.display = 'flex';
 
 		try {
-			const url = new URL(config.restUrl);
-			url.searchParams.set('per_page', perPage);
-			url.searchParams.set('orderby', 'date');
-			url.searchParams.set('order', 'desc');
-			url.searchParams.set('_embed', 'wp:featuredmedia,wp:term');
-			url.searchParams.set('_fields', 'id,date,link,title,excerpt,content,post_format,interaction_count,_links,_embedded');
+			while (!allLoaded) {
+				const url = new URL(config.restUrl);
+				url.searchParams.set('per_page', perPage);
+				url.searchParams.set('orderby', 'date');
+				url.searchParams.set('order', 'desc');
+				url.searchParams.set('_embed', 'wp:featuredmedia,wp:term');
+				url.searchParams.set('_fields', 'id,date,link,title,excerpt,content,post_format,interaction_count,_links,_embedded');
 
-			let nextPage;
-
-			if (termPhase) {
-				// Phase 1: fetch only posts matching the current taxonomy term
-				nextPage = termCurrentPage + 1;
-				url.searchParams.set('page', nextPage);
-				url.searchParams.set(config.termType, config.termId);
-			} else {
-				// Phase 2: fetch global feed (no term filter)
-				nextPage = currentPage + 1;
-				url.searchParams.set('page', nextPage);
-			}
-
-			const resp = await fetch(url.toString(), {
-				headers: { 'X-WP-Nonce': config.nonce }
-			});
-
-			if (!resp.ok) {
-				if (resp.status === 400) {
-					if (termPhase) {
-						// Term posts exhausted — switch to global feed
-						termPhase = false;
-						insertOverflowSeparator();
-						isLoading = false;
-						spinner.style.display = 'none';
-						return;
-					}
-					// Global feed exhausted
-					allLoaded = true;
-					observer.disconnect();
-					return;
+				let nextPage;
+				if (termPhase) {
+					nextPage = termCurrentPage + 1;
+					url.searchParams.set('page', nextPage);
+					url.searchParams.set(config.termType, config.termId);
+				} else {
+					nextPage = currentPage + 1;
+					url.searchParams.set('page', nextPage);
 				}
-				throw new Error('HTTP ' + resp.status);
-			}
 
-			const posts = await resp.json();
-			const totalPagesHeader = resp.headers.get('X-WP-TotalPages');
+				const resp = await fetch(url.toString(), {
+					headers: { 'X-WP-Nonce': config.nonce }
+				});
 
-			if (termPhase) {
-				termCurrentPage = nextPage;
-				// Check if this is the last term page
-				const serverTermPages = totalPagesHeader ? parseInt(totalPagesHeader, 10) : termTotalPages;
-				if (nextPage >= serverTermPages) {
-					// This batch is the last of the term posts.
-					// After appending, switch phase and insert separator.
-					const newCards = appendCards(posts);
-					termPhase = false;
-					insertOverflowSeparator();
-					if (window._tacoboutObserveCards) window._tacoboutObserveCards(newCards);
-					return;
-				}
-			} else {
-				currentPage = nextPage;
-				if (totalPagesHeader) {
-					const serverTotalPages = parseInt(totalPagesHeader, 10);
-					if (nextPage >= serverTotalPages) {
+				if (!resp.ok) {
+					if (resp.status === 400) {
+						if (termPhase) {
+							// Term posts exhausted — switch to global feed
+							termPhase = false;
+							insertOverflowSeparator();
+							// Loop around to fetch global feed immediately
+							continue;
+						}
+						// Global feed exhausted
 						allLoaded = true;
 						observer.disconnect();
+						break;
+					}
+					throw new Error('HTTP ' + resp.status);
+				}
+
+				let posts = await resp.json();
+				const totalPagesHeader = resp.headers.get('X-WP-TotalPages');
+
+				// Filter out already seen posts to prevent duplicates
+				const newPosts = posts.filter(p => !seenPostIds.has(p.id));
+				newPosts.forEach(p => seenPostIds.add(p.id));
+
+				if (termPhase) {
+					termCurrentPage = nextPage;
+					if (newPosts.length > 0) {
+						const newCards = appendCards(newPosts);
+						if (window._tacoboutObserveCards) window._tacoboutObserveCards(newCards);
+					}
+
+					// Check if this is the last term page
+					const serverTermPages = totalPagesHeader ? parseInt(totalPagesHeader, 10) : termTotalPages;
+					if (nextPage >= serverTermPages) {
+						termPhase = false;
+						insertOverflowSeparator();
+					}
+				} else {
+					currentPage = nextPage;
+					if (totalPagesHeader) {
+						const serverTotalPages = parseInt(totalPagesHeader, 10);
+						if (nextPage >= serverTotalPages) {
+							allLoaded = true;
+							observer.disconnect();
+						}
+					}
+
+					if (newPosts.length > 0) {
+						const newCards = appendCards(newPosts);
+						if (window._tacoboutObserveCards) window._tacoboutObserveCards(newCards);
 					}
 				}
+
+				// If we successfully appended new posts, we can break and wait for the user to scroll.
+				// If we appended 0 posts (they were all duplicates), the loop will seamlessly fetch the next page.
+				if (newPosts.length > 0) {
+					break;
+				}
 			}
-
-			const newCards = appendCards(posts);
-			if (window._tacoboutObserveCards) window._tacoboutObserveCards(newCards);
-
 		} catch (err) {
 			console.error('[tacobout] Failed to load posts:', err);
 			allLoaded = true;
@@ -576,6 +595,10 @@
     if (shouldShow !== fabVisible) {
       fabVisible = shouldShow;
       fab.classList.toggle("is-visible", shouldShow);
+      const themeFabEl = document.getElementById("tacobout-theme-toggle");
+      if (themeFabEl) {
+        themeFabEl.classList.toggle("is-stacked", shouldShow);
+      }
     }
     ticking = false;
   }
@@ -591,8 +614,6 @@
     { passive: true },
   );
 
-  // Initial check
-  updateFab();
 
   /* ============================================
 	   THEME TOGGLE FAB
@@ -623,7 +644,8 @@
   applyTheme(getCurrentTheme());
 
   themeFab.addEventListener('click', () => {
-    applyTheme(getCurrentTheme() === 'dark' ? 'light' : 'dark');
+    const newTheme = getCurrentTheme() === 'light' ? 'dark' : 'light';
+    applyTheme(newTheme);
   });
 
   // Keep in sync if system preference changes and user hasn't set a manual override
@@ -632,4 +654,7 @@
       applyTheme(e.matches ? 'dark' : 'light');
     }
   });
+
+  // Initial check (must happen after theme toggle is in the DOM)
+  updateFab();
 })();

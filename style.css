@@ -33,7 +33,7 @@ Tags: full-site-editing, block-theme, blog, dark-mode, post-formats, one-column,
 }
 
 @media (prefers-color-scheme: dark) {
-	:root {
+	:root:not([data-theme="light"]) {
 		--taco-bg: #09090b;
 		--taco-fg: #fafafa;
 		--taco-accent: #3b82f6;
@@ -342,7 +342,7 @@ body::before {
 }
 
 @media (prefers-color-scheme: dark) {
-	body::before {
+	html:not([data-theme="light"]) body::before {
 		background-image:
 			radial-gradient(at 0% 0%, rgba(59, 130, 246, 0.25) 0px, transparent 50%),
 			radial-gradient(at 100% 0%, rgba(244, 114, 182, 0.25) 0px, transparent 50%),
@@ -378,7 +378,7 @@ body::before {
 		border-bottom-color: var(--taco-border);
 	}
 
-	.tacobout-header::before {
+	html:not([data-theme="light"]) .tacobout-header::before {
 		background: rgba(9, 9, 11, 0.85);
 	}
 }
@@ -630,13 +630,13 @@ body::before {
 }
 
 @media (prefers-color-scheme: dark) {
-	.tacobout-magazine-grid .wp-block-post {
+	html:not([data-theme="light"]) .tacobout-magazine-grid .wp-block-post {
 		background: rgba(255, 255, 255, 0.05);
 		border-color: rgba(255, 255, 255, 0.1);
 	}
 
-	.tacobout-magazine-grid .wp-block-post:hover,
-	.tacobout-magazine-grid .wp-block-post:focus-within {
+	html:not([data-theme="light"]) .tacobout-magazine-grid .wp-block-post:hover,
+	html:not([data-theme="light"]) .tacobout-magazine-grid .wp-block-post:focus-within {
 		box-shadow: 0 15px 35px rgba(139, 92, 246, 0.15), 0 5px 15px rgba(0, 0, 0, 0.2);
 		border-color: rgba(255, 255, 255, 0.15);
 	}
@@ -1174,14 +1174,14 @@ body.home:not(.paged) .tacobout-magazine-grid .wp-block-post:first-child .wp-blo
 }
 
 @media (prefers-color-scheme: dark) {
-	.tacobout-interaction-badge {
+	html:not([data-theme="light"]) .tacobout-interaction-badge {
 		background: rgba(39, 39, 42, 0.75);
 		border-color: rgba(255, 255, 255, 0.1);
 		box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
 	}
 
-	.tacobout-interaction-badge:hover,
-	.tacobout-interaction-badge:focus-visible {
+	html:not([data-theme="light"]) .tacobout-interaction-badge:hover,
+	html:not([data-theme="light"]) .tacobout-interaction-badge:focus-visible {
 		background: rgba(39, 39, 42, 0.9);
 		box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
 	}
@@ -1321,14 +1321,14 @@ body.home:not(.paged) .tacobout-magazine-grid .wp-block-post:first-child .tacobo
 }
 
 @media (prefers-color-scheme: dark) {
-	.tacobout-scroll-top {
+	html:not([data-theme="light"]) .tacobout-scroll-top {
 		background: rgba(24, 24, 27, 0.75);
 		border-color: rgba(255, 255, 255, 0.1);
 		box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
 	}
 
-	.tacobout-scroll-top:hover,
-	.tacobout-scroll-top:focus-visible {
+	html:not([data-theme="light"]) .tacobout-scroll-top:hover,
+	html:not([data-theme="light"]) .tacobout-scroll-top:focus-visible {
 		background: var(--taco-accent);
 		border-color: var(--taco-accent);
 		box-shadow: 0 6px 20px rgba(59, 130, 246, 0.4);
@@ -1340,7 +1340,7 @@ body.home:not(.paged) .tacobout-magazine-grid .wp-block-post:first-child .tacobo
    ============================ */
 .tacobout-theme-toggle {
 	position: fixed;
-	bottom: 5.5rem;
+	bottom: 2rem;
 	right: 2rem;
 	z-index: 999;
 	width: 48px;
@@ -1356,7 +1356,7 @@ body.home:not(.paged) .tacobout-magazine-grid .wp-block-post:first-child .tacobo
 	box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
 	color: var(--taco-fg);
 	cursor: pointer;
-	transition: background 0.2s ease, box-shadow 0.2s ease, transform 0.15s ease, border-color 0.2s ease;
+	transition: background 0.2s ease, box-shadow 0.2s ease, transform 0.15s ease, border-color 0.2s ease, bottom 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 	font-size: 1.1rem;
 	line-height: 1;
 }
@@ -1373,15 +1373,19 @@ body.home:not(.paged) .tacobout-magazine-grid .wp-block-post:first-child .tacobo
 	transform: scale(0.92);
 }
 
+.tacobout-theme-toggle.is-stacked {
+	bottom: 5.5rem;
+}
+
 @media (prefers-color-scheme: dark) {
-	.tacobout-theme-toggle {
+	html:not([data-theme="light"]) .tacobout-theme-toggle {
 		background: rgba(24, 24, 27, 0.75);
 		border-color: rgba(255, 255, 255, 0.1);
 		box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
 	}
 
-	.tacobout-theme-toggle:hover,
-	.tacobout-theme-toggle:focus-visible {
+	html:not([data-theme="light"]) .tacobout-theme-toggle:hover,
+	html:not([data-theme="light"]) .tacobout-theme-toggle:focus-visible {
 		background: var(--taco-accent);
 		border-color: var(--taco-accent);
 		box-shadow: 0 6px 20px rgba(59, 130, 246, 0.4);
@@ -1390,11 +1394,15 @@ body.home:not(.paged) .tacobout-magazine-grid .wp-block-post:first-child .tacobo
 
 @media (max-width: 600px) {
 	.tacobout-theme-toggle {
-		bottom: 4.75rem;
+		bottom: 1.25rem;
 		right: 1.25rem;
 		width: 42px;
 		height: 42px;
 		font-size: 1rem;
+	}
+
+	.tacobout-theme-toggle.is-stacked {
+		bottom: 4.75rem;
 	}
 }
 
@@ -1453,13 +1461,13 @@ body.author .wp-block-post:focus-within {
 }
 
 @media (prefers-color-scheme: dark) {
-	body.author .wp-block-post {
+	html:not([data-theme="light"]) body.author .wp-block-post {
 		background: rgba(255, 255, 255, 0.05);
 		border-color: rgba(255, 255, 255, 0.1);
 	}
 
-	body.author .wp-block-post:hover,
-	body.author .wp-block-post:focus-within {
+	html:not([data-theme="light"]) body.author .wp-block-post:hover,
+	html:not([data-theme="light"]) body.author .wp-block-post:focus-within {
 		box-shadow: 0 15px 35px rgba(139, 92, 246, 0.15), 0 5px 15px rgba(0, 0, 0, 0.2);
 		border-color: rgba(255, 255, 255, 0.15);
 	}
