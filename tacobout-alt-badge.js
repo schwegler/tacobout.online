@@ -84,6 +84,7 @@
     }
 
     // Create an observer to watch for new images added to the DOM (like via infinite scroll)
+    let debounceTimer;
     const observer = new MutationObserver((mutations) => {
         let shouldRun = false;
         for (const mutation of mutations) {
@@ -93,7 +94,8 @@
             }
         }
         if (shouldRun) {
-            attachAltBadges();
+            clearTimeout(debounceTimer);
+            debounceTimer = setTimeout(attachAltBadges, 50);
         }
     });
 
