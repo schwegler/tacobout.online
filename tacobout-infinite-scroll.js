@@ -30,6 +30,8 @@
   document.body.classList.add("tacobout-infinite-scroll-active");
 
 	// Optional JS-based masonry fallback if CSS grid-template-rows: masonry isn't supported yet
+	let initialLayoutDone = false;
+
 	function layoutMasonryGrid() {
 		// Only run fallback if CSS grid masonry isn't supported natively
 		if (CSS.supports && CSS.supports('grid-template-rows', 'masonry')) return;
@@ -88,6 +90,8 @@
 				window.scrollBy({ top: drift, behavior: 'instant' });
 			}
 		}
+
+		initialLayoutDone = true;
 	}
 
 	/**
@@ -100,6 +104,12 @@
 		if (!newItems || newItems.length === 0) return;
 
 		const rowHeight = 10;
+
+		// Ensure the grid row settings are always correct before measuring.
+		// This guards against being called before layoutMasonryGrid has run
+		// (e.g. an image fires its load event before the initial layout).
+		grid.style.gridAutoRows = rowHeight + 'px';
+		grid.style.rowGap = '0px';
 
 		// Phase 1: Reset only the new items (writes)
 		newItems.forEach(item => {
@@ -130,20 +140,6 @@
 	// Make it global so author page can use it
 	window.layoutMasonryGrid = layoutMasonryGrid;
 
-	window.addEventListener('load', layoutMasonryGrid);
-
-	// Ensure layout is recalculated when fonts load (prevent text wrapping from shifting heights)
-	if (document.fonts) {
-		document.fonts.ready.then(layoutMasonryGrid);
-	}
-
-	// Capture phase image load listener to recalculate layout after specific images finish loading in the grid
-	grid.addEventListener('load', (e) => {
-		if (e.target.tagName && e.target.tagName.toLowerCase() === 'img') {
-			layoutMasonryGrid();
-		}
-	}, true);
-
 	function debounce(func, wait) {
 		let timeout;
 		return function executedFunction(...args) {
@@ -156,8 +152,51 @@
 		};
 	}
 
-	window.addEventListener('resize', debounce(layoutMasonryGrid, 150));
-	setTimeout(layoutMasonryGrid, 100);
+	// Single debounced full layout — used for resize and initial load triggers
+	const debouncedLayout = debounce(layoutMasonryGrid, 150);
+
+	window.addEventListener('resize', debouncedLayout);
+
+	// Run layout once after fonts + window are ready (a single pass is enough)
+	if (document.fonts) {
+		document.fonts.ready.then(() => setTimeout(layoutMasonryGrid, 50));
+	} else {
+		window.addEventListener('load', () => setTimeout(layoutMasonryGrid, 50));
+	}
+
+	// ResizeObserver — watches every card for height changes caused by anything:
+	// lazy images finishing, gallery images loading, iframes expanding, etc.
+	//
+	// IMPORTANT: only re-spanning the changed card is not enough. CSS grid shares
+	// row tracks across both columns, so when a card in column 1 grows it shifts
+	// the row grid and can visually overlap cards in column 2 that have stale spans.
+	// We must do a full re-layout whenever any card changes height.
+	// The anchor-based scroll-position logic inside layoutMasonryGrid prevents jumps.
+	if (typeof ResizeObserver !== 'undefined') {
+		// Separate debounce from the resize-event one so they don't interfere
+		const debouncedFullLayout = debounce(layoutMasonryGrid, 150);
+
+		const cardResizeObserver = new ResizeObserver(() => {
+			if (!initialLayoutDone) return; // full layout will handle everything
+			debouncedFullLayout();
+		});
+
+		// Observe every existing card's inner content wrapper so ResizeObserver
+		// picks up height changes from child elements (iframes, images, etc.)
+		function observeCards(cards) {
+			cards.forEach(card => {
+				// Observe the inner wrapper so iframe/image expansion is detected
+				const inner = card.querySelector('.tacobout-card-inner') || card;
+				cardResizeObserver.observe(inner);
+			});
+		}
+
+		// Observe initial cards once the DOM is ready
+		observeCards(Array.from(grid.querySelectorAll('.wp-block-post')));
+
+		// Expose so loadMorePosts can observe newly appended cards too
+		window._tacoboutObserveCards = observeCards;
+	}
 
 
 	/* ============================================
@@ -385,6 +424,10 @@
 			posts.forEach((post, i) => {
 				const card = buildCard(post);
 				card.style.animationDelay = (i * 0.05) + 's';
+				// Give each new card a large provisional span immediately so it
+				// stacks below existing content and doesn't overlap while we wait
+				// for the measured span to be applied.
+				card.style.gridRowEnd = 'span 200';
 				fragment.appendChild(card);
 				newCards.push(card);
 			});
@@ -392,6 +435,8 @@
 			// Re-layout only the newly added cards so existing cards (and the
 			// scroll position) are never disturbed.
 			setTimeout(() => layoutNewItems(newCards), 100);
+			// Watch new cards for future height changes (iframes, embeds, etc.)
+			if (window._tacoboutObserveCards) window._tacoboutObserveCards(newCards);
 
 			currentPage = nextPage;
 
