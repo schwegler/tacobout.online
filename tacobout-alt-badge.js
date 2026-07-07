@@ -83,6 +83,19 @@
         attachAltBadges();
     }
 
+    // Debounce function to limit how often a callback is executed
+    function debounce(func, wait) {
+        let timeout;
+        return function (...args) {
+            const context = this;
+            clearTimeout(timeout);
+            timeout = setTimeout(() => func.apply(context, args), wait);
+        };
+    }
+
+    // Debounced version of the attach function for the observer
+    const debouncedAttachAltBadges = debounce(attachAltBadges, 100);
+
     // Create an observer to watch for new images added to the DOM (like via infinite scroll)
     const observer = new MutationObserver((mutations) => {
         let shouldRun = false;
@@ -93,7 +106,7 @@
             }
         }
         if (shouldRun) {
-            attachAltBadges();
+            debouncedAttachAltBadges();
         }
     });
 
