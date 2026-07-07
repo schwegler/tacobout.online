@@ -32,6 +32,7 @@
   let termCurrentPage = 1;
   const termTotalPages = hasTerm ? parseInt(config.termTotalPages, 10) || 1 : 0;
   let separatorInserted = false;
+	let endMessageInserted = false;
 
   let currentPage = hasTerm ? 0 : 1;
   const totalPages = parseInt(config.totalPages, 10);
@@ -439,6 +440,24 @@
 		setTimeout(layoutMasonryGrid, 50);
 	}
 
+
+	function insertEndMessage() {
+		if (endMessageInserted) return;
+		endMessageInserted = true;
+
+		const endMsg = document.createElement('li');
+		endMsg.className = 'tacobout-end-message';
+		endMsg.setAttribute('aria-live', 'polite');
+		endMsg.innerHTML = `
+			<span class="tacobout-end-message-label">
+				<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"></polyline></svg>
+				You've reached the end of the feed.
+			</span>
+		`;
+		grid.appendChild(endMsg);
+		setTimeout(layoutMasonryGrid, 50);
+	}
+
 	async function loadMorePosts() {
 		if (isLoading || allLoaded) return;
 		isLoading = true;
@@ -478,6 +497,7 @@
 						}
 						// Global feed exhausted
 						allLoaded = true;
+						insertEndMessage();
 						observer.disconnect();
 						break;
 					}
@@ -510,6 +530,7 @@
 						const serverTotalPages = parseInt(totalPagesHeader, 10);
 						if (nextPage >= serverTotalPages) {
 							allLoaded = true;
+							insertEndMessage();
 							observer.disconnect();
 						}
 					}
@@ -529,6 +550,7 @@
 		} catch (err) {
 			console.error('[tacobout] Failed to load posts:', err);
 			allLoaded = true;
+			insertEndMessage();
 			observer.disconnect();
 		} finally {
 			isLoading = false;
@@ -574,6 +596,8 @@
 
   if (!allLoaded) {
     observer.observe(sentinel);
+  } else {
+    insertEndMessage();
   }
 
   /* ============================================

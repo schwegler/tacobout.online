@@ -1822,3 +1822,35 @@ body.author .tacobout-card-inner {
 .wp-block-navigation__responsive-container.is-menu-open {
 	padding-top: 48px !important;
 }
+/* ============================
+   END OF FEED MESSAGE
+   ============================ */
+.tacobout-end-message {
+	grid-column: 1 / -1;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	padding: 2.5rem 0 1.5rem;
+	animation: tacobout-fade-in 0.5s ease;
+}
+
+.tacobout-end-message-label {
+	display: flex;
+	align-items: center;
+	gap: 0.5rem;
+	white-space: nowrap;
+	background: var(--taco-surface);
+	border: 1px solid var(--taco-border);
+	border-radius: 100px;
+	padding: 0.375rem 1rem;
+	font-size: 0.8rem;
+	font-weight: 600;
+	letter-spacing: 0.03em;
+	color: var(--taco-muted);
+	box-shadow: var(--taco-shadow);
+}
+
+.tacobout-end-message-label svg {
+	color: var(--taco-accent);
+	flex-shrink: 0;
+}
