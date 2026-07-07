@@ -419,7 +419,12 @@ add_action( 'wp_enqueue_scripts', 'tacobout_enqueue_alt_badge' );
  */
 function tacobout_enable_mastodon_apps_login_redirect( $redirect_to, $requested_redirect_to ) {
 	if ( isset( $_REQUEST['action'] ) && 'enable-mastodon-apps-authenticate' === $_REQUEST['action'] ) {
-		return $requested_redirect_to;
+		$sanitized_redirect = wp_sanitize_redirect( $requested_redirect_to );
+		$scheme = wp_parse_url( $sanitized_redirect, PHP_URL_SCHEME );
+		if ( in_array( strtolower( (string) $scheme ), array( 'javascript', 'vbscript', 'data' ), true ) ) {
+			return $redirect_to;
+		}
+		return $sanitized_redirect;
 	}
 	return $redirect_to;
 }
