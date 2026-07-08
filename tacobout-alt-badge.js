@@ -84,6 +84,7 @@
     }
 
     // Create an observer to watch for new images added to the DOM (like via infinite scroll)
+    let altBadgeTimeout;
     const observer = new MutationObserver((mutations) => {
         let shouldRun = false;
         for (const mutation of mutations) {
@@ -93,7 +94,11 @@
             }
         }
         if (shouldRun) {
-            attachAltBadges();
+            // ⚡ Bolt: Debounce the expensive attachAltBadges DOM traversal.
+            // This prevents main-thread blocking and layout thrashing during
+            // rapid image loading or infinite scroll batch appends.
+            clearTimeout(altBadgeTimeout);
+            altBadgeTimeout = setTimeout(attachAltBadges, 100);
         }
     });
 
