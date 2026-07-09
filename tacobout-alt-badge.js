@@ -84,6 +84,9 @@
     }
 
     // Create an observer to watch for new images added to the DOM (like via infinite scroll)
+    // ⚡ Bolt: Debounce the observer callback to prevent layout thrashing and main-thread blocking
+    // when multiple DOM nodes are appended at once (e.g., during infinite scroll).
+    let debounceTimer;
     const observer = new MutationObserver((mutations) => {
         let shouldRun = false;
         for (const mutation of mutations) {
@@ -93,7 +96,10 @@
             }
         }
         if (shouldRun) {
-            attachAltBadges();
+            clearTimeout(debounceTimer);
+            debounceTimer = setTimeout(() => {
+                attachAltBadges();
+            }, 100);
         }
     });
 
