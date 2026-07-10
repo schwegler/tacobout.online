@@ -83,6 +83,21 @@
         attachAltBadges();
     }
 
+    // Debounce function to prevent main-thread blocking during rapid DOM updates
+    function debounce(func, wait) {
+        let timeout;
+        return function executedFunction(...args) {
+            const later = () => {
+                clearTimeout(timeout);
+                func(...args);
+            };
+            clearTimeout(timeout);
+            timeout = setTimeout(later, wait);
+        };
+    }
+
+    const debouncedAttachAltBadges = debounce(attachAltBadges, 150);
+
     // Create an observer to watch for new images added to the DOM (like via infinite scroll)
     const observer = new MutationObserver((mutations) => {
         let shouldRun = false;
@@ -93,7 +108,7 @@
             }
         }
         if (shouldRun) {
-            attachAltBadges();
+            debouncedAttachAltBadges();
         }
     });
 
