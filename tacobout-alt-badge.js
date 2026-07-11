@@ -83,6 +83,23 @@
         attachAltBadges();
     }
 
+    // Debounce function to prevent layout thrashing and main-thread blocking from frequent DOM mutations
+    function debounce(func, wait) {
+        let timeout;
+        return function () {
+            const context = this;
+            const args = arguments;
+            const later = function () {
+                timeout = null;
+                func.apply(context, args);
+            };
+            clearTimeout(timeout);
+            timeout = setTimeout(later, wait);
+        };
+    }
+
+    const debouncedAttachAltBadges = debounce(attachAltBadges, 150);
+
     // Create an observer to watch for new images added to the DOM (like via infinite scroll)
     const observer = new MutationObserver((mutations) => {
         let shouldRun = false;
@@ -93,7 +110,7 @@
             }
         }
         if (shouldRun) {
-            attachAltBadges();
+            debouncedAttachAltBadges();
         }
     });
 
