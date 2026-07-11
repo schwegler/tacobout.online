@@ -418,8 +418,18 @@ add_action( 'wp_enqueue_scripts', 'tacobout_enqueue_alt_badge' );
  * Prevent login redirection plugins from breaking the Enable Mastodon Apps OAuth flow.
  */
 function tacobout_enable_mastodon_apps_login_redirect( $redirect_to, $requested_redirect_to ) {
+	// phpcs:ignore WordPress.Security.NonceVerification.Recommended
 	if ( isset( $_REQUEST['action'] ) && 'enable-mastodon-apps-authenticate' === $_REQUEST['action'] ) {
-		return $requested_redirect_to;
+		$sanitized_redirect = wp_sanitize_redirect( $requested_redirect_to );
+		$scheme = wp_parse_url( $sanitized_redirect, PHP_URL_SCHEME );
+
+		// Block dangerous schemes
+		$blocked_schemes = array( 'javascript', 'vbscript', 'data' );
+		if ( $scheme && in_array( strtolower( $scheme ), $blocked_schemes, true ) ) {
+			return $redirect_to;
+		}
+
+		return $sanitized_redirect;
 	}
 	return $redirect_to;
 }
