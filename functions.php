@@ -4,7 +4,8 @@
  * A personal magazine theme with deep Bluesky/ATProto integration.
  */
 
-if ( ! defined( 'ABSPATH' ) ) { exit; }
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; }
 
 if ( ! function_exists( 'tacobout_support' ) ) :
 	function tacobout_support() {
@@ -15,15 +16,18 @@ if ( ! function_exists( 'tacobout_support' ) ) :
 		add_theme_support( 'post-thumbnails' );
 
 		// Tumblog post formats
-		add_theme_support( 'post-formats', array(
-			'status',
-			'image',
-			'video',
-			'quote',
-			'link',
-			'audio',
-			'gallery',
-		) );
+		add_theme_support(
+			'post-formats',
+			array(
+				'status',
+				'image',
+				'video',
+				'quote',
+				'link',
+				'audio',
+				'gallery',
+			)
+		);
 	}
 endif;
 add_action( 'after_setup_theme', 'tacobout_support' );
@@ -57,11 +61,11 @@ add_action( 'wp_enqueue_scripts', 'tacobout_enqueue_styles' );
 function tacobout_resource_hints( $urls, $relation_type ) {
 	if ( wp_style_is( 'tacobout-google-fonts', 'queue' ) && 'preconnect' === $relation_type ) {
 		$urls[] = array(
-			'href'        => 'https://fonts.googleapis.com',
+			'href' => 'https://fonts.googleapis.com',
 			'crossorigin',
 		);
 		$urls[] = array(
-			'href'        => 'https://fonts.gstatic.com',
+			'href' => 'https://fonts.gstatic.com',
 			'crossorigin',
 		);
 	}
@@ -109,10 +113,13 @@ add_filter( 'post_class', 'tacobout_post_class', 10, 3 );
  * Register custom block styles
  */
 function tacobout_register_block_styles() {
-	register_block_style( 'core/post-template', array(
-		'name'  => 'tacobout-magazine',
-		'label' => 'Magazine Grid',
-	) );
+	register_block_style(
+		'core/post-template',
+		array(
+			'name'  => 'tacobout-magazine',
+			'label' => 'Magazine Grid',
+		)
+	);
 }
 add_action( 'init', 'tacobout_register_block_styles' );
 
@@ -145,19 +152,21 @@ function tacobout_clear_saved_templates() {
 	$template_types = array( 'wp_template', 'wp_template_part' );
 	$stylesheet     = get_stylesheet();
 	foreach ( $template_types as $post_type ) {
-		$posts = get_posts( array(
-			'post_type'   => $post_type,
-			'post_status' => 'any',
-			'numberposts' => -1,
-			'tax_query'   => array(
-				array(
-					'taxonomy' => 'wp_theme',
-					'field'    => 'slug',
-					'terms'    => $stylesheet,
+		$posts = get_posts(
+			array(
+				'post_type'   => $post_type,
+				'post_status' => 'any',
+				'numberposts' => -1,
+				'tax_query'   => array(
+					array(
+						'taxonomy' => 'wp_theme',
+						'field'    => 'slug',
+						'terms'    => $stylesheet,
+					),
 				),
-			),
-			'fields'      => 'ids',
-		) );
+				'fields'      => 'ids',
+			)
+		);
 		foreach ( $posts as $post_id ) {
 			wp_delete_post( $post_id, true );
 		}
@@ -274,14 +283,21 @@ function tacobout_interaction_badge( $block_content, $block ) {
 	$block_content = preg_replace_callback(
 		'/<li\s[^>]*class="[^"]*wp-block-post[^"]*"[^>]*>/i',
 		function ( $matches ) {
-		// Extract post ID from the post-{id} class (WordPress's get_post_class format)
+			// Extract post ID from the post-{id} class (WordPress's get_post_class format)
 			if ( preg_match( '/[ "]post-([0-9]+)[ "]/', $matches[0], $id_match ) ) {
 				$post_id = intval( $id_match[1] );
 			} else {
 				return $matches[0];
 			}
 
-			$count = (int) get_comments( array( 'post_id' => $post_id, 'status' => 'approve', 'count' => true, 'type' => 'all' ) );
+			$count = (int) get_comments(
+				array(
+					'post_id' => $post_id,
+					'status'  => 'approve',
+					'count'   => true,
+					'type'    => 'all',
+				)
+			);
 			if ( $count < 1 ) {
 				return $matches[0];
 			}
@@ -314,28 +330,43 @@ add_filter( 'render_block_core/post-template', 'tacobout_interaction_badge', 10,
  * Exposes post_format and interaction_count on the posts endpoint.
  */
 function tacobout_register_rest_fields() {
-	register_rest_field( 'post', 'post_format', array(
-		'get_callback' => function ( $post ) {
-			$format = get_post_format( $post['id'] );
-			return $format ? $format : 'standard';
-		},
-		'schema' => array(
-			'description' => 'Post format (standard, video, audio, etc.)',
-			'type'        => 'string',
-			'context'     => array( 'view' ),
-		),
-	) );
+	register_rest_field(
+		'post',
+		'post_format',
+		array(
+			'get_callback' => function ( $post ) {
+				$format = get_post_format( $post['id'] );
+				return $format ? $format : 'standard';
+			},
+			'schema'       => array(
+				'description' => 'Post format (standard, video, audio, etc.)',
+				'type'        => 'string',
+				'context'     => array( 'view' ),
+			),
+		)
+	);
 
-	register_rest_field( 'post', 'interaction_count', array(
-		'get_callback' => function ( $post ) {
-			return (int) get_comments( array( 'post_id' => $post['id'], 'status' => 'approve', 'count' => true, 'type' => 'all' ) );
-		},
-		'schema' => array(
-			'description' => 'Total interaction count (comments + fediverse + bluesky)',
-			'type'        => 'integer',
-			'context'     => array( 'view' ),
-		),
-	) );
+	register_rest_field(
+		'post',
+		'interaction_count',
+		array(
+			'get_callback' => function ( $post ) {
+				return (int) get_comments(
+					array(
+						'post_id' => $post['id'],
+						'status'  => 'approve',
+						'count'   => true,
+						'type'    => 'all',
+					)
+				);
+			},
+			'schema'       => array(
+				'description' => 'Total interaction count (comments + fediverse + bluesky)',
+				'type'        => 'integer',
+				'context'     => array( 'view' ),
+			),
+		)
+	);
 }
 add_action( 'rest_api_init', 'tacobout_register_rest_fields' );
 
@@ -343,7 +374,6 @@ add_action( 'rest_api_init', 'tacobout_register_rest_fields' );
  * Enqueue infinite scroll + scroll-to-top script on the home page.
  */
 function tacobout_enqueue_infinite_scroll() {
-
 
 	wp_enqueue_script(
 		'tacobout-infinite-scroll',
@@ -361,41 +391,45 @@ function tacobout_enqueue_infinite_scroll() {
 	// Detect taxonomy archive context for the overflow separator feature.
 	// On category/tag pages, the initial WP query shows filtered posts; infinite
 	// scroll will mirror that filter until exhausted, then show the global feed.
-	$term_id         = null;
-	$term_name       = null;
-	$term_type       = null; // 'categories' or 'tags' — WP REST API filter param name
-	$term_rest_field = null; // REST API field name to filter by
+	$term_id          = null;
+	$term_name        = null;
+	$term_type        = null; // 'categories' or 'tags' — WP REST API filter param name
+	$term_rest_field  = null; // REST API field name to filter by
 	$term_total_pages = null;
 
 	if ( is_category() ) {
-		$queried        = get_queried_object();
-		$term_id        = $queried->term_id;
-		$term_name      = $queried->name;
-		$term_type      = 'categories';
-		$term_rest_field = 'categories';
-		$term_count     = $queried->count;
+		$queried          = get_queried_object();
+		$term_id          = $queried->term_id;
+		$term_name        = $queried->name;
+		$term_type        = 'categories';
+		$term_rest_field  = 'categories';
+		$term_count       = $queried->count;
 		$term_total_pages = ceil( $term_count / $per_page );
 	} elseif ( is_tag() ) {
-		$queried        = get_queried_object();
-		$term_id        = $queried->term_id;
-		$term_name      = $queried->name;
-		$term_type      = 'tags';
-		$term_rest_field = 'tags';
-		$term_count     = $queried->count;
+		$queried          = get_queried_object();
+		$term_id          = $queried->term_id;
+		$term_name        = $queried->name;
+		$term_type        = 'tags';
+		$term_rest_field  = 'tags';
+		$term_count       = $queried->count;
 		$term_total_pages = ceil( $term_count / $per_page );
 	}
 
-	wp_localize_script( 'tacobout-infinite-scroll', 'tacoboutScroll', array(
-		'restUrl'         => esc_url_raw( rest_url( 'wp/v2/posts' ) ),
-		'nonce'           => wp_create_nonce( 'wp_rest' ),
-		'perPage'         => $per_page,
-		'totalPages'      => $total_pages,
-		'siteUrl'         => esc_url( home_url() ),
-		'termId'          => $term_id,
-		'termName'        => $term_name ? esc_html( $term_name ) : null,
-		'termType'        => $term_rest_field,
-		'termTotalPages'  => $term_total_pages,
-	) );
+	wp_localize_script(
+		'tacobout-infinite-scroll',
+		'tacoboutScroll',
+		array(
+			'restUrl'        => esc_url_raw( rest_url( 'wp/v2/posts' ) ),
+			'nonce'          => wp_create_nonce( 'wp_rest' ),
+			'perPage'        => $per_page,
+			'totalPages'     => $total_pages,
+			'siteUrl'        => esc_url( home_url() ),
+			'termId'         => $term_id,
+			'termName'       => $term_name ? esc_html( $term_name ) : null,
+			'termType'       => $term_rest_field,
+			'termTotalPages' => $term_total_pages,
+		)
+	);
 }
 add_action( 'wp_enqueue_scripts', 'tacobout_enqueue_infinite_scroll' );
 
@@ -419,7 +453,18 @@ add_action( 'wp_enqueue_scripts', 'tacobout_enqueue_alt_badge' );
  */
 function tacobout_enable_mastodon_apps_login_redirect( $redirect_to, $requested_redirect_to ) {
 	if ( isset( $_REQUEST['action'] ) && 'enable-mastodon-apps-authenticate' === $_REQUEST['action'] ) {
-		return $requested_redirect_to;
+		// Sanitize the requested redirect URL first
+		$sanitized_redirect = wp_sanitize_redirect( $requested_redirect_to );
+
+		// Parse the scheme to prevent XSS via dangerous schemes (javascript:, vbscript:, data:)
+		$scheme = wp_parse_url( $sanitized_redirect, PHP_URL_SCHEME );
+
+		// If scheme is empty it's relative which is fine, but we block dangerous ones
+		if ( in_array( strtolower( (string) $scheme ), array( 'javascript', 'vbscript', 'data' ), true ) ) {
+			return $redirect_to; // Fallback to safe default
+		}
+
+		return $sanitized_redirect;
 	}
 	return $redirect_to;
 }
