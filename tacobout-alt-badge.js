@@ -84,6 +84,10 @@
     }
 
     // Create an observer to watch for new images added to the DOM (like via infinite scroll)
+    // ⚡ Bolt: Debounce MutationObserver to prevent main-thread blocking during rapid DOM
+    // mutations (e.g., infinite scrolling). This batches expensive querySelectorAll calls,
+    // significantly reducing CPU usage and layout thrashing.
+    let debounceTimer;
     const observer = new MutationObserver((mutations) => {
         let shouldRun = false;
         for (const mutation of mutations) {
@@ -93,7 +97,8 @@
             }
         }
         if (shouldRun) {
-            attachAltBadges();
+            clearTimeout(debounceTimer);
+            debounceTimer = setTimeout(attachAltBadges, 100);
         }
     });
 
