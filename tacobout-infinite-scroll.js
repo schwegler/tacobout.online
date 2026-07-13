@@ -264,6 +264,7 @@
   endMessage.style.cssText =
     "text-align: center; padding: 2rem 0; font-size: 0.875rem; display: none;";
   endMessage.textContent = "You have reached the end of the feed.";
+  endMessage.setAttribute("aria-live", "polite");
 
   // Insert sentinel, spinner, and end message after the grid's parent query block
   const queryBlock = grid.closest(".wp-block-query");
@@ -275,6 +276,10 @@
     grid.parentNode.insertBefore(endMessage, grid.nextSibling);
     grid.parentNode.insertBefore(spinner, endMessage);
     grid.parentNode.insertBefore(sentinel, spinner);
+  }
+
+  if (allLoaded) {
+    endMessage.style.display = 'block';
   }
 
   /* ============================================
@@ -478,6 +483,7 @@
 						}
 						// Global feed exhausted
 						allLoaded = true;
+						endMessage.style.display = 'block';
 						observer.disconnect();
 						break;
 					}
@@ -510,6 +516,7 @@
 						const serverTotalPages = parseInt(totalPagesHeader, 10);
 						if (nextPage >= serverTotalPages) {
 							allLoaded = true;
+							endMessage.style.display = 'block';
 							observer.disconnect();
 						}
 					}
@@ -529,6 +536,8 @@
 		} catch (err) {
 			console.error('[tacobout] Failed to load posts:', err);
 			allLoaded = true;
+			endMessage.textContent = 'Failed to load more posts.';
+			endMessage.style.display = 'block';
 			observer.disconnect();
 		} finally {
 			isLoading = false;
