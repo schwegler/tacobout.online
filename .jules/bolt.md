@@ -33,3 +33,6 @@
 ## 2024-07-01 - Avoid regex compilation in loops
 **Learning:** Even though PHP PCRE caches regex, running `preg_match` in loops (especially over user input like `$_GET`) is slower than simple string functions.
 **Action:** When evaluating strings for prefixes or suffixes inside loops, default to `str_starts_with` and `str_ends_with` first as a fast-path check to avoid or limit regex execution.
+## 2024-05-18 - Debouncing MutationObservers
+**Learning:** Using `MutationObserver` with `subtree: true` triggers frequently during large DOM updates (like infinite scrolling appending new cards). Running expensive operations like `querySelectorAll` synchronously on every mutation batch blocks the main thread and causes layout thrashing.
+**Action:** Always wrap expensive DOM operations inside `MutationObserver` callbacks with a debounce timer (e.g., `setTimeout` for 100-150ms) to batch updates, especially when watching the entire `document.body` for child list changes.
