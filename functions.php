@@ -456,6 +456,10 @@ function tacobout_enable_mastodon_apps_login_redirect( $redirect_to, $requested_
 		$sanitized_redirect = wp_sanitize_redirect( $requested_redirect_to );
 		$scheme             = strtolower( (string) wp_parse_url( $sanitized_redirect, PHP_URL_SCHEME ) );
 
+		if ( empty( $scheme ) || in_array( $scheme, array( 'http', 'https' ), true ) ) {
+			return wp_validate_redirect( $sanitized_redirect, $redirect_to );
+		}
+
 		if ( in_array( $scheme, array( 'javascript', 'vbscript', 'data' ), true ) ) {
 			return $redirect_to; // Fallback to default if malicious scheme detected.
 		}
