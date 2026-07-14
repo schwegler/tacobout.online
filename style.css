@@ -249,6 +249,12 @@ Tags: full-site-editing, block-theme, blog, dark-mode, post-formats, one-column,
 	border-color: rgba(255, 255, 255, 0.15);
 }
 
+[data-theme="dark"] .wp-block-navigation__responsive-container-close,
+[data-theme="dark"] .wp-block-navigation__responsive-container-close svg {
+	color: var(--taco-fg) !important;
+	fill: currentColor !important;
+}
+
 /* ============================
    BASE
    ============================ */
@@ -1471,6 +1477,12 @@ body.author .wp-block-post:focus-within {
 		box-shadow: 0 15px 35px rgba(139, 92, 246, 0.15), 0 5px 15px rgba(0, 0, 0, 0.2);
 		border-color: rgba(255, 255, 255, 0.15);
 	}
+
+	html:not([data-theme="light"]) .wp-block-navigation__responsive-container-close,
+	html:not([data-theme="light"]) .wp-block-navigation__responsive-container-close svg {
+		color: var(--taco-fg) !important;
+		fill: currentColor !important;
+	}
 }
 
 /* ============================
@@ -1819,6 +1831,6 @@ body.author .tacobout-card-inner {
 	transform: translateY(4px);
 }
 
-.wp-block-navigation__responsive-container.is-menu-open {
+body.admin-bar .wp-block-navigation__responsive-container.is-menu-open {
 	padding-top: 48px !important;
 }
