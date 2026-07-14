@@ -25,3 +25,6 @@
 ## 2026-07-13 - Explicit Feedback for Infinite Scroll End
 **Learning:** When implementing infinite scroll, users (especially screen reader users) can be left wondering if they've reached the bottom of a page, if there was a network error, or if there is simply no more content. Explicit visual and audible (`aria-live="polite"`) feedback when the feed reaches its conclusion is critical to assure users that they have seen all available content.
 **Action:** Always provide an end-of-feed message and ensure it explicitly reveals visually (`display: block`) and audibly (`aria-live`) when content is exhausted.
+## 2024-07-14 - Redundant announcement of decorative SVGs
+**Learning:** Decorative SVG icons inside buttons that already have an `aria-label` will be announced by screen readers as "unlabelled image/graphic", creating a confusing and redundant experience.
+**Action:** Always add `aria-hidden="true"` to decorative SVGs within interactive elements to prevent them from being announced by screen readers.
