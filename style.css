@@ -893,7 +893,21 @@ body.home:not(.paged) .tacobout-magazine-grid .wp-block-post:first-child .wp-blo
 /* ============================
    FEATURED IMAGE
    ============================ */
+.wp-block-post-featured-image a {
+	display: block;
+	width: 100%;
+	height: 100%;
+}
+
+.wp-block-post-featured-image .tacobout-alt-wrapper {
+	width: 100%;
+	height: 100%;
+}
+
 .wp-block-post-featured-image img {
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
 	border-radius: var(--taco-radius);
 	transition: transform var(--taco-transition), box-shadow var(--taco-transition);
 }
@@ -1693,143 +1707,7 @@ body.author .tacobout-card-inner {
 	transform: translateY(4px);
 }
 
-/* ============================================
-   ALT TEXT BADGE
-   ============================================ */
-.tacobout-alt-wrapper {
-	position: relative;
-	display: block;
-	/* Ensures wrapper behaves like a block element, taking full width if necessary */
-	width: fit-content;
-	max-width: 100%;
-}
 
-.tacobout-alt-wrapper img {
-	display: block;
-	max-width: 100%;
-	height: auto;
-}
-
-.tacobout-alt-badge {
-	position: absolute;
-	bottom: 8px;
-	right: 8px;
-	background: rgba(0, 0, 0, 0.7);
-	color: #fff;
-	border: 1px solid rgba(255, 255, 255, 0.2);
-	border-radius: 4px;
-	padding: 2px 6px;
-	font-size: 0.65rem;
-	font-weight: 700;
-	letter-spacing: 0.5px;
-	cursor: pointer;
-	z-index: 10;
-	transition: var(--taco-transition);
-	backdrop-filter: blur(4px);
-}
-
-.tacobout-alt-badge:hover,
-.tacobout-alt-badge:focus-visible {
-	background: rgba(0, 0, 0, 0.9);
-	transform: scale(1.05);
-	outline: 2px solid var(--taco-accent);
-	outline-offset: 2px;
-}
-
-.tacobout-alt-tooltip {
-	position: absolute;
-	bottom: 36px;
-	right: 8px;
-	background: var(--taco-surface);
-	color: var(--taco-fg);
-	padding: 12px;
-	border-radius: var(--taco-radius);
-	font-size: 0.875rem;
-	line-height: 1.4;
-	max-width: 280px;
-	width: max-content;
-	z-index: 20;
-	box-shadow: var(--taco-shadow-lg);
-	border: 1px solid var(--taco-border);
-	opacity: 1;
-	transform: translateY(0);
-	transition: opacity 0.2s ease, transform 0.2s ease;
-}
-
-.tacobout-alt-tooltip[hidden] {
-	display: none;
-	opacity: 0;
-	transform: translateY(4px);
-}
-
-/* ============================================
-   ALT TEXT BADGE
-   ============================================ */
-.tacobout-alt-wrapper {
-	position: relative;
-	display: block;
-	/* Ensures wrapper behaves like a block element, taking full width if necessary */
-	width: fit-content;
-	max-width: 100%;
-}
-
-.tacobout-alt-wrapper img {
-	display: block;
-	max-width: 100%;
-	height: auto;
-}
-
-.tacobout-alt-badge {
-	position: absolute;
-	bottom: 8px;
-	right: 8px;
-	background: rgba(0, 0, 0, 0.7);
-	color: #fff;
-	border: 1px solid rgba(255, 255, 255, 0.2);
-	border-radius: 4px;
-	padding: 2px 6px;
-	font-size: 0.65rem;
-	font-weight: 700;
-	letter-spacing: 0.5px;
-	cursor: pointer;
-	z-index: 10;
-	transition: var(--taco-transition);
-	backdrop-filter: blur(4px);
-}
-
-.tacobout-alt-badge:hover,
-.tacobout-alt-badge:focus-visible {
-	background: rgba(0, 0, 0, 0.9);
-	transform: scale(1.05);
-	outline: 2px solid var(--taco-accent);
-	outline-offset: 2px;
-}
-
-.tacobout-alt-tooltip {
-	position: absolute;
-	bottom: 36px;
-	right: 8px;
-	background: var(--taco-surface);
-	color: var(--taco-fg);
-	padding: 12px;
-	border-radius: var(--taco-radius);
-	font-size: 0.875rem;
-	line-height: 1.4;
-	max-width: 280px;
-	width: max-content;
-	z-index: 20;
-	box-shadow: var(--taco-shadow-lg);
-	border: 1px solid var(--taco-border);
-	opacity: 1;
-	transform: translateY(0);
-	transition: opacity 0.2s ease, transform 0.2s ease;
-}
-
-.tacobout-alt-tooltip[hidden] {
-	display: none;
-	opacity: 0;
-	transform: translateY(4px);
-}
 
 body.admin-bar .wp-block-navigation__responsive-container.is-menu-open {
 	padding-top: 48px !important;

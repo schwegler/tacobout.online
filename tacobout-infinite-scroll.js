@@ -310,10 +310,10 @@
 				media.source_url;
 			const imgAlt = media.alt_text || "";
 			featuredImageHtml = `
-				<figure class="wp-block-post-featured-image">
+				<figure class="wp-block-post-featured-image" style="aspect-ratio:16/9">
 					<a href="${escHtml(post.link)}">
 						<img src="${escHtml(imgSrc)}" alt="${escHtml(imgAlt)}" loading="lazy"
-							style="border-radius:12px;object-fit:cover;width:100%" />
+							style="border-radius:12px;object-fit:cover;width:100%;height:100%" />
 					</a>
 				</figure>
 			`;
