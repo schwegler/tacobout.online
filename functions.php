@@ -372,8 +372,14 @@ add_action( 'rest_api_init', 'tacobout_register_rest_fields' );
 
 /**
  * Enqueue infinite scroll + scroll-to-top script on the home page.
+ * Guarded against loading inside the Site Editor's preview iframe,
+ * which would run heavy observers/fetch logic on top of the editor's
+ * React app and crash Safari.
  */
 function tacobout_enqueue_infinite_scroll() {
+	if ( isset( $_GET['wp_theme_preview'] ) || is_admin() ) {
+		return;
+	}
 
 	wp_enqueue_script(
 		'tacobout-infinite-scroll',
@@ -435,9 +441,14 @@ add_action( 'wp_enqueue_scripts', 'tacobout_enqueue_infinite_scroll' );
 
 
 /**
- * Enqueue script for ALT text badges on images
+ * Enqueue script for ALT text badges on images.
+ * Guarded against loading inside the Site Editor's preview iframe.
  */
 function tacobout_enqueue_alt_badge() {
+	if ( isset( $_GET['wp_theme_preview'] ) || is_admin() ) {
+		return;
+	}
+
 	wp_enqueue_script(
 		'tacobout-alt-badge',
 		get_template_directory_uri() . '/tacobout-alt-badge.js',

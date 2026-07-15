@@ -10,6 +10,11 @@
 (function () {
 	"use strict";
 
+	// Defense-in-depth: don't run inside the Site Editor's preview iframe
+	if (window.location.search.indexOf('wp_theme_preview') !== -1) {
+		return;
+	}
+
 	/* ============================================
 		 THEME TOGGLE — run before any layout to avoid flash
 		 ============================================ */
@@ -64,7 +69,7 @@
 
 	function layoutMasonryGrid() {
 		// Only run fallback if CSS grid masonry isn't supported natively
-		if (CSS.supports && CSS.supports('grid-template-rows', 'masonry')) return;
+		if (typeof CSS !== 'undefined' && CSS.supports && CSS.supports('grid-template-rows', 'masonry')) return;
 
 		const rowHeight = 10; // Use 10px instead of 1px to avoid the 10000 limit
 		grid.style.gridAutoRows = rowHeight + 'px';
@@ -117,7 +122,11 @@
 			const anchorOffsetAfter = anchorEl.getBoundingClientRect().top;
 			const drift = anchorOffsetAfter - anchorOffsetBefore;
 			if (Math.abs(drift) > 1) {
-				window.scrollBy({ top: drift, behavior: 'instant' });
+				try {
+					window.scrollBy({ top: drift, behavior: 'instant' });
+				} catch (e) {
+					window.scrollBy(0, drift);
+				}
 			}
 		}
 
@@ -130,7 +139,7 @@
 	 * cards are never reset, so the viewport never jumps.
 	 */
 	function layoutNewItems(newItems) {
-		if (CSS.supports && CSS.supports('grid-template-rows', 'masonry')) return;
+		if (typeof CSS !== 'undefined' && CSS.supports && CSS.supports('grid-template-rows', 'masonry')) return;
 		if (!newItems || newItems.length === 0) return;
 
 		const rowHeight = 10;
