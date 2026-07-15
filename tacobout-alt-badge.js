@@ -22,6 +22,7 @@
 
             const badge = document.createElement('button');
             badge.className = 'tacobout-alt-badge';
+            badge.setAttribute('type', 'button');
             badge.textContent = 'ALT';
             badge.setAttribute('aria-label', 'Toggle ALT text');
             badge.setAttribute('aria-expanded', 'false');

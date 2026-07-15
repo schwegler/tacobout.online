@@ -590,6 +590,7 @@
 		 ============================================ */
 	const fab = document.createElement("button");
 	fab.className = "tacobout-scroll-top";
+	fab.setAttribute("type", "button");
 	fab.setAttribute("aria-label", "Scroll to top");
 	fab.setAttribute("title", "Scroll to top");
 	fab.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="18 15 12 9 6 15"></polyline></svg>`;
@@ -645,6 +646,7 @@
 	const themeFab = document.createElement('button');
 	themeFab.className = 'tacobout-theme-toggle';
 	themeFab.id = 'tacobout-theme-toggle';
+	themeFab.setAttribute('type', 'button');
 	document.body.appendChild(themeFab);
 
 	function getCurrentTheme() {
