@@ -2,7 +2,7 @@
  * Tacobout Infinite Scroll + Scroll-to-Top + Theme Toggle
  *
  * - IntersectionObserver-based infinite scroll using the WP REST API
- * - Two-phase fetch on taxonomy pages: filtered posts → separator → global feed
+ * - Pagination via WP REST API for standard and taxonomy archives
  * - Floating scroll-to-top button
  * - Theme toggle (dark/light) with localStorage persistence
  * - Progressive enhancement: pagination remains functional without JS
@@ -31,18 +31,13 @@
 	const config = window.tacoboutScroll;
 	if (!config) return;
 
-	// Two-phase fetch state for taxonomy archives
+	// Fetch state
 	const hasTerm = !!(config.termId && config.termType);
-	let termPhase = hasTerm; // true = still fetching filtered term posts
-	let termCurrentPage = 1;
-	const termTotalPages = hasTerm ? parseInt(config.termTotalPages, 10) || 1 : 0;
-	let separatorInserted = false;
-
-	let currentPage = hasTerm ? 0 : 1;
+	let currentPage = 1;
 	const totalPages = parseInt(config.totalPages, 10);
 	const perPage = parseInt(config.perPage, 10);
 	let isLoading = false;
-	let allLoaded = hasTerm ? false : (currentPage >= totalPages);
+	let allLoaded = (currentPage >= totalPages);
 
 
 
@@ -53,7 +48,6 @@
 	if (!grid) return;
 
 	// Keep track of posts we've already displayed to prevent duplicates
-	// (especially when transitioning from a term-filtered fetch to a global fetch)
 	const seenPostIds = new Set();
 	grid.querySelectorAll('.wp-block-post').forEach(el => {
 		const classMatch = el.className.match(/\bpost-(\d+)\b/);
@@ -431,28 +425,6 @@
 		 FETCH + APPEND
 		 ============================================ */
 
-	/**
-	 * Build and insert the overflow separator between taxonomy posts and the
-	 * global "everything else" feed.
-	 */
-	function insertOverflowSeparator() {
-		if (separatorInserted) return;
-		separatorInserted = true;
-
-		const sep = document.createElement('li');
-		sep.className = 'tacobout-overflow-separator';
-		sep.setAttribute('aria-hidden', 'true');
-		sep.innerHTML = `
-			<span class="tacobout-overflow-separator-label">
-				<svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-				You've seen all <strong>${escHtml(config.termName)}</strong> posts &mdash; here's everything else
-			</span>
-		`;
-		grid.appendChild(sep);
-		// Separator spans both columns — trigger a layout pass
-		setTimeout(layoutMasonryGrid, 50);
-	}
-
 	async function loadMorePosts() {
 		if (isLoading || allLoaded) return;
 		isLoading = true;
@@ -467,14 +439,10 @@
 				url.searchParams.set('_embed', 'wp:featuredmedia,wp:term');
 				url.searchParams.set('_fields', 'id,date,link,title,excerpt,content,post_format,interaction_count,_links,_embedded');
 
-				let nextPage;
-				if (termPhase) {
-					nextPage = termCurrentPage + 1;
-					url.searchParams.set('page', nextPage);
+				const nextPage = currentPage + 1;
+				url.searchParams.set('page', nextPage);
+				if (hasTerm) {
 					url.searchParams.set(config.termType, config.termId);
-				} else {
-					nextPage = currentPage + 1;
-					url.searchParams.set('page', nextPage);
 				}
 
 				const resp = await fetch(url.toString(), {
@@ -483,14 +451,7 @@
 
 				if (!resp.ok) {
 					if (resp.status === 400) {
-						if (termPhase) {
-							// Term posts exhausted — switch to global feed
-							termPhase = false;
-							insertOverflowSeparator();
-							// Loop around to fetch global feed immediately
-							continue;
-						}
-						// Global feed exhausted
+						// Feed exhausted
 						allLoaded = true;
 						endMessage.style.display = 'block';
 						observer.disconnect();
@@ -506,34 +467,19 @@
 				const newPosts = posts.filter(p => !seenPostIds.has(p.id));
 				newPosts.forEach(p => seenPostIds.add(p.id));
 
-				if (termPhase) {
-					termCurrentPage = nextPage;
-					if (newPosts.length > 0) {
-						const newCards = appendCards(newPosts);
-						if (window._tacoboutObserveCards) window._tacoboutObserveCards(newCards);
+				currentPage = nextPage;
+				if (totalPagesHeader) {
+					const serverTotalPages = parseInt(totalPagesHeader, 10);
+					if (nextPage >= serverTotalPages) {
+						allLoaded = true;
+						endMessage.style.display = 'block';
+						observer.disconnect();
 					}
+				}
 
-					// Check if this is the last term page
-					const serverTermPages = totalPagesHeader ? parseInt(totalPagesHeader, 10) : termTotalPages;
-					if (nextPage >= serverTermPages) {
-						termPhase = false;
-						insertOverflowSeparator();
-					}
-				} else {
-					currentPage = nextPage;
-					if (totalPagesHeader) {
-						const serverTotalPages = parseInt(totalPagesHeader, 10);
-						if (nextPage >= serverTotalPages) {
-							allLoaded = true;
-							endMessage.style.display = 'block';
-							observer.disconnect();
-						}
-					}
-
-					if (newPosts.length > 0) {
-						const newCards = appendCards(newPosts);
-						if (window._tacoboutObserveCards) window._tacoboutObserveCards(newCards);
-					}
+				if (newPosts.length > 0) {
+					const newCards = appendCards(newPosts);
+					if (window._tacoboutObserveCards) window._tacoboutObserveCards(newCards);
 				}
 
 				// If we successfully appended new posts, we can break and wait for the user to scroll.

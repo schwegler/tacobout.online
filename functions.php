@@ -389,51 +389,39 @@ function tacobout_enqueue_infinite_scroll() {
 		true // Load in footer
 	);
 
-	// Calculate total pages (global, unfiltered)
-	$per_page    = 9;
-	$total_posts = wp_count_posts()->publish;
-	$total_pages = ceil( $total_posts / $per_page );
+	$per_page = 9;
 
-	// Detect taxonomy archive context for the overflow separator feature.
-	// On category/tag pages, the initial WP query shows filtered posts; infinite
-	// scroll will mirror that filter until exhausted, then show the global feed.
-	$term_id          = null;
-	$term_name        = null;
-	$term_type        = null; // 'categories' or 'tags' — WP REST API filter param name
-	$term_rest_field  = null; // REST API field name to filter by
-	$term_total_pages = null;
+	$term_id         = null;
+	$term_rest_field = null;
 
 	if ( is_category() ) {
-		$queried          = get_queried_object();
-		$term_id          = $queried->term_id;
-		$term_name        = $queried->name;
-		$term_type        = 'categories';
-		$term_rest_field  = 'categories';
-		$term_count       = $queried->count;
-		$term_total_pages = ceil( $term_count / $per_page );
+		$queried         = get_queried_object();
+		$term_id         = $queried->term_id;
+		$term_rest_field = 'categories';
+		$term_count      = $queried->count;
+		$total_pages     = ceil( $term_count / $per_page );
 	} elseif ( is_tag() ) {
-		$queried          = get_queried_object();
-		$term_id          = $queried->term_id;
-		$term_name        = $queried->name;
-		$term_type        = 'tags';
-		$term_rest_field  = 'tags';
-		$term_count       = $queried->count;
-		$term_total_pages = ceil( $term_count / $per_page );
+		$queried         = get_queried_object();
+		$term_id         = $queried->term_id;
+		$term_rest_field = 'tags';
+		$term_count      = $queried->count;
+		$total_pages     = ceil( $term_count / $per_page );
+	} else {
+		$total_posts = wp_count_posts()->publish;
+		$total_pages = ceil( $total_posts / $per_page );
 	}
 
 	wp_localize_script(
 		'tacobout-infinite-scroll',
 		'tacoboutScroll',
 		array(
-			'restUrl'        => esc_url_raw( rest_url( 'wp/v2/posts' ) ),
-			'nonce'          => wp_create_nonce( 'wp_rest' ),
-			'perPage'        => $per_page,
-			'totalPages'     => $total_pages,
-			'siteUrl'        => esc_url( home_url() ),
-			'termId'         => $term_id,
-			'termName'       => $term_name ? esc_html( $term_name ) : null,
-			'termType'       => $term_rest_field,
-			'termTotalPages' => $term_total_pages,
+			'restUrl'    => esc_url_raw( rest_url( 'wp/v2/posts' ) ),
+			'nonce'      => wp_create_nonce( 'wp_rest' ),
+			'perPage'    => $per_page,
+			'totalPages' => $total_pages,
+			'siteUrl'    => esc_url( home_url() ),
+			'termId'     => $term_id,
+			'termType'   => $term_rest_field,
 		)
 	);
 }
