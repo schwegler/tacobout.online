@@ -36,3 +36,7 @@
 ## 2024-05-18 - Debouncing MutationObservers
 **Learning:** Using `MutationObserver` with `subtree: true` triggers frequently during large DOM updates (like infinite scrolling appending new cards). Running expensive operations like `querySelectorAll` synchronously on every mutation batch blocks the main thread and causes layout thrashing.
 **Action:** Always wrap expensive DOM operations inside `MutationObserver` callbacks with a debounce timer (e.g., `setTimeout` for 100-150ms) to batch updates, especially when watching the entire `document.body` for child list changes.
+
+## 2024-07-29 - [WordPress N+1 Queries in Render Callbacks]
+**Learning:** Using `get_comments()` with `count => true` inside repeated hooks like `render_block` filters or REST API field callbacks causes severe N+1 query performance issues because WordPress doesn't cache comment counts per post by default for custom interaction types.
+**Action:** Wrap expensive iterative DB queries like `get_comments` inside a helper function using `wp_cache_get` and `wp_cache_set` (saving to a specific cache group), and always invalidate it using a corresponding hook like `clean_post_cache`.

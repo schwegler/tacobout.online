@@ -274,7 +274,36 @@ function tacobout_pre_render_hidden_blocks( $pre_render, $parsed_block, $parent_
 add_filter( 'pre_render_block', 'tacobout_pre_render_hidden_blocks', 10, 3 );
 
 /**
- * Inject an interaction badge into each post card in query loops.
+ * Helper function to get interaction count with caching to prevent N+1 queries.
+ */
+function tacobout_get_interaction_count( $post_id ) {
+	$cache_key = 'tacobout_interactions_' . $post_id;
+	$count     = wp_cache_get( $cache_key, 'tacobout' );
+
+	if ( false === $count ) {
+		$count = (int) get_comments(
+			array(
+				'post_id' => $post_id,
+				'status'  => 'approve',
+				'count'   => true,
+				'type'    => 'all',
+			)
+		);
+		wp_cache_set( $cache_key, $count, 'tacobout' );
+	}
+
+	return $count;
+}
+
+/**
+ * Invalidate interaction count cache when post cache is cleaned.
+ */
+function tacobout_invalidate_interaction_count_cache( $post_id ) {
+	wp_cache_delete( 'tacobout_interactions_' . $post_id, 'tacobout' );
+}
+add_action( 'clean_post_cache', 'tacobout_invalidate_interaction_count_cache' );
+
+/** * Inject an interaction badge into each post card in query loops.
  * Shows total comments (WP + ActivityPub + Atmosphere — all stored as WP comments).
  * Badge is hidden when count is 0.
  */
@@ -290,14 +319,7 @@ function tacobout_interaction_badge( $block_content, $block ) {
 				return $matches[0];
 			}
 
-			$count = (int) get_comments(
-				array(
-					'post_id' => $post_id,
-					'status'  => 'approve',
-					'count'   => true,
-					'type'    => 'all',
-				)
-			);
+			$count = tacobout_get_interaction_count( $post_id );
 			if ( $count < 1 ) {
 				return $matches[0];
 			}
@@ -351,14 +373,7 @@ function tacobout_register_rest_fields() {
 		'interaction_count',
 		array(
 			'get_callback' => function ( $post ) {
-				return (int) get_comments(
-					array(
-						'post_id' => $post['id'],
-						'status'  => 'approve',
-						'count'   => true,
-						'type'    => 'all',
-					)
-				);
+				return tacobout_get_interaction_count( $post['id'] );
 			},
 			'schema'       => array(
 				'description' => 'Total interaction count (comments + fediverse + bluesky)',
