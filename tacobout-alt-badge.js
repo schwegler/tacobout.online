@@ -31,6 +31,7 @@
             wrapper.appendChild(img);
 
             const badge = document.createElement('button');
+            badge.type = 'button';
             badge.className = 'tacobout-alt-badge';
             badge.textContent = 'ALT';
             badge.setAttribute('aria-label', 'Toggle ALT text');
