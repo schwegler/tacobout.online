@@ -46,3 +46,6 @@
 ## 2024-07-17 - Mobile Safari Viewport Height Bug
 **Learning:** `100vh` on mobile Safari often fails to cover the entire view due to address bars causing unexpected clipping on fixed overlays like mobile menus.
 **Action:** Always use `100dvh` (Dynamic Viewport Height) coupled with explicitly setting `top: 0` and `bottom: 0` to accurately span the whole height of the mobile device for modals and full screen overlays.
+## 2026-07-17 - Simplified Single Post Meta Info
+**Learning:** The default single post template had cluttered meta info (author name, date, categories separated by bullets) which could be simplified to match a cleaner, more visual design.
+**Action:** Replaced text-heavy meta information with a simple visual row: author avatar (`wp:avatar`), post date, and category terms as pills, removing extraneous separator bullets for a cleaner aesthetic.
