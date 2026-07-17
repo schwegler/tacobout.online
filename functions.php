@@ -274,6 +274,42 @@ function tacobout_pre_render_hidden_blocks( $pre_render, $parsed_block, $parent_
 add_filter( 'pre_render_block', 'tacobout_pre_render_hidden_blocks', 10, 3 );
 
 /**
+ * Get cached interaction count for a post.
+ * Uses wp_cache to prevent N+1 query problems in loops like render_block or REST API.
+ *
+ * @param int $post_id The post ID.
+ * @return int The total number of interactions.
+ */
+function tacobout_get_interaction_count( $post_id ) {
+	$cache_key = 'tacobout_interaction_count_' . $post_id;
+	$count     = wp_cache_get( $cache_key, 'counts' );
+
+	if ( false === $count ) {
+		$count = (int) get_comments(
+			array(
+				'post_id' => $post_id,
+				'status'  => 'approve',
+				'count'   => true,
+				'type'    => 'all',
+			)
+		);
+		wp_cache_set( $cache_key, $count, 'counts' );
+	}
+
+	return $count;
+}
+
+/**
+ * Invalidate the interaction count cache when a post's cache is cleaned.
+ *
+ * @param int $post_id The post ID.
+ */
+function tacobout_invalidate_interaction_count_cache( $post_id ) {
+	wp_cache_delete( 'tacobout_interaction_count_' . $post_id, 'counts' );
+}
+add_action( 'clean_post_cache', 'tacobout_invalidate_interaction_count_cache' );
+
+/**
  * Inject an interaction badge into each post card in query loops.
  * Shows total comments (WP + ActivityPub + Atmosphere — all stored as WP comments).
  * Badge is hidden when count is 0.
@@ -290,14 +326,7 @@ function tacobout_interaction_badge( $block_content, $block ) {
 				return $matches[0];
 			}
 
-			$count = (int) get_comments(
-				array(
-					'post_id' => $post_id,
-					'status'  => 'approve',
-					'count'   => true,
-					'type'    => 'all',
-				)
-			);
+			$count = tacobout_get_interaction_count( $post_id );
 			if ( $count < 1 ) {
 				return $matches[0];
 			}
@@ -351,14 +380,7 @@ function tacobout_register_rest_fields() {
 		'interaction_count',
 		array(
 			'get_callback' => function ( $post ) {
-				return (int) get_comments(
-					array(
-						'post_id' => $post['id'],
-						'status'  => 'approve',
-						'count'   => true,
-						'type'    => 'all',
-					)
-				);
+				return tacobout_get_interaction_count( $post['id'] );
 			},
 			'schema'       => array(
 				'description' => 'Total interaction count (comments + fediverse + bluesky)',
