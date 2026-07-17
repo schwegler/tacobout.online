@@ -280,6 +280,29 @@ add_filter( 'pre_render_block', 'tacobout_pre_render_hidden_blocks', 10, 3 );
  * @param int $post_id The post ID.
  * @return int The total number of interactions.
  */
+/**
+ * Modify the "trending" query order by to use ALL comments (including fediverse).
+ * By default, WP's orderby=comment_count uses the literal `comment_count` column
+ * which excludes custom comment types (like ActivityPub reactions).
+ * We intercept it to count all approved comments for the post.
+ *
+ * @param string   $orderby The ORDER BY clause of the query.
+ * @param WP_Query $query   The WP_Query instance.
+ * @return string The modified ORDER BY clause.
+ */
+function tacobout_trending_all_comments_orderby( $orderby, $query ) {
+	global $wpdb;
+
+	if ( 'comment_count' === $query->get( 'orderby' ) ) {
+		// Replace the standard comment_count sort with a subquery counting ALL approved comments
+		$subquery = "(SELECT COUNT(*) FROM {$wpdb->comments} WHERE comment_post_ID = {$wpdb->posts}.ID AND comment_approved = '1')";
+		$orderby  = str_replace( "{$wpdb->posts}.comment_count", $subquery, $orderby );
+	}
+
+	return $orderby;
+}
+add_filter( 'posts_orderby', 'tacobout_trending_all_comments_orderby', 10, 2 );
+
 function tacobout_get_interaction_count( $post_id ) {
 	$cache_key = 'tacobout_interaction_count_' . $post_id;
 	$count     = wp_cache_get( $cache_key, 'counts' );
