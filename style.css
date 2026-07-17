@@ -1581,7 +1581,9 @@ body.author .wp-block-post:focus-within {
 }
 
 #respond .form-submit #submit:hover,
-#respond .form-submit input[type="submit"]:hover {
+#respond .form-submit input[type="submit"]:hover,
+#respond .form-submit #submit:focus-visible,
+#respond .form-submit input[type="submit"]:focus-visible {
 	background: var(--taco-accent-2);
 	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
@@ -1711,4 +1713,12 @@ body.author .tacobout-card-inner {
 
 body.admin-bar .wp-block-navigation__responsive-container.is-menu-open {
 	padding-top: 48px !important;
+}
+/* ============================
+   SIDEBAR
+   ============================ */
+.tacobout-sidebar-sticky {
+	position: sticky;
+	top: 6rem;
+	align-self: flex-start;
 }

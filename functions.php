@@ -274,6 +274,42 @@ function tacobout_pre_render_hidden_blocks( $pre_render, $parsed_block, $parent_
 add_filter( 'pre_render_block', 'tacobout_pre_render_hidden_blocks', 10, 3 );
 
 /**
+ * Get cached interaction count for a post.
+ * Uses wp_cache to prevent N+1 query problems in loops like render_block or REST API.
+ *
+ * @param int $post_id The post ID.
+ * @return int The total number of interactions.
+ */
+function tacobout_get_interaction_count( $post_id ) {
+	$cache_key = 'tacobout_interaction_count_' . $post_id;
+	$count     = wp_cache_get( $cache_key, 'counts' );
+
+	if ( false === $count ) {
+		$count = (int) get_comments(
+			array(
+				'post_id' => $post_id,
+				'status'  => 'approve',
+				'count'   => true,
+				'type'    => 'all',
+			)
+		);
+		wp_cache_set( $cache_key, $count, 'counts' );
+	}
+
+	return $count;
+}
+
+/**
+ * Invalidate the interaction count cache when a post's cache is cleaned.
+ *
+ * @param int $post_id The post ID.
+ */
+function tacobout_invalidate_interaction_count_cache( $post_id ) {
+	wp_cache_delete( 'tacobout_interaction_count_' . $post_id, 'counts' );
+}
+add_action( 'clean_post_cache', 'tacobout_invalidate_interaction_count_cache' );
+
+/**
  * Inject an interaction badge into each post card in query loops.
  * Shows total comments (WP + ActivityPub + Atmosphere — all stored as WP comments).
  * Badge is hidden when count is 0.
@@ -290,14 +326,7 @@ function tacobout_interaction_badge( $block_content, $block ) {
 				return $matches[0];
 			}
 
-			$count = (int) get_comments(
-				array(
-					'post_id' => $post_id,
-					'status'  => 'approve',
-					'count'   => true,
-					'type'    => 'all',
-				)
-			);
+			$count = tacobout_get_interaction_count( $post_id );
 			if ( $count < 1 ) {
 				return $matches[0];
 			}
@@ -351,14 +380,7 @@ function tacobout_register_rest_fields() {
 		'interaction_count',
 		array(
 			'get_callback' => function ( $post ) {
-				return (int) get_comments(
-					array(
-						'post_id' => $post['id'],
-						'status'  => 'approve',
-						'count'   => true,
-						'type'    => 'all',
-					)
-				);
+				return tacobout_get_interaction_count( $post['id'] );
 			},
 			'schema'       => array(
 				'description' => 'Total interaction count (comments + fediverse + bluesky)',
@@ -389,39 +411,51 @@ function tacobout_enqueue_infinite_scroll() {
 		true // Load in footer
 	);
 
-	$per_page = 9;
+	// Calculate total pages (global, unfiltered)
+	$per_page    = 9;
+	$total_posts = wp_count_posts()->publish;
+	$total_pages = ceil( $total_posts / $per_page );
 
-	$term_id         = null;
-	$term_rest_field = null;
+	// Detect taxonomy archive context for the overflow separator feature.
+	// On category/tag pages, the initial WP query shows filtered posts; infinite
+	// scroll will mirror that filter until exhausted, then show the global feed.
+	$term_id          = null;
+	$term_name        = null;
+	$term_type        = null; // 'categories' or 'tags' — WP REST API filter param name
+	$term_rest_field  = null; // REST API field name to filter by
+	$term_total_pages = null;
 
 	if ( is_category() ) {
-		$queried         = get_queried_object();
-		$term_id         = $queried->term_id;
-		$term_rest_field = 'categories';
-		$term_count      = $queried->count;
-		$total_pages     = ceil( $term_count / $per_page );
+		$queried          = get_queried_object();
+		$term_id          = $queried->term_id;
+		$term_name        = $queried->name;
+		$term_type        = 'categories';
+		$term_rest_field  = 'categories';
+		$term_count       = $queried->count;
+		$term_total_pages = ceil( $term_count / $per_page );
 	} elseif ( is_tag() ) {
-		$queried         = get_queried_object();
-		$term_id         = $queried->term_id;
-		$term_rest_field = 'tags';
-		$term_count      = $queried->count;
-		$total_pages     = ceil( $term_count / $per_page );
-	} else {
-		$total_posts = wp_count_posts()->publish;
-		$total_pages = ceil( $total_posts / $per_page );
+		$queried          = get_queried_object();
+		$term_id          = $queried->term_id;
+		$term_name        = $queried->name;
+		$term_type        = 'tags';
+		$term_rest_field  = 'tags';
+		$term_count       = $queried->count;
+		$term_total_pages = ceil( $term_count / $per_page );
 	}
 
 	wp_localize_script(
 		'tacobout-infinite-scroll',
 		'tacoboutScroll',
 		array(
-			'restUrl'    => esc_url_raw( rest_url( 'wp/v2/posts' ) ),
-			'nonce'      => wp_create_nonce( 'wp_rest' ),
-			'perPage'    => $per_page,
-			'totalPages' => $total_pages,
-			'siteUrl'    => esc_url( home_url() ),
-			'termId'     => $term_id,
-			'termType'   => $term_rest_field,
+			'restUrl'        => esc_url_raw( rest_url( 'wp/v2/posts' ) ),
+			'nonce'          => wp_create_nonce( 'wp_rest' ),
+			'perPage'        => $per_page,
+			'totalPages'     => $total_pages,
+			'siteUrl'        => esc_url( home_url() ),
+			'termId'         => $term_id,
+			'termName'       => $term_name ? esc_html( $term_name ) : null,
+			'termType'       => $term_rest_field,
+			'termTotalPages' => $term_total_pages,
 		)
 	);
 }
