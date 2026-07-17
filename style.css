@@ -1456,10 +1456,10 @@ body.home:not(.paged) .tacobout-magazine-grid .wp-block-post:first-child .tacobo
 /* ============================
    AUTHOR ARCHIVE & ACTIVITYPUB
    ============================ */
-body.author .wp-block-post-template {
+body.author .tacobout-magazine-grid {
 	display: grid;
 	grid-template-rows: masonry;
-	grid-template-columns: repeat(2, 1fr);
+	grid-template-columns: 1fr;
 	gap: 2rem;
 	align-items: start;
 
@@ -1468,7 +1468,7 @@ body.author .wp-block-post-template {
 }
 
 @media (max-width: 900px) {
-	body.author .wp-block-post-template {
+	body.author .tacobout-magazine-grid {
 		grid-template-columns: 1fr;
 		gap: 1.25rem;
 	}
