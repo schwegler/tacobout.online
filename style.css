@@ -1712,3 +1712,11 @@ body.author .tacobout-card-inner {
 body.admin-bar .wp-block-navigation__responsive-container.is-menu-open {
 	padding-top: 48px !important;
 }
+/* ============================
+   SIDEBAR
+   ============================ */
+.tacobout-sidebar-sticky {
+	position: sticky;
+	top: 6rem;
+	align-self: flex-start;
+}
