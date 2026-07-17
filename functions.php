@@ -510,6 +510,25 @@ function tacobout_enqueue_alt_badge() {
 add_action( 'wp_enqueue_scripts', 'tacobout_enqueue_alt_badge' );
 
 /**
+ * Enqueue script for hiding sticky header on scroll down.
+ * Guarded against loading inside the Site Editor's preview iframe.
+ */
+function tacobout_enqueue_header_script() {
+	if ( isset( $_GET['wp_theme_preview'] ) || is_admin() ) {
+		return;
+	}
+
+	wp_enqueue_script(
+		'tacobout-header',
+		get_template_directory_uri() . '/tacobout-header.js',
+		array(),
+		wp_get_theme()->get( 'Version' ),
+		true // Load in footer
+	);
+}
+add_action( 'wp_enqueue_scripts', 'tacobout_enqueue_header_script' );
+
+/**
  * Prevent login redirection plugins from breaking the Enable Mastodon Apps OAuth flow.
  */
 function tacobout_enable_mastodon_apps_login_redirect( $redirect_to, $requested_redirect_to ) {
