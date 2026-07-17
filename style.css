@@ -361,6 +361,10 @@ body::before {
 /* ============================
    HEADER
    ============================ */
+header:has(.tacobout-header) {
+	display: contents;
+}
+
 .tacobout-header {
 	border-bottom: 1px solid var(--taco-border);
 	position: sticky;
@@ -401,7 +405,7 @@ body::before {
 }
 
 .admin-bar .tacobout-header.is-hidden {
-	transform: translateY(calc(-100% - 32px));
+	transform: translateY(-100%);
 }
 
 @media screen and (max-width: 782px) {
@@ -410,7 +414,7 @@ body::before {
 	}
 
 	.admin-bar .tacobout-header.is-hidden {
-		transform: translateY(calc(-100% - 46px));
+		transform: translateY(-100%);
 	}
 
 	/* Admin bar overflow fixes */
@@ -1738,7 +1742,13 @@ body.admin-bar .wp-block-navigation__responsive-container.is-menu-open {
 .tacobout-sidebar-sticky {
 	position: sticky;
 	bottom: 2rem;
-	align-self: flex-end;
+	align-self: flex-start;
+}
+
+@media (max-width: 782px) {
+	.tacobout-sidebar-sticky {
+		position: static;
+	}
 }
 
 /* ============================
