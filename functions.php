@@ -250,16 +250,16 @@ function tacobout_pre_render_hidden_blocks( $pre_render, $parsed_block, $parent_
 	$format           = get_post_format( $post_id ) ?: 'standard';
 	$should_hide      = false;
 
+	$hidden_formats = array( 'video', 'audio', 'status', 'aside', 'image', 'quote', 'link' );
+
 	if ( 'core/post-content' === $block_name && 'standard' === $format && $is_in_query_loop ) {
 		$should_hide = true;
 	} elseif ( 'core/post-excerpt' === $block_name && $is_in_query_loop ) {
-		$hidden_formats = array( 'video', 'audio', 'status', 'aside', 'image', 'quote', 'link' );
 		if ( in_array( $format, $hidden_formats, true ) ) {
 			$should_hide = true;
 		}
 	} elseif ( 'core/post-featured-image' === $block_name ) {
 		// Hide featured image for non-standard formats BOTH in query loops AND single posts
-		$hidden_formats = array( 'video', 'audio', 'status', 'aside', 'image', 'quote', 'link' );
 		if ( in_array( $format, $hidden_formats, true ) ) {
 			$should_hide = true;
 		}
