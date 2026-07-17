@@ -1735,6 +1735,10 @@ body.admin-bar .wp-block-navigation__responsive-container.is-menu-open {
 	border: none !important;
 }
 
+.tacobout-basic-list .tacobout-interaction-badge {
+	display: none !important;
+}
+
 .tacobout-basic-list .wp-block-post-featured-image,
 .tacobout-basic-list .wp-block-post-title,
 .tacobout-basic-list .wp-block-post-date {
@@ -1747,4 +1751,20 @@ body.admin-bar .wp-block-navigation__responsive-container.is-menu-open {
 
 .tacobout-basic-list .wp-block-post-title:empty {
 	display: none !important;
+}
+
+/* Sidebar / list items horizontal layout fixes */
+.tacobout-list-item .wp-block-post-featured-image {
+	width: 80px !important;
+	height: 80px !important;
+	flex-shrink: 0;
+	margin: 0 !important;
+}
+
+.tacobout-list-item .wp-block-post-featured-image img,
+.tacobout-list-item .wp-block-post-featured-image a {
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+	border-radius: 8px;
 }

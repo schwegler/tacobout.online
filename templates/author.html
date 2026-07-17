@@ -15,11 +15,15 @@
 
 
 		<!-- wp:post-template -->
-			<!-- wp:group {"style":{"spacing":{"blockGap":"0.75rem"}},"layout":{"type":"flex","orientation":"vertical"}} -->
-			<div class="wp-block-group">
-				<!-- wp:post-title {"isLink":true,"level":3,"style":{"typography":{"fontSize":"var(--wp--preset--font-size--medium)"}}} /-->
-				<!-- wp:post-featured-image {"isLink":true,"aspectRatio":"16/9","style":{"border":{"radius":"8px"}}} /-->
-				<!-- wp:post-date {"isLink":true,"style":{"typography":{"fontSize":"var(--wp--preset--font-size--small)"}},"textColor":"muted"} /-->
+			<!-- wp:group {"className":"tacobout-list-item","style":{"spacing":{"blockGap":"1.5rem"}},"layout":{"type":"flex","flexWrap":"nowrap"}} -->
+			<div class="wp-block-group tacobout-list-item">
+				<!-- wp:post-featured-image {"isLink":true,"aspectRatio":"1/1","style":{"border":{"radius":"8px"}}} /-->
+				<!-- wp:group {"style":{"spacing":{"blockGap":"0.5rem"}},"layout":{"type":"flex","orientation":"vertical"}} -->
+				<div class="wp-block-group">
+					<!-- wp:post-title {"isLink":true,"level":3,"style":{"typography":{"fontSize":"var(--wp--preset--font-size--medium)"}}} /-->
+					<!-- wp:post-date {"isLink":true,"style":{"typography":{"fontSize":"var(--wp--preset--font-size--small)"}},"textColor":"muted"} /-->
+				</div>
+				<!-- /wp:group -->
 			</div>
 			<!-- /wp:group -->
 			<!-- wp:spacer {"height":"var:preset|spacing|30"} -->
