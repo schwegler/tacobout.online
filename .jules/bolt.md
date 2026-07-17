@@ -40,3 +40,7 @@
 ## 2024-07-28 - [Cache get_comments to Prevent N+1 Query in Loops]
 **Learning:** Using `get_comments()` inside loops (like `render_block` filters or REST API callbacks) causes N+1 query performance issues because it doesn't use the built-in WordPress object cache for comment counts (unlike `wp_count_comments()`, which lacks the ability to filter by custom types or post IDs effectively).
 **Action:** Wrap expensive queries like `get_comments(['count' => true])` in a helper function using `wp_cache_get()` and `wp_cache_set()` (in the 'counts' group), and hook into `clean_post_cache` to invalidate the cache when a post is updated.
+
+## 2024-07-29 - [Avoid duplicated variable initialization]
+**Learning:** Initializing the same variable with an array multiple times across conditional branches creates code duplication and can lead to bugs if the array needs to be updated but one branch is missed.
+**Action:** Extract duplicate variable initializations that have identical values from within `if`/`elseif` branches and place them above the conditional blocks to ensure DRY principles and cleaner code.
