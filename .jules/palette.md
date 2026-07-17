@@ -42,3 +42,7 @@
 ## 2024-07-17 - Unified Sidebar and User Profile Lists
 **Learning:** WordPress Full Site Editing (FSE) heavily relies on Block markup structure and inline styles. When changing FSE markup, removing format-specific padding and background properties programmatically via CSS override is crucial for creating custom context-based layouts (like a simplified sidebar list), since post formats conditionally apply CSS rules that break uniform layout patterns in query blocks.
 **Action:** When creating simplified block layouts for specific theme contexts (like widgets or profile pages), always introduce a context-specific wrapper class (e.g., `tacobout-basic-list`) and explicitly override core structural theme CSS using `!important` to strip unintended format layouts. Use `:empty` pseudo-classes to hide conditional elements.
+
+## 2024-07-17 - Mobile Safari Viewport Height Bug
+**Learning:** `100vh` on mobile Safari often fails to cover the entire view due to address bars causing unexpected clipping on fixed overlays like mobile menus.
+**Action:** Always use `100dvh` (Dynamic Viewport Height) coupled with explicitly setting `top: 0` and `bottom: 0` to accurately span the whole height of the mobile device for modals and full screen overlays.
