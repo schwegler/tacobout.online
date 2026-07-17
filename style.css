@@ -1748,3 +1748,17 @@ body.admin-bar .wp-block-navigation__responsive-container.is-menu-open {
 .tacobout-basic-list .wp-block-post-title:empty {
 	display: none !important;
 }
+
+/* Mobile Safari fixes for Navigation Overlay */
+.wp-block-navigation__responsive-container.is-menu-open {
+	top: 0 !important;
+	bottom: 0 !important;
+	height: 100dvh !important;
+}
+
+/* Mobile Safari fixes for Navigation Overlay */
+.wp-block-navigation__responsive-container.is-menu-open {
+	top: 0 !important;
+	bottom: 0 !important;
+	height: 100dvh !important;
+}
