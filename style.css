@@ -1719,8 +1719,8 @@ body.admin-bar .wp-block-navigation__responsive-container.is-menu-open {
    ============================ */
 .tacobout-sidebar-sticky {
 	position: sticky;
-	top: 6rem;
-	align-self: flex-start;
+	bottom: 2rem;
+	align-self: flex-end;
 }
 
 /* ============================
@@ -1760,11 +1760,6 @@ body.admin-bar .wp-block-navigation__responsive-container.is-menu-open {
 	height: 100dvh !important;
 }
 
-/* Mobile Safari fixes for Navigation Overlay */
-.wp-block-navigation__responsive-container.is-menu-open {
-	top: 0 !important;
-	bottom: 0 !important;
-	height: 100dvh !important;
 /* Sidebar / list items horizontal layout fixes */
 .tacobout-list-item .wp-block-post-featured-image {
 	width: 80px !important;
