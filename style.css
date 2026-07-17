@@ -1722,3 +1722,29 @@ body.admin-bar .wp-block-navigation__responsive-container.is-menu-open {
 	top: 6rem;
 	align-self: flex-start;
 }
+
+/* ============================
+   BASIC LIST LAYOUT
+   Overrides format-specific styles
+   for sidebars and user profiles
+   ============================ */
+
+.tacobout-basic-list .wp-block-post {
+	padding: 0 !important;
+	background: transparent !important;
+	border: none !important;
+}
+
+.tacobout-basic-list .wp-block-post-featured-image,
+.tacobout-basic-list .wp-block-post-title,
+.tacobout-basic-list .wp-block-post-date {
+	display: block !important;
+}
+
+.tacobout-basic-list .wp-block-post-featured-image:empty {
+	display: none !important;
+}
+
+.tacobout-basic-list .wp-block-post-title:empty {
+	display: none !important;
+}

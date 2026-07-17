@@ -315,6 +315,11 @@ add_action( 'clean_post_cache', 'tacobout_invalidate_interaction_count_cache' );
  * Badge is hidden when count is 0.
  */
 function tacobout_interaction_badge( $block_content, $block ) {
+	// Skip injecting the badge if we are in a basic list context
+	if ( isset( $block['attrs']['className'] ) && strpos( $block['attrs']['className'], 'tacobout-basic-list' ) !== false ) {
+		return $block_content;
+	}
+
 	// Use regex to find each <li...class="...wp-block-post..."> and inject the badge
 	$block_content = preg_replace_callback(
 		'/<li\s[^>]*class="[^"]*wp-block-post[^"]*"[^>]*>/i',

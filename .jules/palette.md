@@ -38,3 +38,7 @@
 ## 2024-07-28 - Explicit Button Types in JS
 **Learning:** When dynamically creating `<button>` elements via JavaScript (e.g., `document.createElement('button')`), they default to `type="submit"`. If these generated buttons are ever placed inside or near a `<form>`, pressing them or hitting enter will inadvertently submit the form instead of performing the intended script action (like toggling a tooltip or scrolling to top).
 **Action:** Always explicitly set `type="button"` using `setAttribute('type', 'button')` on any dynamically generated button element to prevent accidental form submissions and ensure safe reuse across different contexts.
+
+## 2024-07-17 - Unified Sidebar and User Profile Lists
+**Learning:** WordPress Full Site Editing (FSE) heavily relies on Block markup structure and inline styles. When changing FSE markup, removing format-specific padding and background properties programmatically via CSS override is crucial for creating custom context-based layouts (like a simplified sidebar list), since post formats conditionally apply CSS rules that break uniform layout patterns in query blocks.
+**Action:** When creating simplified block layouts for specific theme contexts (like widgets or profile pages), always introduce a context-specific wrapper class (e.g., `tacobout-basic-list`) and explicitly override core structural theme CSS using `!important` to strip unintended format layouts. Use `:empty` pseudo-classes to hide conditional elements.
