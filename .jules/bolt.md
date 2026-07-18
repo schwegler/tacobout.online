@@ -44,3 +44,7 @@
 ## 2024-07-29 - [Avoid duplicated variable initialization]
 **Learning:** Initializing the same variable with an array multiple times across conditional branches creates code duplication and can lead to bugs if the array needs to be updated but one branch is missed.
 **Action:** Extract duplicate variable initializations that have identical values from within `if`/`elseif` branches and place them above the conditional blocks to ensure DRY principles and cleaner code.
+
+## 2024-08-01 - [Avoid inline toLocaleDateString in loops]
+**Learning:** Calling `toLocaleDateString()` or `Intl.DateTimeFormat().format()` repeatedly inside loops or frequent render cycles (like infinite scrolling) is extremely slow because creating the formatter instance is an expensive operation.
+**Action:** Always instantiate `Intl.DateTimeFormat` once outside the loop or render function, and reuse the cached instance to call `.format()` for a significant performance boost.
