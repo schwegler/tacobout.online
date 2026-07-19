@@ -49,3 +49,6 @@
 ## 2026-07-17 - Simplified Single Post Meta Info
 **Learning:** The default single post template had cluttered meta info (author name, date, categories separated by bullets) which could be simplified to match a cleaner, more visual design.
 **Action:** Replaced text-heavy meta information with a simple visual row: author avatar (`wp:avatar`), post date, and category terms as pills, removing extraneous separator bullets for a cleaner aesthetic.
+## 2026-07-19 - Explicit Feedback for Infinite Scroll End
+**Learning:** When transitioning from term-filtered posts to a global feed via infinite scroll, using an invisible separator with `aria-hidden="true"` prevents screen reader users from understanding why the context of the feed has changed.
+**Action:** When adding visual separators that explain a shift in content context (e.g., 'You've seen all category posts - here's everything else'), do not hide them from screen readers. Allow them to be announced so all users share the same contextual understanding.
