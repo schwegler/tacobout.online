@@ -44,3 +44,7 @@
 ## 2024-07-29 - [Avoid duplicated variable initialization]
 **Learning:** Initializing the same variable with an array multiple times across conditional branches creates code duplication and can lead to bugs if the array needs to be updated but one branch is missed.
 **Action:** Extract duplicate variable initializations that have identical values from within `if`/`elseif` branches and place them above the conditional blocks to ensure DRY principles and cleaner code.
+
+## 2024-05-18 - Avoid instantiating Intl.DateTimeFormat in render loops
+**Learning:** Calling `toLocaleDateString()` or instantiating `Intl.DateTimeFormat` inside JavaScript loops or frequent render cycles causes significant performance overhead in list/grid rendering.
+**Action:** Always instantiate `Intl.DateTimeFormat` once outside the loop and reuse its `.format()` method.
