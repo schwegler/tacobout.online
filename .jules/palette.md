@@ -49,3 +49,6 @@
 ## 2026-07-17 - Simplified Single Post Meta Info
 **Learning:** The default single post template had cluttered meta info (author name, date, categories separated by bullets) which could be simplified to match a cleaner, more visual design.
 **Action:** Replaced text-heavy meta information with a simple visual row: author avatar (`wp:avatar`), post date, and category terms as pills, removing extraneous separator bullets for a cleaner aesthetic.
+## 2024-07-28 - Explicit Semantic Context Shifts
+**Learning:** When transitioning between different contexts (like moving from taxonomy-filtered posts to a global feed via infinite scroll), sighted users see a visual separator, but screen reader users miss this critical context change if the separator is hidden with `aria-hidden="true"`.
+**Action:** Do not use `aria-hidden="true"` on separator elements that convey critical structural or semantic context shifts. Allow screen readers to announce these transitions to ensure non-sighted users understand the context change.
