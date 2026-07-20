@@ -295,6 +295,16 @@
 		 CARD BUILDER
 		 Replicates the template structure from home.html
 		 ============================================ */
+
+	// ⚡ Bolt: Cache Intl.DateTimeFormat outside the loop.
+	// Instantiating this inside buildCard() causes significant overhead
+	// during infinite scroll because it re-parses locales and options on every post.
+	const dateFormatter = new Intl.DateTimeFormat("en-US", {
+		year: "numeric",
+		month: "long",
+		day: "numeric",
+	});
+
 	function buildCard(post) {
 		const format = post.post_format || "standard";
 		const formatClass = "tacobout-format-" + format;
@@ -344,11 +354,7 @@
 		}
 
 		const dateObj = new Date(post.date);
-		const dateFormatted = dateObj.toLocaleDateString("en-US", {
-			year: "numeric",
-			month: "long",
-			day: "numeric",
-		});
+		const dateFormatted = dateFormatter.format(dateObj);
 
 		const postMetaHtml = `
 			<div class="wp-block-template-part">
