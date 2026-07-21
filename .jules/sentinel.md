@@ -12,3 +12,8 @@
 **Vulnerability:** The previous open redirect fix for the `login_redirect` filter only blocked specific XSS schemes (`javascript`, `vbscript`, `data`). It failed to validate standard web protocols (`http`, `https`) or empty schemes, leaving the application vulnerable to classic Open Redirect attacks where an attacker could redirect the user to a malicious web page after login.
 **Learning:** Bypassing `wp_validate_redirect()` entirely for custom OAuth flow schemas (like `ivory://`) accidentally bypasses safe domain checking for standard URLs.
 **Prevention:** Conditionally apply `wp_validate_redirect()` for web protocols (`http`, `https`) and relative paths (empty scheme) to enforce safe domain policies, while only bypassing validation for non-standard, custom application schemas that the application explicitly needs to support, and explicitly denying malicious ones (`javascript`, `vbscript`, `data`).
+
+## 2026-07-21 - Fix DOM-based XSS in infinite scroll
+**Vulnerability:** Unescaped insertion of `post.title.rendered` into DOM via `innerHTML` in `tacobout-infinite-scroll.js`.
+**Learning:** WordPress REST API `title.rendered` can contain unescaped HTML characters and must be manually escaped when used with `innerHTML` in JS.
+**Prevention:** Always use the `escHtml()` helper function when interpolating `title.rendered` into HTML strings.
