@@ -49,3 +49,6 @@
 ## 2026-07-17 - Simplified Single Post Meta Info
 **Learning:** The default single post template had cluttered meta info (author name, date, categories separated by bullets) which could be simplified to match a cleaner, more visual design.
 **Action:** Replaced text-heavy meta information with a simple visual row: author avatar (`wp:avatar`), post date, and category terms as pills, removing extraneous separator bullets for a cleaner aesthetic.
+## 2024-07-21 - Tactile Feedback for Interactive Elements
+**Learning:** Custom interactive UI elements (like buttons, badges, or FABs) often have `:hover` and `:focus-visible` states, but lack an `:active` state. This omission prevents tactile visual feedback (like a "pressed" effect) during interactions, degrading the micro-UX.
+**Action:** Always include an `:active` state (e.g., `transform: scale(0.95)`) for custom interactive elements in addition to `:hover` and `:focus-visible` states.
