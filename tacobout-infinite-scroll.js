@@ -295,6 +295,15 @@
 		 CARD BUILDER
 		 Replicates the template structure from home.html
 		 ============================================ */
+
+	// Performance optimization: Instantiate Intl.DateTimeFormat once outside the loop/render cycle
+	// Calling toLocaleDateString() repeatedly is expensive.
+	const dateFormatter = new Intl.DateTimeFormat("en-US", {
+		year: "numeric",
+		month: "long",
+		day: "numeric",
+	});
+
 	function buildCard(post) {
 		const format = post.post_format || "standard";
 		const formatClass = "tacobout-format-" + format;
@@ -344,11 +353,7 @@
 		}
 
 		const dateObj = new Date(post.date);
-		const dateFormatted = dateObj.toLocaleDateString("en-US", {
-			year: "numeric",
-			month: "long",
-			day: "numeric",
-		});
+		const dateFormatted = dateFormatter.format(dateObj);
 
 		const postMetaHtml = `
 			<div class="wp-block-template-part">
@@ -441,7 +446,6 @@
 
 		const sep = document.createElement('li');
 		sep.className = 'tacobout-overflow-separator';
-		sep.setAttribute('aria-hidden', 'true');
 		sep.innerHTML = `
 			<span class="tacobout-overflow-separator-label">
 				<svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>

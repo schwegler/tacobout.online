@@ -89,4 +89,40 @@ class FunctionsTest extends \PHPUnit\Framework\TestCase {
 
         $this->assertTrue(true);
     }
+
+    public function test_tacobout_get_memoized_post_format() {
+        \Brain\Monkey\Functions\expect('get_post_format')
+            ->once()
+            ->with(42)
+            ->andReturn('video');
+
+        // First call should query get_post_format
+        $format1 = tacobout_get_memoized_post_format(42);
+        $this->assertEquals('video', $format1);
+
+        // Second call should return cached format without calling get_post_format again
+        $format2 = tacobout_get_memoized_post_format(42);
+        $this->assertEquals('video', $format2);
+    }
+
+    public function test_tacobout_get_interaction_count_cached() {
+        \Brain\Monkey\Functions\expect('wp_cache_get')
+            ->once()
+            ->with('tacobout_int_count_99', 'posts')
+            ->andReturn(5);
+
+        $count = tacobout_get_interaction_count(99);
+        $this->assertEquals(5, $count);
+    }
+
+    public function test_tacobout_get_total_published_posts_transient() {
+        \Brain\Monkey\Functions\expect('get_transient')
+            ->once()
+            ->with('tacobout_total_published_posts')
+            ->andReturn(15);
+
+        $total = tacobout_get_total_published_posts();
+        $this->assertEquals(15, $total);
+    }
 }
+
