@@ -79,4 +79,49 @@ if (!function_exists('_x')) {
 if (!function_exists('remove_action')) {
     function remove_action() {}
 }
+if (!function_exists('get_post_format')) {
+    function get_post_format($post = null) { return false; }
+}
+if (!function_exists('wp_cache_get')) {
+    function wp_cache_get($key, $group = '') { return false; }
+}
+if (!function_exists('wp_cache_set')) {
+    function wp_cache_set($key, $data, $group = '', $expire = 0) { return true; }
+}
+if (!function_exists('wp_cache_delete')) {
+    function wp_cache_delete($key, $group = '') { return true; }
+}
+if (!function_exists('get_transient')) {
+    function get_transient($transient) { return false; }
+}
+if (!function_exists('set_transient')) {
+    function set_transient($transient, $value, $expiration = 0) { return true; }
+}
+if (!function_exists('delete_transient')) {
+    function delete_transient($transient) { return true; }
+}
+if (!function_exists('wp_count_posts')) {
+    function wp_count_posts($type = 'post', $perm = '') {
+        $std = new stdClass();
+        $std->publish = 10;
+        return $std;
+    }
+}
+if (!function_exists('is_admin')) {
+    function is_admin() { return false; }
+}
+if (!function_exists('is_user_logged_in')) {
+    function is_user_logged_in() { return false; }
+}
+if (!function_exists('is_preview')) {
+    function is_preview() { return false; }
+}
+if (!function_exists('home_url')) {
+    function home_url($path = '') { return 'http://example.com' . $path; }
+}
+if (!function_exists('HOUR_IN_SECONDS')) {
+    define('HOUR_IN_SECONDS', 3600);
+}
+
 require_once __DIR__ . '/../functions.php';
+

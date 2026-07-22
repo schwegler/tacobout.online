@@ -94,13 +94,104 @@ function tacobout_async_google_fonts( $tag, $handle, $href, $media ) {
 add_filter( 'style_loader_tag', 'tacobout_async_google_fonts', 10, 4 );
 
 /**
+ * Helper: Memoize post format lookups during a single request to avoid repetitive taxonomy DB queries.
+ */
+function tacobout_get_memoized_post_format( $post_id ) {
+	static $formats = array();
+	if ( ! isset( $formats[ $post_id ] ) ) {
+		$format = get_post_format( $post_id );
+		$formats[ $post_id ] = $format ? $format : 'standard';
+	}
+	return $formats[ $post_id ];
+}
+
+/**
+ * Helper: Retrieve interaction count (comments + fediverse + bluesky) using in-memory WP object cache.
+ * Avoids executing separate SQL SELECT COUNT(*) queries per post card in query loops and REST API responses.
+ */
+function tacobout_get_interaction_count( $post_id ) {
+	$post_id = (int) $post_id;
+	if ( ! $post_id ) {
+		return 0;
+	}
+
+	$cache_key = 'tacobout_int_count_' . $post_id;
+	$count     = wp_cache_get( $cache_key, 'posts' );
+
+	if ( false === $count ) {
+		$post = get_post( $post_id );
+		if ( $post && isset( $post->comment_count ) ) {
+			$count = (int) $post->comment_count;
+		} else {
+			$count = (int) get_comments_number( $post_id );
+		}
+		wp_cache_set( $cache_key, $count, 'posts', 3600 );
+	}
+
+	return (int) $count;
+}
+
+/**
+ * Invalidate interaction count cache when comments are created, edited, deleted, or status-changed.
+ */
+function tacobout_clear_interaction_count_cache( $comment_id, $comment_object = null ) {
+	$post_id = 0;
+	if ( is_object( $comment_object ) && isset( $comment_object->comment_post_ID ) ) {
+		$post_id = (int) $comment_object->comment_post_ID;
+	} elseif ( $comment_id ) {
+		$comment = get_comment( $comment_id );
+		if ( $comment ) {
+			$post_id = (int) $comment->comment_post_ID;
+		}
+	}
+	if ( $post_id ) {
+		wp_cache_delete( 'tacobout_int_count_' . $post_id, 'posts' );
+	}
+}
+add_action( 'wp_insert_comment', 'tacobout_clear_interaction_count_cache', 10, 2 );
+add_action( 'edit_comment', 'tacobout_clear_interaction_count_cache', 10, 1 );
+add_action( 'delete_comment', 'tacobout_clear_interaction_count_cache', 10, 1 );
+add_action( 'transition_comment_status', function( $new_status, $old_status, $comment ) {
+	if ( isset( $comment->comment_post_ID ) ) {
+		wp_cache_delete( 'tacobout_int_count_' . (int) $comment->comment_post_ID, 'posts' );
+	}
+}, 10, 3 );
+
+/**
+ * Helper: Retrieve total published post count with transient caching.
+ * Prevents wp_count_posts() from querying the database on every front-end page load.
+ */
+function tacobout_get_total_published_posts() {
+	$total_posts = get_transient( 'tacobout_total_published_posts' );
+	if ( false === $total_posts ) {
+		$count_obj   = wp_count_posts();
+		$total_posts = isset( $count_obj->publish ) ? (int) $count_obj->publish : 0;
+		set_transient( 'tacobout_total_published_posts', $total_posts, 12 * HOUR_IN_SECONDS );
+	}
+	return (int) $total_posts;
+}
+
+/**
+ * Clear total published post count transient on post status transition or deletion.
+ */
+function tacobout_clear_total_posts_transient() {
+	delete_transient( 'tacobout_total_published_posts' );
+}
+add_action( 'transition_post_status', function( $new_status, $old_status, $post ) {
+	if ( 'publish' === $new_status || 'publish' === $old_status ) {
+		tacobout_clear_total_posts_transient();
+	}
+}, 10, 3 );
+add_action( 'deleted_post', 'tacobout_clear_total_posts_transient' );
+
+/**
  * CRITICAL: Add post format classes to the post wrapper in Query Loops.
  * WordPress FSE does NOT add format-{type} classes to posts in query loops.
  * This filter fixes that, which is why the CSS was being "ignored" before.
  */
 function tacobout_post_class( $classes, $extra_classes, $post_id ) {
-	$format = get_post_format( $post_id );
-	if ( $format ) {
+	$format = tacobout_get_memoized_post_format( $post_id );
+	if ( $format && 'standard' !== $format ) {
 		$classes[] = 'tacobout-format-' . $format;
 	} else {
 		$classes[] = 'tacobout-format-standard';
@@ -108,6 +199,7 @@ function tacobout_post_class( $classes, $extra_classes, $post_id ) {
 	return $classes;
 }
 add_filter( 'post_class', 'tacobout_post_class', 10, 3 );
+
 
 /**
  * Register custom block styles
@@ -199,9 +291,9 @@ function tacobout_pagination_body_class( $classes ) {
 add_filter( 'body_class', 'tacobout_pagination_body_class' );
 
 /**
- * Add security headers to responses
- * This improves defense in depth by preventing MIME-type sniffing,
- * clickjacking, and cross-site scripting (XSS) attacks.
+ * Add security and HTTP edge caching headers for Varnish / Nginx.
+ * Instructs reverse proxies and CDNs (EasyWP edge cache) to serve static and semi-static
+ * GET requests directly to guest visitors without hitting PHP workers.
  */
 function tacobout_security_headers() {
 	if ( ! is_admin() ) {
@@ -210,9 +302,62 @@ function tacobout_security_headers() {
 		header( 'X-XSS-Protection: 1; mode=block' );
 		header( 'Referrer-Policy: strict-origin-when-cross-origin' );
 		header( 'Strict-Transport-Security: max-age=31536000; includeSubDomains' );
+
+		if ( ! is_user_logged_in() && isset( $_SERVER['REQUEST_METHOD'] ) && 'GET' === $_SERVER['REQUEST_METHOD'] && ! is_preview() ) {
+			header( 'Cache-Control: public, max-age=600, s-maxage=3600, stale-while-revalidate=86400' );
+		}
 	}
 }
 add_action( 'send_headers', 'tacobout_security_headers' );
+
+/**
+ * Add Cache-Control headers for public REST API GET responses (e.g. infinite scroll posts).
+ */
+function tacobout_rest_cache_control_headers( $response, $server, $request ) {
+	if ( 'GET' === $request->get_method() && ! is_user_logged_in() ) {
+		$route = $request->get_route();
+		if ( str_starts_with( $route, '/wp/v2/posts' ) || str_starts_with( $route, '/enable-mastodon-apps/' ) ) {
+			$response->header( 'Cache-Control', 'public, max-age=300, s-maxage=1800, stale-while-revalidate=3600' );
+		}
+	}
+	return $response;
+}
+add_filter( 'rest_post_dispatch', 'tacobout_rest_cache_control_headers', 10, 3 );
+
+/**
+ * Deregister WP Heartbeat script on front-end requests for guest visitors.
+ * Stops unauthenticated AJAX polling calls to admin-ajax.php which consume PHP workers.
+ */
+function tacobout_disable_frontend_heartbeat() {
+	if ( ! is_admin() && ! is_user_logged_in() ) {
+		wp_deregister_script( 'heartbeat' );
+	}
+}
+add_action( 'wp_enqueue_scripts', 'tacobout_disable_frontend_heartbeat', 99 );
+
+/**
+ * Disable self-pingbacks to avoid unnecessary HTTP connection loops back to the server.
+ */
+function tacobout_disable_self_pingbacks( &$links ) {
+	$home_url = home_url();
+	foreach ( $links as $l => $link ) {
+		if ( str_starts_with( $link, $home_url ) ) {
+			unset( $links[ $l ] );
+		}
+	}
+}
+add_action( 'pre_ping', 'tacobout_disable_self_pingbacks' );
+
+/**
+ * Restrict unauthenticated user enumeration via REST API to shield PHP workers from scanner bots.
+ */
+function tacobout_restrict_rest_users( $response, $user, $request ) {
+	if ( ! is_user_logged_in() && str_contains( $request->get_route(), '/wp/v2/users' ) ) {
+		return new WP_Error( 'rest_cannot_access', __( 'Only authenticated users can list users.', 'tacobout' ), array( 'status' => 401 ) );
+	}
+	return $response;
+}
+add_filter( 'rest_prepare_user', 'tacobout_restrict_rest_users', 10, 3 );
 
 /**
  * Disable XML-RPC to mitigate brute-force and DDoS attacks.
@@ -247,7 +392,7 @@ function tacobout_pre_render_hidden_blocks( $pre_render, $parsed_block, $parent_
 	}
 
 	$is_in_query_loop = $parent_block && ! empty( $parent_block->context['queryId'] );
-	$format           = get_post_format( $post_id ) ?: 'standard';
+	$format           = tacobout_get_memoized_post_format( $post_id );
 	$should_hide      = false;
 
 	$hidden_formats = array( 'video', 'audio', 'status', 'aside', 'image', 'quote', 'link' );
@@ -392,8 +537,7 @@ function tacobout_register_rest_fields() {
 		'post_format',
 		array(
 			'get_callback' => function ( $post ) {
-				$format = get_post_format( $post['id'] );
-				return $format ? $format : 'standard';
+				return tacobout_get_memoized_post_format( $post['id'] );
 			},
 			'schema'       => array(
 				'description' => 'Post format (standard, video, audio, etc.)',
@@ -439,9 +583,9 @@ function tacobout_enqueue_infinite_scroll() {
 		true // Load in footer
 	);
 
-	// Calculate total pages (global, unfiltered)
+	// Calculate total pages (global, unfiltered) using transient-cached count
 	$per_page    = 9;
-	$total_posts = wp_count_posts()->publish;
+	$total_posts = tacobout_get_total_published_posts();
 	$total_pages = ceil( $total_posts / $per_page );
 
 	// Detect taxonomy archive context for the overflow separator feature.
