@@ -12,3 +12,8 @@
 **Vulnerability:** The previous open redirect fix for the `login_redirect` filter only blocked specific XSS schemes (`javascript`, `vbscript`, `data`). It failed to validate standard web protocols (`http`, `https`) or empty schemes, leaving the application vulnerable to classic Open Redirect attacks where an attacker could redirect the user to a malicious web page after login.
 **Learning:** Bypassing `wp_validate_redirect()` entirely for custom OAuth flow schemas (like `ivory://`) accidentally bypasses safe domain checking for standard URLs.
 **Prevention:** Conditionally apply `wp_validate_redirect()` for web protocols (`http`, `https`) and relative paths (empty scheme) to enforce safe domain policies, while only bypassing validation for non-standard, custom application schemas that the application explicitly needs to support, and explicitly denying malicious ones (`javascript`, `vbscript`, `data`).
+
+## 2024-05-30 - Fix DOM XSS in REST API Title Rendering
+**Vulnerability:** DOM-based XSS caused by injecting `post.title.rendered` into the DOM.
+**Learning:** In WordPress REST API responses, `title.rendered` may contain unescaped HTML, unlike `excerpt.rendered` or `content.rendered` which are intended to contain HTML.
+**Prevention:** Always explicitly escape `title.rendered` (e.g., using `escHtml()`) on the client side before DOM insertion.
