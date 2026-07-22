@@ -973,6 +973,10 @@ body.home:not(.paged) .tacobout-magazine-grid .wp-block-post:first-child .wp-blo
 	border-color: var(--taco-accent);
 }
 
+.wp-block-post-terms a:active {
+	transform: scale(0.95);
+}
+
 /* ============================
    READ MORE LINK
    ============================ */
@@ -1086,6 +1090,10 @@ body.home:not(.paged) .tacobout-magazine-grid .wp-block-post:first-child .wp-blo
 	background: var(--taco-accent);
 	border-color: var(--taco-accent);
 	color: white;
+}
+
+.wp-block-query-pagination-numbers .page-numbers:active {
+	transform: scale(0.95);
 }
 
 /* ============================
@@ -1213,6 +1221,10 @@ body.home:not(.paged) .tacobout-magazine-grid .wp-block-post:first-child .wp-blo
 	transform: scale(1.08);
 	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 	background: rgba(255, 255, 255, 0.9);
+}
+
+.tacobout-interaction-badge:active {
+	transform: scale(0.95);
 }
 
 @media (prefers-color-scheme: dark) {
@@ -1703,6 +1715,10 @@ body.author .tacobout-card-inner {
 	transform: scale(1.05);
 	outline: 2px solid var(--taco-accent);
 	outline-offset: 2px;
+}
+
+.tacobout-alt-badge:active {
+	transform: scale(0.95);
 }
 
 .tacobout-alt-tooltip {
