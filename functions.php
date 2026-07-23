@@ -99,7 +99,7 @@ add_filter( 'style_loader_tag', 'tacobout_async_google_fonts', 10, 4 );
 function tacobout_get_memoized_post_format( $post_id ) {
 	static $formats = array();
 	if ( ! isset( $formats[ $post_id ] ) ) {
-		$format = get_post_format( $post_id );
+		$format              = get_post_format( $post_id );
 		$formats[ $post_id ] = $format ? $format : 'standard';
 	}
 	return $formats[ $post_id ];
@@ -151,11 +151,16 @@ function tacobout_clear_interaction_count_cache( $comment_id, $comment_object = 
 add_action( 'wp_insert_comment', 'tacobout_clear_interaction_count_cache', 10, 2 );
 add_action( 'edit_comment', 'tacobout_clear_interaction_count_cache', 10, 1 );
 add_action( 'delete_comment', 'tacobout_clear_interaction_count_cache', 10, 1 );
-add_action( 'transition_comment_status', function( $new_status, $old_status, $comment ) {
-	if ( isset( $comment->comment_post_ID ) ) {
-		wp_cache_delete( 'tacobout_int_count_' . (int) $comment->comment_post_ID, 'posts' );
-	}
-}, 10, 3 );
+add_action(
+	'transition_comment_status',
+	function ( $new_status, $old_status, $comment ) {
+		if ( isset( $comment->comment_post_ID ) ) {
+			wp_cache_delete( 'tacobout_int_count_' . (int) $comment->comment_post_ID, 'posts' );
+		}
+	},
+	10,
+	3
+);
 
 /**
  * Helper: Retrieve total published post count with transient caching.
@@ -177,11 +182,16 @@ function tacobout_get_total_published_posts() {
 function tacobout_clear_total_posts_transient() {
 	delete_transient( 'tacobout_total_published_posts' );
 }
-add_action( 'transition_post_status', function( $new_status, $old_status, $post ) {
-	if ( 'publish' === $new_status || 'publish' === $old_status ) {
-		tacobout_clear_total_posts_transient();
-	}
-}, 10, 3 );
+add_action(
+	'transition_post_status',
+	function ( $new_status, $old_status, $post ) {
+		if ( 'publish' === $new_status || 'publish' === $old_status ) {
+			tacobout_clear_total_posts_transient();
+		}
+	},
+	10,
+	3
+);
 add_action( 'deleted_post', 'tacobout_clear_total_posts_transient' );
 
 /**
@@ -448,24 +458,6 @@ function tacobout_trending_all_comments_orderby( $orderby, $query ) {
 }
 add_filter( 'posts_orderby', 'tacobout_trending_all_comments_orderby', 10, 2 );
 
-function tacobout_get_interaction_count( $post_id ) {
-	$cache_key = 'tacobout_interaction_count_' . $post_id;
-	$count     = wp_cache_get( $cache_key, 'counts' );
-
-	if ( false === $count ) {
-		$count = (int) get_comments(
-			array(
-				'post_id' => $post_id,
-				'status'  => 'approve',
-				'count'   => true,
-				'type'    => 'all',
-			)
-		);
-		wp_cache_set( $cache_key, $count, 'counts' );
-	}
-
-	return $count;
-}
 
 /**
  * Invalidate the interaction count cache when a post's cache is cleaned.
@@ -565,13 +557,23 @@ function tacobout_register_rest_fields() {
 add_action( 'rest_api_init', 'tacobout_register_rest_fields' );
 
 /**
+ * Check if the current request is an admin request or a Site Editor theme preview.
+ *
+ * @return bool True if admin or theme preview, false otherwise.
+ */
+function tacobout_is_admin_or_theme_preview() {
+	return isset( $_GET['wp_theme_preview'] ) || is_admin();
+}
+
+
+/**
  * Enqueue infinite scroll + scroll-to-top script on the home page.
  * Guarded against loading inside the Site Editor's preview iframe,
  * which would run heavy observers/fetch logic on top of the editor's
  * React app and crash Safari.
  */
 function tacobout_enqueue_infinite_scroll() {
-	if ( isset( $_GET['wp_theme_preview'] ) || is_admin() ) {
+	if ( tacobout_is_admin_or_theme_preview() ) {
 		return;
 	}
 
@@ -639,7 +641,7 @@ add_action( 'wp_enqueue_scripts', 'tacobout_enqueue_infinite_scroll' );
  * Guarded against loading inside the Site Editor's preview iframe.
  */
 function tacobout_enqueue_alt_badge() {
-	if ( isset( $_GET['wp_theme_preview'] ) || is_admin() ) {
+	if ( tacobout_is_admin_or_theme_preview() ) {
 		return;
 	}
 
@@ -658,7 +660,7 @@ add_action( 'wp_enqueue_scripts', 'tacobout_enqueue_alt_badge' );
  * Guarded against loading inside the Site Editor's preview iframe.
  */
 function tacobout_enqueue_header_script() {
-	if ( isset( $_GET['wp_theme_preview'] ) || is_admin() ) {
+	if ( tacobout_is_admin_or_theme_preview() ) {
 		return;
 	}
 
