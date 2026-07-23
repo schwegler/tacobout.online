@@ -448,24 +448,6 @@ function tacobout_trending_all_comments_orderby( $orderby, $query ) {
 }
 add_filter( 'posts_orderby', 'tacobout_trending_all_comments_orderby', 10, 2 );
 
-function tacobout_get_interaction_count( $post_id ) {
-	$cache_key = 'tacobout_interaction_count_' . $post_id;
-	$count     = wp_cache_get( $cache_key, 'counts' );
-
-	if ( false === $count ) {
-		$count = (int) get_comments(
-			array(
-				'post_id' => $post_id,
-				'status'  => 'approve',
-				'count'   => true,
-				'type'    => 'all',
-			)
-		);
-		wp_cache_set( $cache_key, $count, 'counts' );
-	}
-
-	return $count;
-}
 
 /**
  * Invalidate the interaction count cache when a post's cache is cleaned.
