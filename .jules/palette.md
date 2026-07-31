@@ -55,3 +55,7 @@
 ## 2024-08-01 - Context Shift in Infinite Scroll
 **Learning:** When implementing dynamically loaded content or infinite scroll, using `aria-hidden="true"` on separator elements hides critical structural or semantic context shifts from screen reader users.
 **Action:** Never use `aria-hidden="true"` on separators that convey context changes (e.g. transitioning from a filtered feed to a global feed). Allow screen readers to announce these transitions to ensure non-sighted users understand the shift.
+
+## 2024-11-20 - Theme.json Focus Parity
+**Learning:** In WordPress Full Site Editing, styling interactive elements like links and buttons in `theme.json` often relies on the `:hover` pseudo-class. However, unlike custom CSS where we've learned to pair `:hover` with `:focus-visible`, `theme.json` styles default only to hover, omitting focus styles. This creates a disjointed experience where keyboard users navigate past elements without receiving visual cues.
+**Action:** Always audit `theme.json` styling for `:hover` pseudo-classes and explicitly add a mirroring `:focus` (or `:focus-visible` if supported) pseudo-class block with the same properties to ensure visual feature parity for keyboard navigation.
