@@ -55,3 +55,7 @@
 ## 2024-08-01 - Context Shift in Infinite Scroll
 **Learning:** When implementing dynamically loaded content or infinite scroll, using `aria-hidden="true"` on separator elements hides critical structural or semantic context shifts from screen reader users.
 **Action:** Never use `aria-hidden="true"` on separators that convey context changes (e.g. transitioning from a filtered feed to a global feed). Allow screen readers to announce these transitions to ensure non-sighted users understand the shift.
+
+## 2024-07-29 - Tactile Feedback for Read More Link
+**Learning:** Custom interactive UI elements (like buttons, badges, or FABs) often have `:hover` and `:focus-visible` states, but lack an `:active` state. This omission prevents tactile visual feedback (like a "pressed" effect) during interactions, degrading the micro-UX.
+**Action:** Always include an `:active` state for custom interactive elements in addition to `:hover` and `:focus-visible` states.
