@@ -307,6 +307,7 @@ add_filter( 'body_class', 'tacobout_pagination_body_class' );
  */
 function tacobout_security_headers() {
 	if ( ! is_admin() ) {
+		header( 'Permissions-Policy: camera=(), microphone=(), geolocation=()' );
 		header( 'X-Content-Type-Options: nosniff' );
 		header( 'X-Frame-Options: SAMEORIGIN' );
 		header( 'X-XSS-Protection: 1; mode=block' );
