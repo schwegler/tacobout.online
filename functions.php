@@ -312,6 +312,7 @@ function tacobout_security_headers() {
 		header( 'X-XSS-Protection: 1; mode=block' );
 		header( 'Referrer-Policy: strict-origin-when-cross-origin' );
 		header( 'Strict-Transport-Security: max-age=31536000; includeSubDomains' );
+		header( 'Permissions-Policy: camera=(), microphone=(), geolocation=()' );
 
 		if ( ! is_user_logged_in() && isset( $_SERVER['REQUEST_METHOD'] ) && 'GET' === $_SERVER['REQUEST_METHOD'] && ! is_preview() ) {
 			header( 'Cache-Control: public, max-age=600, s-maxage=3600, stale-while-revalidate=86400' );

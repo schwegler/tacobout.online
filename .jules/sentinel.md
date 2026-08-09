@@ -21,3 +21,7 @@
 **Vulnerability:** DOM-based XSS caused by injecting `post.title.rendered` into the DOM.
 **Learning:** In WordPress REST API responses, `title.rendered` may contain unescaped HTML, unlike `excerpt.rendered` or `content.rendered` which are intended to contain HTML.
 **Prevention:** Always explicitly escape `title.rendered` (e.g., using `escHtml()`) on the client side before DOM insertion.
+## 2024-08-09 - Restrict sensitive browser features via Permissions-Policy
+**Vulnerability:** Missing Permissions-Policy header to restrict access to sensitive browser features like camera, microphone, and geolocation.
+**Learning:** Proactively hardening the application by restricting access to sensitive features can prevent potential abuse.
+**Prevention:** Always add a Permissions-Policy header in the initial setup of security headers to minimize the attack surface.
