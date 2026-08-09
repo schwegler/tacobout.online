@@ -47,3 +47,7 @@
 ## 2024-07-22 - Cache Intl.DateTimeFormat for loop performance
 **Learning:** Calling `toLocaleDateString()` or instantiating `Intl.DateTimeFormat` inside loops causes significant performance overhead due to recreating the formatter.
 **Action:** Always instantiate `Intl.DateTimeFormat` once outside the loop and reuse its `.format()` method.
+
+## 2024-07-29 - [Optimize badge pulse animation]
+**Learning:** Animating `box-shadow` for pulse effects causes continuous CPU repaints.
+**Action:** Replace `box-shadow` animations with a `::after` pseudo-element that animates `transform: scale()` and `opacity` to offload work to the GPU.
