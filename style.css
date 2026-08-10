@@ -696,26 +696,42 @@ body.home:not(.paged) .tacobout-magazine-grid .wp-block-post:first-child::before
 	font-size: 0.75rem;
 	font-weight: 700;
 	letter-spacing: 0.1em;
-	box-shadow: 0 0 10px var(--taco-accent);
-	animation: pulse 2s infinite;
 	z-index: 10;
+}
+
+body.home:not(.paged) .tacobout-magazine-grid .wp-block-post:first-child::after {
+	content: "LATEST" / "";
+	position: absolute;
+	top: 1rem;
+	left: 1.5rem;
+	background: rgba(0, 102, 255, 0.7);
+	color: transparent;
+	padding: 4px 12px;
+	border-radius: 100px;
+	font-size: 0.75rem;
+	font-weight: 700;
+	letter-spacing: 0.1em;
+	z-index: 9;
+	animation: pulse-badge 2s infinite;
+	pointer-events: none;
 }
 
 body.home:not(.paged) .tacobout-magazine-grid .wp-block-post:first-child .entry-content:last-child {
 	margin-bottom: 0;
 }
 
-@keyframes pulse {
+@keyframes pulse-badge {
 	0% {
-		box-shadow: 0 0 0 0 rgba(0, 102, 255, 0.7);
+		transform: scale(0.95);
+		opacity: 1;
 	}
-
 	70% {
-		box-shadow: 0 0 0 10px rgba(0, 102, 255, 0);
+		transform: scale(1.2);
+		opacity: 0;
 	}
-
 	100% {
-		box-shadow: 0 0 0 0 rgba(0, 102, 255, 0);
+		transform: scale(0.95);
+		opacity: 0;
 	}
 }
 
