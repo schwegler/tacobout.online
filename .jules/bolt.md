@@ -47,3 +47,7 @@
 ## 2024-07-22 - Cache Intl.DateTimeFormat for loop performance
 **Learning:** Calling `toLocaleDateString()` or instantiating `Intl.DateTimeFormat` inside loops causes significant performance overhead due to recreating the formatter.
 **Action:** Always instantiate `Intl.DateTimeFormat` once outside the loop and reuse its `.format()` method.
+
+## 2024-08-11 - [Optimize CSS Box-Shadow Animation]
+**Learning:** Animating `box-shadow` directly triggers continuous CPU repaints.
+**Action:** Replace `box-shadow` animations with a pseudo-element animating `transform: scale()` and `opacity`.
