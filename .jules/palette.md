@@ -59,3 +59,6 @@
 ## 2024-07-29 - Tactile Feedback for Read More Link
 **Learning:** Custom interactive UI elements (like buttons, badges, or FABs) often have `:hover` and `:focus-visible` states, but lack an `:active` state. This omission prevents tactile visual feedback (like a "pressed" effect) during interactions, degrading the micro-UX.
 **Action:** Always include an `:active` state for custom interactive elements in addition to `:hover` and `:focus-visible` states.
+## 2024-08-12 - Tactile Feedback for Comment Links
+**Learning:** Custom interactive UI elements (like buttons, badges, or FABs) and specific themed links (like comment reply links and activitypub interaction links) often have `:hover` and `:focus-visible` states, but lack an `:active` state. This omission prevents tactile visual feedback (like a "pressed" effect) during interactions, degrading the micro-UX.
+**Action:** Always include an `:active` state (e.g., `transform: scale(0.95)`) for comment links and interaction buttons in addition to `:hover` and `:focus-visible` states to improve the tactile response.

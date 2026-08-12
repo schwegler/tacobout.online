@@ -1037,6 +1037,13 @@ body.home:not(.paged) .tacobout-magazine-grid .wp-block-post:first-child .wp-blo
 	white-space: nowrap;
 }
 
+.comment-body .comment-reply-link:active,
+.comment-body a.activitypub-interaction-link:active,
+.comment-body .activitypub-like:active,
+.comment-body .activitypub-reply:active {
+	transform: scale(0.95);
+}
+
 /* ============================
    AUTHOR BIO CARD
    ============================ */
