@@ -556,7 +556,8 @@ header:has(.tacobout-header) {
 	}
 
 	/* LATEST badge — slightly smaller on phones */
-	body.home:not(.paged) .tacobout-magazine-grid .wp-block-post:first-child::before {
+	body.home:not(.paged) .tacobout-magazine-grid .wp-block-post:first-child::before,
+	body.home:not(.paged) .tacobout-magazine-grid .wp-block-post:first-child::after {
 		top: 0.75rem;
 		left: 1rem;
 		font-size: 0.65rem;
@@ -697,25 +698,42 @@ body.home:not(.paged) .tacobout-magazine-grid .wp-block-post:first-child::before
 	font-weight: 700;
 	letter-spacing: 0.1em;
 	box-shadow: 0 0 10px var(--taco-accent);
-	animation: pulse 2s infinite;
 	z-index: 10;
+}
+
+body.home:not(.paged) .tacobout-magazine-grid .wp-block-post:first-child::after {
+	content: "LATEST" / "";
+	position: absolute;
+	top: 1rem;
+	left: 1.5rem;
+	background: var(--taco-accent);
+	color: transparent;
+	padding: 4px 12px;
+	border-radius: 100px;
+	font-size: 0.75rem;
+	font-weight: 700;
+	letter-spacing: 0.1em;
+	z-index: 9;
+	pointer-events: none;
+	animation: tacobout-pulse-badge 2s infinite;
 }
 
 body.home:not(.paged) .tacobout-magazine-grid .wp-block-post:first-child .entry-content:last-child {
 	margin-bottom: 0;
 }
 
-@keyframes pulse {
+@keyframes tacobout-pulse-badge {
 	0% {
-		box-shadow: 0 0 0 0 rgba(0, 102, 255, 0.7);
+		transform: scale(1);
+		opacity: 0.7;
 	}
-
 	70% {
-		box-shadow: 0 0 0 10px rgba(0, 102, 255, 0);
+		transform: scale(1.4);
+		opacity: 0;
 	}
-
 	100% {
-		box-shadow: 0 0 0 0 rgba(0, 102, 255, 0);
+		transform: scale(1);
+		opacity: 0;
 	}
 }
 
