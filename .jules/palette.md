@@ -59,3 +59,7 @@
 ## 2024-07-29 - Tactile Feedback for Read More Link
 **Learning:** Custom interactive UI elements (like buttons, badges, or FABs) often have `:hover` and `:focus-visible` states, but lack an `:active` state. This omission prevents tactile visual feedback (like a "pressed" effect) during interactions, degrading the micro-UX.
 **Action:** Always include an `:active` state for custom interactive elements in addition to `:hover` and `:focus-visible` states.
+
+## 2024-08-01 - Focus Parity for Global Elements
+**Learning:** Global structural elements like headings and global button/link styles configured inside `theme.json` are foundational and cascade throughout the design. Defining `:hover` styles for links and buttons without matching `:focus` definitions leaves a critical accessibility gap across the entire site layout, impacting all interactive content not otherwise overridden.
+**Action:** Always ensure that `theme.json` configuration objects establishing `:hover` behavior for interactive elements (`link`, `button`) include an identical adjacent `:focus` sibling object to guarantee keyboard accessibility feature parity across the theme.
