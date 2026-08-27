@@ -304,7 +304,18 @@
 		day: "numeric",
 	});
 
-	function getFeaturedImageHtml(post, showFeaturedImage) {
+	function buildCard(post) {
+		const format = post.post_format || "standard";
+		const formatClass = "tacobout-format-" + format;
+		const interactionCount = post.interaction_count || 0;
+
+		// Determine what to show/hide based on format
+		const showFeaturedImage = format === "standard";
+		const showExcerpt = format === "standard";
+		const showContent = format !== "standard";
+
+		// Build featured image
+		let featuredImageHtml = "";
 		if (
 			showFeaturedImage &&
 			post._embedded &&
@@ -316,7 +327,7 @@
 				media.media_details?.sizes?.medium_large?.source_url ||
 				media.source_url;
 			const imgAlt = media.alt_text || "";
-			return `
+			featuredImageHtml = `
 				<figure class="wp-block-post-featured-image" style="aspect-ratio:16/9">
 					<a href="${escHtml(post.link)}">
 						<img src="${escHtml(imgSrc)}" alt="${escHtml(imgAlt)}" loading="lazy"
@@ -325,10 +336,8 @@
 				</figure>
 			`;
 		}
-		return "";
-	}
 
-	function getPostMetaHtml(post) {
+		// Build post meta (categories + date)
 		let categoriesHtml = "";
 		if (
 			post._embedded &&
@@ -346,7 +355,7 @@
 		const dateObj = new Date(post.date);
 		const dateFormatted = dateFormatter.format(dateObj);
 
-		return `
+		const postMetaHtml = `
 			<div class="wp-block-template-part">
 				<div class="wp-block-group tacobout-post-meta" style="font-size:0.8125rem">
 					${categoriesHtml}
@@ -357,65 +366,45 @@
 				</div>
 			</div>
 		`;
-	}
 
-	function getTitleHtml(post) {
-		return `
+		// Build title
+		const titleHtml = `
 			<h2 class="wp-block-post-title" style="font-size:var(--wp--preset--font-size--x-large);line-height:1.2;margin-top:0;margin-bottom:0">
 				<a href="${escHtml(post.link)}">${escHtml(post.title.rendered)}</a>
 			</h2>
 		`;
-	}
 
-	function getExcerptHtml(post, showExcerpt) {
+		// Build excerpt (for standard format)
+		let excerptHtml = "";
 		if (showExcerpt && post.excerpt && post.excerpt.rendered) {
-			return `
+			excerptHtml = `
 				<div class="wp-block-post-excerpt">
 					<p class="wp-block-post-excerpt__excerpt">${post.excerpt.rendered}</p>
 				</div>
 			`;
 		}
-		return "";
-	}
 
-	function getContentHtml(post, showContent) {
+		// Build content (for non-standard formats)
+		let contentHtml = "";
 		if (showContent && post.content && post.content.rendered) {
-			return `
+			contentHtml = `
 				<div class="wp-block-post-content entry-content">
 					${post.content.rendered}
 				</div>
 			`;
 		}
-		return "";
-	}
 
-	function getInteractionBadgeHtml(post, interactionCount) {
+		// Build interaction badge
+		let badgeHtml = "";
 		if (interactionCount > 0) {
 			const label =
 				interactionCount === 1
 					? "1 interaction"
 					: interactionCount + " interactions";
-			return `<a href="${escHtml(post.link)}" class="tacobout-interaction-badge" aria-label="${escHtml(label)}" title="${escHtml(label)}"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg> ${interactionCount}</a>`;
+			badgeHtml = `<a href="${escHtml(post.link)}" class="tacobout-interaction-badge" aria-label="${escHtml(label)}" title="${escHtml(label)}"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg> ${interactionCount}</a>`;
 		}
-		return "";
-	}
 
-	function buildCard(post) {
-		const format = post.post_format || "standard";
-		const formatClass = "tacobout-format-" + format;
-		const interactionCount = post.interaction_count || 0;
-
-		const showFeaturedImage = format === "standard";
-		const showExcerpt = format === "standard";
-		const showContent = format !== "standard";
-
-		const featuredImageHtml = getFeaturedImageHtml(post, showFeaturedImage);
-		const postMetaHtml = getPostMetaHtml(post);
-		const titleHtml = getTitleHtml(post);
-		const excerptHtml = getExcerptHtml(post, showExcerpt);
-		const contentHtml = getContentHtml(post, showContent);
-		const badgeHtml = getInteractionBadgeHtml(post, interactionCount);
-
+		// Assemble card
 		const li = document.createElement("li");
 		li.className = `wp-block-post post-${post.id} post type-post status-publish wp-post-${post.id} ${formatClass}`;
 

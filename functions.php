@@ -676,12 +676,11 @@ function tacobout_enable_mastodon_apps_login_redirect( $redirect_to, $requested_
 			return wp_validate_redirect( $sanitized_redirect, $redirect_to );
 		}
 
-		$allowed_schemes = array( 'mastodon', 'ivory', 'mammoth', 'mona', 'icecubes', 'toot', 'masto', 'urn' );
-		if ( in_array( $scheme, $allowed_schemes, true ) ) {
-			return $sanitized_redirect;
+		if ( in_array( $scheme, array( 'javascript', 'vbscript', 'data' ), true ) ) {
+			return $redirect_to; // Fallback to default if malicious scheme detected.
 		}
 
-		return $redirect_to;
+		return $sanitized_redirect;
 	}
 	return $redirect_to;
 }
