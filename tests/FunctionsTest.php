@@ -125,6 +125,58 @@ class FunctionsTest extends \PHPUnit\Framework\TestCase {
         $this->assertEquals(15, $total);
     }
 
+    public function test_tacobout_disable_self_pingbacks() {
+        \Brain\Monkey\Functions\expect('home_url')
+            ->once()
+            ->andReturn('http://example.com');
+
+        $links = [
+            'http://example.com/blog/post-1',
+            'https://external-site.com/article',
+            'http://example.com/about',
+            'https://another-domain.org/page',
+        ];
+
+        tacobout_disable_self_pingbacks($links);
+
+        $this->assertEquals([
+            1 => 'https://external-site.com/article',
+            3 => 'https://another-domain.org/page',
+        ], $links);
+    }
+
+    public function test_tacobout_enable_mastodon_apps_login_redirect() {
+        $default_redirect = 'http://example.com/wp-admin/';
+
+        // 1. Non-matching action should return default redirect
+        $_REQUEST = [];
+        $this->assertEquals($default_redirect, tacobout_enable_mastodon_apps_login_redirect($default_redirect, 'ivory://oauth'));
+
+        // Set action for remaining tests
+        $_REQUEST['action'] = 'enable-mastodon-apps-authenticate';
+
+        // 2. Allowed custom schemes
+        $this->assertEquals('ivory://oauth/callback', tacobout_enable_mastodon_apps_login_redirect($default_redirect, 'ivory://oauth/callback'));
+        $this->assertEquals('mastodon://oauth/callback', tacobout_enable_mastodon_apps_login_redirect($default_redirect, 'mastodon://oauth/callback'));
+        $this->assertEquals('urn:ietf:wg:oauth:2.0:oob', tacobout_enable_mastodon_apps_login_redirect($default_redirect, 'urn:ietf:wg:oauth:2.0:oob'));
+
+        // 3. Unallowed custom schemes should fall back to default redirect
+        $this->assertEquals($default_redirect, tacobout_enable_mastodon_apps_login_redirect($default_redirect, 'customscheme://evil.com'));
+
+        // 4. Malicious schemes (javascript, vbscript, data) fall back to default redirect
+        $this->assertEquals($default_redirect, tacobout_enable_mastodon_apps_login_redirect($default_redirect, 'javascript:alert(1)'));
+        $this->assertEquals($default_redirect, tacobout_enable_mastodon_apps_login_redirect($default_redirect, 'data:text/html,<script>alert(1)</script>'));
+
+        // 5. Standard HTTP/HTTPS links use wp_validate_redirect (local domain valid, external invalid)
+        $this->assertEquals('http://example.com/dashboard', tacobout_enable_mastodon_apps_login_redirect($default_redirect, 'http://example.com/dashboard'));
+        $this->assertEquals($default_redirect, tacobout_enable_mastodon_apps_login_redirect($default_redirect, 'https://attacker.com/steal'));
+
+        // 6. Relative URLs (empty scheme) use wp_validate_redirect
+        $this->assertEquals('/relative/path', tacobout_enable_mastodon_apps_login_redirect($default_redirect, '/relative/path'));
+
+        $_REQUEST = [];
+    }
+
     public function test_tacobout_get_taxonomy_scroll_context_default() {
         \Brain\Monkey\Functions\expect('is_category')->once()->andReturn(false);
         \Brain\Monkey\Functions\expect('is_tag')->once()->andReturn(false);

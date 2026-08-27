@@ -74,6 +74,26 @@ if (!function_exists('_x')) {
     function _x($text, $context, $domain) { return $text; }
 }
 
+if (!function_exists('wp_sanitize_redirect')) {
+    function wp_sanitize_redirect($location) {
+        return $location;
+    }
+}
+if (!function_exists('wp_parse_url')) {
+    function wp_parse_url($url, $component = -1) {
+        return parse_url($url, $component);
+    }
+}
+if (!function_exists('wp_validate_redirect')) {
+    function wp_validate_redirect($location, $fallback = '') {
+        // Simple mock: allow relative paths or http(s) matching example.com
+        if (str_starts_with($location, '/') || str_starts_with($location, 'http://example.com') || str_starts_with($location, 'https://example.com')) {
+            return $location;
+        }
+        return $fallback;
+    }
+}
+
 // Load functions.php
 
 if (!function_exists('remove_action')) {
@@ -116,7 +136,7 @@ if (!function_exists('is_user_logged_in')) {
 if (!function_exists('is_preview')) {
     function is_preview() { return false; }
 }
-if (!function_exists('home_url')) {
+if (false) {
     function home_url($path = '') { return 'http://example.com' . $path; }
 }
 if (!function_exists('HOUR_IN_SECONDS')) {
