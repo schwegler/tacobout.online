@@ -136,7 +136,7 @@ if (!function_exists('is_user_logged_in')) {
 if (!function_exists('is_preview')) {
     function is_preview() { return false; }
 }
-if (!function_exists('home_url')) {
+if (false) {
     function home_url($path = '') { return 'http://example.com' . $path; }
 }
 if (!function_exists('HOUR_IN_SECONDS')) {
