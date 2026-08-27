@@ -63,3 +63,7 @@
 ## 2024-10-24 - Focus Parity in theme.json
 **Learning:** In WordPress `theme.json`, keyboard users lose focus visibility if `":focus"` pseudo-classes aren't explicitly mirrored alongside `":hover"` styles for interactive elements.
 **Action:** Always add a mirroring `":focus"` pseudo-class object with identical properties whenever defining `":hover"` styles for links, buttons, and other interactive elements in `theme.json`.
+
+## 2026-08-27 - Complete Removal of Admin Bar Items on Mobile
+**Learning:** Hiding only child elements like `.ab-label` in the WordPress admin bar (`#wpadminbar`) leaves parent list items (`li`) taking up horizontal space with padding, margins, or icons. On mobile screens (<782px), this causes unexpected horizontal overflow and layout breakage.
+**Action:** When hiding third-party admin bar items on mobile screens, always target the top-level list item ID (e.g., `#wp-admin-bar-friends-menu`) to completely remove the element from the layout flow.
