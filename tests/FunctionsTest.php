@@ -145,6 +145,7 @@ class FunctionsTest extends \PHPUnit\Framework\TestCase {
         ], $links);
     }
 
+  
     public function test_tacobout_enable_mastodon_apps_login_redirect() {
         $default_redirect = 'http://example.com/wp-admin/';
 
