@@ -63,3 +63,7 @@
 ## 2024-10-24 - Focus Parity in theme.json
 **Learning:** In WordPress `theme.json`, keyboard users lose focus visibility if `":focus"` pseudo-classes aren't explicitly mirrored alongside `":hover"` styles for interactive elements.
 **Action:** Always add a mirroring `":focus"` pseudo-class object with identical properties whenever defining `":hover"` styles for links, buttons, and other interactive elements in `theme.json`.
+
+## 2026-07-01 - Prevent Mobile Admin Bar Horizontal Overflow
+**Learning:** Adding `overflow-x: hidden` to `#wpadminbar` within mobile media queries (`max-width: 782px`) prevents third-party plugin menu items from causing unwanted horizontal page scrolling on mobile viewports.
+**Action:** Always ensure `#wpadminbar` has `overflow-x: hidden` applied in mobile CSS media queries to guarantee clean mobile layouts when the WordPress admin bar is visible.

@@ -418,6 +418,10 @@ header:has(.tacobout-header) {
 	}
 
 	/* Admin bar overflow fixes */
+	#wpadminbar {
+		overflow-x: hidden;
+	}
+
 	#wpadminbar #wp-admin-bar-friends-menu .ab-label {
 		display: none !important;
 	}
