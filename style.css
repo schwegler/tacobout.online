@@ -418,10 +418,7 @@ header:has(.tacobout-header) {
 	}
 
 	/* Admin bar overflow fixes */
-	#wpadminbar #wp-admin-bar-friends-menu .ab-label {
-		display: none !important;
-	}
-
+	#wpadminbar #wp-admin-bar-friends-menu,
 	#wpadminbar #wp-admin-bar-command-palette,
 	#wpadminbar #wp-admin-bar-stats,
 	#wpadminbar #wp-admin-bar-hack-guardian,
