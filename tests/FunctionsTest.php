@@ -124,5 +124,30 @@ class FunctionsTest extends \PHPUnit\Framework\TestCase {
         $total = tacobout_get_total_published_posts();
         $this->assertEquals(15, $total);
     }
-}
+    public function test_tacobout_get_taxonomy_scroll_context_default() {
+        \Brain\Monkey\Functions\expect('is_category')->once()->andReturn(false);
+        \Brain\Monkey\Functions\expect('is_tag')->once()->andReturn(false);
 
+        $context = tacobout_get_taxonomy_scroll_context(9);
+        $this->assertNull($context['term_id']);
+        $this->assertNull($context['term_name']);
+        $this->assertNull($context['term_type']);
+        $this->assertNull($context['term_total_pages']);
+    }
+
+    public function test_tacobout_get_taxonomy_scroll_context_category() {
+        $term = new \stdClass();
+        $term->term_id = 5;
+        $term->name = 'News';
+        $term->count = 18;
+
+        \Brain\Monkey\Functions\expect('is_category')->once()->andReturn(true);
+        \Brain\Monkey\Functions\expect('get_queried_object')->once()->andReturn($term);
+
+        $context = tacobout_get_taxonomy_scroll_context(9);
+        $this->assertEquals(5, $context['term_id']);
+        $this->assertEquals('News', $context['term_name']);
+        $this->assertEquals('categories', $context['term_type']);
+        $this->assertEquals(2, $context['term_total_pages']);
+    }
+}
