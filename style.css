@@ -1779,7 +1779,7 @@ body.admin-bar .wp-block-navigation__responsive-container.is-menu-open {
    ============================ */
 .tacobout-sidebar-sticky {
 	position: sticky;
-	top: 2rem;
+	top: 10rem;
 	align-self: flex-start;
 }
 
