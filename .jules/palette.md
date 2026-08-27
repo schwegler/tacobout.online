@@ -59,3 +59,7 @@
 ## 2024-07-29 - Tactile Feedback for Read More Link
 **Learning:** Custom interactive UI elements (like buttons, badges, or FABs) often have `:hover` and `:focus-visible` states, but lack an `:active` state. This omission prevents tactile visual feedback (like a "pressed" effect) during interactions, degrading the micro-UX.
 **Action:** Always include an `:active` state for custom interactive elements in addition to `:hover` and `:focus-visible` states.
+
+## 2024-10-24 - Focus Parity in theme.json
+**Learning:** In WordPress `theme.json`, keyboard users lose focus visibility if `":focus"` pseudo-classes aren't explicitly mirrored alongside `":hover"` styles for interactive elements.
+**Action:** Always add a mirroring `":focus"` pseudo-class object with identical properties whenever defining `":hover"` styles for links, buttons, and other interactive elements in `theme.json`.
