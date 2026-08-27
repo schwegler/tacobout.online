@@ -6,9 +6,11 @@ class FunctionsTest extends \PHPUnit\Framework\TestCase {
         \Brain\Monkey\setUp();
         global $wp_styles_enqueued;
         $wp_styles_enqueued = [];
+        $_GET = [];
     }
 
     protected function tearDown(): void {
+        $_GET = [];
         \Brain\Monkey\tearDown();
         parent::tearDown();
     }
@@ -124,5 +126,34 @@ class FunctionsTest extends \PHPUnit\Framework\TestCase {
         $total = tacobout_get_total_published_posts();
         $this->assertEquals(15, $total);
     }
-}
 
+    public function test_tacobout_pagination_body_class_with_query_block_pagination() {
+        $_GET['query-1-page'] = '2';
+        $classes = tacobout_pagination_body_class(['home']);
+        $this->assertEquals(['home', 'paged'], $classes);
+    }
+
+    public function test_tacobout_pagination_body_class_with_query_page() {
+        $_GET['query-page'] = '3';
+        $classes = tacobout_pagination_body_class(['home']);
+        $this->assertEquals(['home', 'paged'], $classes);
+    }
+
+    public function test_tacobout_pagination_body_class_page_one() {
+        $_GET['query-1-page'] = '1';
+        $classes = tacobout_pagination_body_class(['home']);
+        $this->assertEquals(['home'], $classes);
+    }
+
+    public function test_tacobout_pagination_body_class_unmatched_params() {
+        $_GET['query-abc-page'] = '2';
+        $_GET['other-param'] = '2';
+        $classes = tacobout_pagination_body_class(['home']);
+        $this->assertEquals(['home'], $classes);
+    }
+
+    public function test_tacobout_pagination_body_class_empty_get() {
+        $classes = tacobout_pagination_body_class(['home']);
+        $this->assertEquals(['home'], $classes);
+    }
+}
