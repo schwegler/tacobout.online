@@ -21,3 +21,8 @@
 **Vulnerability:** DOM-based XSS caused by injecting `post.title.rendered` into the DOM.
 **Learning:** In WordPress REST API responses, `title.rendered` may contain unescaped HTML, unlike `excerpt.rendered` or `content.rendered` which are intended to contain HTML.
 **Prevention:** Always explicitly escape `title.rendered` (e.g., using `escHtml()`) on the client side before DOM insertion.
+
+## 2026-07-21 - Fix Open Redirect in Mastodon OAuth redirect scheme validation
+**Vulnerability:** Open Redirect vulnerability in `tacobout_enable_mastodon_apps_login_redirect` caused by relying on a blocklist of dangerous URI schemes (`javascript`, `vbscript`, `data`) instead of an allowlist.
+**Learning:** Blocklists for URI scheme validation fail to protect against unlisted or custom malicious schemes. When bypassing strict domain validation (such as `wp_validate_redirect`) for OAuth app redirects, an allowlist of permitted client schemes must be used.
+**Prevention:** Always enforce strict allowlists for acceptable URI schemes when validating redirect URLs, and fall back to safe default redirect URLs for any scheme not explicitly allowed.
