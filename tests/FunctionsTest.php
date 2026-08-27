@@ -124,5 +124,35 @@ class FunctionsTest extends \PHPUnit\Framework\TestCase {
         $total = tacobout_get_total_published_posts();
         $this->assertEquals(15, $total);
     }
+
+    public function test_tacobout_post_class_non_standard_format() {
+        \Brain\Monkey\Functions\expect('get_post_format')
+            ->once()
+            ->with(101)
+            ->andReturn('video');
+
+        $classes = tacobout_post_class(['custom-class'], '', 101);
+        $this->assertEquals(['custom-class', 'tacobout-format-video'], $classes);
+    }
+
+    public function test_tacobout_post_class_standard_format() {
+        \Brain\Monkey\Functions\expect('get_post_format')
+            ->once()
+            ->with(102)
+            ->andReturn('standard');
+
+        $classes = tacobout_post_class([], '', 102);
+        $this->assertEquals(['tacobout-format-standard'], $classes);
+    }
+
+    public function test_tacobout_post_class_empty_or_false_format() {
+        \Brain\Monkey\Functions\expect('get_post_format')
+            ->once()
+            ->with(103)
+            ->andReturn(false);
+
+        $classes = tacobout_post_class(['post'], '', 103);
+        $this->assertEquals(['post', 'tacobout-format-standard'], $classes);
+    }
 }
 
