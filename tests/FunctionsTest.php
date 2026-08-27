@@ -124,5 +124,25 @@ class FunctionsTest extends \PHPUnit\Framework\TestCase {
         $total = tacobout_get_total_published_posts();
         $this->assertEquals(15, $total);
     }
+
+    public function test_tacobout_disable_self_pingbacks() {
+        \Brain\Monkey\Functions\expect('home_url')
+            ->once()
+            ->andReturn('http://example.com');
+
+        $links = [
+            'http://example.com/blog/post-1',
+            'https://external-site.com/article',
+            'http://example.com/about',
+            'https://another-domain.org/page',
+        ];
+
+        tacobout_disable_self_pingbacks($links);
+
+        $this->assertEquals([
+            1 => 'https://external-site.com/article',
+            3 => 'https://another-domain.org/page',
+        ], $links);
+    }
 }
 
