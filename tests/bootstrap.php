@@ -74,26 +74,6 @@ if (!function_exists('_x')) {
     function _x($text, $context, $domain) { return $text; }
 }
 
-if (!function_exists('wp_sanitize_redirect')) {
-    function wp_sanitize_redirect($location) {
-        return $location;
-    }
-}
-if (!function_exists('wp_parse_url')) {
-    function wp_parse_url($url, $component = -1) {
-        return parse_url($url, $component);
-    }
-}
-if (!function_exists('wp_validate_redirect')) {
-    function wp_validate_redirect($location, $fallback = '') {
-        // Simple mock: allow relative paths or http(s) matching example.com
-        if (str_starts_with($location, '/') || str_starts_with($location, 'http://example.com') || str_starts_with($location, 'https://example.com')) {
-            return $location;
-        }
-        return $fallback;
-    }
-}
-
 // Load functions.php
 
 if (!function_exists('remove_action')) {

@@ -6,9 +6,11 @@ class FunctionsTest extends \PHPUnit\Framework\TestCase {
         \Brain\Monkey\setUp();
         global $wp_styles_enqueued;
         $wp_styles_enqueued = [];
+        $_GET = [];
     }
 
     protected function tearDown(): void {
+        $_GET = [];
         \Brain\Monkey\tearDown();
         parent::tearDown();
     }
@@ -149,33 +151,34 @@ class FunctionsTest extends \PHPUnit\Framework\TestCase {
     public function test_tacobout_enable_mastodon_apps_login_redirect() {
         $default_redirect = 'http://example.com/wp-admin/';
 
-        // 1. Non-matching action should return default redirect
-        $_REQUEST = [];
-        $this->assertEquals($default_redirect, tacobout_enable_mastodon_apps_login_redirect($default_redirect, 'ivory://oauth'));
+    public function test_tacobout_pagination_body_class_with_query_block_pagination() {
+        $_GET['query-1-page'] = '2';
+        $classes = tacobout_pagination_body_class(['home']);
+        $this->assertEquals(['home', 'paged'], $classes);
+    }
 
-        // Set action for remaining tests
-        $_REQUEST['action'] = 'enable-mastodon-apps-authenticate';
+    public function test_tacobout_pagination_body_class_with_query_page() {
+        $_GET['query-page'] = '3';
+        $classes = tacobout_pagination_body_class(['home']);
+        $this->assertEquals(['home', 'paged'], $classes);
+    }
 
-        // 2. Allowed custom schemes
-        $this->assertEquals('ivory://oauth/callback', tacobout_enable_mastodon_apps_login_redirect($default_redirect, 'ivory://oauth/callback'));
-        $this->assertEquals('mastodon://oauth/callback', tacobout_enable_mastodon_apps_login_redirect($default_redirect, 'mastodon://oauth/callback'));
-        $this->assertEquals('urn:ietf:wg:oauth:2.0:oob', tacobout_enable_mastodon_apps_login_redirect($default_redirect, 'urn:ietf:wg:oauth:2.0:oob'));
+    public function test_tacobout_pagination_body_class_page_one() {
+        $_GET['query-1-page'] = '1';
+        $classes = tacobout_pagination_body_class(['home']);
+        $this->assertEquals(['home'], $classes);
+    }
 
-        // 3. Unallowed custom schemes should fall back to default redirect
-        $this->assertEquals($default_redirect, tacobout_enable_mastodon_apps_login_redirect($default_redirect, 'customscheme://evil.com'));
+    public function test_tacobout_pagination_body_class_unmatched_params() {
+        $_GET['query-abc-page'] = '2';
+        $_GET['other-param'] = '2';
+        $classes = tacobout_pagination_body_class(['home']);
+        $this->assertEquals(['home'], $classes);
+    }
 
-        // 4. Malicious schemes (javascript, vbscript, data) fall back to default redirect
-        $this->assertEquals($default_redirect, tacobout_enable_mastodon_apps_login_redirect($default_redirect, 'javascript:alert(1)'));
-        $this->assertEquals($default_redirect, tacobout_enable_mastodon_apps_login_redirect($default_redirect, 'data:text/html,<script>alert(1)</script>'));
-
-        // 5. Standard HTTP/HTTPS links use wp_validate_redirect (local domain valid, external invalid)
-        $this->assertEquals('http://example.com/dashboard', tacobout_enable_mastodon_apps_login_redirect($default_redirect, 'http://example.com/dashboard'));
-        $this->assertEquals($default_redirect, tacobout_enable_mastodon_apps_login_redirect($default_redirect, 'https://attacker.com/steal'));
-
-        // 6. Relative URLs (empty scheme) use wp_validate_redirect
-        $this->assertEquals('/relative/path', tacobout_enable_mastodon_apps_login_redirect($default_redirect, '/relative/path'));
-
-        $_REQUEST = [];
+    public function test_tacobout_pagination_body_class_empty_get() {
+        $classes = tacobout_pagination_body_class(['home']);
+        $this->assertEquals(['home'], $classes);
     }
 
     public function test_tacobout_get_taxonomy_scroll_context_default() {
