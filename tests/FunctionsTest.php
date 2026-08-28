@@ -127,6 +127,18 @@ class FunctionsTest extends \PHPUnit\Framework\TestCase {
         $this->assertEquals(15, $total);
     }
 
+    public function test_tacobout_embed_defaults() {
+        $input = [
+            'width'  => 500,
+            'height' => 300,
+            'custom' => 'value',
+        ];
+
+        $output = tacobout_embed_defaults($input);
+
+        $this->assertEquals(900, $output['width']);
+        $this->assertEquals(506, $output['height']);
+        $this->assertEquals('value', $output['custom']);
     public function test_tacobout_disable_self_pingbacks() {
         \Brain\Monkey\Functions\expect('home_url')
             ->once()
