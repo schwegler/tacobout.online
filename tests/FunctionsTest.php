@@ -127,6 +127,30 @@ class FunctionsTest extends \PHPUnit\Framework\TestCase {
         $this->assertEquals(15, $total);
     }
 
+    public function test_tacobout_disable_self_pingbacks() {
+        \Brain\Monkey\Functions\expect('home_url')
+            ->once()
+            ->andReturn('http://example.com');
+
+        $links = [
+            'http://example.com/blog/post-1',
+            'https://external-site.com/article',
+            'http://example.com/about',
+            'https://another-domain.org/page',
+        ];
+
+        tacobout_disable_self_pingbacks($links);
+
+        $this->assertEquals([
+            1 => 'https://external-site.com/article',
+            3 => 'https://another-domain.org/page',
+        ], $links);
+    }
+
+  
+    public function test_tacobout_enable_mastodon_apps_login_redirect() {
+        $default_redirect = 'http://example.com/wp-admin/';
+
     public function test_tacobout_pagination_body_class_with_query_block_pagination() {
         $_GET['query-1-page'] = '2';
         $classes = tacobout_pagination_body_class(['home']);
@@ -155,5 +179,32 @@ class FunctionsTest extends \PHPUnit\Framework\TestCase {
     public function test_tacobout_pagination_body_class_empty_get() {
         $classes = tacobout_pagination_body_class(['home']);
         $this->assertEquals(['home'], $classes);
+    }
+
+    public function test_tacobout_get_taxonomy_scroll_context_default() {
+        \Brain\Monkey\Functions\expect('is_category')->once()->andReturn(false);
+        \Brain\Monkey\Functions\expect('is_tag')->once()->andReturn(false);
+
+        $context = tacobout_get_taxonomy_scroll_context(9);
+        $this->assertNull($context['term_id']);
+        $this->assertNull($context['term_name']);
+        $this->assertNull($context['term_type']);
+        $this->assertNull($context['term_total_pages']);
+    }
+
+    public function test_tacobout_get_taxonomy_scroll_context_category() {
+        $term = new \stdClass();
+        $term->term_id = 5;
+        $term->name = 'News';
+        $term->count = 18;
+
+        \Brain\Monkey\Functions\expect('is_category')->once()->andReturn(true);
+        \Brain\Monkey\Functions\expect('get_queried_object')->once()->andReturn($term);
+
+        $context = tacobout_get_taxonomy_scroll_context(9);
+        $this->assertEquals(5, $context['term_id']);
+        $this->assertEquals('News', $context['term_name']);
+        $this->assertEquals('categories', $context['term_type']);
+        $this->assertEquals(2, $context['term_total_pages']);
     }
 }

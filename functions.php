@@ -557,6 +557,34 @@ function tacobout_register_rest_fields() {
 add_action( 'rest_api_init', 'tacobout_register_rest_fields' );
 
 /**
+ * Helper: Retrieve taxonomy archive context for infinite scroll.
+ */
+function tacobout_get_taxonomy_scroll_context( $per_page ) {
+	$context = array(
+		'term_id'          => null,
+		'term_name'        => null,
+		'term_type'        => null,
+		'term_total_pages' => null,
+	);
+
+	if ( is_category() ) {
+		$queried                  = get_queried_object();
+		$context['term_id']          = $queried->term_id;
+		$context['term_name']        = $queried->name;
+		$context['term_type']        = 'categories';
+		$context['term_total_pages'] = ceil( $queried->count / $per_page );
+	} elseif ( is_tag() ) {
+		$queried                  = get_queried_object();
+		$context['term_id']          = $queried->term_id;
+		$context['term_name']        = $queried->name;
+		$context['term_type']        = 'tags';
+		$context['term_total_pages'] = ceil( $queried->count / $per_page );
+	}
+
+	return $context;
+}
+
+/**
  * Enqueue infinite scroll + scroll-to-top script on the home page.
  * Guarded against loading inside the Site Editor's preview iframe,
  * which would run heavy observers/fetch logic on top of the editor's
@@ -581,31 +609,7 @@ function tacobout_enqueue_infinite_scroll() {
 	$total_pages = ceil( $total_posts / $per_page );
 
 	// Detect taxonomy archive context for the overflow separator feature.
-	// On category/tag pages, the initial WP query shows filtered posts; infinite
-	// scroll will mirror that filter until exhausted, then show the global feed.
-	$term_id          = null;
-	$term_name        = null;
-	$term_type        = null; // 'categories' or 'tags' — WP REST API filter param name
-	$term_rest_field  = null; // REST API field name to filter by
-	$term_total_pages = null;
-
-	if ( is_category() ) {
-		$queried          = get_queried_object();
-		$term_id          = $queried->term_id;
-		$term_name        = $queried->name;
-		$term_type        = 'categories';
-		$term_rest_field  = 'categories';
-		$term_count       = $queried->count;
-		$term_total_pages = ceil( $term_count / $per_page );
-	} elseif ( is_tag() ) {
-		$queried          = get_queried_object();
-		$term_id          = $queried->term_id;
-		$term_name        = $queried->name;
-		$term_type        = 'tags';
-		$term_rest_field  = 'tags';
-		$term_count       = $queried->count;
-		$term_total_pages = ceil( $term_count / $per_page );
-	}
+	$tax_context = tacobout_get_taxonomy_scroll_context( $per_page );
 
 	wp_localize_script(
 		'tacobout-infinite-scroll',
@@ -616,10 +620,10 @@ function tacobout_enqueue_infinite_scroll() {
 			'perPage'        => $per_page,
 			'totalPages'     => $total_pages,
 			'siteUrl'        => esc_url( home_url() ),
-			'termId'         => $term_id,
-			'termName'       => $term_name ? esc_html( $term_name ) : null,
-			'termType'       => $term_rest_field,
-			'termTotalPages' => $term_total_pages,
+			'termId'         => $tax_context['term_id'],
+			'termName'       => $tax_context['term_name'] ? esc_html( $tax_context['term_name'] ) : null,
+			'termType'       => $tax_context['term_type'],
+			'termTotalPages' => $tax_context['term_total_pages'],
 		)
 	);
 }
