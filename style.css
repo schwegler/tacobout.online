@@ -361,6 +361,20 @@ body::before {
 /* ============================
    HEADER
    ============================ */
+/* Site Logo */
+.wp-block-site-logo {
+	line-height: 0;
+}
+
+.wp-block-site-logo img,
+.wp-block-site-logo .custom-logo {
+	max-height: 48px;
+	width: auto;
+	height: auto;
+	max-width: 100%;
+	object-fit: contain;
+}
+
 header:has(.tacobout-header) {
 	display: contents;
 }
@@ -1845,3 +1859,46 @@ body.admin-bar .wp-block-navigation__responsive-container.is-menu-open {
 	object-fit: cover;
 	border-radius: 8px;
 }
+
+/* ============================
+   BLOCK EDITOR OVERRIDES
+   Prevents frontend fixed/sticky elements, pseudo backgrounds,
+   and unconstrained layout styles from breaking the Gutenberg canvas.
+   ============================ */
+.editor-styles-wrapper header:has(.tacobout-header),
+.block-editor-page header:has(.tacobout-header) {
+	display: block !important;
+}
+
+.editor-styles-wrapper .tacobout-header,
+.block-editor-page .tacobout-header {
+	position: static !important;
+	transform: none !important;
+	top: auto !important;
+}
+
+.editor-styles-wrapper .tacobout-header::before,
+.block-editor-page .tacobout-header::before {
+	display: none !important;
+}
+
+.editor-styles-wrapper::before,
+body.block-editor-page::before {
+	display: none !important;
+	animation: none !important;
+}
+
+.editor-styles-wrapper .tacobout-scroll-top,
+.editor-styles-wrapper .tacobout-theme-toggle {
+	display: none !important;
+}
+
+.editor-styles-wrapper .wp-block-site-logo img,
+.editor-styles-wrapper .wp-block-site-logo .custom-logo {
+	max-height: 48px !important;
+	width: auto !important;
+	height: auto !important;
+	max-width: 100% !important;
+	object-fit: contain !important;
+}
+
