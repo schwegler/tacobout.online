@@ -122,6 +122,26 @@ if (false) {
 if (!function_exists('HOUR_IN_SECONDS')) {
     define('HOUR_IN_SECONDS', 3600);
 }
+if (!function_exists('wp_sanitize_redirect')) {
+    function wp_sanitize_redirect($url) {
+        return preg_replace('|[^a-z0-9-~+_.?#=!&;,/:%@$*\'()\\x80-\\xff]|i', '', (string)$url);
+    }
+}
+if (!function_exists('wp_parse_url')) {
+    function wp_parse_url($url, $component = -1) {
+        return parse_url((string)$url, $component);
+    }
+}
+if (!function_exists('wp_validate_redirect')) {
+    function wp_validate_redirect($url, $fallback = '') {
+        $url = trim((string)$url);
+        if (str_starts_with($url, 'http://example.com') || str_starts_with($url, '/')) {
+            return $url;
+        }
+        return $fallback;
+    }
+}
 
 require_once __DIR__ . '/../functions.php';
+
 
