@@ -35,4 +35,11 @@ document.addEventListener( 'DOMContentLoaded', () => {
 			ticking = true;
 		}
 	}, { passive: true } );
+
+	// Reveal header when keyboard focus moves inside it
+	header.addEventListener( 'focusin', () => {
+		if ( header.classList.contains( 'is-hidden' ) ) {
+			header.classList.remove( 'is-hidden' );
+		}
+	} );
 } );
