@@ -1,0 +1,81 @@
+/*
+ * Editor-only compatibility styles.
+ *
+ * Keep selectors based on theme markup. WordPress scopes editor styles to the
+ * editing canvas and rewrites the body selector where required.
+ */
+
+/* The animated public-site mesh is distracting and can overflow the canvas. */
+body::before {
+	display: none !important;
+	content: none !important;
+	animation: none !important;
+}
+
+/* The public wrapper uses display:contents to make the header sticky relative
+ * to the viewport. In an editor canvas it must remain a normal selectable box. */
+header:has(.tacobout-header) {
+	display: block !important;
+}
+
+.tacobout-header {
+	position: relative !important;
+	top: auto !important;
+	transform: none !important;
+	transition: none !important;
+	isolation: isolate;
+}
+
+.tacobout-header::before {
+	display: none !important;
+	content: none !important;
+}
+
+/* Front-end utility controls are not editable block content. */
+.tacobout-scroll-top,
+.tacobout-theme-toggle {
+	display: none !important;
+}
+
+/* Protect the header row when the editor canvas becomes narrow because the
+ * settings sidebar or list view is open. */
+.tacobout-header > .wp-block-group {
+	min-width: 0;
+}
+
+.tacobout-header .wp-block-site-logo,
+.tacobout-header .wp-block-site-title,
+.tacobout-header .wp-block-navigation {
+	min-width: 0;
+}
+
+.tacobout-header .wp-block-site-logo img,
+.tacobout-header .wp-block-site-logo .custom-logo {
+	width: auto !important;
+	height: auto !important;
+	max-width: 100% !important;
+	max-height: 48px !important;
+	object-fit: contain !important;
+}
+
+/* Gutenberg owns Navigation's editor structure and editing affordances. Do not
+ * force its responsive container, submenu, or toolbar into front-end modes. */
+.wp-block-navigation,
+.wp-block-navigation__responsive-container,
+.wp-block-navigation__responsive-container-content {
+	min-width: 0;
+}
+
+/* Editing should remain stable instead of moving cards beneath the pointer. */
+.tacobout-magazine-grid .wp-block-post,
+.tacobout-basic-list .wp-block-post,
+body.author .wp-block-post {
+	animation: none !important;
+	transition: none !important;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+	.tacobout-magazine-grid .wp-block-post {
+		animation: none !important;
+	}
+}

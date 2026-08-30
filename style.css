@@ -4,7 +4,7 @@ Theme URI: https://tacobout.online
 Author: schwegler
 Author URI: https://tacobout.online
 Description: A personal magazine theme for schwegler — ultra-modern tumblog with deep Bluesky/ATProto & ActivityPub integration. Format-aware feeds, dark mode, and 2026 design language.
-Version: 3.6.3
+Version: 3.6.4
 Requires at least: 6.4
 Tested up to: 6.8
 Requires PHP: 8.0
@@ -1879,80 +1879,3 @@ html:not([data-theme="light"]) .wp-block-navigation__responsive-container.is-men
 	object-fit: cover;
 	border-radius: 8px;
 }
-
-/* ============================
-   BLOCK EDITOR OVERRIDES
-   Prevents frontend fixed/sticky elements, pseudo backgrounds,
-   and unconstrained layout styles from breaking the Gutenberg canvas.
-   ============================ */
-.editor-styles-wrapper header:has(.tacobout-header),
-.block-editor-page header:has(.tacobout-header) {
-	display: block !important;
-}
-
-.editor-styles-wrapper .tacobout-header,
-.block-editor-page .tacobout-header {
-	position: static !important;
-	transform: none !important;
-	top: auto !important;
-}
-
-.editor-styles-wrapper .tacobout-header::before,
-.block-editor-page .tacobout-header::before {
-	display: none !important;
-}
-
-.editor-styles-wrapper::before,
-body.block-editor-page::before {
-	display: none !important;
-	animation: none !important;
-}
-
-.editor-styles-wrapper .tacobout-scroll-top,
-.editor-styles-wrapper .tacobout-theme-toggle {
-	display: none !important;
-}
-
-.editor-styles-wrapper .wp-block-site-logo img,
-.editor-styles-wrapper .wp-block-site-logo .custom-logo {
-	max-height: 48px !important;
-	width: auto !important;
-	height: auto !important;
-	max-width: 100% !important;
-	object-fit: contain !important;
-}
-
-/* Block Editor Navigation: Keep links horizontal and suppress mobile overlay controls in editor */
-.editor-styles-wrapper .wp-block-navigation .wp-block-navigation__responsive-container-open {
-	display: none !important;
-}
-
-.editor-styles-wrapper .wp-block-navigation .wp-block-navigation__responsive-container {
-	position: static !important;
-	display: flex !important;
-	width: auto !important;
-	height: auto !important;
-	background: transparent !important;
-	color: inherit !important;
-	transform: none !important;
-}
-
-.editor-styles-wrapper .wp-block-navigation .wp-block-navigation__responsive-container-close {
-	display: none !important;
-}
-
-.editor-styles-wrapper .wp-block-navigation .wp-block-navigation__responsive-container-content {
-	display: flex !important;
-	align-items: center !important;
-	width: auto !important;
-}
-
-.editor-styles-wrapper .wp-block-navigation .wp-block-navigation__container {
-	display: flex !important;
-	flex-direction: row !important;
-	flex-wrap: wrap !important;
-	align-items: center !important;
-	gap: 1.5rem !important;
-}
-
-

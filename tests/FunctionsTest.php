@@ -6,6 +6,9 @@ class FunctionsTest extends \PHPUnit\Framework\TestCase {
         \Brain\Monkey\setUp();
         global $wp_styles_enqueued;
         $wp_styles_enqueued = [];
+        global $theme_supports_added, $editor_styles_added;
+        $theme_supports_added = [];
+        $editor_styles_added = [];
         $_GET = [];
     }
 
@@ -34,6 +37,22 @@ class FunctionsTest extends \PHPUnit\Framework\TestCase {
         $this->assertEquals('https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap', $wp_styles_enqueued['tacobout-google-fonts']['src']);
         $this->assertNull($wp_styles_enqueued['tacobout-google-fonts']['ver']);
         $this->assertEquals([], $wp_styles_enqueued['tacobout-google-fonts']['deps']);
+    }
+
+    public function test_tacobout_support_loads_scoped_editor_styles() {
+        global $theme_supports_added, $editor_styles_added;
+
+        tacobout_support();
+
+        $this->assertArrayHasKey('editor-styles', $theme_supports_added);
+        $this->assertSame(
+            [
+                'style.css',
+                'editor-style.css',
+                'https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap',
+            ],
+            $editor_styles_added
+        );
     }
 
     public function test_tacobout_clear_saved_templates_already_cleared() {

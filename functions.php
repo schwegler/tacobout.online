@@ -9,7 +9,17 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 if ( ! function_exists( 'tacobout_support' ) ) :
 	function tacobout_support() {
-		add_editor_style( 'style.css' );
+		// Load the public theme styles first for visual parity, then add a small
+		// editor-only compatibility layer. WordPress scopes these styles to the
+		// Site Editor / Block Editor canvas for us.
+		add_theme_support( 'editor-styles' );
+		add_editor_style(
+			array(
+				'style.css',
+				'editor-style.css',
+				'https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap',
+			)
+		);
 		load_theme_textdomain( 'tacobout' );
 		add_theme_support( 'wp-block-styles' );
 		add_theme_support( 'responsive-embeds' );

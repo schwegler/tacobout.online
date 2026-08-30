@@ -61,7 +61,19 @@ if (!function_exists('add_filter')) {
 }
 
 if (!function_exists('add_theme_support')) {
-    function add_theme_support() {}
+    function add_theme_support($feature, ...$args) {
+        global $theme_supports_added;
+        $theme_supports_added[$feature] = $args;
+    }
+}
+if (!function_exists('add_editor_style')) {
+    function add_editor_style($stylesheet = 'editor-style.css') {
+        global $editor_styles_added;
+        $editor_styles_added = (array) $stylesheet;
+    }
+}
+if (!function_exists('load_theme_textdomain')) {
+    function load_theme_textdomain() {}
 }
 
 if (!function_exists('register_nav_menus')) {
@@ -143,5 +155,3 @@ if (!function_exists('wp_validate_redirect')) {
 }
 
 require_once __DIR__ . '/../functions.php';
-
-
