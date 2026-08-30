@@ -66,6 +66,68 @@ header:has(.tacobout-header) {
 	min-width: 0;
 }
 
+/* WordPress 7.1 can retain the overlay structure in a desktop Site Editor
+ * canvas. Restore only the closed desktop presentation; an opened overlay and
+ * narrow/mobile previews continue to use Core's responsive behavior. */
+@media (min-width: 782px) {
+	.wp-block-navigation .wp-block-navigation__responsive-container-open {
+		display: none !important;
+	}
+
+	.wp-block-navigation .wp-block-navigation__responsive-container:not(.is-menu-open) {
+		position: static !important;
+		display: flex !important;
+		width: auto !important;
+		height: auto !important;
+		background: transparent !important;
+		color: inherit !important;
+		transform: none !important;
+	}
+
+	.wp-block-navigation .wp-block-navigation__responsive-container:not(.is-menu-open) .wp-block-navigation__responsive-container-close {
+		display: none !important;
+	}
+
+	.wp-block-navigation .wp-block-navigation__responsive-container:not(.is-menu-open) .wp-block-navigation__responsive-container-content {
+		display: flex !important;
+		align-items: center !important;
+		width: auto !important;
+	}
+
+	.wp-block-navigation .wp-block-navigation__responsive-container:not(.is-menu-open) .wp-block-navigation__responsive-container-content > .wp-block-navigation__container {
+		display: flex !important;
+		flex-direction: row !important;
+		flex-wrap: wrap !important;
+		align-items: center !important;
+		gap: 1.5rem !important;
+	}
+}
+
+/* Keep inactive submenu contents from filling the template-part canvas. Core
+ * adds these selection classes while a submenu or one of its links is edited. */
+.wp-block-navigation-submenu:not(.is-selected):not(.has-child-selected) > .wp-block-navigation__submenu-container {
+	display: none !important;
+}
+
+.wp-block-navigation-submenu.is-selected > .wp-block-navigation__submenu-container,
+.wp-block-navigation-submenu.has-child-selected > .wp-block-navigation__submenu-container {
+	display: flex !important;
+}
+
+/* Images should never exceed their block and should keep their intrinsic
+ * proportions in both the post editor and template editors. */
+.wp-block-image img,
+.wp-block-post-featured-image img,
+.tacobout-alt-wrapper img {
+	max-width: 100% !important;
+	height: auto !important;
+}
+
+.wp-block-post-featured-image a,
+.wp-block-post-featured-image .tacobout-alt-wrapper {
+	height: auto !important;
+}
+
 /* Editing should remain stable instead of moving cards beneath the pointer. */
 .tacobout-magazine-grid .wp-block-post,
 .tacobout-basic-list .wp-block-post,
