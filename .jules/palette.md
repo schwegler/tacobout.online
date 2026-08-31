@@ -67,3 +67,7 @@
 ## 2026-07-01 - Prevent Mobile Admin Bar Horizontal Overflow
 **Learning:** Adding `overflow-x: hidden` to `#wpadminbar` within mobile media queries (`max-width: 782px`) prevents third-party plugin menu items from causing unwanted horizontal page scrolling on mobile viewports.
 **Action:** Always ensure `#wpadminbar` has `overflow-x: hidden` applied in mobile CSS media queries to guarantee clean mobile layouts when the WordPress admin bar is visible.
+
+## 2024-07-31 - Sticky Header Focus Accessibility
+**Learning:** When a sticky header auto-hides on scroll down, keyboard users tabbing through the document might focus on an interactive element within the hidden header, causing them to lose context as the header remains visually hidden.
+**Action:** Always add a `focusin` event listener to auto-hiding sticky headers that removes the hidden state, ensuring the header visually reveals itself when any of its interactive children receive keyboard focus.
