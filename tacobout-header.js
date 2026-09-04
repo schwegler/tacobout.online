@@ -12,12 +12,26 @@ document.addEventListener( 'DOMContentLoaded', () => {
 	let lastScroll = window.scrollY;
 	let ticking    = false;
 
+	// ⚡ Bolt: Cache header offsetHeight to prevent synchronous layout calculation (reflow) during scroll
+	let headerHeight = header.offsetHeight;
+	let resizeTicking = false;
+
+	window.addEventListener( 'resize', () => {
+		if ( ! resizeTicking ) {
+			window.requestAnimationFrame( () => {
+				headerHeight = header.offsetHeight;
+				resizeTicking = false;
+			} );
+			resizeTicking = true;
+		}
+	}, { passive: true } );
+
 	const handleScroll = () => {
 		const currentScroll = window.scrollY;
 
 		if ( currentScroll <= 0 ) {
 			header.classList.remove( 'is-hidden' );
-		} else if ( currentScroll > lastScroll && currentScroll > header.offsetHeight ) {
+		} else if ( currentScroll > lastScroll && currentScroll > headerHeight ) {
 			// Scrolling down past the header height.
 			header.classList.add( 'is-hidden' );
 		} else if ( currentScroll < lastScroll ) {
