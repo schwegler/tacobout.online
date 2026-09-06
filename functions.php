@@ -738,3 +738,17 @@ function tacobout_flush_rewrite_rules() {
 	}
 }
 add_action( 'init', 'tacobout_flush_rewrite_rules', 999 );
+
+/**
+ * Prevent username enumeration via the /?author=N query string.
+ * Information disclosure of usernames assists attackers with brute-force logins.
+ */
+function tacobout_block_author_enumeration() {
+	if ( ! is_admin() && isset( $_GET["author"] ) && is_numeric( $_GET["author"] ) ) {
+		if ( function_exists( "wp_safe_redirect" ) ) {
+			wp_safe_redirect( home_url(), 301 );
+			die();
+		}
+	}
+}
+add_action( "init", "tacobout_block_author_enumeration" );
