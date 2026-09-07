@@ -12,12 +12,21 @@ document.addEventListener( 'DOMContentLoaded', () => {
 	let lastScroll = window.scrollY;
 	let ticking    = false;
 
+	// ⚡ Bolt: Cache header height to prevent layout thrashing on scroll.
+	// Reading offsetHeight during high-frequency scroll events forces synchronous layout.
+	// We update this cache on resize instead.
+	let headerHeight = header.offsetHeight;
+
+	window.addEventListener('resize', () => {
+		headerHeight = header.offsetHeight;
+	}, { passive: true });
+
 	const handleScroll = () => {
 		const currentScroll = window.scrollY;
 
 		if ( currentScroll <= 0 ) {
 			header.classList.remove( 'is-hidden' );
-		} else if ( currentScroll > lastScroll && currentScroll > header.offsetHeight ) {
+		} else if ( currentScroll > lastScroll && currentScroll > headerHeight ) {
 			// Scrolling down past the header height.
 			header.classList.add( 'is-hidden' );
 		} else if ( currentScroll < lastScroll ) {
