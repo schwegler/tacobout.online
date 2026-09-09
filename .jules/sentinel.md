@@ -21,3 +21,8 @@
 **Vulnerability:** DOM-based XSS caused by injecting `post.title.rendered` into the DOM.
 **Learning:** In WordPress REST API responses, `title.rendered` may contain unescaped HTML, unlike `excerpt.rendered` or `content.rendered` which are intended to contain HTML.
 **Prevention:** Always explicitly escape `title.rendered` (e.g., using `escHtml()`) on the client side before DOM insertion.
+
+## 2024-05-30 - Disable deprecated X-XSS-Protection header
+**Vulnerability:** The `X-XSS-Protection: 1; mode=block` header is deprecated and can be abused by attackers to block legitimate scripts, creating XSS vulnerabilities.
+**Learning:** Modern browsers have removed the XSS auditor. Sending `X-XSS-Protection: 1` can introduce vulnerabilities in older browsers by allowing attackers to selectively disable scripts.
+**Prevention:** Always use `X-XSS-Protection: 0` to explicitly disable the auditor, and rely on Content Security Policy (CSP) instead.
