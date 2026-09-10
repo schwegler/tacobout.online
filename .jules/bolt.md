@@ -50,3 +50,6 @@
 ## 2024-07-29 - [Avoid SELECT COUNT(*) in ORDER BY]
 **Learning:** Replacing `$post->comment_count` (an O(1) property lookup) with a `SELECT COUNT(*)` subquery to include custom comment types in `ORDER BY` causes a massive performance regression, as it executes for every post on cache misses.
 **Action:** Stick to utilizing pre-calculated columns like `comment_count` for sorting and avoid correlated subqueries inside `posts_orderby` filters whenever possible.
+## 2024-09-10 - [Cache layout properties outside scroll handlers]
+**Learning:** Reading layout properties like `offsetHeight` inside high-frequency event handlers like `scroll` triggers synchronous layout calculations (layout thrashing), causing main thread blocking and performance drops.
+**Action:** Cache these layout properties outside the scroll handler and update them via a `resize` event listener to ensure smooth scrolling.
