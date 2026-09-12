@@ -11,13 +11,19 @@ document.addEventListener( 'DOMContentLoaded', () => {
 
 	let lastScroll = window.scrollY;
 	let ticking    = false;
+	let headerHeight = header.offsetHeight;
+
+	// Cache header height on resize to prevent layout thrashing in scroll handler
+	window.addEventListener( 'resize', () => {
+		headerHeight = header.offsetHeight;
+	}, { passive: true } );
 
 	const handleScroll = () => {
 		const currentScroll = window.scrollY;
 
 		if ( currentScroll <= 0 ) {
 			header.classList.remove( 'is-hidden' );
-		} else if ( currentScroll > lastScroll && currentScroll > header.offsetHeight ) {
+		} else if ( currentScroll > lastScroll && currentScroll > headerHeight ) {
 			// Scrolling down past the header height.
 			header.classList.add( 'is-hidden' );
 		} else if ( currentScroll < lastScroll ) {
