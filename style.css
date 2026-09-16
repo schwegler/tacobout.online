@@ -1879,3 +1879,14 @@ html:not([data-theme="light"]) .wp-block-navigation__responsive-container.is-men
 	object-fit: cover;
 	border-radius: 8px;
 }
+
+/* ============================
+   ACCESSIBILITY: REDUCED MOTION
+   ============================ */
+@media (prefers-reduced-motion: reduce) {
+	*,
+	::before,
+	::after {
+		animation-duration: 0.01ms !important;
+	}
+}
