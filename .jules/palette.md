@@ -71,3 +71,7 @@
 ## 2024-07-31 - Sticky Header Focus Accessibility
 **Learning:** When a sticky header auto-hides on scroll down, keyboard users tabbing through the document might focus on an interactive element within the hidden header, causing them to lose context as the header remains visually hidden.
 **Action:** Always add a `focusin` event listener to auto-hiding sticky headers that removes the hidden state, ensuring the header visually reveals itself when any of its interactive children receive keyboard focus.
+
+## 2024-11-20 - Global Reduced Motion Override
+**Learning:** Infinite CSS animations (like background mesh movement, pulsing badges, and loading spinners) can cause severe vestibular distress for some users. Relying solely on `prefers-reduced-motion: no-preference` to opt-in to animations often leaves default/base animations running.
+**Action:** Always include a global `@media (prefers-reduced-motion: reduce)` block with `animation-duration: 0.01ms !important;` to globally disable all animations for users who have requested reduced motion, while preserving JS compatibility.
