@@ -71,3 +71,7 @@
 ## 2024-07-31 - Sticky Header Focus Accessibility
 **Learning:** When a sticky header auto-hides on scroll down, keyboard users tabbing through the document might focus on an interactive element within the hidden header, causing them to lose context as the header remains visually hidden.
 **Action:** Always add a `focusin` event listener to auto-hiding sticky headers that removes the hidden state, ensuring the header visually reveals itself when any of its interactive children receive keyboard focus.
+
+## 2024-09-20 - Global prefers-reduced-motion fallback
+**Learning:** When globally disabling animations for accessibility (e.g., using `@media (prefers-reduced-motion: reduce)`), setting `animation: none !important;` can break JavaScript logic that relies on `animationend` events.
+**Action:** Always use `animation-duration: 0.01ms !important;` (and the same for transitions) as a safer fallback to ensure JS compatibility while still satisfying the reduced motion requirement.
