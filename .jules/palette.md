@@ -71,3 +71,6 @@
 ## 2024-07-31 - Sticky Header Focus Accessibility
 **Learning:** When a sticky header auto-hides on scroll down, keyboard users tabbing through the document might focus on an interactive element within the hidden header, causing them to lose context as the header remains visually hidden.
 **Action:** Always add a `focusin` event listener to auto-hiding sticky headers that removes the hidden state, ensuring the header visually reveals itself when any of its interactive children receive keyboard focus.
+## 2024-10-25 - Respect prefers-reduced-motion for infinite animations
+**Learning:** Infinite CSS animations (e.g., spinners, pulses, or background movement) can cause vestibular distress for some users and must be disabled when `prefers-reduced-motion: reduce` is set.
+**Action:** Always ensure infinite CSS animations are overridden within a `@media (prefers-reduced-motion: reduce)` block using `animation: none !important;` to prevent vestibular distress.

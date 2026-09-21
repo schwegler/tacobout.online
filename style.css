@@ -1879,3 +1879,11 @@ html:not([data-theme="light"]) .wp-block-navigation__responsive-container.is-men
 	object-fit: cover;
 	border-radius: 8px;
 }
+
+@media (prefers-reduced-motion: reduce) {
+	body::before,
+	body.home:not(.paged) .tacobout-magazine-grid .wp-block-post:first-child::after,
+	.tacobout-spinner-dots span {
+		animation-duration: 0.01ms !important;
+	}
+}
