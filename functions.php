@@ -319,7 +319,7 @@ function tacobout_security_headers() {
 	if ( ! is_admin() ) {
 		header( 'X-Content-Type-Options: nosniff' );
 		header( 'X-Frame-Options: SAMEORIGIN' );
-		header( 'X-XSS-Protection: 1; mode=block' );
+		header( 'X-XSS-Protection: 0' );
 		header( 'Referrer-Policy: strict-origin-when-cross-origin' );
 		header( 'Strict-Transport-Security: max-age=31536000; includeSubDomains' );
 		header( 'Permissions-Policy: camera=(), microphone=(), geolocation=()' );
