@@ -556,13 +556,13 @@ function tacobout_get_taxonomy_scroll_context( $per_page ) {
 	);
 
 	if ( is_category() ) {
-		$queried                  = get_queried_object();
+		$queried                     = get_queried_object();
 		$context['term_id']          = $queried->term_id;
 		$context['term_name']        = $queried->name;
 		$context['term_type']        = 'categories';
 		$context['term_total_pages'] = ceil( $queried->count / $per_page );
 	} elseif ( is_tag() ) {
-		$queried                  = get_queried_object();
+		$queried                     = get_queried_object();
 		$context['term_id']          = $queried->term_id;
 		$context['term_name']        = $queried->name;
 		$context['term_type']        = 'tags';
