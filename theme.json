@@ -256,6 +256,16 @@
 						},
 						"typography": {
 							"textDecoration": "none"
+						},
+						":hover": {
+							"color": {
+								"text": "var(--wp--preset--color--accent)"
+							}
+						},
+						":focus": {
+							"color": {
+								"text": "var(--wp--preset--color--accent)"
+							}
 						}
 					}
 				}
