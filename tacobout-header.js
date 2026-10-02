@@ -12,12 +12,21 @@ document.addEventListener( 'DOMContentLoaded', () => {
 	let lastScroll = window.scrollY;
 	let ticking    = false;
 
+	// ⚡ Bolt: Cache header offsetHeight to prevent layout thrashing on scroll
+	let cachedHeaderHeight = header.offsetHeight;
+	if ( typeof ResizeObserver !== 'undefined' ) {
+		const headerObserver = new ResizeObserver( () => {
+			cachedHeaderHeight = header.offsetHeight;
+		} );
+		headerObserver.observe( header );
+	}
+
 	const handleScroll = () => {
 		const currentScroll = window.scrollY;
 
 		if ( currentScroll <= 0 ) {
 			header.classList.remove( 'is-hidden' );
-		} else if ( currentScroll > lastScroll && currentScroll > header.offsetHeight ) {
+		} else if ( currentScroll > lastScroll && currentScroll > cachedHeaderHeight ) {
 			// Scrolling down past the header height.
 			header.classList.add( 'is-hidden' );
 		} else if ( currentScroll < lastScroll ) {
