@@ -1879,3 +1879,15 @@ html:not([data-theme="light"]) .wp-block-navigation__responsive-container.is-men
 	object-fit: cover;
 	border-radius: 8px;
 }
+
+/* ============================
+   ACCESSIBILITY
+   ============================ */
+@media (prefers-reduced-motion: reduce) {
+	*,
+	*::before,
+	*::after {
+		animation: none !important;
+		transition: none !important;
+	}
+}
