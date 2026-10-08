@@ -253,3 +253,11 @@ light/dark colors, supports keyboard focus and reduced motion, and adapts its
 spacing to narrow columns. Cover images use public HTTPS URLs and send no
 referrer. Missing covers and unavailable stats remain usable without fabricated
 images or metrics. Version 3.8.3 refreshes cached theme styles after deployment.
+
+Single-post pages now use the complete shared discovery sidebar. A targeted
+`render_block_core/column` filter refreshes only columns marked
+`tacobout-sidebar-sticky` on single posts, including saved Site Editor template
+overrides. It preserves the column wrapper and replaces the old sidebar contents
+with public reviews, seven-day Jetpack trending (or its labeled fallback), and
+the compact Playground link. No saved template records are modified. Purge the
+single-post HTML cache after deployment to remove old rendered sidebars.
