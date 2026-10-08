@@ -127,13 +127,12 @@ class FunctionsTest extends \PHPUnit\Framework\TestCase {
     }
 
     public function test_tacobout_get_interaction_count_cached() {
-        \Brain\Monkey\Functions\expect('wp_cache_get')
-            ->once()
-            ->with('tacobout_int_count_99', 'posts')
-            ->andReturn(5);
-
-        $count = tacobout_get_interaction_count(99);
-        $this->assertEquals(5, $count);
+        $data = tacobout_normalize_engagement([(object)['comment_type' => 'comment', 'protocol' => '', 'total' => 5]]);
+        \Brain\Monkey\Functions\expect('absint')->once()->with(99)->andReturn(99);
+        \Brain\Monkey\Functions\expect('wp_cache_get_last_changed')->once()->with('comment')->andReturn('v1');
+        \Brain\Monkey\Functions\expect('wp_cache_get')->once()->with('post_99', 'tacobout_engagement')
+            ->andReturn(['generation' => 'v1', 'time' => time(), 'data' => $data]);
+        $this->assertSame(5, tacobout_get_interaction_count(99));
     }
 
     public function test_tacobout_get_total_published_posts_transient() {
