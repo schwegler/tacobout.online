@@ -149,3 +149,22 @@ add_filter( 'render_block_core/post-template', 'tacobout_grid_sidebar', 20, 2 );
 add_action( 'init', function () {
 	add_shortcode( 'tacobout_trending', 'tacobout_trending_shortcode' );
 } );
+
+/**
+ * Refresh theme sidebar columns even when a Site Editor template is saved in
+ * the database. Preserve the column wrapper and replace only its contents.
+ */
+function tacobout_single_discovery_sidebar( $content, $block ) {
+	$classes = preg_split( '/\s+/', trim( $block['attrs']['className'] ?? '' ) );
+	if ( ! is_single() || ! in_array( 'tacobout-sidebar-sticky', $classes, true ) ) {
+		return $content;
+	}
+	if ( ! preg_match( '/^\s*(<div\b[^>]*>)/i', $content, $wrapper ) ) {
+		return $content;
+	}
+	return $wrapper[1] . tacobout_discovery_sidebar() . '</div>';
+}
+add_filter( 'render_block_core/column', 'tacobout_single_discovery_sidebar', 20, 2 );
+add_action( 'init', function () {
+	add_shortcode( 'tacobout_discovery', 'tacobout_discovery_sidebar' );
+} );
