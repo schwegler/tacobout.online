@@ -90,16 +90,74 @@ function tacobout_parse_public_reviews( $html ) {
 	return $reviews;
 }
 
-function tacobout_public_reviews() {
-	$cached = get_transient( 'tacobout_public_reviews_v2' );
-	if ( is_array( $cached ) ) {
-		return $cached;
-	}
-	$response = wp_safe_remote_get( 'https://trove.schweg.xyz/', array( 'timeout' => 3, 'redirection' => 0, 'limit_response_size' => 524288, 'headers' => array( 'Accept' => 'text/html' ) ) );
-	$reviews = ! is_wp_error( $response ) && 200 === wp_remote_retrieve_response_code( $response ) ? tacobout_parse_public_reviews( wp_remote_retrieve_body( $response ) ) : array();
-	set_transient( 'tacobout_public_reviews_v2', $reviews, empty( $reviews ) ? 300 : 900 );
-	return $reviews;
+/** Fifteen-minute background polling; page rendering never waits on Trove. */
+function tacobout_review_cron_schedules( $schedules ) {
+	$schedules['tacobout_quarter_hour'] = array( 'interval' => 900, 'display' => 'Every 15 minutes' );
+	return $schedules;
 }
+add_filter( 'cron_schedules', 'tacobout_review_cron_schedules' );
+
+function tacobout_schedule_review_refresh() {
+	if ( ! wp_next_scheduled( 'tacobout_refresh_public_reviews' ) ) {
+		wp_schedule_event( time() + 1, 'tacobout_quarter_hour', 'tacobout_refresh_public_reviews' );
+	}
+}
+add_action( 'init', 'tacobout_schedule_review_refresh' );
+
+/** One bounded request per cron job; retries give a sleeping host time to wake. */
+function tacobout_refresh_public_reviews( $page = 1, $reviews = array(), $retry = 0 ) {
+	$page = max( 1, min( 5, (int) $page ) );
+	if ( 1 === $page && 0 === $retry ) {
+		if ( get_transient( 'tacobout_reviews_refresh_lock' ) ) {
+			return;
+		}
+		set_transient( 'tacobout_reviews_refresh_lock', 1, 300 );
+	}
+	$url = 'https://trove.schweg.xyz/' . ( $page > 1 ? '?page=' . $page : '' );
+	$response = wp_safe_remote_get( $url, array( 'timeout' => 30, 'redirection' => 0, 'limit_response_size' => 524288, 'headers' => array( 'Accept' => 'text/html' ) ) );
+	if ( is_wp_error( $response ) || 200 !== wp_remote_retrieve_response_code( $response ) ) {
+		if ( $retry < 1 ) {
+			wp_schedule_single_event( time() + 60, 'tacobout_refresh_review_page', array( $page, $reviews, 1 ) );
+		} else {
+			delete_transient( 'tacobout_reviews_refresh_lock' );
+		}
+		return; // Never replace the last successful snapshot with an error.
+	}
+	$html = wp_remote_retrieve_body( $response );
+	$reviews = array_slice( array_merge( $reviews, tacobout_parse_public_reviews( $html ) ), 0, 3 );
+	$has_next = (bool) preg_match( '/rel=["\']next["\']/i', $html );
+	if ( count( $reviews ) < 3 && $page < 5 && $has_next ) {
+		wp_schedule_single_event( time() + 5, 'tacobout_refresh_review_page', array( $page + 1, $reviews, 0 ) );
+		return;
+	}
+	if ( ! empty( $reviews ) ) {
+		update_option( 'tacobout_reviews_snapshot', array( 'reviews' => $reviews, 'fetched_at' => time() ), false );
+	}
+	delete_transient( 'tacobout_reviews_refresh_lock' );
+}
+add_action( 'tacobout_refresh_public_reviews', 'tacobout_refresh_public_reviews' );
+add_action( 'tacobout_refresh_review_page', 'tacobout_refresh_public_reviews', 10, 3 );
+
+function tacobout_public_reviews() {
+	$snapshot = get_option( 'tacobout_reviews_snapshot', array() );
+	if ( ! empty( $snapshot['reviews'] ) && is_array( $snapshot['reviews'] ) ) {
+		return $snapshot['reviews'];
+	}
+	// Carry a nonempty pre-upgrade cache forward until cron gets a new snapshot.
+	$legacy = get_transient( 'tacobout_public_reviews_v2' );
+	if ( is_array( $legacy ) && ! empty( $legacy ) ) {
+		update_option( 'tacobout_reviews_snapshot', array( 'reviews' => $legacy, 'fetched_at' => time() ), false );
+		return $legacy;
+	}
+	return array();
+}
+
+/** Stop theme-specific polling when switching themes. */
+add_action( 'switch_theme', function () {
+	wp_clear_scheduled_hook( 'tacobout_refresh_public_reviews' );
+	wp_clear_scheduled_hook( 'tacobout_refresh_review_page' );
+	delete_transient( 'tacobout_reviews_refresh_lock' );
+} );
 
 /** Public HTTPS covers only; never allow credentials or executable URLs. */
 function tacobout_sidebar_image_url( $url ) {
