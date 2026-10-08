@@ -7,7 +7,7 @@ class SidebarTest extends \PHPUnit\Framework\TestCase {
         $card = '<div class="activity-card"><span class="activity-text">Ada reviewed a book</span><a class="activity-item-link" href="%s">Book</a>%s</div>';
         $quote = '<div class="activity-review-quote">Good &amp; thoughtful</div>';
         $html = '<div id="activity_feed">' . sprintf($card, '/books/13', $quote) . sprintf($card, '/books/14', '') . sprintf($card, 'https://evil.test/books/1', $quote) . '</div>';
-        $this->assertSame([['url'=>'https://trove.schweg.xyz/books/13','title'=>'Ada reviewed a book','quote'=>'Good & thoughtful']], tacobout_parse_public_reviews($html));
+        $this->assertSame([['url'=>'https://trove.schweg.xyz/books/13','title'=>'Ada reviewed a book','quote'=>'Good & thoughtful','item_title'=>'Book','author'=>'','time'=>'','image'=>'','rating'=>'']], tacobout_parse_public_reviews($html));
     }
 
     public function test_recent_views_rank_public_posts_and_filter_private_content() {
@@ -28,5 +28,15 @@ class SidebarTest extends \PHPUnit\Framework\TestCase {
         \Brain\Monkey\Functions\expect('stats_get_csv')->once()->andReturn(false);
         \Brain\Monkey\Functions\expect('set_transient')->once()->with('tacobout_trending_week', [], 300);
         $this->assertSame([], tacobout_trending_posts());
+    }
+    public function test_review_details_include_public_cover_reviewer_and_rating() {
+        $html = '<div id="activity_feed"><div class="activity-card"><div class="activity-thumbnail"><img src="https://images.example.test/cover.jpg"></div><span class="activity-text"><a class="activity-user-link">Ada</a> reviewed <a class="activity-item-link" href="/books/13">A book</a> (Rating: 3.5 ★)</span><div class="activity-review-quote">A good read</div><span class="activity-time">2 hours ago</span></div></div>';
+        $review = tacobout_parse_public_reviews($html)[0];
+        $this->assertSame('A book', $review['item_title']);
+        $this->assertSame('Ada', $review['author']);
+        $this->assertSame('3.5', $review['rating']);
+        $this->assertSame('https://images.example.test/cover.jpg', $review['image']);
+        $this->assertSame('', tacobout_sidebar_image_url('javascript:alert(1)'));
+        $this->assertSame('', tacobout_sidebar_image_url('https://secret@images.example.test/cover.jpg'));
     }
 }
