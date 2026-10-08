@@ -240,7 +240,16 @@ has a saved Site Editor override of the single template, replace its old trendin
 query with a Shortcode block containing `[tacobout_trending]`. Purge page caches
 after deployment and verify the Jetpack-backed heading on the live site.
 
-At viewport widths of 1600px and above, the homepage expands to fit three
-post columns and a separate 320px sidebar on the right. The recovered content-aware
-three-column masonry layout stays intact inside the post grid. Below
-that breakpoint, the sidebar stays in its upper-right grid slot.
+The sidebar follows the recovered grid breakpoints: one column below 760px,
+two from 760–1050px, and three above 1050px. It occupies the upper-right slot
+at both two and three columns; posts continue alongside and beneath it. Only
+at ultra-wide widths of 2000px and above does it move outside the three-column
+post grid into a separate 320px right rail.
+
+The sidebar uses a purple Playground feature, public Trove cover images with
+reviewer attribution and ratings, review excerpts, and numbered trending post
+previews with featured thumbnails where available. It follows the theme’s
+light/dark colors, supports keyboard focus and reduced motion, and adapts its
+spacing to narrow columns. Cover images use public HTTPS URLs and send no
+referrer. Missing covers and unavailable stats remain usable without fabricated
+images or metrics. Version 3.8.3 refreshes cached theme styles after deployment.
