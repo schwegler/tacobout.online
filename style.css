@@ -4,7 +4,7 @@ Theme URI: https://tacobout.online
 Author: schwegler
 Author URI: https://tacobout.online
 Description: A personal magazine theme for schwegler — ultra-modern tumblog with compatibility with optional Bluesky/ATProto & ActivityPub plugins. Format-aware feeds, dark mode, and 2026 design language.
-Version: 3.7.0
+Version: 3.8.2
 Requires at least: 6.4
 Tested up to: 6.8
 Requires PHP: 8.0
@@ -545,43 +545,42 @@ header:has(.tacobout-header) {
    MAGAZINE GRID — THE FEED
    ============================ */
 /* ============================
-   MAGAZINE GRID — MASONRY
+   MAGAZINE GRID — 2026 DYNAMIC BENTO LAYOUT
    ============================ */
 .tacobout-magazine-grid {
 	display: grid;
-	grid-template-rows: masonry;
-	grid-template-columns: repeat(2, 1fr);
-	gap: 2rem;
-	align-items: start;
+	grid-template-columns: repeat(3, minmax(0, 1fr));
+	grid-auto-flow: dense;
+	gap: 1.75rem;
+	align-items: stretch;
 
 	list-style: none;
 	padding: 0;
+	margin: 0 0 2.5rem 0;
 }
 
-@media (max-width: 900px) {
+@media (max-width: 1024px) {
+	.tacobout-magazine-grid {
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+		gap: 1.5rem;
+	}
+}
+
+@media (max-width: 640px) {
 	.tacobout-magazine-grid {
 		grid-template-columns: 1fr;
 		gap: 1.25rem;
 	}
 
-	/* Tighter card padding + margin on tablet/mobile */
+	body.home:not(.paged) .tacobout-magazine-grid .wp-block-post:first-child {
+		grid-column: 1 / -1;
+	}
+}
+
+@media (max-width: 900px) {
+	/* Tighter card padding on tablet/mobile */
 	.tacobout-magazine-grid .wp-block-post {
 		padding: 1.25rem;
-		margin-bottom: 1.25rem;
-	}
-
-	/* Scale down the hero first-post */
-	body.home:not(.paged) .tacobout-magazine-grid .wp-block-post:first-child {
-		padding: 2.5rem 1.5rem 1.5rem 1.5rem !important;
-	}
-
-	/* Slightly smaller hero title on tablet */
-	body.home:not(.paged) .tacobout-magazine-grid .wp-block-post:first-child .wp-block-post-title {
-		font-size: clamp(2rem, 5vw, 3.5rem) !important;
-	}
-
-	body.home:not(.paged) .tacobout-magazine-grid .wp-block-post:first-child .wp-block-post-excerpt {
-		font-size: 1.1rem;
 	}
 
 	/* Format-specific cards: tighter padding */
@@ -738,60 +737,119 @@ header:has(.tacobout-header) {
 	}
 }
 
-/* Each post in the grid */
+/* ============================
+   BENTO CARD BASE & MEDIA UNIFORMITY
+   ============================ */
 .tacobout-magazine-grid .wp-block-post {
-
-	margin-bottom: 2rem;
+	margin-bottom: 0;
 	overflow: hidden;
 	min-width: 0;
-	/* Glassmorphism */
-	background: rgba(255, 255, 255, 0.5);
-	backdrop-filter: blur(20px);
-	-webkit-backdrop-filter: blur(20px);
-	border: 1px solid rgba(255, 255, 255, 0.4);
+	box-sizing: border-box;
+	height: 100%;
+	/* Glassmorphism 2026 */
+	background: rgba(255, 255, 255, 0.6);
+	backdrop-filter: blur(24px);
+	-webkit-backdrop-filter: blur(24px);
+	border: 1px solid rgba(255, 255, 255, 0.45);
 	border-radius: var(--taco-radius);
 	padding: 1.5rem;
 	box-shadow: var(--taco-shadow);
-	transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.4s ease, border-color 0.4s ease;
+	transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.35s ease, border-color 0.35s ease;
 	display: flex;
 	flex-direction: column;
+	position: relative;
 }
 
 .tacobout-magazine-grid .wp-block-post:hover,
 .tacobout-magazine-grid .wp-block-post:focus-within {
-	box-shadow: 0 15px 35px rgba(0, 102, 255, 0.1), 0 5px 15px rgba(0, 0, 0, 0.05);
-	border-color: rgba(255, 255, 255, 0.8);
+	transform: translateY(-4px);
+	box-shadow: 0 16px 36px rgba(0, 102, 255, 0.12), 0 4px 12px rgba(0, 0, 0, 0.06);
+	border-color: rgba(255, 255, 255, 0.85);
 }
 
 @media (prefers-color-scheme: dark) {
 	html:not([data-theme="light"]) .tacobout-magazine-grid .wp-block-post {
-		background: rgba(255, 255, 255, 0.05);
-		border-color: rgba(255, 255, 255, 0.1);
+		background: rgba(255, 255, 255, 0.04);
+		border-color: rgba(255, 255, 255, 0.08);
 	}
 
 	html:not([data-theme="light"]) .tacobout-magazine-grid .wp-block-post:hover,
 	html:not([data-theme="light"]) .tacobout-magazine-grid .wp-block-post:focus-within {
-		box-shadow: 0 15px 35px rgba(139, 92, 246, 0.15), 0 5px 15px rgba(0, 0, 0, 0.2);
-		border-color: rgba(255, 255, 255, 0.15);
+		transform: translateY(-4px);
+		box-shadow: 0 20px 40px rgba(139, 92, 246, 0.22), 0 4px 16px rgba(0, 0, 0, 0.35);
+		border-color: rgba(139, 92, 246, 0.45);
 	}
 }
 
-/* Fix inner group spacing since card now has padding */
+/* Card inner flex layout */
 .tacobout-magazine-grid .tacobout-card-inner {
 	height: 100%;
 	display: flex;
 	flex-direction: column;
+	gap: 0.75rem;
+}
+
+/* Uniform media sizing for standard bento cards */
+.tacobout-magazine-grid .wp-block-post:not(:first-child) .wp-block-post-featured-image {
+	aspect-ratio: 16 / 9;
+	width: 100%;
+	overflow: hidden;
+	border-radius: calc(var(--taco-radius) - 2px);
+	margin: 0 0 0.5rem 0;
+	background: var(--taco-surface-2);
+}
+
+.tacobout-magazine-grid .wp-block-post:not(:first-child) .wp-block-post-featured-image a,
+.tacobout-magazine-grid .wp-block-post:not(:first-child) .wp-block-post-featured-image img {
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+	display: block;
+	transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.tacobout-magazine-grid .wp-block-post:hover .wp-block-post-featured-image img {
+	transform: scale(1.03);
+}
+
+/* Clean typography on standard bento cards */
+.tacobout-magazine-grid .wp-block-post:not(:first-child) .wp-block-post-title {
+	font-size: clamp(1.15rem, 1.35vw, 1.45rem) !important;
+	line-height: 1.25 !important;
+	font-weight: 600;
+	letter-spacing: -0.02em;
+}
+
+.tacobout-magazine-grid .wp-block-post:not(:first-child) .wp-block-post-excerpt {
+	font-size: 0.9375rem;
+	line-height: 1.5;
+	color: var(--taco-muted);
 }
 
 /* ============================
-   HERO: ADAPTIVE FIRST POST
+   BENTO HERO: 2-COLUMN LEAD POST
    ============================ */
 body.home:not(.paged) .tacobout-magazine-grid .wp-block-post:first-child {
-	grid-column: 1 / -1;
-	padding: 3rem 2rem 2rem 2rem !important;
+	grid-column: span 2;
 	position: relative;
 	border: 1px solid var(--taco-accent);
-	box-shadow: 0 0 40px rgba(139, 92, 246, 0.15);
+	box-shadow: 0 0 40px rgba(139, 92, 246, 0.18);
+	padding: 2.25rem 2rem 2rem 2rem !important;
+	background: linear-gradient(135deg, rgba(255, 255, 255, 0.75), rgba(255, 255, 255, 0.45));
+}
+
+@media (prefers-color-scheme: dark) {
+	html:not([data-theme="light"]) body.home:not(.paged) .tacobout-magazine-grid .wp-block-post:first-child {
+		background: linear-gradient(135deg, rgba(139, 92, 246, 0.08), rgba(255, 255, 255, 0.03));
+		border-color: rgba(139, 92, 246, 0.6);
+		box-shadow: 0 0 45px rgba(139, 92, 246, 0.22);
+	}
+}
+
+[data-theme="dark"] body.home:not(.paged) .tacobout-magazine-grid .wp-block-post:first-child {
+	background: linear-gradient(135deg, rgba(139, 92, 246, 0.08), rgba(255, 255, 255, 0.03));
+	border-color: rgba(139, 92, 246, 0.6);
+	box-shadow: 0 0 45px rgba(139, 92, 246, 0.22);
 }
 
 /* Latest Badge */
@@ -848,21 +906,6 @@ body.home:not(.paged) .tacobout-magazine-grid .wp-block-post:first-child .entry-
 	}
 }
 
-body.home:not(.paged) .tacobout-magazine-grid .wp-block-post:first-child .wp-block-post-title {
-	font-size: clamp(2.5rem, 6vw, 4.5rem) !important;
-	line-height: 1.05 !important;
-	letter-spacing: -0.04em !important;
-	background: linear-gradient(135deg, var(--taco-accent), var(--taco-accent-2));
-	-webkit-background-clip: text;
-	background-clip: text;
-	-webkit-text-fill-color: transparent;
-}
-
-body.home:not(.paged) .tacobout-magazine-grid .wp-block-post:first-child .wp-block-post-excerpt {
-	font-size: 1.25rem;
-	max-width: 800px;
-}
-
 /* ============================
    POST FORMAT CARDS
    The tacobout_post_class filter in functions.php
@@ -878,45 +921,45 @@ body.home:not(.paged) .tacobout-magazine-grid .wp-block-post:first-child .wp-blo
 
 /* --- STANDARD FORMAT — hide full content, show excerpt --- */
 
-.tacobout-format-standard .wp-block-post-content {
+.tacobout-magazine-grid .tacobout-format-standard .wp-block-post-content {
 	display: none !important;
 }
 
 /* --- VIDEO FORMAT --- */
 
-.tacobout-format-video .wp-block-post-featured-image,
-.tacobout-format-video .wp-block-post-excerpt {
+.tacobout-magazine-grid .tacobout-format-video .wp-block-post-featured-image,
+.tacobout-magazine-grid .tacobout-format-video .wp-block-post-excerpt {
 	display: none !important;
 }
 
-.tacobout-format-video .wp-block-post-content {
+.tacobout-magazine-grid .tacobout-format-video .wp-block-post-content {
 	margin-bottom: 1rem;
 	order: -1;
 	/* Place above title */
 }
 
-.tacobout-format-video .wp-block-post-title {
+.tacobout-magazine-grid .tacobout-format-video .wp-block-post-title {
 	font-size: 1.5rem !important;
 	/* Smaller title */
 }
 
-.tacobout-format-video .wp-block-post-content .wp-block-embed {
+.tacobout-magazine-grid .tacobout-format-video .wp-block-post-content .wp-block-embed {
 	margin: 0;
 }
 
-.tacobout-format-video .wp-block-post-content .wp-block-embed__wrapper {
+.tacobout-magazine-grid .tacobout-format-video .wp-block-post-content .wp-block-embed__wrapper {
 	border-radius: var(--taco-radius);
 	overflow: hidden;
 }
 
 /* --- AUDIO FORMAT --- */
 
-.tacobout-format-audio .wp-block-post-featured-image,
-.tacobout-format-audio .wp-block-post-excerpt {
+.tacobout-magazine-grid .tacobout-format-audio .wp-block-post-featured-image,
+.tacobout-magazine-grid .tacobout-format-audio .wp-block-post-excerpt {
 	display: none !important;
 }
 
-.tacobout-format-audio .wp-block-post-content {
+.tacobout-magazine-grid .tacobout-format-audio .wp-block-post-content {
 	background: var(--taco-surface);
 	border-radius: var(--taco-radius);
 	padding: 1.5rem;
@@ -925,36 +968,36 @@ body.home:not(.paged) .tacobout-magazine-grid .wp-block-post:first-child .wp-blo
 	/* Place above title */
 }
 
-.tacobout-format-audio .wp-block-post-title {
+.tacobout-magazine-grid .tacobout-format-audio .wp-block-post-title {
 	font-size: 1.5rem !important;
 	/* Smaller title */
 }
 
 /* --- STATUS & ASIDE FORMATS (microblog) --- */
 
-.tacobout-format-status .wp-block-post-featured-image,
-.tacobout-format-status .wp-block-post-excerpt,
-.tacobout-format-aside .wp-block-post-featured-image,
-.tacobout-format-aside .wp-block-post-excerpt {
+.tacobout-magazine-grid .tacobout-format-status .wp-block-post-featured-image,
+.tacobout-magazine-grid .tacobout-format-status .wp-block-post-excerpt,
+.tacobout-magazine-grid .tacobout-format-aside .wp-block-post-featured-image,
+.tacobout-magazine-grid .tacobout-format-aside .wp-block-post-excerpt {
 	display: none !important;
 }
 
-.tacobout-format-status .wp-block-post-content,
-.tacobout-format-aside .wp-block-post-content {
+.tacobout-magazine-grid .tacobout-format-status .wp-block-post-content,
+.tacobout-magazine-grid .tacobout-format-aside .wp-block-post-content {
 	font-size: 1.15rem;
 	line-height: 1.6;
 	order: -1;
 }
 
-.tacobout-format-status .wp-block-post-title,
-.tacobout-format-aside .wp-block-post-title {
+.tacobout-magazine-grid .tacobout-format-status .wp-block-post-title,
+.tacobout-magazine-grid .tacobout-format-aside .wp-block-post-title {
 	font-size: 1.25rem !important;
 	opacity: 0.7;
 	margin-top: 0.5rem !important;
 }
 
-.tacobout-format-status,
-.tacobout-format-aside {
+.tacobout-magazine-grid .tacobout-format-status,
+.tacobout-magazine-grid .tacobout-format-aside {
 	background: var(--taco-surface);
 	border-radius: var(--taco-radius);
 	padding: 1.5rem !important;
@@ -963,65 +1006,66 @@ body.home:not(.paged) .tacobout-magazine-grid .wp-block-post:first-child .wp-blo
 
 /* --- IMAGE FORMAT --- */
 
-.tacobout-format-image .wp-block-post-featured-image,
-.tacobout-format-image .wp-block-post-excerpt {
+.tacobout-magazine-grid .tacobout-format-image .wp-block-post-featured-image,
+.tacobout-magazine-grid .tacobout-format-image .wp-block-post-excerpt {
 	display: none !important;
 }
 
-.tacobout-format-image .wp-block-post-content {
+.tacobout-magazine-grid .tacobout-format-image .wp-block-post-content {
 	margin-bottom: 1rem;
 	order: -1;
 }
 
-.tacobout-format-image .wp-block-post-title {
+.tacobout-magazine-grid .tacobout-format-image .wp-block-post-title {
 	font-size: 1.5rem !important;
 }
 
-.tacobout-format-image .wp-block-post-content img {
+.tacobout-magazine-grid .tacobout-format-image .wp-block-post-content img {
 	border-radius: var(--taco-radius);
 }
 
 /* --- QUOTE FORMAT --- */
 
-.tacobout-format-quote .wp-block-post-featured-image,
-.tacobout-format-quote .wp-block-post-excerpt {
+.tacobout-magazine-grid .tacobout-format-quote .wp-block-post-featured-image,
+.tacobout-magazine-grid .tacobout-format-quote .wp-block-post-excerpt {
 	display: none !important;
 }
 
-.tacobout-format-quote .wp-block-post-content {
+.tacobout-magazine-grid .tacobout-format-quote .wp-block-post-content {
 	order: -1;
 }
 
-.tacobout-format-quote .wp-block-post-title {
+.tacobout-magazine-grid .tacobout-format-quote .wp-block-post-title {
 	font-size: 1.25rem !important;
 	margin-top: 1rem !important;
 }
 
-.tacobout-format-quote {
+.tacobout-magazine-grid .tacobout-format-quote {
 	background: var(--taco-surface);
+	border: 1px solid var(--taco-border);
 	border-left: 4px solid var(--taco-accent);
-	border-radius: 0 var(--taco-radius) var(--taco-radius) 0;
-	padding: 1.5rem 2rem !important;
+	border-radius: var(--taco-radius);
+	padding: 1.75rem !important;
 }
 
 /* --- LINK FORMAT --- */
-.tacobout-format-link .wp-block-post-featured-image {
+.tacobout-magazine-grid .tacobout-format-link .wp-block-post-featured-image {
 	display: none !important;
 }
 
-.tacobout-format-link .wp-block-post-excerpt {
+.tacobout-magazine-grid .tacobout-format-link .wp-block-post-excerpt {
 	display: none !important;
 }
 
-.tacobout-format-link .wp-block-post-content {
+.tacobout-magazine-grid .tacobout-format-link .wp-block-post-content {
 	order: -1;
 }
 
-.tacobout-format-link .wp-block-post-title {
+.tacobout-magazine-grid .tacobout-format-link .wp-block-post-title {
 	font-size: 1.5rem !important;
 }
 
-.tacobout-format-link {
+.tacobout-magazine-grid .tacobout-format-link {
 	background: var(--taco-surface);
 	border-radius: var(--taco-radius);
 	padding: 1.5rem !important;
@@ -1607,10 +1651,9 @@ body.home:not(.paged) .tacobout-magazine-grid .wp-block-post:first-child .tacobo
    ============================ */
 body.author .tacobout-magazine-grid {
 	display: grid;
-	grid-template-rows: masonry;
 	grid-template-columns: 1fr;
 	gap: 2rem;
-	align-items: start;
+	align-items: stretch;
 
 	list-style: none;
 	padding: 0;
@@ -1971,4 +2014,239 @@ html:not([data-theme="light"]) .wp-block-navigation__responsive-container.is-men
 	height: 100%;
 	object-fit: cover;
 	border-radius: 8px;
+}
+
+/* CONTENT-AWARE BENTO
+ * Natural-height fallback first. JS measures cards into tiny row tracks, so
+ * neither a long post nor a late-loading embed stretches its neighbours.
+ */
+body .tacobout-magazine-grid {
+	--tacobout-columns: 3;
+	display: grid !important;
+	grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+	grid-auto-flow: row dense;
+	align-items: start;
+	gap: 20px !important;
+	padding: 0;
+}
+body .tacobout-magazine-grid.tacobout-bento-ready {
+	grid-auto-rows: 4px !important;
+	row-gap: 0 !important;
+}
+body .tacobout-magazine-grid > .wp-block-post {
+	margin: 0 !important;
+	height: auto !important;
+	min-height: 0 !important;
+	align-self: start;
+	grid-column: span 1;
+	padding: 1.25rem !important;
+	border-radius: 20px;
+	background: var(--taco-surface);
+	border: 1px solid var(--taco-border);
+	box-shadow: 0 4px 20px rgb(0 0 0 / 4%);
+	backdrop-filter: none;
+	-webkit-backdrop-filter: none;
+	overflow: hidden;
+	animation: none;
+	transition: border-color .2s ease, box-shadow .2s ease;
+}
+body .tacobout-magazine-grid > .wp-block-post:hover,
+body .tacobout-magazine-grid > .wp-block-post:focus-within {
+	transform: none;
+	border-color: var(--taco-accent);
+}
+body .tacobout-magazine-grid .tacobout-card-inner {
+	display: flex !important;
+	height: auto !important;
+	min-width: 0;
+	gap: .85rem;
+}
+body .tacobout-magazine-grid .tacobout-card-inner > * {
+	min-width: 0;
+	max-width: 100%;
+	margin-block: 0 !important;
+}
+body .tacobout-magazine-grid .wp-block-post-title {
+	font-size: clamp(1.2rem, 1.5vw, 1.55rem) !important;
+	line-height: 1.22 !important;
+	letter-spacing: -.035em;
+	text-wrap: pretty;
+	opacity: 1;
+}
+body .tacobout-magazine-grid .wp-block-post-title a {
+	color: var(--taco-fg);
+	-webkit-text-fill-color: currentColor;
+}
+body .tacobout-magazine-grid .wp-block-post-excerpt,
+body .tacobout-magazine-grid .wp-block-post-content {
+	font-size: .96rem;
+	line-height: 1.6;
+	overflow-wrap: anywhere;
+}
+body .tacobout-magazine-grid .wp-block-post-excerpt { color: var(--taco-muted); }
+body .tacobout-magazine-grid .wp-block-post-content > :first-child { margin-top: 0; }
+body .tacobout-magazine-grid .wp-block-post-content > :last-child { margin-bottom: 0; }
+body .tacobout-magazine-grid .tacobout-post-meta {
+	order: 5 !important;
+	margin: .25rem 0 0 !important;
+	gap: .5rem;
+	flex-wrap: wrap;
+	font-size: .72rem !important;
+}
+body .tacobout-magazine-grid .tacobout-post-meta .wp-block-post-date { font-size: .72rem !important; }
+body .tacobout-magazine-grid .wp-block-post-featured-image {
+	display: block !important;
+	aspect-ratio: auto !important;
+	height: auto !important;
+	min-height: 0 !important;
+	max-height: none !important;
+	margin: 0 !important;
+	border-radius: 12px;
+	overflow: hidden;
+}
+body .tacobout-magazine-grid .wp-block-post-featured-image :is(a, img, .tacobout-alt-wrapper) {
+	height: auto !important;
+	width: 100%;
+	max-width: 100%;
+	object-fit: contain;
+	transform: none !important;
+}
+body .tacobout-magazine-grid :is(.tacobout-format-gallery, .tacobout-format-chat) .wp-block-post-excerpt { display: none; }
+body .tacobout-magazine-grid :is(.tacobout-format-gallery, .tacobout-format-chat) .wp-block-post-content { display: block; }
+body .tacobout-magazine-grid .tacobout-format-gallery .wp-block-post-content { order: -1; }
+body .tacobout-magazine-grid .wp-block-post-content :is(figure, .alignwide, .alignfull) {
+	width: auto;
+	max-width: 100%;
+	margin-inline: 0;
+}
+body .tacobout-magazine-grid .wp-block-post-content :is(img, video) {
+	display: block;
+	width: 100%;
+	height: auto !important;
+	max-width: 100%;
+	object-fit: contain;
+	border-radius: 12px;
+}
+body .tacobout-magazine-grid .wp-block-post-content :is(audio, iframe) { max-width: 100%; }
+body .tacobout-magazine-grid .wp-block-post-content audio { width: 100%; }
+body .tacobout-magazine-grid .tacobout-video-frame {
+	display: block;
+	position: static !important;
+	width: 100% !important;
+	height: auto !important;
+	border: 0;
+	border-radius: 12px;
+}
+body .tacobout-magazine-grid .wp-block-embed__wrapper:has(.tacobout-video-frame)::before { display: none !important; }
+body .tacobout-magazine-grid .wp-block-post-content :is(.wp-block-gallery, .gallery) {
+	display: block !important;
+	columns: 2;
+	column-gap: 10px;
+}
+body .tacobout-magazine-grid .wp-block-post-content :is(.wp-block-gallery > figure, .gallery-item) {
+	display: inline-block !important;
+	break-inside: avoid;
+	width: 100% !important;
+	margin: 0 0 10px !important;
+}
+body .tacobout-magazine-grid .wp-block-gallery figure figcaption {
+	position: static !important;
+	max-height: none !important;
+	background: none !important;
+	color: var(--taco-muted) !important;
+	padding: .5rem 0 0 !important;
+	font-size: .8rem;
+}
+body .tacobout-magazine-grid .tacobout-format-audio .wp-block-post-content {
+	padding: 0;
+	background: transparent;
+}
+body .tacobout-magazine-grid .tacobout-format-quote blockquote {
+	margin: 0;
+	padding: .3rem 0 .3rem 1rem;
+	border-left: 3px solid var(--taco-accent);
+	font-size: 1.2rem;
+	line-height: 1.45;
+}
+body .tacobout-magazine-grid :is(.tacobout-format-status, .tacobout-format-aside) .wp-block-post-content { font-size: 1.1rem; }
+.tacobout-card-more { margin-top: 1rem; }
+.tacobout-card-more summary {
+	cursor: pointer;
+	color: var(--taco-accent);
+	font-weight: 600;
+	padding-block: .4rem;
+}
+.tacobout-link-source {
+	display: block;
+	margin-top: 1rem;
+	padding: .75rem 1rem;
+	border: 1px solid var(--taco-border);
+	border-radius: 10px;
+	font-size: .82rem;
+	font-weight: 600;
+	overflow-wrap: anywhere;
+}
+body.home:not(.paged) .tacobout-magazine-grid .wp-block-post:first-child {
+	grid-column: span 1;
+	padding: 3rem 1.25rem 1.25rem !important;
+	box-shadow: none;
+}
+body.home:not(.paged) .tacobout-magazine-grid .wp-block-post:first-child::after { display: none; }
+body .tacobout-magazine-grid .tacobout-overflow-separator { grid-column: 1 / -1; height: auto; }
+@media (min-width: 760px) {
+	body .tacobout-magazine-grid > .tacobout-card-wide,
+	body.home:not(.paged) .tacobout-magazine-grid > .tacobout-card-wide:first-child { grid-column: span 2; }
+	body .tacobout-magazine-grid .tacobout-card-spanning.tacobout-card-horizontal .tacobout-card-inner {
+		display: grid !important;
+		grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr);
+		column-gap: 1.5rem;
+		align-items: start;
+	}
+	body .tacobout-magazine-grid .tacobout-card-spanning.tacobout-card-horizontal .wp-block-post-featured-image {
+		grid-column: 1;
+		grid-row: 1 / span 4;
+	}
+	body .tacobout-magazine-grid .tacobout-card-spanning.tacobout-card-horizontal :is(.wp-block-post-title, .wp-block-post-excerpt, .tacobout-post-meta) { grid-column: 2; }
+	body .tacobout-magazine-grid .tacobout-card-spanning .wp-block-post-title { font-size: clamp(1.5rem, 2.2vw, 2rem) !important; }
+}
+@media (min-width: 760px) and (max-width: 1050px) {
+	body .tacobout-magazine-grid { --tacobout-columns: 2; grid-template-columns: repeat(2, minmax(0, 1fr)) !important; }
+}
+@media (max-width: 759px) {
+	body .tacobout-magazine-grid { --tacobout-columns: 1; grid-template-columns: minmax(0, 1fr) !important; }
+	body .tacobout-magazine-grid > .wp-block-post { grid-column: 1 !important; }
+}
+@media (prefers-reduced-motion: reduce) {
+	body .tacobout-magazine-grid *, body .tacobout-magazine-grid *::before { animation: none !important; transition: none !important; }
+}
+.tacobout-view-media, .tacobout-media-dialog button {
+	font: inherit;
+	color: var(--taco-fg);
+	background: var(--taco-surface);
+	border: 1px solid var(--taco-border);
+	border-radius: 10px;
+	padding: .6rem .9rem;
+	cursor: pointer;
+}
+.tacobout-view-media { margin-top: .75rem; font-size: .85rem; }
+.tacobout-media-dialog {
+	width: min(1100px, 94vw);
+	max-height: 94dvh;
+	box-sizing: border-box;
+	padding: 1rem;
+	border: 1px solid var(--taco-border);
+	border-radius: 18px;
+	background: var(--taco-bg);
+	color: var(--taco-fg);
+}
+.tacobout-media-dialog::backdrop { background: rgb(0 0 0 / 85%); }
+.tacobout-media-toolbar { display: flex; align-items: center; gap: .75rem; }
+.tacobout-media-toolbar [data-close] { margin-right: auto; }
+.tacobout-media-dialog button:disabled { opacity: .4; cursor: default; }
+.tacobout-media-dialog figure { margin: 1rem 0 0; }
+.tacobout-media-dialog img { width: 100%; height: 72dvh; object-fit: contain; }
+.tacobout-media-dialog figcaption { margin-top: .75rem; text-align: center; }
+/* Override dimensions baked into older saved Query blocks as well. */
+body .tacobout-magazine-grid .wp-block-post .wp-block-post-featured-image img {
+	object-fit: contain !important;
 }
