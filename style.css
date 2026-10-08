@@ -2249,6 +2249,7 @@ body .tacobout-magazine-grid .tacobout-overflow-separator { grid-column: 1 / -1;
 /* Override dimensions baked into older saved Query blocks as well. */
 body .tacobout-magazine-grid .wp-block-post .wp-block-post-featured-image img {
 	object-fit: contain !important;
+}
 
 /* An occupied upper-right masonry slot; cards resume below it. */
 body .tacobout-magazine-grid.tacobout-grid-with-sidebar {
