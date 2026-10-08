@@ -8,6 +8,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; }
 
 require_once __DIR__ . '/inc/trove.php';
+require_once __DIR__ . '/inc/sidebar.php';
 
 if ( ! function_exists( 'tacobout_support' ) ) :
 	function tacobout_support() {

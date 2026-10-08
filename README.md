@@ -208,3 +208,39 @@ This recovery retains Trove embeds and the normalized engagement, cache, and RES
 fixes already merged on GitHub. The local 3.8.1 changes were absent from GitHub;
 installing its older theme files replaced that local layout. Version 3.8.2 identifies
 the combined recovery.
+
+## Discovery sidebar and trending posts
+
+The first homepage grid includes a top-right sidebar linking to
+https://infopages.pages.dev/, the three latest written reviews in Trove's
+anonymous public community activity feed, and trending blog posts. The sidebar
+occupies a masonry slot, allowing cards to fill its left side and continue below
+it. On narrow screens it joins the single-column feed. Pagination/infinite scroll
+never inserts a second sidebar; archive/search/author grids are unchanged.
+
+Both this sidebar and the single-post template use `[tacobout_trending]`, ranked
+by **Jetpack post views over the past seven days**, rather than lifetime comment
+counts. Jetpack Stats must be active, connected, and permitted to return stats
+for the site's plan. Installing Jetpack alone does not guarantee data access.
+Rankings cache for 30 minutes; unavailable/empty data retries after five minutes
+and shows an explicitly labeled latest-posts fallback. Only published,
+unprotected blog posts qualify; the single-post list excludes the current post.
+Site Kit's authenticated Google reports are not queried or exposed to visitors.
+
+Trove reviews cache for 15 minutes (five minutes on an empty/failed response).
+Only public written reviews are included, with author/rating text and an excerpt;
+no authenticated or private collection data is requested. This uses Trove's
+current public HTML rather than a documented RSS/API contract, so a change to
+its activity markup may require updating the parser. When unavailable the
+sidebar retains the link to Trove.
+
+Deploy `inc/sidebar.php`, `functions.php`, `style.css`,
+`tacobout-infinite-scroll.js`, and `templates/single.html` together. If WordPress
+has a saved Site Editor override of the single template, replace its old trending
+query with a Shortcode block containing `[tacobout_trending]`. Purge page caches
+after deployment and verify the Jetpack-backed heading on the live site.
+
+At viewport widths of 1600px and above, the homepage expands to fit three
+post columns and a separate 320px sidebar on the right. The recovered content-aware
+three-column masonry layout stays intact inside the post grid. Below
+that breakpoint, the sidebar stays in its upper-right grid slot.

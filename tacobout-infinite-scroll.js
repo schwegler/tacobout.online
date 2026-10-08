@@ -74,11 +74,26 @@
 			grid.classList.add('tacobout-bento-ready');
 			const columns = parseInt(getComputedStyle(grid).getPropertyValue('--tacobout-columns'), 10) || 1;
 			const skyline = Array(columns).fill(0);
+			const sidebar = grid.querySelector('.tacobout-grid-sidebar');
+			const wideSidebar = sidebar && window.matchMedia('(min-width: 1600px)').matches;
+			grid.style.minHeight = wideSidebar ? sidebar.getBoundingClientRect().height + 'px' : '';
+
 			if (grid.dataset.bentoColumns !== String(columns)) {
 				Array.from(grid.children).forEach(card => { card.style.gridColumn = ''; card.style.gridRow = ''; });
 				grid.dataset.bentoColumns = String(columns);
 			}
+			// Reserve the upper-right slot before placing posts in the shortest column.
+			if (sidebar && !wideSidebar && columns > 1) {
+				sidebar.style.gridColumn = String(columns);
+				const rows = Math.ceil((sidebar.getBoundingClientRect().height + 20) / 4);
+				sidebar.style.gridRow = '1 / span ' + rows;
+				skyline[columns - 1] = rows;
+			}
 			Array.from(grid.children).forEach(card => {
+				if (card === sidebar && (wideSidebar || columns > 1)) {
+					if (wideSidebar) { card.style.gridColumn = ''; card.style.gridRow = ''; }
+					return;
+				}
 				const separator = card.classList.contains('tacobout-overflow-separator');
 				let span = separator ? columns : 1;
 				let column = skyline.indexOf(Math.min(...skyline));
@@ -244,6 +259,8 @@
 	window._tacoboutObserveCards = prepareCards;
 	prepareCards(Array.from(grid.querySelectorAll('.wp-block-post')));
 	resizeObserver?.observe(grid);
+	const discovery = grid.querySelector('.tacobout-discovery-sidebar');
+	if (discovery) resizeObserver?.observe(discovery);
 	grid.addEventListener('load', layoutMasonryGrid, true);
 	grid.addEventListener('loadedmetadata', layoutMasonryGrid, true);
 	grid.addEventListener('toggle', layoutMasonryGrid, true);
