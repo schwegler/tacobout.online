@@ -75,7 +75,7 @@
 			const columns = parseInt(getComputedStyle(grid).getPropertyValue('--tacobout-columns'), 10) || 1;
 			const skyline = Array(columns).fill(0);
 			const sidebar = grid.querySelector('.tacobout-grid-sidebar');
-			const wideSidebar = sidebar && window.matchMedia('(min-width: 1600px)').matches;
+			const wideSidebar = sidebar && window.matchMedia('(min-width: 2000px)').matches;
 			grid.style.minHeight = wideSidebar ? sidebar.getBoundingClientRect().height + 'px' : '';
 
 			if (grid.dataset.bentoColumns !== String(columns)) {
