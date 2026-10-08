@@ -4,7 +4,7 @@ Theme URI: https://tacobout.online
 Author: schwegler
 Author URI: https://tacobout.online
 Description: A personal magazine theme for schwegler — ultra-modern tumblog with compatibility with optional Bluesky/ATProto & ActivityPub plugins. Format-aware feeds, dark mode, and 2026 design language.
-Version: 3.8.3
+Version: 3.8.4
 Requires at least: 6.4
 Tested up to: 6.8
 Requires PHP: 8.0
@@ -2273,22 +2273,18 @@ body .tacobout-magazine-grid.tacobout-grid-with-sidebar {
 }
 .tacobout-discovery-sidebar *, .tacobout-discovery-section * { box-sizing: border-box; }
 .tacobout-playground {
-	position: relative;
-	isolation: isolate;
-	overflow: hidden;
-	display: block;
-	padding: 26px;
-	border-radius: 20px;
-	background: linear-gradient(130deg, #342168, #6431bb 70%, #8759d8);
-	color: #fff !important;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 16px;
+	padding: 16px 20px;
+	border-radius: 14px;
+	background: color-mix(in srgb, var(--taco-surface) 65%, transparent);
+	color: var(--taco-fg);
 	text-decoration: none;
-	box-shadow: 0 12px 30px rgb(61 26 120 / 18%);
 }
-.tacobout-playground h3 { position: relative; margin: 38px 0 10px; max-width: 9ch; font-size: 1.9rem; line-height: 1.1; letter-spacing: -.05em; color: #fff; }
-.tacobout-playground p { position: relative; margin: 0 0 24px; max-width: 22ch; font-size: .9rem; color: #e1d4fa; }
-.tacobout-playground-art { position: absolute; right: 14px; top: 8px; font: 700 80px/1.2 monospace; color: rgb(255 255 255 / 14%); transform: rotate(-12deg); }
-.tacobout-playground-cta { display: flex; justify-content: space-between; align-items: center; font-size: .85rem; font-weight: 650; padding-top: 16px; border-top: 1px solid rgb(255 255 255 / 22%); }
-.tacobout-playground-cta > span { font-size: 1.3rem; }
+.tacobout-playground strong { display: block; font-size: .85rem; font-weight: 600; line-height: 1.4; margin-bottom: 3px; }
+.tacobout-playground > svg { color: var(--taco-muted); flex-shrink: 0; }
 .tacobout-discovery-section {
 	padding: 22px;
 	border-radius: 20px;
@@ -2317,8 +2313,8 @@ body .tacobout-magazine-grid.tacobout-grid-with-sidebar {
 .tacobout-sidebar-empty { font-size: .85rem; color: var(--taco-muted); }
 .tacobout-discovery-sidebar a:focus-visible, .tacobout-discovery-section a:focus-visible { outline: 3px solid var(--taco-accent); outline-offset: 5px; border-radius: 6px; }
 @media (hover: hover) {
-	.tacobout-playground { transition: transform .2s ease, box-shadow .2s ease; }
-	.tacobout-playground:hover { transform: translateY(-3px); box-shadow: 0 16px 36px rgb(61 26 120 / 25%); }
+	.tacobout-playground { transition: background .2s ease; }
+	.tacobout-playground:hover { background: var(--taco-surface); }
 	.tacobout-review-link:hover strong, .tacobout-trending-link:hover strong { color: var(--taco-accent); }
 }
 @container (max-width: 320px) {
@@ -2352,4 +2348,3 @@ body .tacobout-magazine-grid.tacobout-grid-with-sidebar {
 }
 
 .tacobout-sidebar-heading > a { display: inline-flex; align-items: center; gap: 4px; }
-.tacobout-playground-cta svg { flex-shrink: 0; }

@@ -112,7 +112,7 @@ function tacobout_sidebar_arrow() {
 }
 
 function tacobout_discovery_sidebar() {
-	$html = '<aside class="tacobout-discovery-sidebar" aria-label="' . esc_attr__( 'Explore more', 'tacobout' ) . '"><a class="tacobout-playground" href="https://infopages.pages.dev/"><span class="tacobout-playground-art" aria-hidden="true">&lt;/&gt;</span><h3>' . esc_html__( 'HTML Playground', 'tacobout' ) . '</h3><p>' . esc_html__( 'Small experiments. Big rabbit holes.', 'tacobout' ) . '</p><span class="tacobout-playground-cta">' . esc_html__( 'Explore InfoPages', 'tacobout' ) . ' ' . tacobout_sidebar_arrow() . '</span></a>';
+	$html = '<aside class="tacobout-discovery-sidebar" aria-label="' . esc_attr__( 'Explore more', 'tacobout' ) . '">';
 	$html .= '<section class="tacobout-discovery-section tacobout-review-section"><div class="tacobout-sidebar-heading"><h3>' . esc_html__( 'Latest on Trove', 'tacobout' ) . '</h3><a href="https://trove.schweg.xyz/">' . esc_html__( 'View all', 'tacobout' ) . ' ' . tacobout_sidebar_arrow() . '</a></div><p class="tacobout-sidebar-caption">' . esc_html__( 'From the public review feed', 'tacobout' ) . '</p><ul class="tacobout-sidebar-links tacobout-review-list">';
 	$reviews = tacobout_public_reviews();
 	foreach ( $reviews as $review ) {
@@ -133,7 +133,7 @@ function tacobout_discovery_sidebar() {
 	if ( empty( $reviews ) ) {
 		$html .= '<li class="tacobout-sidebar-empty">' . esc_html__( 'Discover what people are reading, watching, and listening to on Trove.', 'tacobout' ) . '</li>';
 	}
-	return $html . '</ul></section>' . tacobout_trending_shortcode() . '</aside>';
+	return $html . '</ul></section>' . tacobout_trending_shortcode() . '<a class="tacobout-playground" href="https://infopages.pages.dev/"><span><strong>' . esc_html__( 'HTML Playground', 'tacobout' ) . '</strong><span class="tacobout-sidebar-meta">' . esc_html__( 'A few experiments on InfoPages', 'tacobout' ) . '</span></span>' . tacobout_sidebar_arrow() . '</a></aside>';
 }
 
 /** Keep the sidebar inside the list so masonry can fill around and below it. */
