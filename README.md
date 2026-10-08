@@ -1,6 +1,6 @@
 # Tacobout Social — WordPress Theme
 
-A personal magazine theme for **schwegler** at [tacobout.online](https://tacobout.online). Ultra-modern tumblog with deep Bluesky/ATProto and ActivityPub integration.
+A personal magazine theme for **schwegler** at [tacobout.online](https://tacobout.online). A format-aware tumblog compatible with optional Bluesky/ATProto and ActivityPub plugins.
 
 ## Features
 
@@ -83,7 +83,7 @@ This theme is designed to work with:
 
 - **[ActivityPub](https://wordpress.org/plugins/activitypub/)** — Federate posts to Mastodon and the fediverse
 - **[Enable Mastodon Apps](https://wordpress.org/plugins/enable-mastodon-apps/)** — Use Mastodon apps with your blog
-- **[Jetstrea/Atmosphere](https://wordpress.org/plugins/jetstrea/)** — Sync posts to Bluesky/ATProto
+- **[ATmosphere](https://github.com/Automattic/wordpress-atmosphere)** — Sync posts to Bluesky/ATProto
 
 ## Customization
 
@@ -103,3 +103,97 @@ Edit the footer template part to update your Bluesky and Mastodon profile URLs.
 
 - WordPress 6.4+
 - PHP 8.0+
+
+
+## Open Social Engagement
+
+The badge and backward-compatible integer `interaction_count` now mean **approved,
+locally recorded engagement**, not global social totals. `tacobout_get_engagement($post_id)`
+and the read-only posts REST field `engagement` provide the breakdown. The number can
+increase after deployment because recognized reactions excluded from WordPress's
+ordinary `comment_count` are now included. The speech-bubble design and CSS selectors
+remain intact; titles and accessible labels say “locally recorded interactions.”
+
+- `comments`: approved ordinary comments with no protocol marker. This is not proof of
+  native origin when an older importer omits metadata.
+- `other_comments`: approved pingbacks/trackbacks and ordinary comments with unknown protocols.
+- `replies`, `likes`, `reposts`, `quotes`: sums of the two protocol breakdowns.
+- `activitypub` / `atproto`: approved `comment` (also legacy empty type), `like`,
+  `repost`, and `quote` rows bearing the exact `protocol` metadata value.
+- `total`: comments + other_comments + replies + likes + reposts + quotes.
+- `calculated_at`: UTC time the local aggregate was computed, not a remote synchronization time.
+  `updated_at` and `last_synced_at` are null because the theme cannot prove a complete sync.
+- `is_partial` is always true. `is_stale` refers only to failed local reads, not remote
+  freshness. Zero means no matching approved local records, not no remote engagement.
+  `source=local_query_failed` marks a database read failure, with a prior snapshot if available.
+
+ActivityPub source: locally received WordPress comments/reactions tagged `protocol=activitypub`.
+Current upstream stores Create replies as comments and Like/Announce as `like`/`repost`;
+settings, moderation, federation delivery, and plugin version determine what actually arrives.
+No remote server scraping occurs. Mentions without a persisted matching record are not counted.
+
+ATProto source: locally imported WordPress rows tagged `protocol=atproto`. Current ATmosphere
+upstream imports replies/likes/reposts and exposes `atmosphere_reaction_synced`. Standalone
+Bluesky quote ingestion is unverified; `coverage.atproto_quotes=no_verified_import_lane`
+marks this limitation. A quote record is counted if a compatible importer actually stores
+one with the verified schema. The theme does not infer engagement from a footer profile link.
+
+Remote records deduplicate by **post + protocol + normalized comment type + source_id**,
+case-sensitively. Without a source ID, each local row counts once. Duplicate metadata uses
+its earliest row. Distinct protocols remain distinct; cross-protocol bridges and missing
+identities cannot be deduplicated reliably. Native duplicate comments remain distinct.
+There is no AppView count added to imported replies, so no remote/local reply overlap.
+Unknown reaction types/protocols and private notes are excluded; spam, pending, trashed,
+and deleted comments are excluded.
+
+Rendering performs zero remote social API calls. Ingestion remains with the plugins:
+ATmosphere upstream schedules hourly reaction/reply sync and daily reply backfill;
+ActivityPub handles incoming delivery. Disabling a plugin retains approved historical
+records but stops that plugin's ingestion. No new theme scheduler, table, credentials,
+remote cache, or competing polling process was introduced.
+
+The local aggregate cache is `tacobout_engagement/post_{ID}`, with a 300-second TTL
+and explicit age check. WordPress's `comment` cache generation catches inserts, edits,
+status changes, deletes and moves. Targeted hooks also clear it after comment count/post
+cache updates, deletion, protocol/source metadata changes, and Atmosphere imports.
+Raw SQL writers should use WordPress APIs or explicitly invalidate the affected post;
+unhooked changes otherwise take up to five minutes to be read. The previous two
+inconsistent cache-key systems are no longer read or written.
+
+Guest HTML and eligible public posts REST reads use `max-age=60, s-maxage=120,
+must-revalidate`. Authenticated, nonce/Authorization-bearing, edit-context, error,
+revision, and Mastodon Apps REST responses are left to WordPress/plugin policy.
+With functioning hooks and caches honoring origin headers/Age, new **local** data can
+remain in shared HTML/REST for up to two minutes; allow three minutes conservatively
+if a downstream browser cache resets Age. Unhooked local changes add five minutes
+(seven minutes, or eight conservatively). Already open pages do not update themselves.
+Remote delivery/indexing, plugin backlog, cron delays, and proxy policy overrides are
+additional and potentially unbounded. This is a local freshness budget, not a global SLA.
+
+After deploying, purge existing HTML and posts REST cache objects once so old day-long
+stale allowances do not survive. For routine local refresh, use:
+
+```sh
+wp tacobout engagement 123
+wp tacobout engagement 123 --refresh
+wp cron event list --fields=hook,next_run_gmt,recurrence
+wp cron event run atmosphere_sync_reactions
+wp cron event run atmosphere_backfill_replies
+```
+
+The custom CLI command reports per-type counts, calculation time, candidate ActivityPub
+object permalink, ATProto root mapping and scheduled sync/backfill times. `--refresh`
+recalculates this post's local snapshot; it does not fetch social data or purge CDN HTML.
+The two plugin cron commands apply only when the corresponding deployed plugin registers
+those hooks. Check `wp plugin list`, relevant sync settings and moderation first.
+Do not run the destructive integration fixture against production.
+
+On low-traffic sites, use a real system scheduler running `wp cron event run --due-now`
+every minute under the WordPress account. Set `DISABLE_WP_CRON` only after confirming
+that scheduler works. Inspect plugin diagnostics/debug logging for auth failures,
+rate limits, last successful run, duration and backlog; this theme does not fabricate
+those metrics or log on every page request. Verify proxy headers with `curl -I` and
+compare a post's CLI snapshot with `wp-json/wp/v2/posts/123?_fields=id,interaction_count,engagement`.
+
+The full audit, source references, ranked causes, testing and production checks are in
+[docs/open-social-engagement-audit.md](docs/open-social-engagement-audit.md).

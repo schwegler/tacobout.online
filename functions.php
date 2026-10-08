@@ -1,7 +1,7 @@
 <?php
 /**
  * Tacobout Social 2.0 — functions and definitions
- * A personal magazine theme with deep Bluesky/ATProto integration.
+ * A personal magazine theme compatible with optional social plugins.
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -117,62 +117,7 @@ function tacobout_get_memoized_post_format( $post_id ) {
 	return $formats[ $post_id ];
 }
 
-/**
- * Helper: Retrieve interaction count (comments + fediverse + bluesky) using in-memory WP object cache.
- * Avoids executing separate SQL SELECT COUNT(*) queries per post card in query loops and REST API responses.
- */
-function tacobout_get_interaction_count( $post_id ) {
-	$post_id = (int) $post_id;
-	if ( ! $post_id ) {
-		return 0;
-	}
-
-	$cache_key = 'tacobout_int_count_' . $post_id;
-	$count     = wp_cache_get( $cache_key, 'posts' );
-
-	if ( false === $count ) {
-		$post = get_post( $post_id );
-		if ( $post && isset( $post->comment_count ) ) {
-			$count = (int) $post->comment_count;
-		} else {
-			$count = (int) get_comments_number( $post_id );
-		}
-		wp_cache_set( $cache_key, $count, 'posts', 3600 );
-	}
-
-	return (int) $count;
-}
-
-/**
- * Invalidate interaction count cache when comments are created, edited, deleted, or status-changed.
- */
-function tacobout_clear_interaction_count_cache( $comment_id, $comment_object = null ) {
-	$post_id = 0;
-	if ( is_object( $comment_object ) && isset( $comment_object->comment_post_ID ) ) {
-		$post_id = (int) $comment_object->comment_post_ID;
-	} elseif ( $comment_id ) {
-		$comment = get_comment( $comment_id );
-		if ( $comment ) {
-			$post_id = (int) $comment->comment_post_ID;
-		}
-	}
-	if ( $post_id ) {
-		wp_cache_delete( 'tacobout_int_count_' . $post_id, 'posts' );
-	}
-}
-add_action( 'wp_insert_comment', 'tacobout_clear_interaction_count_cache', 10, 2 );
-add_action( 'edit_comment', 'tacobout_clear_interaction_count_cache', 10, 1 );
-add_action( 'delete_comment', 'tacobout_clear_interaction_count_cache', 10, 1 );
-add_action(
-	'transition_comment_status',
-	function ( $new_status, $old_status, $comment ) {
-		if ( isset( $comment->comment_post_ID ) ) {
-			wp_cache_delete( 'tacobout_int_count_' . (int) $comment->comment_post_ID, 'posts' );
-		}
-	},
-	10,
-	3
-);
+require_once __DIR__ . '/inc/engagement.php';
 
 /**
  * Helper: Retrieve total published post count with transient caching.
@@ -300,7 +245,7 @@ function tacobout_pagination_body_class( $classes ) {
 	// Check for query block pagination params
 	foreach ( $_GET as $key => $value ) {
 		if ( str_starts_with( $key, 'query' ) && str_ends_with( $key, 'page' ) ) {
-			if ( $key === 'query-page' || preg_match( '/^query-\d+-page$/', $key ) ) {
+			if ( 'query-page' === $key || preg_match( '/^query-\d+-page$/', $key ) ) {
 				if ( intval( $value ) > 1 ) {
 					$classes[] = 'paged';
 					break;
@@ -326,22 +271,37 @@ function tacobout_security_headers() {
 		header( 'Strict-Transport-Security: max-age=31536000; includeSubDomains' );
 		header( 'Permissions-Policy: camera=(), microphone=(), geolocation=()' );
 
-		if ( ! is_user_logged_in() && isset( $_SERVER['REQUEST_METHOD'] ) && 'GET' === $_SERVER['REQUEST_METHOD'] && ! is_preview() ) {
-			header( 'Cache-Control: public, max-age=600, s-maxage=3600, stale-while-revalidate=86400' );
-		}
 	}
 }
 add_action( 'send_headers', 'tacobout_security_headers' );
+
+/** Apply HTML caching after the query and optional protocol handlers have run. */
+function tacobout_page_cache_headers() {
+	$accept = strtolower( $_SERVER['HTTP_ACCEPT'] ?? '' );
+	if ( ! is_user_logged_in() && 'GET' === ( $_SERVER['REQUEST_METHOD'] ?? '' )
+		&& ! is_preview() && ! is_404() && ! is_feed() && ! is_search()
+		&& ! post_password_required()
+		&& empty( $_SERVER['HTTP_AUTHORIZATION'] ) && empty( $_SERVER['HTTP_SIGNATURE'] )
+		&& empty( $_SERVER['HTTP_X_WP_NONCE'] )
+		&& ! str_contains( $accept, 'application/activity+json' )
+		&& ! str_contains( $accept, 'application/ld+json' ) ) {
+		header( 'Cache-Control: public, max-age=60, s-maxage=120, must-revalidate' );
+	}
+}
+add_action( 'template_redirect', 'tacobout_page_cache_headers', 99 );
 
 /**
  * Add Cache-Control headers for public REST API GET responses (e.g. infinite scroll posts).
  */
 function tacobout_rest_cache_control_headers( $response, $server, $request ) {
-	if ( 'GET' === $request->get_method() && ! is_user_logged_in() ) {
-		$route = $request->get_route();
-		if ( str_starts_with( $route, '/wp/v2/posts' ) || str_starts_with( $route, '/enable-mastodon-apps/' ) ) {
-			$response->header( 'Cache-Control', 'public, max-age=300, s-maxage=1800, stale-while-revalidate=3600' );
-		}
+	$context = $request->get_param( 'context' );
+	// Leave plugin/authenticated/error responses to their own cache policy.
+	if ( 'GET' === $request->get_method() && ! is_user_logged_in()
+		&& ! $request->get_header( 'authorization' ) && ! $request->get_header( 'x-wp-nonce' )
+		&& 200 === $response->get_status()
+		&& ( ! $context || 'view' === $context )
+		&& preg_match( '#^/wp/v2/posts(?:/[0-9]+)?$#', $request->get_route() ) ) {
+		$response->header( 'Cache-Control', 'public, max-age=60, s-maxage=120, must-revalidate' );
 	}
 	return $response;
 }
@@ -442,26 +402,8 @@ function tacobout_pre_render_hidden_blocks( $pre_render, $parsed_block, $parent_
 add_filter( 'pre_render_block', 'tacobout_pre_render_hidden_blocks', 10, 3 );
 
 /**
- * Get cached interaction count for a post.
- * Uses wp_cache to prevent N+1 query problems in loops like render_block or REST API.
- *
- * @param int $post_id The post ID.
- * @return int The total number of interactions.
- */
-
-/**
- * Invalidate the interaction count cache when a post's cache is cleaned.
- *
- * @param int $post_id The post ID.
- */
-function tacobout_invalidate_interaction_count_cache( $post_id ) {
-	wp_cache_delete( 'tacobout_interaction_count_' . $post_id, 'counts' );
-}
-add_action( 'clean_post_cache', 'tacobout_invalidate_interaction_count_cache' );
-
-/**
  * Inject an interaction badge into each post card in query loops.
- * Shows total comments (WP + ActivityPub + Atmosphere — all stored as WP comments).
+ * Shows approved locally recorded engagement; remote coverage is partial.
  * Badge is hidden when count is 0.
  */
 function tacobout_interaction_badge( $block_content, $block ) {
@@ -488,7 +430,7 @@ function tacobout_interaction_badge( $block_content, $block ) {
 
 			$label = sprintf(
 				/* translators: %d: interaction count */
-				_n( '%d interaction', '%d interactions', $count, 'tacobout' ),
+				_n( '%d locally recorded interaction', '%d locally recorded interactions', $count, 'tacobout' ),
 				$count
 			);
 
@@ -537,8 +479,23 @@ function tacobout_register_rest_fields() {
 				return tacobout_get_interaction_count( $post['id'] );
 			},
 			'schema'       => array(
-				'description' => 'Total interaction count (comments + fediverse + bluesky)',
+				'description' => 'Approved locally recorded engagement; partial network coverage. See engagement.',
 				'type'        => 'integer',
+				'context'     => array( 'view' ),
+			),
+		)
+	);
+	register_rest_field(
+		'post',
+		'engagement',
+		array(
+			'get_callback' => function ( $post ) {
+				return tacobout_get_engagement( $post['id'] );
+			},
+			'schema'       => array(
+				'description' => 'Approved local engagement snapshot, not global network totals.',
+				'type'        => 'object',
+				'readonly'    => true,
 				'context'     => array( 'view' ),
 			),
 		)
@@ -558,13 +515,13 @@ function tacobout_get_taxonomy_scroll_context( $per_page ) {
 	);
 
 	if ( is_category() ) {
-		$queried                  = get_queried_object();
+		$queried                     = get_queried_object();
 		$context['term_id']          = $queried->term_id;
 		$context['term_name']        = $queried->name;
 		$context['term_type']        = 'categories';
 		$context['term_total_pages'] = ceil( $queried->count / $per_page );
 	} elseif ( is_tag() ) {
-		$queried                  = get_queried_object();
+		$queried                     = get_queried_object();
 		$context['term_id']          = $queried->term_id;
 		$context['term_name']        = $queried->name;
 		$context['term_type']        = 'tags';
