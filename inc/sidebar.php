@@ -90,16 +90,22 @@ function tacobout_parse_public_reviews( $html ) {
 	return $reviews;
 }
 
-/** Fifteen-minute background polling; page rendering never waits on Trove. */
+/** Three daily background scans; page rendering never waits on Trove. */
 function tacobout_review_cron_schedules( $schedules ) {
-	$schedules['tacobout_quarter_hour'] = array( 'interval' => 900, 'display' => 'Every 15 minutes' );
+	$schedules['tacobout_eight_hours'] = array( 'interval' => 8 * HOUR_IN_SECONDS, 'display' => 'Every 8 hours' );
 	return $schedules;
 }
 add_filter( 'cron_schedules', 'tacobout_review_cron_schedules' );
 
 function tacobout_schedule_review_refresh() {
-	if ( ! wp_next_scheduled( 'tacobout_refresh_public_reviews' ) ) {
-		wp_schedule_event( time() + 1, 'tacobout_quarter_hour', 'tacobout_refresh_public_reviews' );
+	$event = wp_get_scheduled_event( 'tacobout_refresh_public_reviews' );
+	// Recurring events retain their stored interval across theme upgrades.
+	if ( $event && ( 'tacobout_eight_hours' !== $event->schedule || 8 * HOUR_IN_SECONDS !== (int) $event->interval ) ) {
+		wp_clear_scheduled_hook( 'tacobout_refresh_public_reviews' );
+		$event = false;
+	}
+	if ( ! $event ) {
+		wp_schedule_event( time() + 1, 'tacobout_eight_hours', 'tacobout_refresh_public_reviews' );
 	}
 }
 add_action( 'init', 'tacobout_schedule_review_refresh' );

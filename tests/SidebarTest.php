@@ -3,6 +3,32 @@ class SidebarTest extends \PHPUnit\Framework\TestCase {
     protected function setUp(): void { parent::setUp(); \Brain\Monkey\setUp(); }
     protected function tearDown(): void { \Brain\Monkey\tearDown(); parent::tearDown(); }
 
+    public function test_upgrade_replaces_stored_quarter_hour_event() {
+        \Brain\Monkey\Functions\expect('wp_get_scheduled_event')->once()->with('tacobout_refresh_public_reviews')->andReturn((object)['schedule'=>'tacobout_quarter_hour', 'interval'=>900]);
+        \Brain\Monkey\Functions\expect('wp_clear_scheduled_hook')->once()->with('tacobout_refresh_public_reviews');
+        \Brain\Monkey\Functions\expect('wp_schedule_event')->once()->with(\Mockery::type('int'), 'tacobout_eight_hours', 'tacobout_refresh_public_reviews');
+        \Brain\Monkey\Functions\expect('wp_schedule_single_event')->never();
+        $this->assertNull(tacobout_schedule_review_refresh());
+    }
+
+    public function test_correct_schedule_is_not_reset_on_each_request() {
+        \Brain\Monkey\Functions\expect('wp_get_scheduled_event')->once()->andReturn((object)['schedule'=>'tacobout_eight_hours', 'interval'=>28800]);
+        \Brain\Monkey\Functions\expect('wp_clear_scheduled_hook')->never();
+        \Brain\Monkey\Functions\expect('wp_schedule_event')->never();
+        $this->assertNull(tacobout_schedule_review_refresh());
+    }
+
+    public function test_first_install_schedules_eight_hour_refresh() {
+        \Brain\Monkey\Functions\expect('wp_get_scheduled_event')->once()->andReturn(false);
+        \Brain\Monkey\Functions\expect('wp_clear_scheduled_hook')->never();
+        \Brain\Monkey\Functions\expect('wp_schedule_event')->once()->with(\Mockery::type('int'), 'tacobout_eight_hours', 'tacobout_refresh_public_reviews');
+        $schedules = tacobout_review_cron_schedules(['hourly'=>['interval'=>3600]]);
+        $this->assertSame(28800, $schedules['tacobout_eight_hours']['interval']);
+        $this->assertArrayHasKey('hourly', $schedules);
+        $this->assertArrayNotHasKey('tacobout_quarter_hour', $schedules);
+        $this->assertNull(tacobout_schedule_review_refresh());
+    }
+
     public function test_public_reviews_ignore_non_reviews_and_untrusted_links() {
         $card = '<div class="activity-card"><span class="activity-text">Ada reviewed a book</span><a class="activity-item-link" href="%s">Book</a>%s</div>';
         $quote = '<div class="activity-review-quote">Good &amp; thoughtful</div>';
