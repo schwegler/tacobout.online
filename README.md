@@ -44,6 +44,41 @@ This theme uses WordPress **Post Formats** (not categories) to control how posts
 
 ## Social Integration
 
+### Trove media collection
+
+Link a book, movie, album, comic, TV show/episode, or video game from
+[Trove](https://trove.schweg.xyz/) in a blog post by pasting its public item URL
+on its own line. WordPress turns it into a card with the title, cover, and item
+description. In the block editor, you can also use an **Embed** block with the URL.
+
+For your own title or a short personal note, add a **Shortcode** block:
+
+```text
+[trove url="https://trove.schweg.xyz/books/13" note="What I’ve been reading lately."]
+```
+
+The optional `title` attribute overrides the item title. Notes are plain text;
+write longer reviews in the surrounding post blocks. Cards follow the blog’s
+light/dark appearance and open the item on Trove in the same tab.
+
+Only public numeric item URLs on `https://trove.schweg.xyz` are supported.
+Profile URLs, collection/account pages, and URLs with query strings are not
+embedded. The blog uses public Open Graph metadata; it does not need a Trove
+account, API key, or access to private collection data. Successful previews are
+cached for six hours. If an item is unavailable or the preview request fails,
+the card remains a link and retries after five minutes. Cover images are loaded
+from their public image hosts, without sending a referrer.
+
+Deployment needs the new `inc/trove.php` file along with the updated
+`functions.php` and `style.css`. Ensure the WordPress host permits outbound HTTPS
+to Trove; if page metadata changes, delete the corresponding
+`tacobout_trove_` transient or wait for cache expiry. Existing saved WordPress
+embed caches may also need clearing when testing changes to previously embedded
+URLs. No production content is created by this integration.
+
+See [the companion integration notes](docs/trove-integration.md) for a prompt to
+coordinate changes in Trove’s separate environment.
+
 This theme is designed to work with:
 
 - **[ActivityPub](https://wordpress.org/plugins/activitypub/)** — Federate posts to Mastodon and the fediverse

@@ -106,9 +106,7 @@ if (false) {
 if (false) {
     function get_transient($transient) { return false; }
 }
-if (!function_exists('set_transient')) {
-    function set_transient($transient, $value, $expiration = 0) { return true; }
-}
+// Leave transient writes to Brain Monkey so cache lifetimes can be asserted.
 if (!function_exists('delete_transient')) {
     function delete_transient($transient) { return true; }
 }

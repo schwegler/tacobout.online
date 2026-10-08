@@ -7,6 +7,8 @@
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; }
 
+require_once __DIR__ . '/inc/trove.php';
+
 if ( ! function_exists( 'tacobout_support' ) ) :
 	function tacobout_support() {
 		// Load the public theme styles first for visual parity, then add a small
