@@ -76,9 +76,6 @@ to Trove; if page metadata changes, delete the corresponding
 embed caches may also need clearing when testing changes to previously embedded
 URLs. No production content is created by this integration.
 
-See [the companion integration notes](docs/trove-integration.md) for a prompt to
-coordinate changes in Trove’s separate environment.
-
 This theme is designed to work with:
 
 - **[ActivityPub](https://wordpress.org/plugins/activitypub/)** — Federate posts to Mastodon and the fediverse
