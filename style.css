@@ -2250,3 +2250,83 @@ body .tacobout-magazine-grid .tacobout-overflow-separator { grid-column: 1 / -1;
 body .tacobout-magazine-grid .wp-block-post .wp-block-post-featured-image img {
 	object-fit: contain !important;
 }
+
+/* An occupied upper-right masonry slot; cards resume below it. */
+body .tacobout-magazine-grid.tacobout-grid-with-sidebar {
+	--tacobout-columns: 2;
+	grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+	grid-auto-flow: row dense;
+}
+.tacobout-grid-sidebar {
+	grid-column: 2;
+	grid-row-start: 1;
+	margin-block-start: 0 !important;
+	margin-bottom: 2rem;
+	min-width: 0;
+}
+body.home:not(.paged) .tacobout-grid-with-sidebar .wp-block-post:first-child {
+	grid-column: 1;
+}
+.tacobout-discovery-sidebar {
+	padding: 1.5rem;
+	border: 1px solid var(--wp--preset--color--muted);
+	border-radius: 12px;
+}
+.tacobout-discovery-section + .tacobout-discovery-section {
+	margin-top: 1.75rem;
+	padding-top: 1.5rem;
+	border-top: 1px solid var(--wp--preset--color--muted);
+}
+.tacobout-discovery-section h3 {
+	font-size: 1rem;
+	margin: 0 0 .75rem;
+}
+.tacobout-sidebar-caption, .tacobout-sidebar-links p {
+	font-size: .875rem;
+	opacity: .8;
+}
+.tacobout-sidebar-links {
+	list-style: none;
+	padding: 0;
+	margin: 0;
+}
+.tacobout-sidebar-links li + li {
+	margin-top: 1rem;
+}
+.tacobout-sidebar-links a {
+	overflow-wrap: anywhere;
+}
+@media (max-width: 759px) {
+	body .tacobout-magazine-grid.tacobout-grid-with-sidebar {
+		--tacobout-columns: 1;
+		grid-template-columns: minmax(0, 1fr) !important;
+	}
+	.tacobout-grid-sidebar {
+		grid-column: 1;
+		grid-row-start: auto;
+	}
+}
+
+/* Three readable post columns plus a separate 320px discovery rail. */
+@media (min-width: 1600px) {
+	body.home:not(.paged) main:has(.tacobout-grid-with-sidebar) > .wp-block-query {
+		box-sizing: border-box;
+		width: calc(100vw - 4rem);
+		max-width: 1680px;
+		padding-right: 352px;
+	}
+	body .tacobout-magazine-grid.tacobout-grid-with-sidebar {
+		--tacobout-columns: 3;
+		position: relative;
+		grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+		grid-auto-flow: row;
+	}
+	.tacobout-grid-with-sidebar > .tacobout-grid-sidebar {
+		position: absolute;
+		top: 0;
+		right: -352px;
+		width: 320px;
+		grid-column: auto;
+		grid-row: auto;
+	}
+}
