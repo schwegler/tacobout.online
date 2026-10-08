@@ -227,7 +227,8 @@ and shows an explicitly labeled latest-posts fallback. Only published,
 unprotected blog posts qualify; the single-post list excludes the current post.
 Site Kit's authenticated Google reports are not queried or exposed to visitors.
 
-Trove reviews cache for 15 minutes (five minutes on an empty/failed response).
+Trove reviews refresh in the background every 15 minutes; the last successful
+snapshot persists across empty responses, cold starts, and failed requests.
 Only public written reviews are included, with author/rating text and an excerpt;
 no authenticated or private collection data is requested. This uses Trove's
 current public HTML rather than a documented RSS/API contract, so a change to
@@ -261,3 +262,32 @@ overrides. It preserves the column wrapper and replaces the old sidebar contents
 with public reviews, seven-day Jetpack trending (or its labeled fallback), and
 the compact Playground link. No saved template records are modified. Purge the
 single-post HTML cache after deployment to remove old rendered sidebars.
+
+## Trove background review refresh
+
+Sidebar rendering reads the persistent `tacobout_reviews_snapshot` option and
+never waits on Trove. WordPress cron refreshes it every 15 minutes. A scan reads
+up to five anonymous public activity pages to find the three latest written
+reviews; watched/read/listened events do not qualify. Each job makes one bounded
+30-second request, and a timeout or non-200 response retries once after 60 seconds
+to allow a sleeping host to wake up. Empty or failed scans never erase the last
+successful snapshot. Only one scan starts within the five-minute lock window.
+The first scheduled scan starts after deployment; until it completes, an existing
+nonempty transient is carried forward or the link-only empty state remains.
+
+After deployment, run the first refresh under the WordPress account:
+
+```sh
+wp cron event run tacobout_refresh_public_reviews
+wp cron event run --due-now
+wp option get tacobout_reviews_snapshot --format=json
+```
+
+Continuation pages run at least five seconds later; run due events again until
+the snapshot is populated, or let the normal cron runner finish them. Use a real
+system scheduler running `wp cron event run --due-now` every minute on sites
+whose HTML is fully cached or has low traffic: WordPress cron needs execution
+even when requests do not reach PHP. Purge cached homepage and single-post HTML
+after the initial snapshot populates. `fetched_at` records the last successful
+scan; retained reviews can be older during outages. Theme switching clears both
+refresh hooks and the lock, while preserving the last good review snapshot.
