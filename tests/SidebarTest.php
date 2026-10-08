@@ -39,4 +39,41 @@ class SidebarTest extends \PHPUnit\Framework\TestCase {
         $this->assertSame('', tacobout_sidebar_image_url('javascript:alert(1)'));
         $this->assertSame('', tacobout_sidebar_image_url('https://secret@images.example.test/cover.jpg'));
     }
+    public function test_snapshot_reads_never_wait_on_trove() {
+        $reviews = [['title'=>'Cached review']];
+        \Brain\Monkey\Functions\expect('get_option')->once()->with('tacobout_reviews_snapshot', [])->andReturn(['reviews'=>$reviews, 'fetched_at'=>1]);
+        \Brain\Monkey\Functions\expect('wp_safe_remote_get')->never();
+        $this->assertSame($reviews, tacobout_public_reviews());
+    }
+
+    public function test_timeout_keeps_snapshot_and_schedules_one_wakeup_retry() {
+        \Brain\Monkey\Functions\expect('get_transient')->once()->andReturn(false);
+        \Brain\Monkey\Functions\expect('set_transient')->once();
+        \Brain\Monkey\Functions\expect('wp_safe_remote_get')->once()->with('https://trove.schweg.xyz/', \Mockery::on(fn($args)=>$args['timeout']===30))->andReturn(false);
+        \Brain\Monkey\Functions\expect('is_wp_error')->once()->andReturn(true);
+        \Brain\Monkey\Functions\expect('update_option')->never();
+        \Brain\Monkey\Functions\expect('wp_schedule_single_event')->once()->with(\Mockery::type('int'), 'tacobout_refresh_review_page', [1,[],1]);
+        $this->assertNull(tacobout_refresh_public_reviews());
+    }
+
+    public function test_activity_without_reviews_continues_to_next_public_page() {
+        \Brain\Monkey\Functions\expect('get_transient')->once()->andReturn(false);
+        \Brain\Monkey\Functions\expect('set_transient')->once();
+        \Brain\Monkey\Functions\expect('wp_safe_remote_get')->once()->andReturn([]);
+        \Brain\Monkey\Functions\expect('is_wp_error')->once()->andReturn(false);
+        \Brain\Monkey\Functions\expect('wp_remote_retrieve_response_code')->once()->andReturn(200);
+        \Brain\Monkey\Functions\expect('wp_remote_retrieve_body')->once()->andReturn('<a rel="next" href="/?page=2">Next</a>');
+        \Brain\Monkey\Functions\expect('update_option')->never();
+        \Brain\Monkey\Functions\expect('wp_schedule_single_event')->once()->with(\Mockery::type('int'), 'tacobout_refresh_review_page', [2,[],0]);
+        $this->assertNull(tacobout_refresh_public_reviews());
+    }
+
+    public function test_empty_scan_never_erases_last_good_reviews() {
+        \Brain\Monkey\Functions\expect('wp_safe_remote_get')->once()->andReturn([]);
+        \Brain\Monkey\Functions\expect('is_wp_error')->once()->andReturn(false);
+        \Brain\Monkey\Functions\expect('wp_remote_retrieve_response_code')->once()->andReturn(200);
+        \Brain\Monkey\Functions\expect('wp_remote_retrieve_body')->once()->andReturn('<p>No reviews</p>');
+        \Brain\Monkey\Functions\expect('update_option')->never();
+        $this->assertNull(tacobout_refresh_public_reviews(5));
+    }
 }
