@@ -60,193 +60,196 @@
 		if (classMatch) seenPostIds.add(parseInt(classMatch[1], 10));
 	});
 
-	// Mark body so CSS can hide pagination
-	document.body.classList.add("tacobout-infinite-scroll-active");
-
-
-	// Optional JS-based masonry fallback if CSS grid-template-rows: masonry isn't supported yet
-	let initialLayoutDone = false;
+	// Four-pixel tracks give each card its own height without equal-height rows.
+	// Keep DOM order intact and place cards against the shortest column.
+	let layoutFrame = 0;
+	const preparedCards = new WeakSet();
+	const resizeObserver = typeof ResizeObserver !== 'undefined'
+		? new ResizeObserver(layoutMasonryGrid) : null;
 
 	function layoutMasonryGrid() {
-		// Only run fallback if CSS grid masonry isn't supported natively
-		if (typeof CSS !== 'undefined' && CSS.supports && CSS.supports('grid-template-rows', 'masonry')) return;
-
-		const rowHeight = 10; // Use 10px instead of 1px to avoid the 10000 limit
-		grid.style.gridAutoRows = rowHeight + 'px';
-		grid.style.rowGap = '0px'; // Disable CSS grid row gaps, we use margin instead
-
-		const items = grid.querySelectorAll('.wp-block-post, .tacobout-overflow-separator');
-
-		// Anchor scroll position to a visible element so the reset below doesn't
-		// cause the browser to jump the viewport. Pick the last item that is
-		// currently above (or at) the top of the viewport as the anchor.
-		let anchorEl = null;
-		let anchorOffsetBefore = 0;
-		const viewportTop = window.scrollY;
-		Array.from(items).forEach(item => {
-			const rect = item.getBoundingClientRect();
-			if (rect.top <= 0) {
-				anchorEl = item;
-				anchorOffsetBefore = rect.top; // negative when scrolled past
+		if (layoutFrame) return;
+		layoutFrame = requestAnimationFrame(() => {
+			layoutFrame = 0;
+			grid.classList.add('tacobout-bento-ready');
+			const columns = parseInt(getComputedStyle(grid).getPropertyValue('--tacobout-columns'), 10) || 1;
+			const skyline = Array(columns).fill(0);
+			if (grid.dataset.bentoColumns !== String(columns)) {
+				Array.from(grid.children).forEach(card => { card.style.gridColumn = ''; card.style.gridRow = ''; });
+				grid.dataset.bentoColumns = String(columns);
 			}
+			Array.from(grid.children).forEach(card => {
+				const separator = card.classList.contains('tacobout-overflow-separator');
+				let span = separator ? columns : 1;
+				let column = skyline.indexOf(Math.min(...skyline));
+				let top = skyline[column];
+				if (separator) {
+					column = 0;
+					top = Math.max(...skyline);
+				} else if (columns > 1 && card.classList.contains('tacobout-card-wide')) {
+					// Only bridge columns when their bottoms nearly line up. Otherwise
+					// a wide card would seal a large, unfillable hole beneath itself.
+					let candidate = -1;
+					let lowest = Infinity;
+					for (let i = 0; i < columns - 1; i++) {
+						const edge = Math.max(skyline[i], skyline[i + 1]);
+						if (Math.abs(skyline[i] - skyline[i + 1]) <= 8 && edge < lowest) {
+							candidate = i; lowest = edge;
+						}
+					}
+					if (candidate !== -1 && lowest <= top + 8) { span = 2; column = candidate; top = lowest; }
+				}
+				card.classList.toggle('tacobout-card-spanning', span > 1 && !separator);
+				const placement = (column + 1) + ' / span ' + span;
+				if (card.style.gridColumn !== placement) card.style.gridColumn = placement;
+				const rows = Math.ceil((card.getBoundingClientRect().height + 20) / 4);
+				const row = (top + 1) + ' / span ' + rows;
+				if (card.style.gridRow !== row) card.style.gridRow = row;
+				for (let i = column; i < column + span; i++) skyline[i] = top + rows;
+			});
 		});
+	}
 
-		// Phase 1: Reset styles (writes)
-		items.forEach(item => {
-			item.style.gridRowEnd = 'auto';
-		});
+	function prepareCards(cards) {
+		cards.forEach(card => {
+			if (preparedCards.has(card)) return;
+			preparedCards.add(card);
+			const content = card.querySelector('.wp-block-post-content');
+			const featured = card.querySelector('.wp-block-post-featured-image');
+			const media = !card.classList.contains('tacobout-format-standard') && content?.querySelector('img, video, iframe, audio, .wp-block-gallery');
+			if (featured && media && !card.classList.contains('tacobout-format-standard')) featured.remove();
+			// Explicit intrinsic ratios also avoid the 1500px containment placeholder
+			// browsers can give WordPress lazy images with sizes="auto".
+			card.querySelectorAll('img').forEach(img => {
+				const sizeImage = () => {
+					const width = img.naturalWidth || Number(img.getAttribute('width'));
+					const height = img.naturalHeight || Number(img.getAttribute('height'));
+					if (width && height) img.style.setProperty('aspect-ratio', width + ' / ' + height, 'important');
+					layoutMasonryGrid();
+				};
+				sizeImage();
+				img.addEventListener('load', sizeImage);
+			});
+			const index = Array.from(grid.querySelectorAll('.wp-block-post')).indexOf(card);
+			const gallery = !card.classList.contains('tacobout-format-standard') && content?.querySelector('.wp-block-gallery, .gallery');
+			card.classList.toggle('tacobout-card-wide', !!gallery ||
+				(!!featured && (index === 0 || index % 7 === 4)));
+			card.classList.toggle('tacobout-card-horizontal', !!featured && !media);
 
-		// Force reflow once
-		grid.offsetHeight;
+			// Honor provider ratios, including portrait video, without squashing audio embeds.
+			content?.querySelectorAll('iframe').forEach(frame => {
+				const src = frame.getAttribute('src') || '';
+				if (!/youtube(?:-nocookie)?\.com|youtu\.be|vimeo\.com|videopress\.com/.test(src)) return;
+				const block = frame.closest('.wp-block-embed');
+				const ratioClass = block?.className.match(/wp-embed-aspect-(\d+)-(\d+)/);
+				const w = Number(frame.getAttribute('width'));
+				const h = Number(frame.getAttribute('height'));
+				const ratio = ratioClass ? Number(ratioClass[1]) / Number(ratioClass[2]) :
+					(/\/shorts\//.test(src) ? 9 / 16 : (w && h ? w / h : 16 / 9));
+				frame.classList.add('tacobout-video-frame');
+				frame.style.aspectRatio = String(ratio);
+				frame.loading = 'lazy';
+				if (!frame.title) frame.title = 'Video player';
+			});
 
-		// Phase 2: Measure elements (reads)
-		const measurements = Array.from(items).map(item => {
-			const style = window.getComputedStyle(item);
-			const marginTop = parseFloat(style.marginTop) || 0;
-			const marginBottom = parseFloat(style.marginBottom) || 0;
-			const height = item.getBoundingClientRect().height;
-			return {
-				item,
-				span: Math.ceil((height + marginTop + marginBottom) / rowHeight)
-			};
-		});
-
-		// Phase 3: Apply spans (writes)
-		measurements.forEach(({ item, span }) => {
-			item.style.gridRowEnd = 'span ' + span;
-		});
-
-		// Restore scroll position relative to the anchor element so the page
-		// doesn't jump after spans are re-applied.
-		if (anchorEl) {
-			const anchorOffsetAfter = anchorEl.getBoundingClientRect().top;
-			const drift = anchorOffsetAfter - anchorOffsetBefore;
-			if (Math.abs(drift) > 1) {
-				try {
-					window.scrollBy({ top: drift, behavior: 'instant' });
-				} catch (e) {
-					window.scrollBy(0, drift);
+			// Collapse long prose at block boundaries, never halfway through a player.
+			if (content && !card.classList.contains('tacobout-format-standard') && content.textContent.trim().length > 650 && !content.querySelector('details')) {
+				const blocks = Array.from(content.children);
+				let length = 0;
+				let cutoff = blocks.length;
+				for (let i = 0; i < blocks.length; i++) {
+					length += blocks[i].textContent.length;
+					if (length > 300) { cutoff = i + 1; break; }
+				}
+				const firstMedia = blocks.findIndex(block => block.matches('figure, video, audio, iframe') || block.querySelector('img, video, audio, iframe'));
+				cutoff = Math.max(cutoff, firstMedia + 1);
+				if (cutoff < blocks.length) {
+					const details = document.createElement('details');
+					details.className = 'tacobout-card-more';
+					const summary = document.createElement('summary');
+					summary.textContent = 'Keep reading';
+					details.append(summary);
+					blocks.slice(cutoff).forEach(block => details.append(block));
+					content.append(details);
 				}
 			}
-		}
-
-		initialLayoutDone = true;
+			if (card.classList.contains('tacobout-format-link') && content) {
+				const source = Array.from(content.querySelectorAll('a[href]')).find(link => {
+					const url = new URL(link.href, location.href);
+					return /^https?:$/.test(url.protocol) && url.hostname !== location.hostname;
+				});
+				if (source) {
+					const link = document.createElement('a');
+					link.className = 'tacobout-link-source';
+					link.href = source.href;
+					link.textContent = new URL(source.href).hostname.replace(/^www\./, '') + ' ↗';
+					content.append(link);
+				}
+			}
+			if (content && card.matches('.tacobout-format-gallery, .tacobout-format-image')) {
+				const images = Array.from(card.querySelectorAll('.wp-block-post-content img, .wp-block-post-featured-image img'));
+				if (images.length) {
+					const view = document.createElement('button');
+					view.type = 'button';
+					view.className = 'tacobout-view-media';
+					view.textContent = images.length > 1 ? 'View ' + images.length + ' photos ↗' : 'View image ↗';
+					view.addEventListener('click', () => openMedia(images));
+					content.append(view);
+				}
+			}
+			resizeObserver?.observe(card);
+		});
+		layoutMasonryGrid();
 	}
 
-	/**
-	 * Lightweight variant used after infinite-scroll appends new cards.
-	 * Only measures and sets spans for the provided new items — existing
-	 * cards are never reset, so the viewport never jumps.
-	 */
+	function openMedia(images) {
+		const dialog = document.createElement('dialog');
+		dialog.className = 'tacobout-media-dialog';
+		dialog.setAttribute('aria-label', 'Image viewer');
+		dialog.innerHTML = '<div class="tacobout-media-toolbar"><button type="button" data-close autofocus>Close</button><button type="button" data-prev aria-label="Previous image">←</button><span aria-live="polite"></span><button type="button" data-next aria-label="Next image">→</button></div><figure><img alt=""><figcaption></figcaption></figure>';
+		let index = 0;
+		const render = () => {
+			const source = images[index];
+			const full = source.closest('a')?.href;
+			const img = dialog.querySelector('img');
+			img.src = source.dataset.fullUrl || source.dataset.origFile || (full && /\.(?:png|jpe?g|webp|gif|avif)(?:[?#]|$)/i.test(full) ? full : source.currentSrc || source.src);
+			img.alt = source.alt;
+			dialog.querySelector('figcaption').textContent = source.closest('figure')?.querySelector('figcaption')?.textContent || source.alt;
+			dialog.querySelector('[aria-live]').textContent = (index + 1) + ' / ' + images.length;
+			dialog.querySelector('[data-prev]').disabled = index === 0;
+			dialog.querySelector('[data-next]').disabled = index === images.length - 1;
+		};
+		dialog.querySelector('[data-close]').onclick = () => dialog.close();
+		dialog.querySelector('[data-prev]').onclick = () => { index--; render(); };
+		dialog.querySelector('[data-next]').onclick = () => { index++; render(); };
+		dialog.addEventListener('keydown', event => {
+			if (event.key === 'ArrowRight' && index < images.length - 1) { index++; render(); event.preventDefault(); }
+			if (event.key === 'ArrowLeft' && index > 0) { index--; render(); event.preventDefault(); }
+		});
+		dialog.addEventListener('close', () => dialog.remove(), { once: true });
+		document.body.append(dialog);
+		render();
+		dialog.showModal();
+	}
+
 	function layoutNewItems(newItems) {
-		if (typeof CSS !== 'undefined' && CSS.supports && CSS.supports('grid-template-rows', 'masonry')) return;
-		if (!newItems || newItems.length === 0) return;
-
-		const rowHeight = 10;
-
-		// Ensure the grid row settings are always correct before measuring.
-		// This guards against being called before layoutMasonryGrid has run
-		// (e.g. an image fires its load event before the initial layout).
-		grid.style.gridAutoRows = rowHeight + 'px';
-		grid.style.rowGap = '0px';
-
-		// Phase 1: Reset only the new items (writes)
-		newItems.forEach(item => {
-			item.style.gridRowEnd = 'auto';
-		});
-
-		// Force reflow once
-		grid.offsetHeight;
-
-		// Phase 2: Measure new items (reads)
-		const measurements = newItems.map(item => {
-			const style = window.getComputedStyle(item);
-			const marginTop = parseFloat(style.marginTop) || 0;
-			const marginBottom = parseFloat(style.marginBottom) || 0;
-			const height = item.getBoundingClientRect().height;
-			return {
-				item,
-				span: Math.ceil((height + marginTop + marginBottom) / rowHeight)
-			};
-		});
-
-		// Phase 3: Apply spans (writes)
-		measurements.forEach(({ item, span }) => {
-			item.style.gridRowEnd = 'span ' + span;
-		});
-
-		// If the sentinel is still in view after layout, trigger another fetch
-		// so the infinite scroll doesn't stall on large screens.
+		prepareCards(newItems);
 		setTimeout(() => {
 			const sentinel = document.querySelector('.tacobout-scroll-sentinel');
-			if (!sentinel) return;
-			const rect = sentinel.getBoundingClientRect();
-			if (rect.top < window.innerHeight + 400 && !isLoading && !allLoaded) {
-				loadMorePosts();
-			}
-		}, 50);
+			if (sentinel && sentinel.getBoundingClientRect().top < innerHeight + 400 && !isLoading && !allLoaded) loadMorePosts();
+		}, 100);
 	}
 
-	// Make it global so author page can use it
 	window.layoutMasonryGrid = layoutMasonryGrid;
-
-	function debounce(func, wait) {
-		let timeout;
-		return function executedFunction(...args) {
-			const later = () => {
-				clearTimeout(timeout);
-				func(...args);
-			};
-			clearTimeout(timeout);
-			timeout = setTimeout(later, wait);
-		};
-	}
-
-	// Single debounced full layout — used for resize and initial load triggers
-	const debouncedLayout = debounce(layoutMasonryGrid, 150);
-
-	window.addEventListener('resize', debouncedLayout);
-
-	// Run layout once after fonts + window are ready (a single pass is enough)
-	if (document.fonts) {
-		document.fonts.ready.then(() => setTimeout(layoutMasonryGrid, 50));
-	} else {
-		window.addEventListener('load', () => setTimeout(layoutMasonryGrid, 50));
-	}
-
-	// ResizeObserver — watches every card for height changes caused by anything:
-	// lazy images finishing, gallery images loading, iframes expanding, etc.
-	//
-	// IMPORTANT: only re-spanning the changed card is not enough. CSS grid shares
-	// row tracks across both columns, so when a card in column 1 grows it shifts
-	// the row grid and can visually overlap cards in column 2 that have stale spans.
-	// We must do a full re-layout whenever any card changes height.
-	// The anchor-based scroll-position logic inside layoutMasonryGrid prevents jumps.
-	if (typeof ResizeObserver !== 'undefined') {
-		// Separate debounce from the resize-event one so they don't interfere
-		const debouncedFullLayout = debounce(layoutMasonryGrid, 150);
-
-		const cardResizeObserver = new ResizeObserver(() => {
-			if (!initialLayoutDone) return; // full layout will handle everything
-			debouncedFullLayout();
-		});
-
-		// Observe every existing card's inner content wrapper so ResizeObserver
-		// picks up height changes from child elements (iframes, images, etc.)
-		function observeCards(cards) {
-			cards.forEach(card => {
-				// Observe the inner wrapper so iframe/image expansion is detected
-				const inner = card.querySelector('.tacobout-card-inner') || card;
-				cardResizeObserver.observe(inner);
-			});
-		}
-
-		// Observe initial cards once the DOM is ready
-		observeCards(Array.from(grid.querySelectorAll('.wp-block-post')));
-
-		// Expose so loadMorePosts can observe newly appended cards too
-		window._tacoboutObserveCards = observeCards;
-	}
+	window._tacoboutObserveCards = prepareCards;
+	prepareCards(Array.from(grid.querySelectorAll('.wp-block-post')));
+	resizeObserver?.observe(grid);
+	grid.addEventListener('load', layoutMasonryGrid, true);
+	grid.addEventListener('loadedmetadata', layoutMasonryGrid, true);
+	grid.addEventListener('toggle', layoutMasonryGrid, true);
+	window.addEventListener('resize', layoutMasonryGrid);
+	document.fonts?.ready.then(layoutMasonryGrid);
+	document.body.classList.add('tacobout-infinite-scroll-active');
 
 
 	/* ============================================
@@ -310,7 +313,7 @@
 		const interactionCount = post.interaction_count || 0;
 
 		// Determine what to show/hide based on format
-		const showFeaturedImage = format === "standard";
+		const showFeaturedImage = format === "standard" || !/<(?:img|video|iframe|audio)\b|wp-block-gallery/i.test(post.content?.rendered || "");
 		const showExcerpt = format === "standard";
 		const showContent = format !== "standard";
 
@@ -328,10 +331,11 @@
 				media.source_url;
 			const imgAlt = media.alt_text || "";
 			featuredImageHtml = `
-				<figure class="wp-block-post-featured-image" style="aspect-ratio:16/9">
+				<figure class="wp-block-post-featured-image">
 					<a href="${escHtml(post.link)}">
 						<img src="${escHtml(imgSrc)}" alt="${escHtml(imgAlt)}" loading="lazy"
-							style="border-radius:12px;object-fit:cover;width:100%;height:100%" />
+							width="${Number(media.media_details?.sizes?.medium_large?.width || media.media_details?.width) || 800}" height="${Number(media.media_details?.sizes?.medium_large?.height || media.media_details?.height) || 600}"
+							style="border-radius:12px;width:100%;height:auto" />
 					</a>
 				</figure>
 			`;
@@ -370,7 +374,7 @@
 		// Build title
 		const titleHtml = `
 			<h2 class="wp-block-post-title" style="font-size:var(--wp--preset--font-size--x-large);line-height:1.2;margin-top:0;margin-bottom:0">
-				<a href="${escHtml(post.link)}">${escHtml(post.title.rendered)}</a>
+				<a href="${escHtml(post.link)}">${post.title.rendered || "Untitled post"}</a>
 			</h2>
 		`;
 
@@ -379,7 +383,7 @@
 		if (showExcerpt && post.excerpt && post.excerpt.rendered) {
 			excerptHtml = `
 				<div class="wp-block-post-excerpt">
-					<p class="wp-block-post-excerpt__excerpt">${post.excerpt.rendered}</p>
+					${post.excerpt.rendered}
 				</div>
 			`;
 		}
@@ -419,6 +423,18 @@
 			</div>
 		`;
 
+		// REST excerpts do not inherit the Query block's moreText setting.
+		// Match the server-rendered cards without duplicating an existing link.
+		const excerpt = li.querySelector('.wp-block-post-excerpt');
+		if (excerpt && !excerpt.querySelector('.wp-block-post-excerpt__more-link')) {
+			const more = document.createElement('a');
+			more.className = 'wp-block-post-excerpt__more-link';
+			more.href = post.link;
+			more.textContent = 'Read more →';
+			const target = excerpt.querySelector('p:last-child') || excerpt;
+			target.append(document.createTextNode(' '), more);
+		}
+
 		return li;
 	}
 
@@ -453,6 +469,7 @@
 			</span>
 		`;
 		grid.appendChild(sep);
+		resizeObserver?.observe(sep);
 		// Separator spans both columns — trigger a layout pass
 		setTimeout(layoutMasonryGrid, 50);
 	}
@@ -548,6 +565,8 @@
 			}
 		} catch (err) {
 			console.error('[tacobout] Failed to load posts:', err);
+			// Restore server pagination if the network or REST endpoint fails.
+			document.body.classList.remove('tacobout-infinite-scroll-active');
 			allLoaded = true;
 			endMessage.textContent = 'Failed to load more posts.';
 			endMessage.style.display = 'block';
@@ -567,16 +586,11 @@
 		posts.forEach((post, i) => {
 			const card = buildCard(post);
 			card.style.animationDelay = (i * 0.05) + 's';
-			// Give each new card a large provisional span immediately so it
-			// stacks below existing content and doesn't overlap while we wait
-			// for the measured span to be applied.
-			card.style.gridRowEnd = 'span 200';
 			fragment.appendChild(card);
 			newCards.push(card);
 		});
 		grid.appendChild(fragment);
-		// Re-layout only the newly added cards so existing cards (and the
-		// scroll position) are never disturbed.
+		// Re-check sentinel position in case viewport needs more content
 		setTimeout(() => layoutNewItems(newCards), 100);
 		return newCards;
 	}

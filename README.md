@@ -6,7 +6,7 @@ A personal magazine theme for **schwegler** at [tacobout.online](https://tacobou
 
 - **Full Site Editing (FSE)** — Customize headers, footers, and templates in the Site Editor
 - **Post Format-Aware Feed** — Video posts show embeds, audio shows players, statuses show inline text, standard posts show excerpts with featured images. Fully automatic.
-- **Magazine Grid** — 2-column responsive grid with the latest post spanning full width as a hero (only on page 1)
+- **Magazine Grid** — Responsive three-column desktop grid, two columns on tablets, and one on phones, with a two-column lead card on the first home page and side-by-side hero media/text on desktop
 - **Dark Mode** — Automatic via `prefers-color-scheme`, no toggle needed
 - **Glassmorphic Header** — Sticky, blurred header that stays visible while scrolling
 - **Bluesky + Mastodon Integration** — Works with ActivityPub, Nodeinfo, and WebFinger plugins. Footer links to your Bluesky and Mastodon profiles.
@@ -197,3 +197,17 @@ compare a post's CLI snapshot with `wp-json/wp/v2/posts/123?_fields=id,interacti
 
 The full audit, source references, ranked causes, testing and production checks are in
 [docs/open-social-engagement-audit.md](docs/open-social-engagement-audit.md).
+
+## Recovered Local Layout (3.8.2)
+
+Restores the uncommitted 3.8.1 theme from the latest uploaded Mac copy. The feed uses
+three-column dynamic masonry on desktop, two columns on tablets, and one on phones.
+Cards fill the shortest available column and recalculate after media loads, window
+resizes, content expansion, and infinite-scroll inserts. Content-aware wide cards,
+natural media proportions, expandable long posts, and the gallery viewer are restored.
+Gallery/chat formats and featured-image fallback handling match the local copy.
+
+This recovery retains Trove embeds and the normalized engagement, cache, and REST
+fixes already merged on GitHub. The local 3.8.1 changes were absent from GitHub;
+installing its older theme files replaced that local layout. Version 3.8.2 identifies
+the combined recovery.

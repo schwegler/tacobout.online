@@ -267,4 +267,37 @@ class FunctionsTest extends \PHPUnit\Framework\TestCase {
         $this->assertEquals('categories', $context['term_type']);
         $this->assertEquals(2, $context['term_total_pages']);
     }
+    public function test_query_zero_hides_standard_full_content_but_single_does_not() {
+        \Brain\Monkey\Functions\expect('get_post_format')->once()->with(801)->andReturn(false);
+        $parent = (object) ['context' => ['postId' => 801, 'queryId' => 0]];
+        $block = ['blockName' => 'core/post-content'];
+        $this->assertSame('', tacobout_pre_render_hidden_blocks(null, $block, $parent));
+        unset($parent->context['queryId']);
+        $this->assertNull(tacobout_pre_render_hidden_blocks(null, $block, $parent));
+    }
+
+    public function test_gallery_uses_body_media_without_duplicate_excerpt_or_thumbnail() {
+        \Brain\Monkey\Functions\expect('get_post_format')->once()->with(802)->andReturn('gallery');
+        \Brain\Monkey\Functions\expect('get_post_field')->once()->with('post_content', 802)
+            ->andReturn('<!-- wp:gallery --><figure class="wp-block-gallery"><img src="photo.jpg"></figure><!-- /wp:gallery -->');
+        $parent = (object) ['context' => ['postId' => 802, 'queryId' => 0]];
+        $this->assertSame('', tacobout_pre_render_hidden_blocks(null, ['blockName' => 'core/post-excerpt'], $parent));
+        $this->assertSame('', tacobout_pre_render_hidden_blocks(null, ['blockName' => 'core/post-featured-image'], $parent));
+        $this->assertNull(tacobout_pre_render_hidden_blocks(null, ['blockName' => 'core/post-content'], $parent));
+    }
+
+    public function test_image_post_keeps_featured_image_when_body_has_no_media() {
+        \Brain\Monkey\Functions\expect('get_post_format')->once()->with(803)->andReturn('image');
+        \Brain\Monkey\Functions\expect('get_post_field')->once()->with('post_content', 803)->andReturn('<p>A photograph from today.</p>');
+        $parent = (object) ['context' => ['postId' => 803, 'queryId' => 0]];
+        $this->assertNull(tacobout_pre_render_hidden_blocks(null, ['blockName' => 'core/post-featured-image'], $parent));
+    }
+
+    public function test_video_shortcode_suppresses_duplicate_featured_image() {
+        \Brain\Monkey\Functions\expect('get_post_format')->once()->with(804)->andReturn('video');
+        \Brain\Monkey\Functions\expect('get_post_field')->once()->with('post_content', 804)->andReturn('[video src="movie.mp4"]');
+        $parent = (object) ['context' => ['postId' => 804, 'queryId' => 0]];
+        $this->assertSame('', tacobout_pre_render_hidden_blocks(null, ['blockName' => 'core/post-featured-image'], $parent));
+    }
+
 }

@@ -38,6 +38,8 @@ if ( ! function_exists( 'tacobout_support' ) ) :
 				'link',
 				'audio',
 				'gallery',
+				'aside',
+				'chat',
 			)
 		);
 	}
@@ -374,11 +376,11 @@ function tacobout_pre_render_hidden_blocks( $pre_render, $parsed_block, $parent_
 		return $pre_render;
 	}
 
-	$is_in_query_loop = $parent_block && ! empty( $parent_block->context['queryId'] );
+	$is_in_query_loop = $parent_block && isset( $parent_block->context['queryId'] );
 	$format           = tacobout_get_memoized_post_format( $post_id );
 	$should_hide      = false;
 
-	$hidden_formats = array( 'video', 'audio', 'status', 'aside', 'image', 'quote', 'link' );
+	$hidden_formats = array( 'video', 'audio', 'status', 'aside', 'image', 'quote', 'link', 'gallery', 'chat' );
 
 	if ( 'core/post-content' === $block_name && 'standard' === $format && $is_in_query_loop ) {
 		$should_hide = true;
@@ -387,9 +389,10 @@ function tacobout_pre_render_hidden_blocks( $pre_render, $parsed_block, $parent_
 			$should_hide = true;
 		}
 	} elseif ( 'core/post-featured-image' === $block_name ) {
-		// Hide featured image for non-standard formats BOTH in query loops AND single posts
+		// Keep a featured-image fallback when the post has no body media.
 		if ( in_array( $format, $hidden_formats, true ) ) {
-			$should_hide = true;
+			$content     = get_post_field( 'post_content', $post_id );
+			$should_hide = (bool) preg_match( '/<(?:img|video|audio|iframe)\b|wp:(?:image|gallery|video|audio|embed)\b|\[(?:gallery|video|audio|embed)\b/i', $content );
 		}
 	}
 
