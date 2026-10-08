@@ -227,7 +227,7 @@ and shows an explicitly labeled latest-posts fallback. Only published,
 unprotected blog posts qualify; the single-post list excludes the current post.
 Site Kit's authenticated Google reports are not queried or exposed to visitors.
 
-Trove reviews refresh in the background every 15 minutes; the last successful
+Trove reviews refresh in the background every eight hours (three times a day); the last successful
 snapshot persists across empty responses, cold starts, and failed requests.
 Only public written reviews are included, with author/rating text and an excerpt;
 no authenticated or private collection data is requested. This uses Trove's
@@ -266,12 +266,16 @@ single-post HTML cache after deployment to remove old rendered sidebars.
 ## Trove background review refresh
 
 Sidebar rendering reads the persistent `tacobout_reviews_snapshot` option and
-never waits on Trove. WordPress cron refreshes it every 15 minutes. A scan reads
+never waits on Trove. WordPress cron refreshes it every eight hours (three times a day). A scan reads
 up to five anonymous public activity pages to find the three latest written
 reviews; watched/read/listened events do not qualify. Each job makes one bounded
 30-second request, and a timeout or non-200 response retries once after 60 seconds
 to allow a sleeping host to wake up. Empty or failed scans never erase the last
 successful snapshot. Only one scan starts within the five-minute lock window.
+On the first WordPress request after deployment, the theme automatically replaces
+an existing 15-minute review event with the eight-hour schedule. Other cron jobs
+and any in-progress review-page continuation are unaffected. New reviews can take
+eight hours plus cron and page-cache delays to appear.
 The first scheduled scan starts after deployment; until it completes, an existing
 nonempty transient is carried forward or the link-only empty state remains.
 
