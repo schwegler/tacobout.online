@@ -391,7 +391,7 @@
 		// Build title
 		const titleHtml = `
 			<h2 class="wp-block-post-title" style="font-size:var(--wp--preset--font-size--x-large);line-height:1.2;margin-top:0;margin-bottom:0">
-				<a href="${escHtml(post.link)}">${post.title.rendered || "Untitled post"}</a>
+				<a href="${escHtml(post.link)}">${escHtml(post.title.rendered) || "Untitled post"}</a>
 			</h2>
 		`;
 

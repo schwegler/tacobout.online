@@ -257,7 +257,7 @@ add_action( 'after_setup_theme', 'tacobout_clear_saved_templates' );
  * hero selector body.home:not(.paged) works correctly.
  */
 function tacobout_pagination_body_class( $classes ) {
-	// Check for query block pagination params
+	// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Checking public pagination params; no state is modified.
 	foreach ( $_GET as $key => $value ) {
 		if ( str_starts_with( $key, 'query' ) && str_ends_with( $key, 'page' ) ) {
 			if ( 'query-page' === $key || preg_match( '/^query-\d+-page$/', $key ) ) {
@@ -635,6 +635,7 @@ add_action( 'wp_enqueue_scripts', 'tacobout_enqueue_header_script' );
  * Prevent login redirection plugins from breaking the Enable Mastodon Apps OAuth flow.
  */
 function tacobout_enable_mastodon_apps_login_redirect( $redirect_to, $requested_redirect_to ) {
+	// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Explicitly intercepting a specific cross-site OAuth flow where nonces are unavailable.
 	if ( isset( $_REQUEST['action'] ) && 'enable-mastodon-apps-authenticate' === $_REQUEST['action'] ) {
 		$sanitized_redirect = wp_sanitize_redirect( $requested_redirect_to );
 		$scheme             = strtolower( (string) wp_parse_url( $sanitized_redirect, PHP_URL_SCHEME ) );
