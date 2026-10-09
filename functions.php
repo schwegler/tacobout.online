@@ -69,6 +69,18 @@ function tacobout_enqueue_styles() {
 add_action( 'wp_enqueue_scripts', 'tacobout_enqueue_styles' );
 
 /**
+ * Keep the navigation's structural CSS on the site origin. A blocked or stale
+ * third-party CDN response exposes the hidden overlay and submenu lists.
+ */
+function tacobout_navigation_style_src( $src, $handle ) {
+	if ( 'wp-block-navigation' === $handle ) {
+		return includes_url( 'blocks/navigation/style.min.css' );
+	}
+	return $src;
+}
+add_filter( 'style_loader_src', 'tacobout_navigation_style_src', PHP_INT_MAX, 2 );
+
+/**
  * Add preconnect resource hints for Google Fonts.
  * This optimization reduces DNS lookup, TCP handshake, and TLS negotiation time for the font files,
  * resulting in faster text rendering and reducing layout shifts.
