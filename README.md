@@ -61,7 +61,8 @@ The optional `title` attribute overrides the item title. Notes are plain text;
 write longer reviews in the surrounding post blocks. Cards follow the blog’s
 light/dark appearance and open the item on Trove in the same tab.
 
-Only public numeric item URLs on `https://trove.schweg.xyz` are supported.
+Public item URLs on `https://trove.schweg.xyz` support numeric IDs and IDs with
+a title slug, such as `/comics/9-uncanny-x-men-2024`.
 Profile URLs, collection/account pages, and URLs with query strings are not
 embedded. The blog uses public Open Graph metadata; it does not need a Trove
 account, API key, or access to private collection data. Successful previews are
