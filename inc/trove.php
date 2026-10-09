@@ -26,7 +26,7 @@ function tacobout_trove_item_url( $url ) {
 		}
 	}
 	$path = $parts['path'] ?? '';
-	if ( ! preg_match( '#^/(movies|albums|comics|tv_shows|tv_episodes|video_games|books)/[1-9][0-9]*/?$#', $path ) ) {
+	if ( ! preg_match( '#^/(movies|albums|comics|tv_shows|tv_episodes|video_games|books)/[1-9][0-9]*(?:-[a-z0-9]+(?:-[a-z0-9]+)*)?/?$#', $path ) ) {
 		return '';
 	}
 	return 'https://trove.schweg.xyz' . rtrim( $path, '/' );
@@ -149,7 +149,7 @@ function tacobout_register_trove_embeds() {
 	add_shortcode( 'trove', 'tacobout_trove_shortcode' );
 	wp_embed_register_handler(
 		'tacobout-trove',
-		'#^https://trove\.schweg\.xyz/(?:movies|albums|comics|tv_shows|tv_episodes|video_games|books)/[1-9][0-9]*/?(?:\#[^\s]*)?$#i',
+		'#^https://trove\.schweg\.xyz/(?:movies|albums|comics|tv_shows|tv_episodes|video_games|books)/[1-9][0-9]*(?:-[a-z0-9]+(?:-[a-z0-9]+)*)?/?(?:\#[^\s]*)?$#i',
 		function ( $matches, $attributes, $url ) {
 			return tacobout_trove_shortcode( array( 'url' => $url ) );
 		}

@@ -7,7 +7,8 @@ item pages, so there is no new API to coordinate or deploy.
 
 - Canonical HTTPS origin: `https://trove.schweg.xyz`.
 - Item routes: `/movies/:id`, `/albums/:id`, `/comics/:id`, `/tv_shows/:id`,
-  `/tv_episodes/:id`, `/video_games/:id`, and `/books/:id`, with positive numeric IDs.
+  `/tv_episodes/:id`, `/video_games/:id`, and `/books/:id`, with positive numeric IDs
+  and optional lowercase title slugs (for example `/comics/9-uncanny-x-men-2024`).
 - Successful public pages include HTML `<meta property="og:title" content="…">`
   and, when available, `og:description` and an absolute HTTPS `og:image` URL.
 - Titles may end in ` | Trove`; the blog removes that suffix from the card.

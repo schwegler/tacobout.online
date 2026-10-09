@@ -24,10 +24,45 @@ class TroveTest extends \PHPUnit\Framework\TestCase {
             'https://trove.schweg.xyz/login',
             'https://trove.schweg.xyz/books/../users/1',
             'https://trove.schweg.xyz/books/0',
+            'https://trove.schweg.xyz/comics/0-uncanny-x-men',
+            'https://trove.schweg.xyz/comics/9-',
+            'https://trove.schweg.xyz/comics/9-uncanny/extra',
+            'https://trove.schweg.xyz/comics/9-../users/1',
+            'https://trove.schweg.xyz/comics/9-uncanny?token=private',
             'javascript:alert(1)',
         ] as $url) {
             $this->assertSame('', tacobout_trove_item_url($url), $url);
         }
+    }
+
+    public function test_slugged_item_url_renders_the_reported_shortcode() {
+        $url = 'https://trove.schweg.xyz/comics/9-uncanny-x-men-2024';
+        $this->assertSame($url, tacobout_trove_item_url($url . '/#review'));
+        $this->mock_rendering_functions();
+        \Brain\Monkey\Functions\expect('get_transient')->once()->with('tacobout_trove_' . md5($url))->andReturn([
+            'og:title' => 'Uncanny X-Men (2024) | Trove',
+            'og:description' => 'Comic by Gail Simone • Marvel',
+            'og:image' => 'https://trove.schweg.xyz/media/covers/comic/9',
+        ]);
+        $html = tacobout_trove_shortcode(['url' => $url, 'note' => 'starting back on my X bullshit']);
+        $this->assertStringContainsString('href="' . $url . '"', $html);
+        $this->assertStringContainsString('Uncanny X-Men (2024)', $html);
+        $this->assertStringContainsString('src="https://trove.schweg.xyz/media/covers/comic/9"', $html);
+        $this->assertStringContainsString('starting back on my X bullshit', $html);
+    }
+
+    public function test_pasted_url_handler_accepts_numeric_and_slugged_items() {
+        \Brain\Monkey\Functions\expect('add_shortcode')->once()->with('trove', 'tacobout_trove_shortcode');
+        \Brain\Monkey\Functions\expect('wp_embed_register_handler')->once()->with('tacobout-trove', \Mockery::on(function ($pattern) {
+            foreach (['https://trove.schweg.xyz/books/13', 'https://trove.schweg.xyz/comics/9-uncanny-x-men-2024', 'https://trove.schweg.xyz/comics/9-uncanny-x-men-2024/#review'] as $url) {
+                $this->assertSame(1, preg_match($pattern, $url), $url);
+            }
+            foreach (['https://trove.schweg.xyz/comics/9-', 'https://trove.schweg.xyz/comics/9-uncanny/extra', 'https://trove.schweg.xyz/comics/9-uncanny?token=private'] as $url) {
+                $this->assertSame(0, preg_match($pattern, $url), $url);
+            }
+            return true;
+        }), \Mockery::type('Closure'));
+        tacobout_register_trove_embeds();
     }
 
     public function test_metadata_handles_attribute_order_entities_and_utf8() {
