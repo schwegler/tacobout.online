@@ -2229,6 +2229,15 @@ body .tacobout-magazine-grid .tacobout-overflow-separator { grid-column: 1 / -1;
 	cursor: pointer;
 }
 .tacobout-view-media { margin-top: .75rem; font-size: .85rem; }
+.tacobout-view-media:hover, .tacobout-view-media:focus-visible, .tacobout-media-dialog button:not(:disabled):hover, .tacobout-media-dialog button:not(:disabled):focus-visible {
+	background: var(--taco-surface-2);
+	border-color: var(--taco-accent);
+	color: var(--taco-accent);
+	outline: none;
+}
+.tacobout-view-media:active, .tacobout-media-dialog button:not(:disabled):active {
+	transform: scale(0.96);
+}
 .tacobout-media-dialog {
 	width: min(1100px, 94vw);
 	max-height: 94dvh;
