@@ -237,6 +237,11 @@
 		dialog.querySelector('[data-close]').onclick = () => dialog.close();
 		dialog.querySelector('[data-prev]').onclick = () => { index--; render(); };
 		dialog.querySelector('[data-next]').onclick = () => { index++; render(); };
+		dialog.addEventListener('click', event => {
+			const rect = dialog.getBoundingClientRect();
+			const isInDialog = rect.top <= event.clientY && event.clientY <= rect.bottom && rect.left <= event.clientX && event.clientX <= rect.right;
+			if (!isInDialog) dialog.close();
+		});
 		dialog.addEventListener('keydown', event => {
 			if (event.key === 'ArrowRight' && index < images.length - 1) { index++; render(); event.preventDefault(); }
 			if (event.key === 'ArrowLeft' && index > 0) { index--; render(); event.preventDefault(); }
