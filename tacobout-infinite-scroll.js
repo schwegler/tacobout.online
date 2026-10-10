@@ -264,7 +264,12 @@
 	grid.addEventListener('load', layoutMasonryGrid, true);
 	grid.addEventListener('loadedmetadata', layoutMasonryGrid, true);
 	grid.addEventListener('toggle', layoutMasonryGrid, true);
-	window.addEventListener('resize', layoutMasonryGrid);
+	// ⚡ Bolt: Debounce the window resize event listener to avoid continuous layout recalculations during rapid resizing.
+	let resizeTimer;
+	window.addEventListener('resize', () => {
+		clearTimeout(resizeTimer);
+		resizeTimer = setTimeout(layoutMasonryGrid, 100);
+	});
 	document.fonts?.ready.then(layoutMasonryGrid);
 	document.body.classList.add('tacobout-infinite-scroll-active');
 

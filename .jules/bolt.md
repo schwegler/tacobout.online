@@ -50,3 +50,6 @@
 ## 2024-07-29 - [Avoid SELECT COUNT(*) in ORDER BY]
 **Learning:** Replacing `$post->comment_count` (an O(1) property lookup) with a `SELECT COUNT(*)` subquery to include custom comment types in `ORDER BY` causes a massive performance regression, as it executes for every post on cache misses.
 **Action:** Stick to utilizing pre-calculated columns like `comment_count` for sorting and avoid correlated subqueries inside `posts_orderby` filters whenever possible.
+## 2024-07-29 - [Debouncing Window Resize Events]
+**Learning:** Continuous window resizing triggers the `resize` event at a very high frequency. Executing expensive layout recalculations (like `layoutMasonryGrid` or other DOM manipulations) synchronously on every event tick blocks the main thread and causes severe layout thrashing.
+**Action:** Always wrap expensive DOM or layout calculations triggered by window `resize` events inside a debounce function (e.g., using `setTimeout` for ~100ms) to ensure the calculation only runs when the resizing pauses or stops, significantly reducing CPU usage and jank.
