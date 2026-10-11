@@ -71,3 +71,6 @@
 ## 2024-07-31 - Sticky Header Focus Accessibility
 **Learning:** When a sticky header auto-hides on scroll down, keyboard users tabbing through the document might focus on an interactive element within the hidden header, causing them to lose context as the header remains visually hidden.
 **Action:** Always add a `focusin` event listener to auto-hiding sticky headers that removes the hidden state, ensuring the header visually reveals itself when any of its interactive children receive keyboard focus.
+## 2024-10-10 - Native Dialog Dismissal Expectations
+**Learning:** Native `<dialog>` elements built into the web platform do not automatically close when their `::backdrop` is clicked, even though this is a universally expected pattern for modal dismissal.
+**Action:** When using a native `<dialog>`, manually implement a backdrop click listener that compares the event coordinates against the dialog's `getBoundingClientRect()` to explicitly call `.close()`.
