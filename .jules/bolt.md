@@ -53,3 +53,6 @@
 ## 2024-07-29 - [Debouncing Window Resize Events]
 **Learning:** Continuous window resizing triggers the `resize` event at a very high frequency. Executing expensive layout recalculations (like `layoutMasonryGrid` or other DOM manipulations) synchronously on every event tick blocks the main thread and causes severe layout thrashing.
 **Action:** Always wrap expensive DOM or layout calculations triggered by window `resize` events inside a debounce function (e.g., using `setTimeout` for ~100ms) to ensure the calculation only runs when the resizing pauses or stops, significantly reducing CPU usage and jank.
+## 2024-07-29 - [Avoid DOM read/write interleaving]
+**Learning:** Interleaving DOM reads (like `getBoundingClientRect()`) with DOM writes (like `style.gridColumn = ...`) inside a loop over many elements causes the browser to synchronously recalculate layout (layout thrashing) on every iteration.
+**Action:** Always batch DOM reads into one pass to cache necessary measurements (like heights), and then perform DOM writes in a separate subsequent pass. Only remeasure if a write changes an element's dimensions and the new dimension is immediately needed.

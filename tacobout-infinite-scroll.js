@@ -76,20 +76,37 @@
 			const skyline = Array(columns).fill(0);
 			const sidebar = grid.querySelector('.tacobout-grid-sidebar');
 			const wideSidebar = sidebar && window.matchMedia('(min-width: 2000px)').matches;
-			grid.style.minHeight = wideSidebar ? sidebar.getBoundingClientRect().height + 'px' : '';
+
+			// ⚡ Bolt: Cache sidebar height to prevent layout thrashing
+			const sidebarHeight = sidebar ? sidebar.getBoundingClientRect().height : 0;
+			grid.style.minHeight = wideSidebar ? sidebarHeight + 'px' : '';
 
 			if (grid.dataset.bentoColumns !== String(columns)) {
 				Array.from(grid.children).forEach(card => { card.style.gridColumn = ''; card.style.gridRow = ''; });
 				grid.dataset.bentoColumns = String(columns);
 			}
+
+			// ⚡ Bolt: Prevent layout thrashing by measuring all card heights upfront before any grid modifications.
+			// This reduces synchronous layout recalculations from O(N) to O(1) in the common case.
+			const cards = Array.from(grid.children);
+			const cachedHeights = new Map();
+			const cachedSpans = new Map();
+
+			cards.forEach(card => {
+				cachedHeights.set(card, card.getBoundingClientRect().height);
+				const match = card.style.gridColumn.match(/span (\d+)/);
+				cachedSpans.set(card, match ? parseInt(match[1], 10) : 1);
+			});
+
 			// Reserve the upper-right slot before placing posts in the shortest column.
 			if (sidebar && !wideSidebar && columns > 1) {
 				sidebar.style.gridColumn = String(columns);
-				const rows = Math.ceil((sidebar.getBoundingClientRect().height + 20) / 4);
+				const rows = Math.ceil((sidebarHeight + 20) / 4);
 				sidebar.style.gridRow = '1 / span ' + rows;
 				skyline[columns - 1] = rows;
 			}
-			Array.from(grid.children).forEach(card => {
+
+			cards.forEach(card => {
 				if (card === sidebar && (wideSidebar || columns > 1)) {
 					if (wideSidebar) { card.style.gridColumn = ''; card.style.gridRow = ''; }
 					return;
@@ -116,8 +133,17 @@
 				}
 				card.classList.toggle('tacobout-card-spanning', span > 1 && !separator);
 				const placement = (column + 1) + ' / span ' + span;
-				if (card.style.gridColumn !== placement) card.style.gridColumn = placement;
-				const rows = Math.ceil((card.getBoundingClientRect().height + 20) / 4);
+
+				let height = cachedHeights.get(card);
+				if (card.style.gridColumn !== placement) {
+					card.style.gridColumn = placement;
+					// If the card's width (span) changed, its height likely changed, so we must remeasure
+					if (cachedSpans.get(card) !== span) {
+						height = card.getBoundingClientRect().height;
+					}
+				}
+
+				const rows = Math.ceil((height + 20) / 4);
 				const row = (top + 1) + ' / span ' + rows;
 				if (card.style.gridRow !== row) card.style.gridRow = row;
 				for (let i = column; i < column + span; i++) skyline[i] = top + rows;
