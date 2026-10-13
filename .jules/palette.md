@@ -74,3 +74,6 @@
 ## 2024-10-10 - Native Dialog Dismissal Expectations
 **Learning:** Native `<dialog>` elements built into the web platform do not automatically close when their `::backdrop` is clicked, even though this is a universally expected pattern for modal dismissal.
 **Action:** When using a native `<dialog>`, manually implement a backdrop click listener that compares the event coordinates against the dialog's `getBoundingClientRect()` to explicitly call `.close()`.
+## 2024-11-20 - Tactile Feedback for Summary Elements
+**Learning:** `summary` elements used to toggle `details` blocks act as interactive buttons, but often lack tactile feedback beyond cursor changes. This leaves users unsure if their interaction registered, especially on touch devices or for keyboard users.
+**Action:** Always include `:hover`, `:focus-visible`, and `:active` states for custom `summary` elements to ensure tactile visual feedback (like color changes and scaling) during interactions, maintaining a consistent micro-UX across all interactive components.

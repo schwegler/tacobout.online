@@ -2179,6 +2179,15 @@ body .tacobout-magazine-grid :is(.tacobout-format-status, .tacobout-format-aside
 	color: var(--taco-accent);
 	font-weight: 600;
 	padding-block: .4rem;
+	width: max-content;
+	transition: color var(--taco-transition), transform var(--taco-transition);
+}
+.tacobout-card-more summary:hover,
+.tacobout-card-more summary:focus-visible {
+	color: var(--taco-accent-2);
+}
+.tacobout-card-more summary:active {
+	transform: scale(0.96);
 }
 .tacobout-link-source {
 	display: block;
