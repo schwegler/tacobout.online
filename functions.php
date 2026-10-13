@@ -548,13 +548,20 @@ function tacobout_get_taxonomy_scroll_context( $per_page ) {
 }
 
 /**
+ * Check if we are inside the Site Editor's preview iframe or admin area.
+ */
+function tacobout_is_editor_preview() {
+	return isset( $_GET['wp_theme_preview'] ) || is_admin();
+}
+
+/**
  * Enqueue infinite scroll + scroll-to-top script on the home page.
  * Guarded against loading inside the Site Editor's preview iframe,
  * which would run heavy observers/fetch logic on top of the editor's
  * React app and crash Safari.
  */
 function tacobout_enqueue_infinite_scroll() {
-	if ( isset( $_GET['wp_theme_preview'] ) || is_admin() ) {
+	if ( tacobout_is_editor_preview() ) {
 		return;
 	}
 
@@ -606,7 +613,7 @@ add_action( 'wp_enqueue_scripts', 'tacobout_enqueue_infinite_scroll' );
  * Guarded against loading inside the Site Editor's preview iframe.
  */
 function tacobout_enqueue_alt_badge() {
-	if ( isset( $_GET['wp_theme_preview'] ) || is_admin() ) {
+	if ( tacobout_is_editor_preview() ) {
 		return;
 	}
 
@@ -625,7 +632,7 @@ add_action( 'wp_enqueue_scripts', 'tacobout_enqueue_alt_badge' );
  * Guarded against loading inside the Site Editor's preview iframe.
  */
 function tacobout_enqueue_header_script() {
-	if ( isset( $_GET['wp_theme_preview'] ) || is_admin() ) {
+	if ( tacobout_is_editor_preview() ) {
 		return;
 	}
 
