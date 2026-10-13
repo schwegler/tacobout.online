@@ -58,6 +58,10 @@ a.tacobout-trove-card:focus-visible {
 	outline-offset: 4px;
 }
 
+a.tacobout-trove-card:active {
+	transform: scale(0.98);
+}
+
 .tacobout-trove-card__cover {
 	flex: 0 0 auto;
 	width: 96px;
