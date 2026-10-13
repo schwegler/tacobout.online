@@ -152,6 +152,9 @@
 	}
 
 	function prepareCards(cards) {
+		// ⚡ Bolt: Cache all posts array outside the loop to prevent O(N²) DOM queries
+		const allPosts = Array.from(grid.querySelectorAll('.wp-block-post'));
+
 		cards.forEach(card => {
 			if (preparedCards.has(card)) return;
 			preparedCards.add(card);
@@ -171,7 +174,7 @@
 				sizeImage();
 				img.addEventListener('load', sizeImage);
 			});
-			const index = Array.from(grid.querySelectorAll('.wp-block-post')).indexOf(card);
+			const index = allPosts.indexOf(card);
 			const gallery = !card.classList.contains('tacobout-format-standard') && content?.querySelector('.wp-block-gallery, .gallery');
 			card.classList.toggle('tacobout-card-wide', !!gallery ||
 				(!!featured && (index === 0 || index % 7 === 4)));
