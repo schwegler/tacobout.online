@@ -559,9 +559,17 @@ function tacobout_enqueue_infinite_scroll() {
 	}
 
 	wp_enqueue_script(
+		'dompurify',
+		get_template_directory_uri() . '/dompurify.min.js',
+		array(),
+		'3.0.6',
+		true
+	);
+
+	wp_enqueue_script(
 		'tacobout-infinite-scroll',
 		get_template_directory_uri() . '/tacobout-infinite-scroll.js',
-		array(),
+		array( 'dompurify' ),
 		wp_get_theme()->get( 'Version' ),
 		true // Load in footer
 	);

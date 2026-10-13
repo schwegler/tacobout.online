@@ -468,7 +468,7 @@
 		const li = document.createElement("li");
 		li.className = `wp-block-post post-${post.id} post type-post status-publish wp-post-${post.id} ${formatClass}`;
 
-		li.innerHTML = `
+		const rawHtml = `
 			${badgeHtml}
 			<div class="wp-block-group tacobout-card-inner">
 				${featuredImageHtml}
@@ -478,6 +478,9 @@
 				${contentHtml}
 			</div>
 		`;
+		li.innerHTML = window.DOMPurify
+			? window.DOMPurify.sanitize(rawHtml, { USE_PROFILES: { html: true, svg: true }, ADD_TAGS: ['iframe'], ADD_ATTR: ['target'] })
+			: rawHtml;
 
 		// REST excerpts do not inherit the Query block's moreText setting.
 		// Match the server-rendered cards without duplicating an existing link.
@@ -518,12 +521,15 @@
 
 		const sep = document.createElement('li');
 		sep.className = 'tacobout-overflow-separator';
-		sep.innerHTML = `
+		const sepRawHtml = `
 			<span class="tacobout-overflow-separator-label">
 				<svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
 				You've seen all <strong>${escHtml(config.termName)}</strong> posts &mdash; here's everything else
 			</span>
 		`;
+		sep.innerHTML = window.DOMPurify
+			? window.DOMPurify.sanitize(sepRawHtml, { USE_PROFILES: { html: true, svg: true } })
+			: sepRawHtml;
 		grid.appendChild(sep);
 		resizeObserver?.observe(sep);
 		// Separator spans both columns — trigger a layout pass
