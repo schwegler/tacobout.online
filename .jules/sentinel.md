@@ -21,3 +21,7 @@
 **Vulnerability:** DOM-based XSS caused by injecting `post.title.rendered` into the DOM.
 **Learning:** In WordPress REST API responses, `title.rendered` may contain unescaped HTML, unlike `excerpt.rendered` or `content.rendered` which are intended to contain HTML.
 **Prevention:** Always explicitly escape `title.rendered` (e.g., using `escHtml()`) on the client side before DOM insertion.
+## 2023-10-25 - DOMPurify Configuration for WordPress REST API HTML
+**Vulnerability:** Cross-Site Scripting (XSS) via `innerHTML` assignment of post content fetched from the REST API.
+**Learning:** When adding `DOMPurify` to sanitize HTML assembled in JavaScript from the WordPress REST API, the default configuration strips `iframe` elements and `target` attributes, which breaks legitimate WordPress features like embedded YouTube videos and external links.
+**Prevention:** To avoid breaking legitimate WordPress content when fixing XSS vulnerabilities with `DOMPurify`, always configure the sanitizer to explicitly allow necessary tags and attributes. For example: `DOMPurify.sanitize(html, { USE_PROFILES: { html: true, svg: true }, ADD_TAGS: ['iframe'], ADD_ATTR: ['target'] })`. Also ensure that `svg` profiles are enabled if the layout contains inline SVG icons.
