@@ -1973,6 +1973,14 @@ body.admin-bar .wp-block-navigation__responsive-container.is-menu-open {
 	display: none !important;
 }
 
+/* Mobile Safari fixes for Navigation Overlay */
+@supports (-webkit-touch-callout: none) {
+	.wp-block-navigation__responsive-container.is-menu-open {
+		height: 100dvh;
+		max-height: 100dvh;
+	}
+}
+
 /* Mobile Safari fixes and theming for Navigation Overlay */
 .wp-block-navigation__responsive-container.is-menu-open {
 	position: fixed !important;
