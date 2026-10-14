@@ -46,123 +46,96 @@ function tacobout_trending_shortcode() {
 	return $html . '</ol></section>';
 }
 
-/** Parse only review cards from Trove's anonymous public activity feed. */
-function tacobout_parse_public_reviews( $html ) {
-	if ( ! class_exists( 'DOMDocument' ) || '' === trim( $html ) ) {
-		return array();
+/** Validate the public JSON contract before it can reach a stored snapshot. */
+function tacobout_parse_review_response( $body ) {
+	$envelope = json_decode( $body );
+	if ( ! is_object( $envelope ) || ! isset( $envelope->reviews ) || ! is_array( $envelope->reviews ) ) {
+		return null;
 	}
-	$previous = libxml_use_internal_errors( true );
-	$document = new DOMDocument();
-	$loaded = $document->loadHTML( '<?xml encoding="utf-8" ?>' . $html, LIBXML_NONET );
-	libxml_clear_errors();
-	libxml_use_internal_errors( $previous );
-	if ( ! $loaded ) {
-		return array();
+	$data = json_decode( $body, true );
+	if ( ! is_array( $data ) || ! isset( $data['reviews'] ) || ! is_array( $data['reviews'] ) || ! array_is_list( $data['reviews'] ) ) {
+		return null;
 	}
-	$xpath = new DOMXPath( $document );
 	$reviews = array();
-	foreach ( $xpath->query( '//*[@id="activity_feed"]//*[contains(concat(" ", normalize-space(@class), " "), " activity-card ")]' ) as $card ) {
-		$quote = $xpath->query( './/*[contains(concat(" ", normalize-space(@class), " "), " activity-review-quote ")]', $card )->item( 0 );
-		$link = $xpath->query( './/a[contains(concat(" ", normalize-space(@class), " "), " activity-item-link ")]', $card )->item( 0 );
-		$text = $xpath->query( './/*[contains(concat(" ", normalize-space(@class), " "), " activity-text ")]', $card )->item( 0 );
-		if ( ! $quote || ! $link || ! $text ) {
-			continue;
+	foreach ( array_slice( $data['reviews'], 0, 3 ) as $review ) {
+		if ( ! is_array( $review ) || ! is_string( $review['id'] ?? null ) || ! is_string( $review['body'] ?? null ) || '' === trim( $review['body'] ) || ! is_string( $review['item_title'] ?? null ) || ! is_string( $review['item_url'] ?? null ) || ! is_string( $review['reviewer']['display_name'] ?? null ) ) {
+			return null;
 		}
-		$href = $link->getAttribute( 'href' );
-		$url = tacobout_trove_item_url( str_starts_with( $href, '/' ) ? 'https://trove.schweg.xyz' . $href : $href );
+		$url = tacobout_trove_item_url( $review['item_url'] );
 		if ( '' === $url ) {
-			continue;
+			return null;
 		}
-		$review = array( 'url' => $url, 'title' => preg_replace( '/\s+/u', ' ', trim( $text->textContent ) ), 'quote' => trim( $quote->textContent ) );
-		$review['item_title'] = trim( $link->textContent );
-		$author = $xpath->query( './/a[contains(@class, "activity-user-link")]', $card )->item( 0 );
-		$time = $xpath->query( './/*[contains(@class, "activity-time")]', $card )->item( 0 );
-		$image = $xpath->query( './/*[contains(@class, "activity-thumbnail")]//img', $card )->item( 0 );
-		$review['author'] = $author ? trim( $author->textContent ) : '';
-		$review['time'] = $time ? trim( $time->textContent ) : '';
-		$review['image'] = $image ? tacobout_sidebar_image_url( $image->getAttribute( 'src' ) ) : '';
-		$review['rating'] = preg_match( '/Rating:\s*([0-5](?:\.[0-9]+)?)\s*★/u', $review['title'], $rating ) ? $rating[1] : '';
-		$reviews[] = $review;
-		if ( count( $reviews ) === 3 ) {
-			break;
+		$rating = $review['rating'] ?? null;
+		if ( null !== $rating && ( ! is_numeric( $rating ) || $rating < 0 || $rating > 5 ) ) {
+			return null;
 		}
+		$reviews[] = array(
+			'id' => $review['id'],
+			'url' => $url,
+			'item_title' => $review['item_title'],
+			'quote' => $review['body'],
+			'author' => $review['reviewer']['display_name'],
+			'image' => is_string( $review['cover_url'] ?? null ) ? tacobout_sidebar_image_url( $review['cover_url'] ) : '',
+			'rating' => null === $rating ? '' : (string) $rating,
+		);
 	}
 	return $reviews;
 }
 
-/** Three daily background scans; page rendering never waits on Trove. */
-function tacobout_review_cron_schedules( $schedules ) {
-	$schedules['tacobout_eight_hours'] = array( 'interval' => 8 * HOUR_IN_SECONDS, 'display' => 'Every 8 hours' );
-	return $schedules;
-}
-add_filter( 'cron_schedules', 'tacobout_review_cron_schedules' );
-
-function tacobout_schedule_review_refresh() {
-	$event = wp_get_scheduled_event( 'tacobout_refresh_public_reviews' );
-	// Recurring events retain their stored interval across theme upgrades.
-	if ( $event && ( 'tacobout_eight_hours' !== $event->schedule || 8 * HOUR_IN_SECONDS !== (int) $event->interval ) ) {
-		wp_clear_scheduled_hook( 'tacobout_refresh_public_reviews' );
-		$event = false;
-	}
-	if ( ! $event ) {
-		wp_schedule_event( time() + 1, 'tacobout_eight_hours', 'tacobout_refresh_public_reviews' );
-	}
-}
-add_action( 'init', 'tacobout_schedule_review_refresh' );
-
-/** One bounded request per cron job; retries give a sleeping host time to wake. */
-function tacobout_refresh_public_reviews( $page = 1, $reviews = array(), $retry = 0 ) {
-	$page = max( 1, min( 5, (int) $page ) );
-	if ( 1 === $page && 0 === $retry ) {
-		if ( get_transient( 'tacobout_reviews_refresh_lock' ) ) {
-			return;
-		}
-		set_transient( 'tacobout_reviews_refresh_lock', 1, 300 );
-	}
-	$url = 'https://trove.schweg.xyz/' . ( $page > 1 ? '?page=' . $page : '' );
-	$response = wp_safe_remote_get( $url, array( 'timeout' => 30, 'redirection' => 0, 'limit_response_size' => 524288, 'headers' => array( 'Accept' => 'text/html' ) ) );
-	if ( is_wp_error( $response ) || 200 !== wp_remote_retrieve_response_code( $response ) ) {
-		if ( $retry < 1 ) {
-			wp_schedule_single_event( time() + 60, 'tacobout_refresh_review_page', array( $page, $reviews, 1 ) );
-		} else {
-			delete_transient( 'tacobout_reviews_refresh_lock' );
-		}
-		return; // Never replace the last successful snapshot with an error.
-	}
-	$html = wp_remote_retrieve_body( $response );
-	$reviews = array_slice( array_merge( $reviews, tacobout_parse_public_reviews( $html ) ), 0, 3 );
-	$has_next = (bool) preg_match( '/rel=["\']next["\']/i', $html );
-	if ( count( $reviews ) < 3 && $page < 5 && $has_next ) {
-		wp_schedule_single_event( time() + 5, 'tacobout_refresh_review_page', array( $page + 1, $reviews, 0 ) );
-		return;
-	}
-	if ( ! empty( $reviews ) ) {
-		update_option( 'tacobout_reviews_snapshot', array( 'reviews' => $reviews, 'fetched_at' => time() ), false );
-	}
-	delete_transient( 'tacobout_reviews_refresh_lock' );
-}
-add_action( 'tacobout_refresh_public_reviews', 'tacobout_refresh_public_reviews' );
-add_action( 'tacobout_refresh_review_page', 'tacobout_refresh_public_reviews', 10, 3 );
-
+/** Stored bodies may be reused only after Trove validates their ETag. */
 function tacobout_public_reviews() {
-	$snapshot = get_option( 'tacobout_reviews_snapshot', array() );
-	if ( ! empty( $snapshot['reviews'] ) && is_array( $snapshot['reviews'] ) ) {
+	$snapshot = get_option( 'tacobout_reviews_api_snapshot', array() );
+	$headers = array( 'Accept' => 'application/json' );
+	if ( is_array( $snapshot ) && is_string( $snapshot['etag'] ?? null ) && '' !== $snapshot['etag'] && is_array( $snapshot['reviews'] ?? null ) ) {
+		$headers['If-None-Match'] = $snapshot['etag'];
+	}
+	$response = wp_safe_remote_get( 'https://trove.schweg.xyz/api/reviews?limit=3', array( 'timeout' => 5, 'redirection' => 0, 'limit_response_size' => 131072, 'headers' => $headers ) );
+	if ( is_wp_error( $response ) ) {
+		return array();
+	}
+	$status = wp_remote_retrieve_response_code( $response );
+	if ( 304 === $status && isset( $headers['If-None-Match'] ) ) {
 		return $snapshot['reviews'];
 	}
-	// Carry a nonempty pre-upgrade cache forward until cron gets a new snapshot.
-	$legacy = get_transient( 'tacobout_public_reviews_v2' );
-	if ( is_array( $legacy ) && ! empty( $legacy ) ) {
-		update_option( 'tacobout_reviews_snapshot', array( 'reviews' => $legacy, 'fetched_at' => time() ), false );
-		return $legacy;
+	if ( 200 !== $status ) {
+		return array();
 	}
-	return array();
+	$reviews = tacobout_parse_review_response( wp_remote_retrieve_body( $response ) );
+	if ( null === $reviews ) {
+		return array();
+	}
+	$etag = wp_remote_retrieve_header( $response, 'etag' );
+	update_option( 'tacobout_reviews_api_snapshot', array( 'reviews' => $reviews, 'etag' => is_string( $etag ) ? $etag : '' ), false );
+	return $reviews;
 }
 
-/** Stop theme-specific polling when switching themes. */
-add_action( 'switch_theme', function () {
+/** Retire polling and HTML snapshots; they cannot satisfy review revalidation. */
+function tacobout_retire_review_polling() {
+	if ( get_option( 'tacobout_reviews_api_migrated' ) ) {
+		return;
+	}
 	wp_clear_scheduled_hook( 'tacobout_refresh_public_reviews' );
 	wp_clear_scheduled_hook( 'tacobout_refresh_review_page' );
 	delete_transient( 'tacobout_reviews_refresh_lock' );
+	delete_transient( 'tacobout_public_reviews_v2' );
+	delete_option( 'tacobout_reviews_snapshot' );
+	update_option( 'tacobout_reviews_api_migrated', true, false );
+}
+add_action( 'init', 'tacobout_retire_review_polling' );
+
+/** Cacheable HTML contains only a placeholder, never a saved review body. */
+add_action( 'wp_enqueue_scripts', function () {
+	if ( tacobout_is_editor_preview() ) {
+		return;
+	}
+	wp_enqueue_script( 'tacobout-reviews', get_theme_file_uri( 'tacobout-reviews.js' ), array(), wp_get_theme()->get( 'Version' ), true );
+} );
+
+function tacobout_review_rest_response() {
+	return new WP_REST_Response( array( 'html' => tacobout_review_section( tacobout_public_reviews() ) ), 200, array( 'Cache-Control' => 'no-store, private', 'Vary' => 'Cookie' ) );
+}
+add_action( 'rest_api_init', function () {
+	register_rest_route( 'tacobout/v1', '/reviews', array( 'methods' => 'GET', 'callback' => 'tacobout_review_rest_response', 'permission_callback' => '__return_true' ) );
 } );
 
 /** Public HTTPS covers only; never allow credentials or executable URLs. */
@@ -175,10 +148,11 @@ function tacobout_sidebar_arrow() {
 	return '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17 17 7M7 7h10v10"/></svg>';
 }
 
-function tacobout_discovery_sidebar() {
-	$html = '<aside class="tacobout-discovery-sidebar" aria-label="' . esc_attr__( 'Explore more', 'tacobout' ) . '">';
-	$html .= '<section class="tacobout-discovery-section tacobout-review-section"><div class="tacobout-sidebar-heading"><h3>' . esc_html__( 'Latest on Trove', 'tacobout' ) . '</h3><a href="https://trove.schweg.xyz/">' . esc_html__( 'View all', 'tacobout' ) . ' ' . tacobout_sidebar_arrow() . '</a></div><p class="tacobout-sidebar-caption">' . esc_html__( 'From the public review feed', 'tacobout' ) . '</p><ul class="tacobout-sidebar-links tacobout-review-list">';
-	$reviews = tacobout_public_reviews();
+function tacobout_review_section( $reviews ) {
+	if ( empty( $reviews ) ) {
+		return '';
+	}
+	$html = '<section class="tacobout-discovery-section tacobout-review-section"><div class="tacobout-sidebar-heading"><h3>' . esc_html__( 'Latest on Trove', 'tacobout' ) . '</h3><a href="https://trove.schweg.xyz/">' . esc_html__( 'View all', 'tacobout' ) . ' ' . tacobout_sidebar_arrow() . '</a></div><p class="tacobout-sidebar-caption">' . esc_html__( 'From the public review feed', 'tacobout' ) . '</p><ul class="tacobout-sidebar-links tacobout-review-list">';
 	foreach ( $reviews as $review ) {
 		$html .= '<li><a class="tacobout-review-link" href="' . esc_url( $review['url'] ) . '">';
 		$image = tacobout_sidebar_image_url( $review['image'] ?? '' );
@@ -189,15 +163,18 @@ function tacobout_discovery_sidebar() {
 		if ( ! empty( $review['author'] ) ) {
 			$html .= '<span class="tacobout-sidebar-meta">' . esc_html( $review['author'] ) . '</span>';
 		}
-		if ( ! empty( $review['rating'] ) ) {
+		if ( isset( $review['rating'] ) && '' !== $review['rating'] ) {
 			$html .= '<span class="tacobout-review-rating" aria-label="' . esc_attr( sprintf( __( 'Rated %s out of 5', 'tacobout' ), $review['rating'] ) ) . '"><span aria-hidden="true">★</span> ' . esc_html( $review['rating'] ) . '<span class="tacobout-sidebar-meta"> / 5</span></span>';
 		}
 		$html .= '</span></a><blockquote>' . esc_html( wp_trim_words( $review['quote'], 24 ) ) . '</blockquote></li>';
 	}
-	if ( empty( $reviews ) ) {
-		$html .= '<li class="tacobout-sidebar-empty">' . esc_html__( 'Discover what people are reading, watching, and listening to on Trove.', 'tacobout' ) . '</li>';
-	}
-	return $html . '</ul></section>' . tacobout_trending_shortcode() . '<a class="tacobout-playground" href="https://infopages.pages.dev/"><span><strong>' . esc_html__( 'HTML Playground', 'tacobout' ) . '</strong><span class="tacobout-sidebar-meta">' . esc_html__( 'A few experiments on InfoPages', 'tacobout' ) . '</span></span>' . tacobout_sidebar_arrow() . '</a></aside>';
+	return $html . '</ul></section>';
+}
+
+function tacobout_discovery_sidebar() {
+	$html = '<aside class="tacobout-discovery-sidebar" aria-label="' . esc_attr__( 'Explore more', 'tacobout' ) . '">';
+	$html .= '<div data-tacobout-reviews="' . esc_url( rest_url( 'tacobout/v1/reviews' ) ) . '" hidden></div>';
+	return $html . tacobout_trending_shortcode() . '<a class="tacobout-playground" href="https://infopages.pages.dev/"><span><strong>' . esc_html__( 'HTML Playground', 'tacobout' ) . '</strong><span class="tacobout-sidebar-meta">' . esc_html__( 'A few experiments on InfoPages', 'tacobout' ) . '</span></span>' . tacobout_sidebar_arrow() . '</a></aside>';
 }
 
 /** Keep the sidebar inside the list so masonry can fill around and below it. */
