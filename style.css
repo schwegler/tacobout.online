@@ -30,6 +30,47 @@ Tags: full-site-editing, block-theme, blog, dark-mode, post-formats, one-column,
 	--taco-shadow: 0 1px 3px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04);
 	--taco-shadow-lg: 0 10px 30px rgba(0, 0, 0, 0.08);
 	--taco-transition: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+
+	/* Sister Brand Primaries */
+	--taco-blue: #3B82F6;
+	--taco-blue-hover: #2563EB;
+	--trove-violet: #7C3AED;
+	--trove-violet-hover: #6D28D9;
+
+	/* Shared Bridge Accents */
+	--shared-gold: #F59E0B;
+	--shared-lavender: #F3EFFA;
+	--shared-lavender-mid: #DDD6FE;
+
+	/* Ligne Claire Ink & Card Mechanics */
+	--ink-black: #0F0E17;
+	--ink-charcoal: #111827;
+	--stroke-weight-outer: 2.5px;
+	--radius-card: 14px;
+	--radius-pill: 999px;
+	--shadow-comic: 4px 4px 0px #0F0E17;
+	--shadow-comic-sm: 2px 2px 0px #0F0E17;
+}
+
+/* Crisp die-cut sticker treatment for transparent PNG mascots in both Light & Dark Mode */
+.mascot-sticker {
+	display: inline-block;
+	max-width: 100%;
+	height: auto;
+	object-fit: contain;
+	filter: drop-shadow(2px 3px 0px rgba(15, 14, 23, 0.22));
+	transition: transform 0.18s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.mascot-sticker:hover {
+	transform: translateY(-3px) rotate(-2deg);
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.mascot-sticker, .mascot-sticker:hover {
+		transition: none;
+		transform: none;
+	}
 }
 
 /* Trove item embeds use the same typography and surfaces as blog post cards. */

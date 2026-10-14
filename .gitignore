@@ -57,3 +57,4 @@ activitypub.zip
 vendor/
 composer.lock
 .phpunit.cache/
+.DS_Store
