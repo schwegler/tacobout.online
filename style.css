@@ -586,6 +586,50 @@ header:has(.tacobout-header) {
 	}
 }
 
+/* Sister Brand Pill in Top Navigation */
+.tacobout-header .tacobout-sister-nav-pill a,
+.wp-block-navigation__container .tacobout-sister-nav-pill a,
+a.tacobout-sister-nav-pill {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.35rem;
+	padding: 0.35rem 0.85rem;
+	border-radius: var(--radius-pill);
+	background: var(--shared-lavender);
+	color: var(--trove-violet) !important;
+	border: 1.5px solid var(--shared-lavender-mid);
+	font-weight: 600;
+	font-size: 0.85rem;
+	text-decoration: none;
+	transition: background 0.15s ease, border-color 0.15s ease, transform 0.15s ease;
+}
+
+.tacobout-header .tacobout-sister-nav-pill a:hover,
+.wp-block-navigation__container .tacobout-sister-nav-pill a:hover,
+a.tacobout-sister-nav-pill:hover {
+	background: var(--shared-lavender-mid);
+	border-color: var(--trove-violet);
+	color: var(--trove-violet-hover) !important;
+	transform: translateY(-1px);
+	text-decoration: none;
+}
+
+[data-theme="dark"] .tacobout-header .tacobout-sister-nav-pill a,
+[data-theme="dark"] .wp-block-navigation__container .tacobout-sister-nav-pill a,
+[data-theme="dark"] a.tacobout-sister-nav-pill {
+	background: rgba(124, 58, 237, 0.16);
+	border-color: rgba(124, 58, 237, 0.36);
+	color: #DDD6FE !important;
+}
+
+[data-theme="dark"] .tacobout-header .tacobout-sister-nav-pill a:hover,
+[data-theme="dark"] .wp-block-navigation__container .tacobout-sister-nav-pill a:hover,
+[data-theme="dark"] a.tacobout-sister-nav-pill:hover {
+	background: rgba(124, 58, 237, 0.28);
+	border-color: var(--trove-violet);
+	color: #FFFFFF !important;
+}
+
 /* ============================
    MAGAZINE GRID — THE FEED
    ============================ */

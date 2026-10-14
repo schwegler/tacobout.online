@@ -14,7 +14,7 @@ This plan organizes the `tacobout.online` redesign into self-contained, reviewab
 | Phase / Module | Description | Key Deliverables & Evidence | Status |
 | :--- | :--- | :--- | :--- |
 | **0. Tracking & Brand Assets** | Establish redesign tokens, ligne claire mechanics, `.mascot-sticker` system, and Telly/Trove transparent PNGs | `assets/brand/*`, `style.css`, `tests/RedesignBrandTest.php`, `docs/REDESIGN_IMPLEMENTATION_TRACKING.md` | `DONE` |
-| **1. Global Header & Sister Nav** | Custom speech-bubble taco app icon in header, violet sister-brand pill (`💎 Media Trove & Library ↗`), sticky header offsets | `parts/header.html`, `tacobout-header.js`, header tests | `TODO` |
+| **1. Global Header & Sister Nav** | Custom speech-bubble taco app icon in header, violet sister-brand pill (`💎 Media Trove & Library ↗`), sticky header offsets | `parts/header.html`, `style.css`, `tests/HeaderNavigationTest.php` | `DONE` |
 | **2. Homepage Hero & Bento Feed** | "On the Air" welcome strip featuring `telly_pose_01_on_the_mic.png`, end-of-feed notice with `telly_pose_02_taco_break.png`, footer tagline | `templates/index.html`, `patterns/query.php`, homepage tests | `TODO` |
 | **3. Single Article & Fediverse Prompt** | Post footer discussion card with `telly_pose_02_taco_break.png` and Bluesky CTA, Trove review card with `facet_pose_04_five_star.png`, trending box | `templates/single.html`, `inc/sidebar.php`, sidebar/article tests | `TODO` |
 | **4. Channel Banners & 404 Recovery** | Category archive channel cards (`/in/media/tv/`, `/wrestling/`, `/food/`), About page Bento grid, 404 "Dead Air on This Channel" | `templates/archive.html`, `templates/404.html`, archive/404 tests | `TODO` |
@@ -29,6 +29,11 @@ This plan organizes the `tacobout.online` redesign into self-contained, reviewab
   - Added sister brand variables (`--taco-blue`, `--trove-violet`, `--shared-gold`, `--shadow-comic`) and `.mascot-sticker` utility to `style.css`.
   - Added PHPUnit tests in `tests/RedesignBrandTest.php`.
   - Added `docs/REDESIGN_IMPLEMENTATION_TRACKING.md`.
+
+- **Commit 1:** `Integrate Trove sister-brand navigation pill and header pill styling`
+  - Added violet companion navigation link `💎 Media Trove & Library ↗` to `parts/header.html`.
+  - Added responsive pill layout and dark-mode styling for `.tacobout-sister-nav-pill` in `style.css`.
+  - Added PHPUnit test in `tests/HeaderNavigationTest.php`.
 
 ---
 
