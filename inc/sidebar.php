@@ -80,7 +80,8 @@ function tacobout_parse_public_reviews( $html ) {
 		$image = $xpath->query( './/*[contains(@class, "activity-thumbnail")]//img', $card )->item( 0 );
 		$review['author'] = $author ? trim( $author->textContent ) : '';
 		$review['time'] = $time ? trim( $time->textContent ) : '';
-		$review['image'] = $image ? tacobout_sidebar_image_url( $image->getAttribute( 'src' ) ) : '';
+		$image_src = $image ? $image->getAttribute( 'src' ) : '';
+		$review['image'] = tacobout_sidebar_image_url( str_starts_with( $image_src, '/' ) && ! str_starts_with( $image_src, '//' ) ? 'https://trove.schweg.xyz' . $image_src : $image_src );
 		$review['rating'] = preg_match( '/Rating:\s*([0-5](?:\.[0-9]+)?)\s*★/u', $review['title'], $rating ) ? $rating[1] : '';
 		$reviews[] = $review;
 		if ( count( $reviews ) === 3 ) {
@@ -90,9 +91,9 @@ function tacobout_parse_public_reviews( $html ) {
 	return $reviews;
 }
 
-/** Three daily background scans; page rendering never waits on Trove. */
+/** Hourly background scans; page rendering never waits on Trove. */
 function tacobout_review_cron_schedules( $schedules ) {
-	$schedules['tacobout_eight_hours'] = array( 'interval' => 8 * HOUR_IN_SECONDS, 'display' => 'Every 8 hours' );
+	$schedules['tacobout_hourly'] = array( 'interval' => HOUR_IN_SECONDS, 'display' => 'Every hour' );
 	return $schedules;
 }
 add_filter( 'cron_schedules', 'tacobout_review_cron_schedules' );
@@ -100,25 +101,27 @@ add_filter( 'cron_schedules', 'tacobout_review_cron_schedules' );
 function tacobout_schedule_review_refresh() {
 	$event = wp_get_scheduled_event( 'tacobout_refresh_public_reviews' );
 	// Recurring events retain their stored interval across theme upgrades.
-	if ( $event && ( 'tacobout_eight_hours' !== $event->schedule || 8 * HOUR_IN_SECONDS !== (int) $event->interval ) ) {
+	if ( $event && ( 'tacobout_hourly' !== $event->schedule || HOUR_IN_SECONDS !== (int) $event->interval ) ) {
 		wp_clear_scheduled_hook( 'tacobout_refresh_public_reviews' );
 		$event = false;
 	}
 	if ( ! $event ) {
-		wp_schedule_event( time() + 1, 'tacobout_eight_hours', 'tacobout_refresh_public_reviews' );
+		wp_schedule_event( time() + 1, 'tacobout_hourly', 'tacobout_refresh_public_reviews' );
 	}
 }
 add_action( 'init', 'tacobout_schedule_review_refresh' );
 
 /** One bounded request per cron job; retries give a sleeping host time to wake. */
 function tacobout_refresh_public_reviews( $page = 1, $reviews = array(), $retry = 0 ) {
-	$page = max( 1, min( 5, (int) $page ) );
+	$page = max( 1, min( 200, (int) $page ) );
 	if ( 1 === $page && 0 === $retry ) {
 		if ( get_transient( 'tacobout_reviews_refresh_lock' ) ) {
 			return;
 		}
-		set_transient( 'tacobout_reviews_refresh_lock', 1, 300 );
 	}
+	// Renew for each continuation: bulk imports can push reviews hundreds of
+	// activities down the feed. Each job still fetches only one bounded page.
+	set_transient( 'tacobout_reviews_refresh_lock', 1, 2 * HOUR_IN_SECONDS );
 	$url = 'https://trove.schweg.xyz/' . ( $page > 1 ? '?page=' . $page : '' );
 	$response = wp_safe_remote_get( $url, array( 'timeout' => 30, 'redirection' => 0, 'limit_response_size' => 524288, 'headers' => array( 'Accept' => 'text/html' ) ) );
 	if ( is_wp_error( $response ) || 200 !== wp_remote_retrieve_response_code( $response ) ) {
@@ -132,7 +135,7 @@ function tacobout_refresh_public_reviews( $page = 1, $reviews = array(), $retry 
 	$html = wp_remote_retrieve_body( $response );
 	$reviews = array_slice( array_merge( $reviews, tacobout_parse_public_reviews( $html ) ), 0, 3 );
 	$has_next = (bool) preg_match( '/rel=["\']next["\']/i', $html );
-	if ( count( $reviews ) < 3 && $page < 5 && $has_next ) {
+	if ( count( $reviews ) < 3 && $page < 200 && $has_next ) {
 		wp_schedule_single_event( time() + 5, 'tacobout_refresh_review_page', array( $page + 1, $reviews, 0 ) );
 		return;
 	}

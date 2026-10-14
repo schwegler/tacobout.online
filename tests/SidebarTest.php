@@ -3,27 +3,27 @@ class SidebarTest extends \PHPUnit\Framework\TestCase {
     protected function setUp(): void { parent::setUp(); \Brain\Monkey\setUp(); }
     protected function tearDown(): void { \Brain\Monkey\tearDown(); parent::tearDown(); }
 
-    public function test_upgrade_replaces_stored_quarter_hour_event() {
-        \Brain\Monkey\Functions\expect('wp_get_scheduled_event')->once()->with('tacobout_refresh_public_reviews')->andReturn((object)['schedule'=>'tacobout_quarter_hour', 'interval'=>900]);
+    public function test_upgrade_replaces_stored_eight_hour_event() {
+        \Brain\Monkey\Functions\expect('wp_get_scheduled_event')->once()->with('tacobout_refresh_public_reviews')->andReturn((object)['schedule'=>'tacobout_eight_hours', 'interval'=>28800]);
         \Brain\Monkey\Functions\expect('wp_clear_scheduled_hook')->once()->with('tacobout_refresh_public_reviews');
-        \Brain\Monkey\Functions\expect('wp_schedule_event')->once()->with(\Mockery::type('int'), 'tacobout_eight_hours', 'tacobout_refresh_public_reviews');
+        \Brain\Monkey\Functions\expect('wp_schedule_event')->once()->with(\Mockery::type('int'), 'tacobout_hourly', 'tacobout_refresh_public_reviews');
         \Brain\Monkey\Functions\expect('wp_schedule_single_event')->never();
         $this->assertNull(tacobout_schedule_review_refresh());
     }
 
     public function test_correct_schedule_is_not_reset_on_each_request() {
-        \Brain\Monkey\Functions\expect('wp_get_scheduled_event')->once()->andReturn((object)['schedule'=>'tacobout_eight_hours', 'interval'=>28800]);
+        \Brain\Monkey\Functions\expect('wp_get_scheduled_event')->once()->andReturn((object)['schedule'=>'tacobout_hourly', 'interval'=>3600]);
         \Brain\Monkey\Functions\expect('wp_clear_scheduled_hook')->never();
         \Brain\Monkey\Functions\expect('wp_schedule_event')->never();
         $this->assertNull(tacobout_schedule_review_refresh());
     }
 
-    public function test_first_install_schedules_eight_hour_refresh() {
+    public function test_first_install_schedules_hourly_refresh() {
         \Brain\Monkey\Functions\expect('wp_get_scheduled_event')->once()->andReturn(false);
         \Brain\Monkey\Functions\expect('wp_clear_scheduled_hook')->never();
-        \Brain\Monkey\Functions\expect('wp_schedule_event')->once()->with(\Mockery::type('int'), 'tacobout_eight_hours', 'tacobout_refresh_public_reviews');
+        \Brain\Monkey\Functions\expect('wp_schedule_event')->once()->with(\Mockery::type('int'), 'tacobout_hourly', 'tacobout_refresh_public_reviews');
         $schedules = tacobout_review_cron_schedules(['hourly'=>['interval'=>3600]]);
-        $this->assertSame(28800, $schedules['tacobout_eight_hours']['interval']);
+        $this->assertSame(3600, $schedules['tacobout_hourly']['interval']);
         $this->assertArrayHasKey('hourly', $schedules);
         $this->assertArrayNotHasKey('tacobout_quarter_hour', $schedules);
         $this->assertNull(tacobout_schedule_review_refresh());
@@ -95,6 +95,7 @@ class SidebarTest extends \PHPUnit\Framework\TestCase {
     }
 
     public function test_empty_scan_never_erases_last_good_reviews() {
+        \Brain\Monkey\Functions\expect('set_transient')->once();
         \Brain\Monkey\Functions\expect('wp_safe_remote_get')->once()->andReturn([]);
         \Brain\Monkey\Functions\expect('is_wp_error')->once()->andReturn(false);
         \Brain\Monkey\Functions\expect('wp_remote_retrieve_response_code')->once()->andReturn(200);
@@ -102,4 +103,45 @@ class SidebarTest extends \PHPUnit\Framework\TestCase {
         \Brain\Monkey\Functions\expect('update_option')->never();
         $this->assertNull(tacobout_refresh_public_reviews(5));
     }
+    public function test_scan_continues_past_bulk_activity_on_page_five() {
+        \Brain\Monkey\Functions\expect('set_transient')->once()->with('tacobout_reviews_refresh_lock', 1, 7200);
+        \Brain\Monkey\Functions\expect('wp_safe_remote_get')->once()->with('https://trove.schweg.xyz/?page=5', \Mockery::type('array'))->andReturn([]);
+        \Brain\Monkey\Functions\expect('is_wp_error')->once()->andReturn(false);
+        \Brain\Monkey\Functions\expect('wp_remote_retrieve_response_code')->once()->andReturn(200);
+        \Brain\Monkey\Functions\expect('wp_remote_retrieve_body')->once()->andReturn('<a rel="next" href="/?page=6">Next</a>');
+        \Brain\Monkey\Functions\expect('update_option')->never();
+        \Brain\Monkey\Functions\expect('wp_schedule_single_event')->once()->with(\Mockery::type('int'), 'tacobout_refresh_review_page', [6,[],0]);
+        $this->assertNull(tacobout_refresh_public_reviews(5));
+    }
+
+    public function test_local_cover_paths_resolve_to_trove_but_protocol_relative_urls_do_not() {
+        $html = '<div id="activity_feed"><div class="activity-card"><div class="activity-thumbnail"><img src="%s"></div><span class="activity-text"><a class="activity-item-link" href="/movies/223-rushmore-1998">Rushmore</a></span><div class="activity-review-quote">Good</div></div></div>';
+        $this->assertSame('https://trove.schweg.xyz/media/covers/movie/223', tacobout_parse_public_reviews(sprintf($html, '/media/covers/movie/223'))[0]['image']);
+        $this->assertSame('', tacobout_parse_public_reviews(sprintf($html, '//evil.test/cover'))[0]['image']);
+    }
+
+    public function test_three_reviews_replace_snapshot_and_stop_pagination() {
+        $card = '<div class="activity-card"><span class="activity-text"><a class="activity-item-link" href="/books/%d">Book</a></span><div class="activity-review-quote">Good</div></div>';
+        $html = '<div id="activity_feed">' . sprintf($card, 1) . sprintf($card, 2) . sprintf($card, 3) . '</div><a rel="next">Next</a>';
+        \Brain\Monkey\Functions\expect('set_transient')->once();
+        \Brain\Monkey\Functions\expect('wp_safe_remote_get')->once()->andReturn([]);
+        \Brain\Monkey\Functions\expect('is_wp_error')->once()->andReturn(false);
+        \Brain\Monkey\Functions\expect('wp_remote_retrieve_response_code')->once()->andReturn(200);
+        \Brain\Monkey\Functions\expect('wp_remote_retrieve_body')->once()->andReturn($html);
+        \Brain\Monkey\Functions\expect('update_option')->once()->with('tacobout_reviews_snapshot', \Mockery::on(fn($snapshot) => count($snapshot['reviews']) === 3 && $snapshot['reviews'][0]['url'] === 'https://trove.schweg.xyz/books/1' && $snapshot['fetched_at'] > 0), false);
+        \Brain\Monkey\Functions\expect('wp_schedule_single_event')->never();
+        $this->assertNull(tacobout_refresh_public_reviews(9));
+    }
+
+    public function test_scan_stops_at_safety_limit() {
+        \Brain\Monkey\Functions\expect('set_transient')->once();
+        \Brain\Monkey\Functions\expect('wp_safe_remote_get')->once()->andReturn([]);
+        \Brain\Monkey\Functions\expect('is_wp_error')->once()->andReturn(false);
+        \Brain\Monkey\Functions\expect('wp_remote_retrieve_response_code')->once()->andReturn(200);
+        \Brain\Monkey\Functions\expect('wp_remote_retrieve_body')->once()->andReturn('<a rel="next">Next</a>');
+        \Brain\Monkey\Functions\expect('update_option')->never();
+        \Brain\Monkey\Functions\expect('wp_schedule_single_event')->never();
+        $this->assertNull(tacobout_refresh_public_reviews(200));
+    }
+
 }
