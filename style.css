@@ -24,6 +24,8 @@ Tags: full-site-editing, block-theme, blog, dark-mode, post-formats, one-column,
 	--taco-callout-shadow: 0 3px 14px rgba(15,14,23,.06);
 	--taco-fg: #0f0e17;
 	--taco-accent: #2563eb;
+	--taco-accent-fill: #2563eb;
+	--taco-accent-fill-hover: #1d4ed8;
 	--taco-accent-2: #1d4ed8;
 	--taco-muted: #71717a;
 	--taco-surface: #f4f4f5;
@@ -221,7 +223,7 @@ a.tacobout-trove-card:active {
 	}
 
 	.has-accent-background-color {
-		background-color: var(--taco-accent) !important;
+		background-color: var(--taco-accent-fill) !important;
 	}
 
 	/* Accent 2 */
@@ -230,7 +232,7 @@ a.tacobout-trove-card:active {
 	}
 
 	.has-accent-2-background-color {
-		background-color: var(--taco-accent-2) !important;
+		background-color: var(--taco-accent-fill-hover) !important;
 	}
 
 	/* Muted */
@@ -308,9 +310,9 @@ a.tacobout-trove-card:active {
 [data-theme="dark"] .has-contrast-color { color: var(--taco-fg) !important; }
 [data-theme="dark"] .has-contrast-background-color { background-color: var(--taco-fg) !important; }
 [data-theme="dark"] .has-accent-color { color: var(--taco-accent) !important; }
-[data-theme="dark"] .has-accent-background-color { background-color: var(--taco-accent) !important; }
+[data-theme="dark"] .has-accent-background-color { background-color: var(--taco-accent-fill) !important; }
 [data-theme="dark"] .has-accent-2-color { color: var(--taco-accent-2) !important; }
-[data-theme="dark"] .has-accent-2-background-color { background-color: var(--taco-accent-2) !important; }
+[data-theme="dark"] .has-accent-2-background-color { background-color: var(--taco-accent-fill-hover) !important; }
 [data-theme="dark"] .has-muted-color { color: var(--taco-muted) !important; }
 [data-theme="dark"] .has-muted-background-color { background-color: var(--taco-muted) !important; }
 [data-theme="dark"] .has-surface-color { color: var(--taco-surface) !important; }
@@ -367,7 +369,7 @@ a.tacobout-trove-card:active {
 
 [data-theme="dark"] .tacobout-scroll-top:hover,
 [data-theme="dark"] .tacobout-scroll-top:focus-visible {
-	background: var(--taco-accent);
+	background: var(--taco-accent-fill);
 	border-color: var(--taco-accent);
 	box-shadow: 0 6px 20px rgba(59, 130, 246, 0.4);
 }
@@ -380,7 +382,7 @@ a.tacobout-trove-card:active {
 
 [data-theme="dark"] .tacobout-theme-toggle:hover,
 [data-theme="dark"] .tacobout-theme-toggle:focus-visible {
-	background: var(--taco-accent);
+	background: var(--taco-accent-fill);
 	border-color: var(--taco-accent);
 	box-shadow: 0 6px 20px rgba(59, 130, 246, 0.4);
 }
@@ -457,7 +459,7 @@ body::before {
 }
 
 ::selection {
-	background: var(--taco-accent);
+	background: var(--taco-accent-fill);
 	color: white;
 }
 
@@ -1440,7 +1442,7 @@ body.home:not(.paged) .tacobout-magazine-grid .wp-block-post:first-child .entry-
 
 .wp-block-post-terms a:hover,
 .wp-block-post-terms a:focus-visible {
-	background: var(--taco-accent);
+	background: var(--taco-accent-fill);
 	color: white !important;
 	border-color: var(--taco-accent);
 }
@@ -2042,7 +2044,7 @@ body.home:not(.paged) .tacobout-magazine-grid .wp-block-post:first-child .entry-
 .wp-block-query-pagination-numbers .page-numbers:hover,
 .wp-block-query-pagination-numbers .page-numbers.current,
 .wp-block-query-pagination-numbers .page-numbers:focus-visible {
-	background: var(--taco-accent);
+	background: var(--taco-accent-fill);
 	border-color: var(--taco-accent);
 	color: white;
 }
@@ -2253,7 +2255,7 @@ body.home:not(.paged) .tacobout-magazine-grid .wp-block-post:first-child .tacobo
 	width: 10px;
 	height: 10px;
 	border-radius: 50%;
-	background: var(--taco-accent);
+	background: var(--taco-accent-fill);
 	animation: tacoboutBounce 1.4s ease-in-out infinite both;
 }
 
@@ -2319,7 +2321,7 @@ body.home:not(.paged) .tacobout-magazine-grid .wp-block-post:first-child .tacobo
 
 .tacobout-scroll-top:hover,
 .tacobout-scroll-top:focus-visible {
-	background: var(--taco-accent);
+	background: var(--taco-accent-fill);
 	color: white;
 	border-color: var(--taco-accent);
 	box-shadow: 0 6px 20px rgba(0, 102, 255, 0.3);
@@ -2338,7 +2340,7 @@ body.home:not(.paged) .tacobout-magazine-grid .wp-block-post:first-child .tacobo
 
 	html:not([data-theme="light"]) .tacobout-scroll-top:hover,
 	html:not([data-theme="light"]) .tacobout-scroll-top:focus-visible {
-		background: var(--taco-accent);
+		background: var(--taco-accent-fill);
 		border-color: var(--taco-accent);
 		box-shadow: 0 6px 20px rgba(59, 130, 246, 0.4);
 	}
@@ -2372,7 +2374,7 @@ body.home:not(.paged) .tacobout-magazine-grid .wp-block-post:first-child .tacobo
 
 .tacobout-theme-toggle:hover,
 .tacobout-theme-toggle:focus-visible {
-	background: var(--taco-accent);
+	background: var(--taco-accent-fill);
 	color: white;
 	border-color: var(--taco-accent);
 	box-shadow: 0 6px 20px rgba(0, 102, 255, 0.3);
@@ -2395,7 +2397,7 @@ body.home:not(.paged) .tacobout-magazine-grid .wp-block-post:first-child .tacobo
 
 	html:not([data-theme="light"]) .tacobout-theme-toggle:hover,
 	html:not([data-theme="light"]) .tacobout-theme-toggle:focus-visible {
-		background: var(--taco-accent);
+		background: var(--taco-accent-fill);
 		border-color: var(--taco-accent);
 		box-shadow: 0 6px 20px rgba(59, 130, 246, 0.4);
 	}
@@ -2556,7 +2558,7 @@ body.author .wp-block-post:focus-within {
 
 #respond .form-submit #submit,
 #respond .form-submit input[type="submit"] {
-	background: var(--taco-accent);
+	background: var(--taco-accent-fill);
 	color: white;
 	border: none;
 	border-radius: 8px;
@@ -2572,7 +2574,7 @@ body.author .wp-block-post:focus-within {
 #respond .form-submit input[type="submit"]:hover,
 #respond .form-submit #submit:focus-visible,
 #respond .form-submit input[type="submit"]:focus-visible {
-	background: var(--taco-accent-2);
+	background: var(--taco-accent-fill-hover);
 	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
@@ -3231,3 +3233,5 @@ html :is(.tacobout-discussion-prompt, .tacobout-channel-subcopy,
 .tacobout-error-channel-badge { background: #b91c1c; }
 .tacobout-channel-badge { background: #2563eb; }
 .tacobout-end-archive { margin-inline-end: 0; }
+
+.tacobout-error-primary-btn { background: var(--taco-accent-fill); }
