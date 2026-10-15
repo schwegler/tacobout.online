@@ -212,6 +212,28 @@ function tacobout_embed_defaults( $defaults ) {
 add_filter( 'embed_defaults', 'tacobout_embed_defaults' );
 
 /**
+ * Bluesky's embed loader declares top-level constants, so repeating its script
+ * once per post throws on a multi-post feed. Load it once after all post markup.
+ */
+function tacobout_bluesky_embed_loader( $content ) {
+	if ( is_admin() ) {
+		return $content;
+	}
+	$clean = preg_replace(
+		'#<script\b[^>]*\bsrc=([\'\"])https://embed\.bsky\.app/static/embed\.js\1[^>]*>\s*</script>#i',
+		'',
+		$content,
+		-1,
+		$count
+	);
+	if ( $count > 0 ) {
+		wp_enqueue_script( 'tacobout-bluesky-embed', 'https://embed.bsky.app/static/embed.js', array(), null, true );
+	}
+	return null === $clean ? $content : $clean;
+}
+add_filter( 'the_content', 'tacobout_bluesky_embed_loader', 20 );
+
+/**
  * CRITICAL: Clear saved template customizations from the database.
  * When templates are edited in the Site Editor, WordPress saves them to the
  * database as wp_template / wp_template_part custom post types. These saved

@@ -40,6 +40,14 @@ class FunctionsTest extends \PHPUnit\Framework\TestCase {
         $this->assertEquals([], $wp_styles_enqueued['tacobout-google-fonts']['deps']);
     }
 
+    public function test_bluesky_loader_preserves_embed_markup_and_other_scripts() {
+        $embed = '<blockquote data-bluesky-uri="at://did:example/app.bsky.feed.post/123">Post</blockquote>';
+        $loader = '<script async src="https://embed.bsky.app/static/embed.js" charset="utf-8"></script>';
+        $other = '<script src="https://example.com/other.js"></script>';
+        $this->assertSame($embed . $embed . $other, tacobout_bluesky_embed_loader($embed . $loader . $embed . $loader . $other));
+        $this->assertSame($embed, tacobout_bluesky_embed_loader($embed));
+    }
+
     public function test_tacobout_support_loads_scoped_editor_styles() {
         global $theme_supports_added, $editor_styles_added;
 

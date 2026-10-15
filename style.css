@@ -4,7 +4,7 @@ Theme URI: https://tacobout.online
 Author: schwegler
 Author URI: https://tacobout.online
 Description: A personal magazine theme for schwegler — ultra-modern tumblog with compatibility with optional Bluesky/ATProto & ActivityPub plugins. Format-aware feeds, dark mode, and 2026 design language.
-Version: 3.8.12
+Version: 3.8.13
 Requires at least: 6.4
 Tested up to: 6.8
 Requires PHP: 8.0
@@ -3096,23 +3096,27 @@ body .tacobout-magazine-grid .wp-block-post .wp-block-post-featured-image img {
     z-index: 100000;
 }
 .tacobout-primary-navigation .is-menu-open {
+    box-sizing: border-box;
+    animation: none !important;
     overflow-y: auto;
     overscroll-behavior: contain;
     padding: calc(4.5rem + env(safe-area-inset-top)) max(1.25rem, env(safe-area-inset-right)) max(2rem, env(safe-area-inset-bottom)) max(1.25rem, env(safe-area-inset-left)) !important;
 }
 .tacobout-primary-navigation .is-menu-open .wp-block-navigation__responsive-container-content {
-    align-items: stretch;
+    align-items: stretch !important;
     padding: 0;
     max-width: 40rem;
     margin-inline: auto;
 }
 .tacobout-primary-navigation .is-menu-open .wp-block-navigation__container {
-    align-items: stretch;
+    align-items: stretch !important;
+    justify-content: flex-start !important;
     width: 100%;
     gap: 1rem;
 }
 .tacobout-primary-navigation .is-menu-open .wp-block-navigation-item {
-    align-items: stretch;
+    align-items: stretch !important;
+    text-align: left;
     width: 100%;
 }
 .tacobout-primary-navigation .is-menu-open .wp-block-navigation__submenu-container {
@@ -3125,7 +3129,12 @@ body .tacobout-magazine-grid .wp-block-post .wp-block-post-featured-image img {
     border-left: 2px solid var(--taco-border);
     border-radius: 0;
     box-shadow: none;
+    gap: .125rem !important;
 }
+.tacobout-primary-navigation .is-menu-open .has-child > .wp-block-navigation-item__content { font-weight: 700; }
+.tacobout-primary-navigation .is-menu-open .tacobout-sister-nav-pill { align-self: flex-start; width: auto; }
+.tacobout-primary-navigation .is-menu-open .tacobout-sister-nav-pill a { color: #6d28d9 !important; }
+[data-theme="dark"] .tacobout-primary-navigation .is-menu-open .tacobout-sister-nav-pill a { color: #c4b5fd !important; }
 .tacobout-primary-navigation .is-menu-open .wp-block-navigation__responsive-container-close {
     position: fixed;
     top: max(1rem, env(safe-area-inset-top));

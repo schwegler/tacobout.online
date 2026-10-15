@@ -297,7 +297,7 @@ after the initial snapshot populates. `fetched_at` records the last successful
 scan; retained reviews can be older during outages. Theme switching clears both
 refresh hooks and the lock, while preserving the last good review snapshot.
 
-## Reset-safe category navigation (3.8.12)
+## Reset-safe category navigation (3.8.13)
 
 The code header restores the production Media and Everything category menus in
 their original order, including Big Brother under Media and Schweg/Guest Posts
@@ -315,3 +315,7 @@ Footer and article discussion links use the integrated tacobout Bluesky and
 Mastodon accounts. Updating the theme does not remove Site Editor overrides;
 reset the header/footer template parts only if they still override these defaults.
 Posts, integrations, public Trove reviews, masonry, and tracking are retained.
+
+Bluesky embed scripts are consolidated into one footer loader to avoid duplicate
+global declarations on multi-post feeds. New infinite-scroll cards call the
+provider scanner without executing its loader again.
