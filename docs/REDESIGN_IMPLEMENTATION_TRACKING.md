@@ -17,7 +17,7 @@ This plan organizes the `tacobout.online` redesign into self-contained, reviewab
 | **1. Global Header & Sister Nav** | Custom speech-bubble taco app icon in header, custom vector glyph sister-brand pill, sticky header offsets | `parts/header.html`, `style.css`, `tests/HeaderNavigationTest.php` | `DONE` |
 | **2. Homepage Hero & Bento Feed** | "On the Air" welcome strip featuring `telly_pose_01_on_the_mic.png`, end-of-feed notice with `telly_pose_02_taco_break.png`, footer tagline | `templates/home.html`, `patterns/on-the-air.php`, `tacobout-infinite-scroll.js`, `tests/HomepageBentoTest.php` | `DONE` |
 | **3. Single Article & Fediverse Prompt** | Post footer discussion card with `telly_pose_02_taco_break.png` and Bluesky CTA, Trove review card with `facet_pose_04_five_star.png`, trending box | `templates/single.html`, `inc/sidebar.php`, `patterns/post-discussion.php`, `tests/SingleArticleAndSidebarTest.php` | `DONE` |
-| **4. Channel Banners & 404 Recovery** | Category archive channel cards (`/in/media/tv/`, `/wrestling/`, `/food/`), About page Bento grid, 404 "Dead Air on This Channel" | `templates/archive.html`, `templates/404.html`, archive/404 tests | `TODO` |
+| **4. Channel Banners & 404 Recovery** | Category archive channel cards (`/in/media/tv/`, `/wrestling/`, `/food/`), About page Bento grid, 404 "Dead Air on This Channel" | `templates/archive.html`, `templates/404.html`, `patterns/channel-banner.php`, `patterns/error-404.php`, `tests/ChannelBannerAndError404Test.php` | `DONE` |
 | **5. Quality Gates & Release Verification** | Full PHPUnit test suite, responsive checks (320px–2000px), dark/light mode contrast | All tests pass, zero regressions | `TODO` |
 
 ---
@@ -52,6 +52,15 @@ This plan organizes the `tacobout.online` redesign into self-contained, reviewab
   - Added styles in `sidebar.css` and `style.css`.
   - Bumped theme version to `3.8.9` in `style.css`.
   - Added PHPUnit tests in `tests/SingleArticleAndSidebarTest.php`.
+
+- **Commit 4:** `Add archive Channel Banner Cards and Dead Air 404 recovery page`
+  - Added `patterns/channel-banner.php` with custom curated banner headlines, sub-copy, Telly mascots (`telly_pose_03_side_eye.png`, `telly_pose_02_taco_break.png`), and Trove links for TV, Wrestling, Big Brother, and Food channels.
+  - Updated `templates/archive.html` to use the Channel Banner pattern.
+  - Added `patterns/error-404.php` featuring `telly_pose_03_side_eye.png`, "404: Dead Air on This Channel" broadcast recovery, and search form.
+  - Updated `templates/404.html` to use the error-404 pattern.
+  - Added styles in `style.css`.
+  - Bumped theme version to `3.8.10` in `style.css`.
+  - Added PHPUnit tests in `tests/ChannelBannerAndError404Test.php`.
 
 ---
 
