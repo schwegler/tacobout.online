@@ -39,7 +39,7 @@ function tacobout_trending_shortcode() {
 		$posts = get_posts( array( 'numberposts' => 3, 'post_status' => 'publish', 'has_password' => false, 'exclude' => is_single() ? array( get_queried_object_id() ) : array() ) );
 	}
 	$bolt_icon = '<svg class="tacobout-sidebar-icon" viewBox="0 0 24 24" fill="currentColor" width="14" height="14" aria-hidden="true"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>';
-	$mascot_hype = esc_url( get_theme_file_uri( 'assets/brand/telly_pose_04_breaking_hype.png' ) );
+	$mascot_hype = esc_url( add_query_arg( 'ver', wp_get_theme()->get( 'Version' ), get_theme_file_uri( 'assets/brand/telly_pose_04_breaking_hype.png' ) ) );
 	$title = $trending ? __( 'Hot on the Wire', 'tacobout' ) : __( 'Latest Posts', 'tacobout' );
 	$caption = $trending ? __( 'Most read over the past 7 days', 'tacobout' ) : __( 'Recent posts while view stats are unavailable', 'tacobout' );
 
@@ -158,8 +158,8 @@ function tacobout_review_section( $reviews ) {
 		return '';
 	}
 	$gem_icon = '<svg class="tacobout-sidebar-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="14" height="14" aria-hidden="true"><path d="M6 3h12l4 7-10 11L2 10l4-7z"/><path d="M2 10h20"/><path d="M12 21L7.5 10 10 3"/><path d="M12 21l4.5-11L14 3"/></svg>';
-	$mascot_facet = esc_url( get_theme_file_uri( 'assets/brand/facet_pose_04_five_star.png' ) );
-	$html = '<section class="tacobout-discovery-section tacobout-review-section"><div class="tacobout-sidebar-heading"><h3>' . $gem_icon . ' ' . esc_html__( 'Freshly Logged in Trove', 'tacobout' ) . '</h3><img src="' . $mascot_facet . '" alt="" class="mascot-sticker tacobout-sidebar-mascot" /></div><a class="tacobout-sidebar-shelf-link" href="https://trove.schweg.xyz/">' . esc_html__( 'Explore the shelf', 'tacobout' ) . ' ' . tacobout_sidebar_arrow() . '</a><p class="tacobout-sidebar-caption">' . esc_html__( 'Live from the public review vault', 'tacobout' ) . '</p><ul class="tacobout-sidebar-links tacobout-review-list">';
+	$mascot_facet = esc_url( add_query_arg( 'ver', wp_get_theme()->get( 'Version' ), get_theme_file_uri( 'assets/brand/facet_pose_01_bookworm.png' ) ) );
+	$html = '<section class="tacobout-discovery-section tacobout-review-section"><div class="tacobout-sidebar-heading"><h3>' . $gem_icon . ' ' . esc_html__( 'Latest reviews from Trove', 'tacobout' ) . '</h3><img src="' . $mascot_facet . '" alt="" class="mascot-sticker tacobout-sidebar-mascot" /></div><a class="tacobout-sidebar-shelf-link" href="https://trove.schweg.xyz/">' . esc_html__( 'Explore the shelf', 'tacobout' ) . ' ' . tacobout_sidebar_arrow() . '</a><p class="tacobout-sidebar-caption">' . esc_html__( 'Recent reviews from the public collection. Refreshed periodically.', 'tacobout' ) . '</p><ul class="tacobout-sidebar-links tacobout-review-list">';
 	foreach ( $reviews as $review ) {
 		$html .= '<li><a class="tacobout-review-link" href="' . esc_url( $review['url'] ) . '">';
 		$image = tacobout_sidebar_image_url( $review['image'] ?? '' );

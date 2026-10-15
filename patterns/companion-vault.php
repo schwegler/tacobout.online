@@ -17,13 +17,13 @@ $mascot_url = add_query_arg( 'ver', wp_get_theme()->get( 'Version' ), get_theme_
 	<div class="tacobout-vault-content">
 		<span class="tacobout-vault-badge">
 			<svg class="tacobout-badge-icon" viewBox="0 0 24 24" fill="currentColor" width="12" height="12" aria-hidden="true"><polygon points="6 3 18 3 22 9 12 22 2 9"/></svg>
-			SISTER COMPANION
+			THE COLLECTION
 		</span>
-		<h2 class="tacobout-vault-headline">The Companion Vault (trove.schweg.xyz)</h2>
-		<p class="tacobout-vault-subcopy">Because shouting into the void needed a card catalog, I also built Trove—a custom media tracker for every movie, show, comic, book, album, and game mentioned here.</p>
+		<h2 class="tacobout-vault-headline">The collection continues on Trove.</h2>
+		<p class="tacobout-vault-subcopy">Track movies, shows, comics, books, albums, and games. Organize your collection, log progress, and share reviews on Trove.</p>
 		<div class="tacobout-vault-actions">
 			<a href="https://trove.schweg.xyz" class="tacobout-sister-nav-pill" target="_blank" rel="noopener noreferrer">
-				Explore the Shelf on Trove
+				Explore Trove
 			</a>
 		</div>
 	</div>

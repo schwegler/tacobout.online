@@ -6,8 +6,8 @@ class ReleaseQualityGatesTest extends \PHPUnit\Framework\TestCase {
         $this->assertFileExists($pattern_path);
         $pattern = file_get_contents($pattern_path);
 
-        $this->assertStringContainsString('The Companion Vault (trove.schweg.xyz)', $pattern);
-        $this->assertStringContainsString('Because shouting into the void needed a card catalog, I also built Trove—a custom media tracker for every movie, show, comic, book, album, and game mentioned here.', $pattern);
+        $this->assertStringContainsString('The collection continues on Trove.', $pattern);
+        $this->assertStringContainsString('Track movies, shows, comics, books, albums, and games. Organize your collection, log progress, and share reviews on Trove.', $pattern);
         $this->assertStringContainsString('mascot_duo_telly_and_facet_transparent.png', $pattern);
         $this->assertStringContainsString('https://trove.schweg.xyz', $pattern);
         $this->assertStringContainsString('tacobout-badge-icon', $pattern);
@@ -23,7 +23,7 @@ class ReleaseQualityGatesTest extends \PHPUnit\Framework\TestCase {
     public function test_style_css_version_and_companion_vault_rules() {
         $css = file_get_contents(__DIR__ . '/../style.css');
 
-        $this->assertStringContainsString('Version: 3.8.14', $css);
+        $this->assertStringContainsString('Version: 3.8.15', $css);
         $this->assertStringContainsString('.tacobout-companion-vault-card', $css);
         $this->assertStringContainsString('.tacobout-vault-mascot', $css);
         $this->assertStringContainsString('.tacobout-vault-badge', $css);
@@ -41,7 +41,7 @@ class ReleaseQualityGatesTest extends \PHPUnit\Framework\TestCase {
             'facet_pose_01_bookworm.png',
             'facet_pose_02_gamer_mode.png',
             'facet_pose_03_crate_digger.png',
-            'facet_pose_04_five_star.png',
+            'facet_pose_01_bookworm.png',
             'mascot_duo_telly_and_facet_transparent.png',
             'tacobout_rounded_app_icon.png',
             'trove_rounded_app_icon.png',

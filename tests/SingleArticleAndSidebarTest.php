@@ -14,8 +14,8 @@ class SingleArticleAndSidebarTest extends \PHPUnit\Framework\TestCase {
         $this->assertStringContainsString('telly_pose_02_taco_break.png', $pattern);
         $this->assertStringContainsString('Written by <strong>Schweg and Friends</strong>', $pattern);
         $this->assertStringContainsString('Fuelled by tacos, games &amp; cats (Rose &amp; Violet)', $pattern);
-        $this->assertStringContainsString('Reply directly from Bluesky or Mastodon', $pattern);
-        $this->assertStringContainsString('Taco ‘bout this on Bluesky →', $pattern);
+        $this->assertStringContainsString('Follow taco ’bout it on Bluesky or Mastodon', $pattern);
+        $this->assertStringContainsString('Follow on Bluesky →', $pattern);
         $this->assertStringContainsString('https://bsky.app/profile/tacobout.online', $pattern);
         $this->assertStringContainsString('https://mastodon.social/@blog@tacobout.online', $pattern);
         // Custom SVG icons used instead of emojis
@@ -31,13 +31,13 @@ class SingleArticleAndSidebarTest extends \PHPUnit\Framework\TestCase {
         $this->assertStringContainsString('Most read over the past 7 days', $sidebar_php);
         $this->assertStringContainsString('telly_pose_04_breaking_hype.png', $sidebar_php);
 
-        $this->assertStringContainsString('Freshly Logged in Trove', $sidebar_php);
-        $this->assertStringContainsString('Live from the public review vault', $sidebar_php);
+        $this->assertStringContainsString('Latest reviews from Trove', $sidebar_php);
+        $this->assertStringContainsString('Recent reviews from the public collection. Refreshed periodically.', $sidebar_php);
         $this->assertStringContainsString('Explore the shelf', $sidebar_php);
-        $this->assertStringContainsString('facet_pose_04_five_star.png', $sidebar_php);
+        $this->assertStringContainsString('facet_pose_01_bookworm.png', $sidebar_php);
 
         // Verify Trove mascot is directly in the heading div matching the tacobout widget
-        $this->assertMatchesRegularExpression('/tacobout-sidebar-heading.*?Freshly Logged in Trove.*?tacobout-sidebar-mascot/', $sidebar_php);
+        $this->assertMatchesRegularExpression('/tacobout-sidebar-heading.*?Latest reviews from Trove.*?tacobout-sidebar-mascot/', $sidebar_php);
         $this->assertStringContainsString('tacobout-sidebar-shelf-link', $sidebar_php);
 
         // Verify SVG icons are used without system emojis
