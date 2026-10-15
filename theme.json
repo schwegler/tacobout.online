@@ -8,22 +8,22 @@
 			"palette": [
 				{
 					"slug": "base",
-					"color": "#fafafa",
+					"color": "#f3effa",
 					"name": "Base"
 				},
 				{
 					"slug": "contrast",
-					"color": "#0f0f0f",
+					"color": "#0f0e17",
 					"name": "Contrast"
 				},
 				{
 					"slug": "accent",
-					"color": "#8b5cf6",
+					"color": "#2563eb",
 					"name": "Accent"
 				},
 				{
 					"slug": "accent-2",
-					"color": "#d946ef",
+					"color": "#1d4ed8",
 					"name": "Accent Secondary"
 				},
 				{

@@ -12,12 +12,12 @@ class SingleArticleAndSidebarTest extends \PHPUnit\Framework\TestCase {
         $pattern = file_get_contents(__DIR__ . '/../patterns/post-discussion.php');
 
         $this->assertStringContainsString('telly_pose_02_taco_break.png', $pattern);
-        $this->assertStringContainsString('Written by <strong>@schwegler</strong>', $pattern);
-        $this->assertStringContainsString('Fuelled by tacos, Steam Deck &amp; cats (Rose &amp; Violet)', $pattern);
+        $this->assertStringContainsString('Written by <strong>Schweg and Friends</strong>', $pattern);
+        $this->assertStringContainsString('Fuelled by tacos, games &amp; cats (Rose &amp; Violet)', $pattern);
         $this->assertStringContainsString('Reply directly from Bluesky or Mastodon', $pattern);
         $this->assertStringContainsString('Taco ‘bout this on Bluesky →', $pattern);
-        $this->assertStringContainsString('https://bsky.app/profile/schwegler.lol', $pattern);
-        $this->assertStringContainsString('https://tacobout.online/@schwegler', $pattern);
+        $this->assertStringContainsString('https://bsky.app/profile/tacobout.online', $pattern);
+        $this->assertStringContainsString('https://mastodon.social/@blog@tacobout.online', $pattern);
         // Custom SVG icons used instead of emojis
         $this->assertStringContainsString('tacobout-action-icon', $pattern);
         $this->assertStringNotContainsString('🦋', $pattern);

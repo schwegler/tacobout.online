@@ -296,3 +296,22 @@ even when requests do not reach PHP. Purge cached homepage and single-post HTML
 after the initial snapshot populates. `fetched_at` records the last successful
 scan; retained reviews can be older during outages. Theme switching clears both
 refresh hooks and the lock, while preserving the last good review snapshot.
+
+## Reset-safe category navigation (3.8.12)
+
+The code header restores the production Media and Everything category menus in
+their original order, including Big Brother under Media and Schweg/Guest Posts
+under Everything. Category URLs use the site's `/in/` permalink base. The Trove
+pill remains; the Moot Checker is temporarily omitted pending its URL.
+
+Navigation collapses below 1100px. Native WordPress open/close, focus handling,
+and submenu controls are retained. The open dialog has an opaque theme-aware
+surface, safe-area spacing, scrollable nested links, and a visible close button.
+Scroll hiding pauses while navigation is open or keyboard focus is in the header.
+The site logo no longer overwrites the independently configured site icon.
+
+Default global colors now use lavender, midnight ink, and accessible blue links.
+Footer and article discussion links use the integrated tacobout Bluesky and
+Mastodon accounts. Updating the theme does not remove Site Editor overrides;
+reset the header/footer template parts only if they still override these defaults.
+Posts, integrations, public Trove reviews, masonry, and tracking are retained.
