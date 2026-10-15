@@ -670,6 +670,11 @@
 		grid.appendChild(fragment);
 		// Re-check sentinel position in case viewport needs more content
 		setTimeout(() => layoutNewItems(newCards), 100);
+		// The shared provider loader is already present on feeds with Bluesky
+		// embeds. Scan only newly inserted cards, without evaluating it again.
+		if (window.bluesky && typeof window.bluesky.scan === 'function') {
+			newCards.forEach(card => window.bluesky.scan(card));
+		}
 		return newCards;
 	}
 
