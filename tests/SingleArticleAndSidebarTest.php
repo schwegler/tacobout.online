@@ -36,6 +36,10 @@ class SingleArticleAndSidebarTest extends \PHPUnit\Framework\TestCase {
         $this->assertStringContainsString('Explore the shelf', $sidebar_php);
         $this->assertStringContainsString('facet_pose_04_five_star.png', $sidebar_php);
 
+        // Verify Trove mascot is directly in the heading div matching the tacobout widget
+        $this->assertMatchesRegularExpression('/tacobout-sidebar-heading.*?Freshly Logged in Trove.*?tacobout-sidebar-mascot/', $sidebar_php);
+        $this->assertStringContainsString('tacobout-sidebar-shelf-link', $sidebar_php);
+
         // Verify SVG icons are used without system emojis
         $this->assertStringContainsString('tacobout-sidebar-icon', $sidebar_php);
         $this->assertStringNotContainsString('⚡', $sidebar_php);
@@ -52,6 +56,8 @@ class SingleArticleAndSidebarTest extends \PHPUnit\Framework\TestCase {
         $this->assertStringContainsString('.tacobout-mastodon-cta', $css);
 
         $this->assertStringContainsString('.tacobout-sidebar-mascot', $sidebar_css);
+        $this->assertStringContainsString('height: 44px;', $sidebar_css);
+        $this->assertStringContainsString('.tacobout-sidebar-shelf-link', $sidebar_css);
         $this->assertStringContainsString('.tacobout-sidebar-icon', $sidebar_css);
     }
 }
