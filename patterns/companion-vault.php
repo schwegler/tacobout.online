@@ -1,0 +1,31 @@
+<?php
+/**
+ * Title: The Companion Vault Callout
+ * Slug: tacobout/companion-vault
+ * Categories: featured
+ * Inserter: true
+ */
+if ( ! defined( 'ABSPATH' ) ) { exit; }
+
+$mascot_url = get_theme_file_uri( 'assets/brand/mascot_duo_telly_and_facet_transparent.png' );
+?>
+<!-- wp:group {"className":"tacobout-companion-vault-card","layout":{"type":"flex","flexWrap":"wrap","verticalAlignment":"center"}} -->
+<div class="wp-block-group tacobout-companion-vault-card">
+	<div class="tacobout-vault-mascot-wrap">
+		<img src="<?php echo esc_url( $mascot_url ); ?>" alt="" class="mascot-sticker tacobout-vault-mascot" />
+	</div>
+	<div class="tacobout-vault-content">
+		<span class="tacobout-vault-badge">
+			<svg class="tacobout-badge-icon" viewBox="0 0 24 24" fill="currentColor" width="12" height="12" aria-hidden="true"><polygon points="6 3 18 3 22 9 12 22 2 9"/></svg>
+			SISTER COMPANION
+		</span>
+		<h2 class="tacobout-vault-headline">The Companion Vault (trove.schweg.xyz)</h2>
+		<p class="tacobout-vault-subcopy">Because shouting into the void needed a card catalog, I also built Trove—a custom media tracker for every movie, show, comic, book, album, and game mentioned here.</p>
+		<div class="tacobout-vault-actions">
+			<a href="https://trove.schweg.xyz" class="tacobout-sister-nav-pill" target="_blank" rel="noopener noreferrer">
+				Explore the Shelf on Trove
+			</a>
+		</div>
+	</div>
+</div>
+<!-- /wp:group -->

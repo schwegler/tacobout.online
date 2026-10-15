@@ -4,7 +4,7 @@ Theme URI: https://tacobout.online
 Author: schwegler
 Author URI: https://tacobout.online
 Description: A personal magazine theme for schwegler — ultra-modern tumblog with compatibility with optional Bluesky/ATProto & ActivityPub plugins. Format-aware feeds, dark mode, and 2026 design language.
-Version: 3.8.10
+Version: 3.8.11
 Requires at least: 6.4
 Tested up to: 6.8
 Requires PHP: 8.0
@@ -1892,6 +1892,108 @@ body.home:not(.paged) .tacobout-magazine-grid .wp-block-post:first-child .entry-
 	}
 
 	.tacobout-error-mascot {
+		height: 80px;
+		max-height: 80px;
+	}
+}
+
+/* ============================
+   COMPANION VAULT CALLOUT CARD
+   ============================ */
+.tacobout-companion-vault-card {
+	background: var(--bg-surface, #F3EFFA);
+	border: 2px solid var(--border-comic, #18181B);
+	box-shadow: var(--shadow-comic, 4px 4px 0px #18181B);
+	border-radius: var(--radius-card, 16px);
+	padding: 2rem 2.25rem;
+	margin: 2.5rem 0;
+	display: flex;
+	align-items: center;
+	gap: 2rem;
+}
+
+[data-theme="dark"] .tacobout-companion-vault-card {
+	background: #1C1A29;
+	border-color: #2E2B44;
+	box-shadow: 4px 4px 0px #09090D;
+}
+
+.tacobout-vault-mascot-wrap {
+	flex-shrink: 0;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.tacobout-vault-mascot {
+	width: auto;
+	height: 110px;
+	max-height: 110px;
+	object-fit: contain;
+	display: block;
+	transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.tacobout-vault-mascot:hover {
+	transform: scale(1.06) rotate(-2deg);
+}
+
+.tacobout-vault-content {
+	flex: 1;
+	min-width: 0;
+}
+
+.tacobout-vault-badge {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.35rem;
+	padding: 0.2rem 0.65rem;
+	border-radius: var(--radius-pill, 9999px);
+	background: var(--trove-violet, #7C3AED);
+	color: #FFFFFF;
+	font-family: var(--wp--preset--font-family--mono, monospace);
+	font-weight: 800;
+	font-size: 0.725rem;
+	letter-spacing: 0.08em;
+	text-transform: uppercase;
+	margin-bottom: 0.5rem;
+	box-shadow: 1px 1px 0px rgba(0, 0, 0, 0.3);
+}
+
+.tacobout-vault-headline {
+	font-family: var(--wp--preset--font-family--heading, inherit);
+	font-size: clamp(1.35rem, 2.5vw, 1.75rem);
+	font-weight: 800;
+	letter-spacing: -0.02em;
+	line-height: 1.25;
+	margin: 0 0 0.5rem 0;
+	color: var(--text-primary, #0F0E17);
+}
+
+[data-theme="dark"] .tacobout-vault-headline {
+	color: #F3EFFA;
+}
+
+.tacobout-vault-subcopy {
+	font-size: 0.95rem;
+	line-height: 1.5;
+	color: var(--wp--preset--color--muted, #71717A);
+	margin: 0 0 1.25rem 0;
+}
+
+[data-theme="dark"] .tacobout-vault-subcopy {
+	color: #A0A0B0;
+}
+
+@media (max-width: 640px) {
+	.tacobout-companion-vault-card {
+		padding: 1.5rem 1.25rem;
+		flex-direction: column;
+		align-items: flex-start;
+		gap: 1.25rem;
+	}
+
+	.tacobout-vault-mascot {
 		height: 80px;
 		max-height: 80px;
 	}

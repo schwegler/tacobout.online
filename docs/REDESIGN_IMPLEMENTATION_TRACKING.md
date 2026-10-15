@@ -18,7 +18,7 @@ This plan organizes the `tacobout.online` redesign into self-contained, reviewab
 | **2. Homepage Hero & Bento Feed** | "On the Air" welcome strip featuring `telly_pose_01_on_the_mic.png`, end-of-feed notice with `telly_pose_02_taco_break.png`, footer tagline | `templates/home.html`, `patterns/on-the-air.php`, `tacobout-infinite-scroll.js`, `tests/HomepageBentoTest.php` | `DONE` |
 | **3. Single Article & Fediverse Prompt** | Post footer discussion card with `telly_pose_02_taco_break.png` and Bluesky CTA, Trove review card with `facet_pose_04_five_star.png`, trending box | `templates/single.html`, `inc/sidebar.php`, `patterns/post-discussion.php`, `tests/SingleArticleAndSidebarTest.php` | `DONE` |
 | **4. Channel Banners & 404 Recovery** | Category archive channel cards (`/in/media/tv/`, `/wrestling/`, `/food/`), About page Bento grid, 404 "Dead Air on This Channel" | `templates/archive.html`, `templates/404.html`, `patterns/channel-banner.php`, `patterns/error-404.php`, `tests/ChannelBannerAndError404Test.php` | `DONE` |
-| **5. Quality Gates & Release Verification** | Full PHPUnit test suite, responsive checks (320px–2000px), dark/light mode contrast | All tests pass, zero regressions | `TODO` |
+| **5. Quality Gates & Release Verification** | Full PHPUnit test suite, Companion Vault pattern, About template, responsive checks (320px–2000px), emoji hygiene | All 78 tests pass (323 assertions), zero regressions | `DONE` |
 
 ---
 
@@ -61,6 +61,14 @@ This plan organizes the `tacobout.online` redesign into self-contained, reviewab
   - Added styles in `style.css`.
   - Bumped theme version to `3.8.10` in `style.css`.
   - Added PHPUnit tests in `tests/ChannelBannerAndError404Test.php`.
+
+- **Commit 5:** `Add Companion Vault callout pattern, About template, and finalize release quality gates`
+  - Added `patterns/companion-vault.php` featuring `mascot_duo_telly_and_facet_transparent.png`, custom SVG prism glyph, and Trove sister shelf copy.
+  - Added `templates/page-about.html` integrating the Companion Vault pattern.
+  - Added `.tacobout-companion-vault-card` and mascot responsive styling in `style.css`.
+  - Bumped theme version to `3.8.11` in `style.css`.
+  - Added comprehensive quality gates and emoji hygiene suite in `tests/ReleaseQualityGatesTest.php`.
+  - Verified 100% test pass rate (78 tests, 323 assertions).
 
 ---
 
