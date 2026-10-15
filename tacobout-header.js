@@ -22,8 +22,12 @@ document.addEventListener( 'DOMContentLoaded', () => {
 
 	const handleScroll = () => {
 		const currentScroll = window.scrollY;
+		// A transformed sticky ancestor traps the fixed navigation dialog. Keep
+		// the header visible for the entire dialog lifetime and keyboard use.
+		const menuOpen = header.querySelector( '.is-menu-open' );
+		const focused = header.contains( document.activeElement );
 
-		if ( currentScroll <= 0 ) {
+		if ( menuOpen || focused || currentScroll <= 0 ) {
 			header.classList.remove( 'is-hidden' );
 		} else if ( currentScroll > lastScroll && currentScroll > headerHeight ) {
 			// Scrolling down past the header height.

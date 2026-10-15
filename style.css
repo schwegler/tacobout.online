@@ -4,7 +4,7 @@ Theme URI: https://tacobout.online
 Author: schwegler
 Author URI: https://tacobout.online
 Description: A personal magazine theme for schwegler — ultra-modern tumblog with compatibility with optional Bluesky/ATProto & ActivityPub plugins. Format-aware feeds, dark mode, and 2026 design language.
-Version: 3.8.11
+Version: 3.8.12
 Requires at least: 6.4
 Tested up to: 6.8
 Requires PHP: 8.0
@@ -18,10 +18,10 @@ Tags: full-site-editing, block-theme, blog, dark-mode, post-formats, one-column,
    DESIGN TOKENS — DARK MODE
    ============================ */
 :root {
-	--taco-bg: #fafafa;
-	--taco-fg: #0f0f0f;
-	--taco-accent: #0066ff;
-	--taco-accent-2: #ff3366;
+	--taco-bg: #f3effa;
+	--taco-fg: #0f0e17;
+	--taco-accent: #2563eb;
+	--taco-accent-2: #1d4ed8;
 	--taco-muted: #71717a;
 	--taco-surface: #f4f4f5;
 	--taco-surface-2: #e4e4e7;
@@ -2760,17 +2760,11 @@ body.admin-bar .wp-block-navigation__responsive-container.is-menu-open {
 	right: 0 !important;
 	width: 100vw !important;
 	height: 100dvh !important;
-	background: rgba(250, 250, 250, 0.96) !important;
-	backdrop-filter: blur(20px) saturate(180%) !important;
-	-webkit-backdrop-filter: blur(20px) saturate(180%) !important;
+	background: var(--taco-bg) !important;
+	backdrop-filter: none !important;
+	-webkit-backdrop-filter: none !important;
 	color: var(--taco-fg) !important;
 	z-index: 100000 !important;
-}
-
-[data-theme="dark"] .wp-block-navigation__responsive-container.is-menu-open,
-html:not([data-theme="light"]) .wp-block-navigation__responsive-container.is-menu-open {
-	background: rgba(9, 9, 11, 0.96) !important;
-	color: var(--taco-fg) !important;
 }
 
 .wp-block-navigation__responsive-container.is-menu-open .wp-block-navigation-item__content {
@@ -3044,4 +3038,122 @@ body .tacobout-magazine-grid .tacobout-overflow-separator { grid-column: 1 / -1;
 /* Override dimensions baked into older saved Query blocks as well. */
 body .tacobout-magazine-grid .wp-block-post .wp-block-post-featured-image img {
 	object-fit: contain !important;
+}
+
+/* Reset-safe navigation: native WordPress dialog semantics, theme-owned layout. */
+.tacobout-header-row {
+    max-width: 1440px;
+    margin-inline: auto;
+    padding-inline: clamp(1rem, 3vw, 2rem);
+    flex-wrap: nowrap !important;
+    gap: 1.5rem;
+    min-height: 3rem;
+}
+.tacobout-header-brand { min-width: 0; flex-shrink: 1; gap: .75rem; }
+.tacobout-header-brand .wp-block-site-logo { flex: 0 0 auto; }
+.tacobout-header-brand .wp-block-site-title {
+    font-size: clamp(1.1rem, 2.4vw, 1.65rem);
+    line-height: 1.15;
+    white-space: nowrap;
+}
+.tacobout-header-brand .wp-block-site-title a { color: var(--taco-fg); }
+.tacobout-primary-navigation { flex: 0 0 auto; }
+.tacobout-primary-navigation a { text-decoration: none; }
+.tacobout-primary-navigation .wp-block-navigation-item__content,
+.tacobout-primary-navigation .wp-block-navigation-submenu__toggle {
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
+}
+.tacobout-primary-navigation a:focus-visible,
+.tacobout-primary-navigation button:focus-visible {
+    outline: 2px solid var(--taco-accent);
+    outline-offset: 4px;
+    border-radius: 6px;
+}
+.tacobout-primary-navigation .wp-block-navigation__submenu-container {
+    background: var(--taco-bg);
+    color: var(--taco-fg);
+    border: 1px solid var(--taco-border);
+    border-radius: 12px;
+    box-shadow: var(--taco-shadow-lg);
+    padding: .5rem;
+    min-width: 13rem;
+}
+.tacobout-primary-navigation .wp-block-navigation__submenu-container a {
+    padding: .5rem .75rem;
+    width: 100%;
+    border-radius: 6px;
+    color: var(--taco-fg);
+}
+.tacobout-primary-navigation .wp-block-navigation__submenu-container a:hover {
+    background: var(--taco-surface-2);
+}
+/* No transform, containment, or filter may become the open dialog's viewport. */
+.tacobout-header:has(.is-menu-open) {
+    transform: none !important;
+    transition: none;
+    z-index: 100000;
+}
+.tacobout-primary-navigation .is-menu-open {
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    padding: calc(4.5rem + env(safe-area-inset-top)) max(1.25rem, env(safe-area-inset-right)) max(2rem, env(safe-area-inset-bottom)) max(1.25rem, env(safe-area-inset-left)) !important;
+}
+.tacobout-primary-navigation .is-menu-open .wp-block-navigation__responsive-container-content {
+    align-items: stretch;
+    padding: 0;
+    max-width: 40rem;
+    margin-inline: auto;
+}
+.tacobout-primary-navigation .is-menu-open .wp-block-navigation__container {
+    align-items: stretch;
+    width: 100%;
+    gap: 1rem;
+}
+.tacobout-primary-navigation .is-menu-open .wp-block-navigation-item {
+    align-items: stretch;
+    width: 100%;
+}
+.tacobout-primary-navigation .is-menu-open .wp-block-navigation__submenu-container {
+    box-sizing: border-box;
+    width: 100%;
+    min-width: 0;
+    padding: .5rem 0 .5rem 1rem !important;
+    margin-top: .25rem;
+    border: 0;
+    border-left: 2px solid var(--taco-border);
+    border-radius: 0;
+    box-shadow: none;
+}
+.tacobout-primary-navigation .is-menu-open .wp-block-navigation__responsive-container-close {
+    position: fixed;
+    top: max(1rem, env(safe-area-inset-top));
+    right: max(1.25rem, env(safe-area-inset-right));
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: var(--taco-surface-2);
+    color: var(--taco-fg);
+}
+body.admin-bar .tacobout-primary-navigation .is-menu-open .wp-block-navigation__responsive-container-close { top: 3.75rem; }
+@media (max-width: 1099px) {
+    .tacobout-primary-navigation .wp-block-navigation__responsive-container:not(.is-menu-open) { display: none !important; }
+    .tacobout-primary-navigation .wp-block-navigation__responsive-container-open { display: flex !important; width: 44px; height: 44px; align-items: center; justify-content: center; }
+}
+@media (min-width: 1100px) {
+    .tacobout-primary-navigation .wp-block-navigation__responsive-container:not(.is-menu-open) { display: block !important; }
+    .tacobout-primary-navigation .wp-block-navigation__responsive-container-open { display: none !important; }
+}
+@media (max-width: 480px) {
+    .tacobout-header-row { gap: .75rem; padding-inline: .75rem; }
+    .tacobout-header-brand .wp-block-site-logo img { width: 36px; }
+    .wp-site-blocks { --wp--style--root--padding-left: 1rem; --wp--style--root--padding-right: 1rem; }
+    .wp-block-post-content { overflow-wrap: anywhere; }
+    .wp-block-post-content pre { max-width: 100%; overflow-x: auto; }
+    .wp-block-post-content .wp-block-table { overflow-x: auto; }
+    .wp-block-columns > .wp-block-column { min-width: 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+    .tacobout-header { transition: none; }
 }

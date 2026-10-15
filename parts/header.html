@@ -1,20 +1,37 @@
 <!-- wp:group {"className":"tacobout-header","layout":{"type":"constrained"},"style":{"spacing":{"padding":{"top":"1rem","bottom":"1rem"}}}} -->
 <div class="wp-block-group tacobout-header" style="padding-top:1rem;padding-bottom:1rem">
 	<!-- wp:group {"layout":{"type":"flex","flexWrap":"wrap","justifyContent":"space-between"},"style":{"spacing":{"blockGap":"1rem"}}} -->
-	<div class="wp-block-group">
+	<div class="wp-block-group tacobout-header-row">
 		<!-- wp:group {"layout":{"type":"flex","flexWrap":"nowrap"},"style":{"spacing":{"blockGap":"0.75rem"}}} -->
-		<div class="wp-block-group">
-			<!-- wp:site-logo {"width":40,"shouldSyncIcon":true} /-->
+		<div class="wp-block-group tacobout-header-brand">
+			<!-- wp:site-logo {"width":48,"shouldSyncIcon":false} /-->
 			<!-- wp:site-title {"level":0} /-->
 		</div>
 		<!-- /wp:group -->
 
-		<!-- wp:navigation {"layout":{"type":"flex","setCascadingProperties":true,"justifyContent":"right"},"style":{"spacing":{"blockGap":"1.5rem"}}} -->
-			<!-- wp:navigation-link {"label":"Writing","url":"/category/writing/","kind":"taxonomy","isTopLevelLink":true} /-->
-			<!-- wp:navigation-link {"label":"Scrapbook","url":"/category/scrapbook/","kind":"taxonomy","isTopLevelLink":true} /-->
-			<!-- wp:navigation-link {"label":"Links","url":"/category/links/","kind":"taxonomy","isTopLevelLink":true} /-->
-			<!-- wp:navigation-link {"label":"Podcast","url":"/category/podcast/","kind":"taxonomy","isTopLevelLink":true} /-->
+		<!-- wp:navigation {"ariaLabel":"Primary navigation","className":"tacobout-primary-navigation","openSubmenusOnClick":false,"overlayMenu":"mobile","layout":{"type":"flex","setCascadingProperties":true,"justifyContent":"right"},"style":{"spacing":{"blockGap":"1rem"}}} -->
 			<!-- wp:navigation-link {"label":"Media Trove & Library","url":"https://trove.schweg.xyz","className":"tacobout-sister-nav-pill","isTopLevelLink":true} /-->
+			<!-- wp:navigation-submenu {"label":"Media","url":"/in/media/","kind":"custom","isTopLevelLink":true} -->
+				<!-- wp:navigation-link {"label":"TV","url":"/in/media/tv/","kind":"custom"} /-->
+				<!-- wp:navigation-link {"label":"Movies","url":"/in/media/movies/","kind":"custom"} /-->
+				<!-- wp:navigation-link {"label":"Comics","url":"/in/media/comics/","kind":"custom"} /-->
+				<!-- wp:navigation-link {"label":"Games","url":"/in/media/games/","kind":"custom"} /-->
+				<!-- wp:navigation-link {"label":"Music","url":"/in/media/music/","kind":"custom"} /-->
+				<!-- wp:navigation-link {"label":"Books","url":"/in/media/books/","kind":"custom"} /-->
+				<!-- wp:navigation-link {"label":"Wrestling","url":"/in/media/wrestling/","kind":"custom"} /-->
+				<!-- wp:navigation-link {"label":"Big Brother","url":"/in/media/tv/big-brother/","kind":"custom"} /-->
+			<!-- /wp:navigation-submenu -->
+			<!-- wp:navigation-submenu {"label":"Everything","url":"/in/everything/","kind":"custom","isTopLevelLink":true} -->
+				<!-- wp:navigation-link {"label":"News","url":"/in/everything/news/","kind":"custom"} /-->
+				<!-- wp:navigation-link {"label":"Food","url":"/in/everything/food/","kind":"custom"} /-->
+				<!-- wp:navigation-link {"label":"Tech","url":"/in/everything/tech/","kind":"custom"} /-->
+				<!-- wp:navigation-link {"label":"Video","url":"/in/everything/video/","kind":"custom"} /-->
+				<!-- wp:navigation-link {"label":"Links","url":"/in/everything/links/","kind":"custom"} /-->
+				<!-- wp:navigation-link {"label":"Images","url":"/in/everything/images/","kind":"custom"} /-->
+				<!-- wp:navigation-link {"label":"Schweg Posts","url":"/in/everything/schwegler/","kind":"custom"} /-->
+				<!-- wp:navigation-link {"label":"Guest Posts","url":"/in/everything/guest/","kind":"custom"} /-->
+			<!-- /wp:navigation-submenu -->
+			<!-- wp:navigation-link {"label":"About","url":"/about/","kind":"custom","isTopLevelLink":true} /-->
 		<!-- /wp:navigation -->
 	</div>
 	<!-- /wp:group -->
