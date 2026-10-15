@@ -4,7 +4,7 @@ Theme URI: https://tacobout.online
 Author: schwegler
 Author URI: https://tacobout.online
 Description: A personal magazine theme for schwegler — ultra-modern tumblog with compatibility with optional Bluesky/ATProto & ActivityPub plugins. Format-aware feeds, dark mode, and 2026 design language.
-Version: 3.8.6
+Version: 3.8.8
 Requires at least: 6.4
 Tested up to: 6.8
 Requires PHP: 8.0
@@ -592,7 +592,7 @@ header:has(.tacobout-header) {
 a.tacobout-sister-nav-pill {
 	display: inline-flex;
 	align-items: center;
-	gap: 0.35rem;
+	gap: 0.45rem;
 	padding: 0.35rem 0.85rem;
 	border-radius: var(--radius-pill);
 	background: var(--shared-lavender);
@@ -604,6 +604,33 @@ a.tacobout-sister-nav-pill {
 	transition: background 0.15s ease, border-color 0.15s ease, transform 0.15s ease;
 }
 
+.tacobout-header .tacobout-sister-nav-pill a::before,
+.wp-block-navigation__container .tacobout-sister-nav-pill a::before,
+a.tacobout-sister-nav-pill::before {
+	content: "";
+	display: inline-block;
+	width: 14px;
+	height: 14px;
+	flex-shrink: 0;
+	background-color: currentColor;
+	-webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 3h12l4 7-10 11L2 10l4-7z'/%3E%3Cpath d='M2 10h20'/%3E%3Cpath d='M12 21L7.5 10 10 3'/%3E%3Cpath d='M12 21l4.5-11L14 3'/%3E%3C/svg%3E") no-repeat center / contain;
+	mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 3h12l4 7-10 11L2 10l4-7z'/%3E%3Cpath d='M2 10h20'/%3E%3Cpath d='M12 21L7.5 10 10 3'/%3E%3Cpath d='M12 21l4.5-11L14 3'/%3E%3C/svg%3E") no-repeat center / contain;
+}
+
+.tacobout-header .tacobout-sister-nav-pill a::after,
+.wp-block-navigation__container .tacobout-sister-nav-pill a::after,
+a.tacobout-sister-nav-pill::after {
+	content: "";
+	display: inline-block;
+	width: 12px;
+	height: 12px;
+	flex-shrink: 0;
+	background-color: currentColor;
+	-webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cline x1='7' y1='17' x2='17' y2='7'/%3E%3Cpolyline points='7 7 17 7 17 17'/%3E%3C/svg%3E") no-repeat center / contain;
+	mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cline x1='7' y1='17' x2='17' y2='7'/%3E%3Cpolyline points='7 7 17 7 17 17'/%3E%3C/svg%3E") no-repeat center / contain;
+	transition: transform 0.15s ease;
+}
+
 .tacobout-header .tacobout-sister-nav-pill a:hover,
 .wp-block-navigation__container .tacobout-sister-nav-pill a:hover,
 a.tacobout-sister-nav-pill:hover {
@@ -612,6 +639,12 @@ a.tacobout-sister-nav-pill:hover {
 	color: var(--trove-violet-hover) !important;
 	transform: translateY(-1px);
 	text-decoration: none;
+}
+
+.tacobout-header .tacobout-sister-nav-pill a:hover::after,
+.wp-block-navigation__container .tacobout-sister-nav-pill a:hover::after,
+a.tacobout-sister-nav-pill:hover::after {
+	transform: translate(1px, -1px);
 }
 
 [data-theme="dark"] .tacobout-header .tacobout-sister-nav-pill a,
@@ -628,6 +661,174 @@ a.tacobout-sister-nav-pill:hover {
 	background: rgba(124, 58, 237, 0.28);
 	border-color: var(--trove-violet);
 	color: #FFFFFF !important;
+}
+
+/* ============================
+   ON THE AIR — HERO WELCOME STRIP
+   ============================ */
+.tacobout-on-the-air-strip {
+	background: var(--bg-surface, #F3EFFA);
+	border: 2px solid var(--border-comic, #18181B);
+	box-shadow: var(--shadow-comic, 4px 4px 0px #18181B);
+	border-radius: var(--radius-card, 16px);
+	padding: 1.25rem 1.75rem;
+	margin-bottom: 2rem;
+	display: flex;
+	align-items: center;
+	gap: 1.5rem;
+	position: relative;
+	overflow: hidden;
+}
+
+[data-theme="dark"] .tacobout-on-the-air-strip {
+	background: #1C1A29;
+	border-color: #2E2B44;
+	box-shadow: 4px 4px 0px #09090D;
+}
+
+body:not(.home) .tacobout-on-the-air-strip {
+	display: none !important;
+}
+
+.tacobout-on-the-air-mascot-wrap {
+	flex-shrink: 0;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.tacobout-on-the-air-mascot {
+	width: auto;
+	height: 84px;
+	max-height: 84px;
+	object-fit: contain;
+	display: block;
+	transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.tacobout-on-the-air-mascot:hover {
+	transform: scale(1.08) rotate(-2deg);
+}
+
+.tacobout-on-the-air-content {
+	flex: 1;
+	min-width: 0;
+}
+
+.tacobout-on-the-air-badge {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.35rem;
+	padding: 0.2rem 0.65rem;
+	border-radius: var(--radius-pill, 9999px);
+	background: var(--shared-gold, #F59E0B);
+	color: #18181B;
+	font-family: var(--wp--preset--font-family--mono, monospace);
+	font-weight: 800;
+	font-size: 0.725rem;
+	letter-spacing: 0.08em;
+	text-transform: uppercase;
+	margin-bottom: 0.45rem;
+	box-shadow: 1px 1px 0px rgba(0, 0, 0, 0.3);
+}
+
+.tacobout-badge-icon {
+	display: inline-block;
+	flex-shrink: 0;
+}
+
+.tacobout-on-the-air-text {
+	font-size: 0.95rem;
+	line-height: 1.45;
+	color: var(--text-primary, #0F0E17);
+	margin: 0;
+	font-weight: 500;
+}
+
+[data-theme="dark"] .tacobout-on-the-air-text {
+	color: #F3EFFA;
+}
+
+@media (max-width: 640px) {
+	.tacobout-on-the-air-strip {
+		padding: 1rem 1.25rem;
+		gap: 1rem;
+	}
+
+	.tacobout-on-the-air-mascot {
+		height: 64px;
+		max-height: 64px;
+	}
+
+	.tacobout-on-the-air-text {
+		font-size: 0.875rem;
+	}
+}
+
+/* ============================
+   END-OF-FEED MASCOT CARD
+   ============================ */
+.tacobout-end-of-feed {
+	text-align: center;
+	padding: 2.5rem 1rem;
+	margin: 2.5rem auto 1.5rem auto;
+	max-width: 600px;
+}
+
+.tacobout-end-card {
+	background: var(--bg-surface, #F3EFFA);
+	border: 2px solid var(--border-comic, #18181B);
+	box-shadow: var(--shadow-comic, 4px 4px 0px #18181B);
+	border-radius: var(--radius-card, 16px);
+	padding: 2rem 1.75rem;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 0.75rem;
+}
+
+[data-theme="dark"] .tacobout-end-card {
+	background: #1C1A29;
+	border-color: #2E2B44;
+	box-shadow: 4px 4px 0px #09090D;
+}
+
+.tacobout-end-mascot {
+	width: auto;
+	height: 96px;
+	max-height: 96px;
+	object-fit: contain;
+	display: block;
+	margin: 0 auto 0.5rem auto;
+	transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.tacobout-end-mascot:hover {
+	transform: scale(1.08) rotate(-2deg);
+}
+
+.tacobout-end-headline {
+	font-family: var(--wp--preset--font-family--heading, inherit);
+	font-weight: 700;
+	font-size: 1.15rem;
+	margin: 0;
+	color: var(--text-primary, #0F0E17);
+}
+
+[data-theme="dark"] .tacobout-end-headline {
+	color: #F3EFFA;
+}
+
+.tacobout-end-subcopy {
+	font-size: 0.925rem;
+	line-height: 1.45;
+	color: var(--wp--preset--color--muted, #71717A);
+	margin: 0 0 0.5rem 0;
+	max-width: 480px;
+}
+
+[data-theme="dark"] .tacobout-end-subcopy {
+	color: #A0A0B0;
 }
 
 /* ============================
@@ -943,32 +1144,32 @@ body.home:not(.paged) .tacobout-magazine-grid .wp-block-post:first-child {
 
 /* Latest Badge */
 body.home:not(.paged) .tacobout-magazine-grid .wp-block-post:first-child::before {
-	content: "LATEST";
+	content: "LATEST DROP";
 	position: absolute;
 	top: 1rem;
 	left: 1.5rem;
-	background: var(--taco-accent);
+	background: var(--taco-blue, #3B82F6);
 	color: white;
 	padding: 4px 12px;
 	border-radius: 100px;
-	font-size: 0.75rem;
-	font-weight: 700;
-	letter-spacing: 0.1em;
+	font-size: 0.725rem;
+	font-weight: 800;
+	letter-spacing: 0.08em;
 	z-index: 10;
 }
 
 /* ⚡ Bolt: Optimize pulse animation by offloading to compositor thread */
 body.home:not(.paged) .tacobout-magazine-grid .wp-block-post:first-child::after {
-	content: "LATEST" / "";
+	content: "LATEST DROP" / "";
 	position: absolute;
 	top: 1rem;
 	left: 1.5rem;
-	background: var(--taco-accent);
+	background: var(--taco-blue, #3B82F6);
 	padding: 4px 12px;
 	border-radius: 100px;
-	font-size: 0.75rem;
-	font-weight: 700;
-	letter-spacing: 0.1em;
+	font-size: 0.725rem;
+	font-weight: 800;
+	letter-spacing: 0.08em;
 	z-index: 9;
 	pointer-events: none;
 	animation: pulse-badge 2s infinite;

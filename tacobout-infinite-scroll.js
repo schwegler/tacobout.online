@@ -327,12 +327,23 @@
 	`;
 	spinner.style.display = "none";
 
-	const endMessage = document.createElement("p");
-	endMessage.className = "has-muted-color has-text-color";
-	endMessage.style.cssText =
-		"text-align: center; padding: 2rem 0; font-size: 0.875rem; display: none;";
-	endMessage.textContent = "You have reached the end of the feed.";
+	const endMessage = document.createElement("div");
+	endMessage.className = "tacobout-end-of-feed";
+	endMessage.style.cssText = "display: none;";
 	endMessage.setAttribute("aria-live", "polite");
+
+	const tacoBreakMascot = (config && config.mascotTacoBreak)
+		? config.mascotTacoBreak
+		: ((config && config.siteUrl ? config.siteUrl : '') + '/wp-content/themes/tacobout/assets/brand/telly_pose_02_taco_break.png');
+
+	endMessage.innerHTML = `
+		<div class="tacobout-end-card">
+			<img src="${tacoBreakMascot}" alt="Telly having a taco break" class="mascot-sticker tacobout-end-mascot" />
+			<p class="tacobout-end-headline">You’ve hit the bottom of the taco basket.</p>
+			<p class="tacobout-end-subcopy">No more posts down here—grab a snack, or browse 640+ logged movies, comics, and shows over on Trove →</p>
+			<a href="https://trove.schweg.xyz" class="tacobout-sister-nav-pill">Browse 640+ Titles in Trove Vault</a>
+		</div>
+	`;
 
 	// Insert sentinel, spinner, and end message after the grid's parent query block
 	const queryBlock = grid.closest(".wp-block-query");
@@ -489,7 +500,7 @@
 			const more = document.createElement('a');
 			more.className = 'wp-block-post-excerpt__more-link';
 			more.href = post.link;
-			more.textContent = 'Read more →';
+			more.textContent = 'Tune in & read →';
 			const target = excerpt.querySelector('p:last-child') || excerpt;
 			target.append(document.createTextNode(' '), more);
 		}
@@ -630,7 +641,12 @@
 			// Restore server pagination if the network or REST endpoint fails.
 			document.body.classList.remove('tacobout-infinite-scroll-active');
 			allLoaded = true;
-			endMessage.textContent = 'Failed to load more posts.';
+			const errorHeadline = endMessage.querySelector('.tacobout-end-headline');
+			if (errorHeadline) {
+				errorHeadline.textContent = 'Failed to load more posts.';
+			} else {
+				endMessage.textContent = 'Failed to load more posts.';
+			}
 			endMessage.style.display = 'block';
 			observer.disconnect();
 		} finally {

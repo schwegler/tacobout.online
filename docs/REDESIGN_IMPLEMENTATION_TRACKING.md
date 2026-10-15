@@ -14,8 +14,8 @@ This plan organizes the `tacobout.online` redesign into self-contained, reviewab
 | Phase / Module | Description | Key Deliverables & Evidence | Status |
 | :--- | :--- | :--- | :--- |
 | **0. Tracking & Brand Assets** | Establish redesign tokens, ligne claire mechanics, `.mascot-sticker` system, and Telly/Trove transparent PNGs | `assets/brand/*`, `style.css`, `tests/RedesignBrandTest.php`, `docs/REDESIGN_IMPLEMENTATION_TRACKING.md` | `DONE` |
-| **1. Global Header & Sister Nav** | Custom speech-bubble taco app icon in header, violet sister-brand pill (`💎 Media Trove & Library ↗`), sticky header offsets | `parts/header.html`, `style.css`, `tests/HeaderNavigationTest.php` | `DONE` |
-| **2. Homepage Hero & Bento Feed** | "On the Air" welcome strip featuring `telly_pose_01_on_the_mic.png`, end-of-feed notice with `telly_pose_02_taco_break.png`, footer tagline | `templates/index.html`, `patterns/query.php`, homepage tests | `TODO` |
+| **1. Global Header & Sister Nav** | Custom speech-bubble taco app icon in header, custom vector glyph sister-brand pill, sticky header offsets | `parts/header.html`, `style.css`, `tests/HeaderNavigationTest.php` | `DONE` |
+| **2. Homepage Hero & Bento Feed** | "On the Air" welcome strip featuring `telly_pose_01_on_the_mic.png`, end-of-feed notice with `telly_pose_02_taco_break.png`, footer tagline | `templates/home.html`, `patterns/on-the-air.php`, `tacobout-infinite-scroll.js`, `tests/HomepageBentoTest.php` | `DONE` |
 | **3. Single Article & Fediverse Prompt** | Post footer discussion card with `telly_pose_02_taco_break.png` and Bluesky CTA, Trove review card with `facet_pose_04_five_star.png`, trending box | `templates/single.html`, `inc/sidebar.php`, sidebar/article tests | `TODO` |
 | **4. Channel Banners & 404 Recovery** | Category archive channel cards (`/in/media/tv/`, `/wrestling/`, `/food/`), About page Bento grid, 404 "Dead Air on This Channel" | `templates/archive.html`, `templates/404.html`, archive/404 tests | `TODO` |
 | **5. Quality Gates & Release Verification** | Full PHPUnit test suite, responsive checks (320px–2000px), dark/light mode contrast | All tests pass, zero regressions | `TODO` |
@@ -31,9 +31,18 @@ This plan organizes the `tacobout.online` redesign into self-contained, reviewab
   - Added `docs/REDESIGN_IMPLEMENTATION_TRACKING.md`.
 
 - **Commit 1:** `Integrate Trove sister-brand navigation pill and header pill styling`
-  - Added violet companion navigation link `💎 Media Trove & Library ↗` to `parts/header.html`.
+  - Added violet companion navigation link `Media Trove & Library` to `parts/header.html`.
   - Added responsive pill layout and dark-mode styling for `.tacobout-sister-nav-pill` in `style.css`.
   - Added PHPUnit test in `tests/HeaderNavigationTest.php`.
+
+- **Commit 2:** `Add On The Air welcome strip, Telly end-of-feed mascot card, and Trove sister footer`
+  - Added `patterns/on-the-air.php` featuring `telly_pose_01_on_the_mic.png`, custom SVG lightning glyph, and broadcast welcome copy.
+  - Added `tacobout-end-of-feed` mascot card in `tacobout-infinite-scroll.js` starring `telly_pose_02_taco_break.png` and Trove cross-link.
+  - Updated card excerpts to `Tune in & read →` and featured card badge to `LATEST DROP`.
+  - Updated `parts/footer.html` with sister broadcast link to `Trove (trove.schweg.xyz)`.
+  - Upgraded custom SVG glyphs in `assets/icons/` to eliminate emojis across navigation and badges.
+  - Bumped theme version to `3.8.8` in `style.css`.
+  - Added PHPUnit tests in `tests/HomepageBentoTest.php`.
 
 ---
 

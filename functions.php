@@ -606,6 +606,7 @@ function tacobout_enqueue_infinite_scroll() {
 			'termName'       => $tax_context['term_name'] ? esc_html( $tax_context['term_name'] ) : null,
 			'termType'       => $tax_context['term_type'],
 			'termTotalPages' => $tax_context['term_total_pages'],
+			'mascotTacoBreak'=> esc_url_raw( get_template_directory_uri() . '/assets/brand/telly_pose_02_taco_break.png' ),
 		)
 	);
 }

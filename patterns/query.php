@@ -14,7 +14,7 @@ if ( ! defined( 'ABSPATH' ) ) { exit; }
 		<!-- wp:post-featured-image {"isLink":true,"style":{"border":{"radius":"12px"}}} /-->
 		<!-- wp:template-part {"slug":"post-meta"} /-->
 		<!-- wp:post-title {"isLink":true,"level":2,"style":{"typography":{"fontSize":"var(--wp--preset--font-size--x-large)","lineHeight":"1.2"},"spacing":{"margin":{"top":"0","bottom":"0"}}}} /-->
-		<!-- wp:post-excerpt {"moreText":"Read more →","showMoreOnNewLine":false,"excerptLength":22} /-->
+		<!-- wp:post-excerpt {"moreText":"Tune in & read →","showMoreOnNewLine":false,"excerptLength":22} /-->
 		<!-- wp:post-content /-->
 	</div>
 	<!-- /wp:group -->
