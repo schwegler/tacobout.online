@@ -3,8 +3,8 @@ Theme Name: Tacobout Social
 Theme URI: https://tacobout.online
 Author: schwegler
 Author URI: https://tacobout.online
-Description: A personal magazine theme for schwegler — ultra-modern tumblog with compatibility with optional Bluesky/ATProto & ActivityPub plugins. Format-aware feeds, dark mode, and 2026 design language.
-Version: 3.8.14
+Description: An independent publication theme with format-aware feeds, responsive navigation, light and dark modes, and optional Bluesky/AT Protocol and ActivityPub integrations.
+Version: 3.8.15
 Requires at least: 6.4
 Tested up to: 6.8
 Requires PHP: 8.0
@@ -19,6 +19,9 @@ Tags: full-site-editing, block-theme, blog, dark-mode, post-formats, one-column,
    ============================ */
 :root {
 	--taco-bg: #f3effa;
+	--taco-callout: #f3effa;
+	--taco-callout-border: #ddd6fe;
+	--taco-callout-shadow: 0 3px 14px rgba(15,14,23,.06);
 	--taco-fg: #0f0e17;
 	--taco-accent: #2563eb;
 	--taco-accent-2: #1d4ed8;
@@ -173,9 +176,12 @@ a.tacobout-trove-card:active {
 @media (prefers-color-scheme: dark) {
 	:root:not([data-theme="light"]) {
 		--taco-bg: #09090b;
+	--taco-callout: #1c1a29;
+	--taco-callout-border: #2e2b44;
+	--taco-callout-shadow: 0 3px 14px rgba(0,0,0,.2);
 		--taco-fg: #fafafa;
-		--taco-accent: #3b82f6;
-		--taco-accent-2: #f472b6;
+		--taco-accent: #60a5fa;
+		--taco-accent-2: #93c5fd;
 		--taco-muted: #a1a1aa;
 		--taco-surface: #18181b;
 		--taco-surface-2: #27272a;
@@ -278,9 +284,12 @@ a.tacobout-trove-card:active {
    ============================ */
 [data-theme="dark"] {
 	--taco-bg: #09090b;
+	--taco-callout: #1c1a29;
+	--taco-callout-border: #2e2b44;
+	--taco-callout-shadow: 0 3px 14px rgba(0,0,0,.2);
 	--taco-fg: #fafafa;
-	--taco-accent: #3b82f6;
-	--taco-accent-2: #f472b6;
+	--taco-accent: #60a5fa;
+	--taco-accent-2: #93c5fd;
 	--taco-muted: #a1a1aa;
 	--taco-surface: #18181b;
 	--taco-surface-2: #27272a;
@@ -3072,8 +3081,8 @@ body .tacobout-magazine-grid .wp-block-post .wp-block-post-featured-image img {
     border-radius: 6px;
 }
 .tacobout-primary-navigation .wp-block-navigation__submenu-container {
-    background: var(--taco-bg);
-    color: var(--taco-fg);
+    background: var(--taco-surface) !important;
+    color: var(--taco-fg) !important;
     border: 1px solid var(--taco-border);
     border-radius: 12px;
     box-shadow: var(--taco-shadow-lg);
@@ -3084,10 +3093,12 @@ body .tacobout-magazine-grid .wp-block-post .wp-block-post-featured-image img {
     padding: .5rem .75rem;
     width: 100%;
     border-radius: 6px;
-    color: var(--taco-fg);
+    color: var(--taco-fg) !important;
 }
-.tacobout-primary-navigation .wp-block-navigation__submenu-container a:hover {
+.tacobout-primary-navigation .wp-block-navigation__submenu-container a:hover,
+.tacobout-primary-navigation .wp-block-navigation__submenu-container a:focus-visible {
     background: var(--taco-surface-2);
+    color: var(--taco-fg) !important;
 }
 /* No transform, containment, or filter may become the open dialog's viewport. */
 .tacobout-header:has(.is-menu-open) {
@@ -3166,3 +3177,57 @@ body.admin-bar .tacobout-primary-navigation .is-menu-open .wp-block-navigation__
 @media (prefers-reduced-motion: reduce) {
     .tacobout-header { transition: none; }
 }
+
+/* Navigation colors must win over WordPress preset colors in every theme state. */
+.tacobout-primary-navigation .wp-block-navigation__responsive-container.is-menu-open {
+    background: var(--taco-bg) !important;
+    color: var(--taco-fg) !important;
+}
+.tacobout-primary-navigation .wp-block-navigation-item:not(.tacobout-sister-nav-pill) > a {
+    color: var(--taco-fg) !important;
+}
+.tacobout-primary-navigation .wp-block-navigation-item:not(.tacobout-sister-nav-pill) > a:is(:hover, :focus-visible) {
+    color: var(--taco-accent-2) !important;
+}
+.tacobout-primary-navigation .wp-block-navigation__submenu-container a:is(:hover, :focus-visible) {
+    color: var(--taco-fg) !important;
+    background: var(--taco-surface-2) !important;
+}
+.tacobout-discussion-actions > a, .tacobout-vault-actions > a,
+.tacobout-channel-actions > a, .tacobout-error-actions > a { min-height: 44px; box-sizing: border-box; }
+.tacobout-on-the-air-text { max-width: 65ch; }
+.tacobout-bluesky-cta { background: #0066cc; border-color: #0055aa; }
+.tacobout-bluesky-cta:is(:hover, :focus-visible) { background: #0055aa; }
+.tacobout-mastodon-cta { color: #4f46c7 !important; }
+[data-theme="dark"] .tacobout-mastodon-cta { color: #c4b5fd !important; }
+@media (prefers-color-scheme: dark) {
+    html:not([data-theme="light"]) .tacobout-mastodon-cta { color: #c4b5fd !important; }
+    html:not([data-theme="light"]) a.tacobout-sister-nav-pill,
+    html:not([data-theme="light"]) .tacobout-sister-nav-pill a {
+        background: rgba(124,58,237,.16); border-color: rgba(124,58,237,.36); color: #ddd6fe !important;
+    }
+    html:not([data-theme="light"]) .tacobout-sister-nav-pill a:is(:hover,:focus-visible),
+    html:not([data-theme="light"]) a.tacobout-sister-nav-pill:is(:hover,:focus-visible) {
+        background: rgba(124,58,237,.28); color: #fff !important;
+    }
+}
+@media (max-width: 480px) {
+    .wp-block-post-content .wp-block-image.alignright { max-width: 40%; margin-inline-start: 1rem; }
+}
+
+.tacobout-end-archive { display: inline-flex; align-items: center; min-height: 44px; margin-inline-end: 1rem; }
+
+/* One surface and text treatment for all editorial callouts in both themes. */
+html :is(.tacobout-on-the-air-strip, .tacobout-discussion-card, .tacobout-channel-banner,
+.tacobout-error-card, .tacobout-companion-vault-card, .tacobout-end-card) {
+    background: var(--taco-callout);
+    border: 1px solid var(--taco-callout-border);
+    box-shadow: var(--taco-callout-shadow);
+}
+html :is(.tacobout-on-the-air-text, .tacobout-discussion-author, .tacobout-channel-headline,
+.tacobout-error-title, .tacobout-vault-headline, .tacobout-end-headline) { color: var(--taco-fg); }
+html :is(.tacobout-discussion-prompt, .tacobout-channel-subcopy,
+.tacobout-error-text, .tacobout-vault-subcopy, .tacobout-end-subcopy) { color: var(--taco-muted); }
+.tacobout-error-channel-badge { background: #b91c1c; }
+.tacobout-channel-badge { background: #2563eb; }
+.tacobout-end-archive { margin-inline-end: 0; }

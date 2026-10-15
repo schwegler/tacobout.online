@@ -15,8 +15,7 @@ class HomepageBentoTest extends \PHPUnit\Framework\TestCase {
         $this->assertStringContainsString('telly_pose_01_on_the_mic.png', $pattern);
         $this->assertStringContainsString('ON THE AIR', $pattern);
         $this->assertStringContainsString('tacobout-badge-icon', $pattern);
-        $this->assertStringContainsString('Hot takes, wrestling rabbit holes, free-streaming deep dives', $pattern);
-        $this->assertStringContainsString('Schwegler’s corner for TV commentary', $pattern);
+        $this->assertStringContainsString('Culture, technology, and the internet. Plenty to talk about.', $pattern);
         // Ensure no emoji is used in the badge
         $this->assertStringNotContainsString('⚡', $pattern);
     }
@@ -33,8 +32,8 @@ class HomepageBentoTest extends \PHPUnit\Framework\TestCase {
         $scroll_js = file_get_contents(__DIR__ . '/../tacobout-infinite-scroll.js');
         $functions_php = file_get_contents(__DIR__ . '/../functions.php');
 
-        $this->assertStringContainsString('You’ve hit the bottom of the taco basket.', $scroll_js);
-        $this->assertStringContainsString('browse 640+ logged movies, comics, and shows over on Trove', $scroll_js);
+        $this->assertStringContainsString('You’re caught up.', $scroll_js);
+        $this->assertStringContainsString('There’s more in the archive. The collection continues on Trove.', $scroll_js);
         $this->assertStringContainsString('telly_pose_02_taco_break.png', $scroll_js);
         $this->assertStringContainsString('telly_pose_02_taco_break.png', $functions_php);
         $this->assertStringContainsString('https://trove.schweg.xyz', $scroll_js);

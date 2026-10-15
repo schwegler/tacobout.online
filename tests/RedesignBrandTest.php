@@ -22,7 +22,7 @@ class RedesignBrandTest extends \PHPUnit\Framework\TestCase {
             'tacobout_rounded_app_icon.png',
             'tacobout_favicon_32px.png',
             'mascot_duo_telly_and_facet_transparent.png',
-            'facet_pose_04_five_star.png',
+            'facet_pose_01_bookworm.png',
         ];
 
         foreach ($required_assets as $asset) {

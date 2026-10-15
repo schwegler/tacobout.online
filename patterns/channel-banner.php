@@ -13,31 +13,31 @@ $raw_name = ( $term && isset( $term->name ) ) ? $term->name : '';
 
 $channels = array(
 	'tv' => array(
-		'headline' => 'TV, Free Streaming & Reality Mess',
+		'headline' => 'TV & Streaming',
 		'subcopy'  => 'From Tubi rabbit holes and Revry drag competitions to cooking shows beyond the reruns.',
 		'mascot'   => 'assets/brand/telly_pose_03_side_eye.png',
 		'trove_label' => 'See all logged TV Shows in Trove',
 		'trove_url'   => 'https://trove.schweg.xyz/tv_shows',
 	),
 	'wrestling' => array(
-		'headline' => 'Squared Circle & Storyline Deep Dives',
+		'headline' => 'Wrestling',
 		'subcopy'  => 'Workrate, long-term booking payoffs, and the wonderfully absurd theater of pro wrestling.',
 		'mascot'   => 'assets/brand/telly_pose_03_side_eye.png',
-		'trove_label' => 'Explore Trove Media Vault',
+		'trove_label' => 'Explore Trove',
 		'trove_url'   => 'https://trove.schweg.xyz',
 	),
 	'big-brother' => array(
-		'headline' => 'Live-Feed Receipt Book: Big Brother',
+		'headline' => 'Big Brother',
 		'subcopy'  => 'Blindsides, sloppy HOH reigns, and late-night houseguest overthinking.',
 		'mascot'   => 'assets/brand/telly_pose_03_side_eye.png',
 		'trove_label' => 'See all logged TV Shows in Trove',
 		'trove_url'   => 'https://trove.schweg.xyz/tv_shows',
 	),
 	'food' => array(
-		'headline' => 'Food, Culinary Streams & Late-Night Snacks',
-		'subcopy'  => 'Tastemade marathons, kitchen experiments, and things worth eating while shouting into the void.',
+		'headline' => 'Food',
+		'subcopy'  => 'Tastemade marathons, kitchen experiments, and things worth eating.',
 		'mascot'   => 'assets/brand/telly_pose_02_taco_break.png',
-		'trove_label' => 'Explore Trove Media Vault',
+		'trove_label' => 'Explore Trove',
 		'trove_url'   => 'https://trove.schweg.xyz',
 	),
 );
@@ -46,11 +46,15 @@ $channel = $channels[ $slug ] ?? array(
 	'headline' => $raw_name ? $raw_name : 'Archive Channel',
 	'subcopy'  => ( $term && ! empty( $term->description ) ) ? $term->description : 'Dispatches, commentary, and media logs from the open web.',
 	'mascot'   => 'assets/brand/telly_pose_01_on_the_mic.png',
-	'trove_label' => 'Explore Trove Media Vault',
+	'trove_label' => 'Explore Trove',
 	'trove_url'   => 'https://trove.schweg.xyz',
 );
 
-$mascot_url = get_theme_file_uri( $channel['mascot'] );
+if ( $term && ! empty( $term->description ) ) {
+	$channel['subcopy'] = $term->description;
+}
+
+$mascot_url = add_query_arg( 'ver', wp_get_theme()->get( 'Version' ), get_theme_file_uri( $channel['mascot'] ) );
 ?>
 <!-- wp:group {"className":"tacobout-channel-banner","layout":{"type":"flex","flexWrap":"wrap","verticalAlignment":"center"}} -->
 <div class="wp-block-group tacobout-channel-banner">

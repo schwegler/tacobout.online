@@ -339,9 +339,10 @@
 	endMessage.innerHTML = `
 		<div class="tacobout-end-card">
 			<img src="${tacoBreakMascot}" alt="Telly having a taco break" class="mascot-sticker tacobout-end-mascot" />
-			<p class="tacobout-end-headline">You’ve hit the bottom of the taco basket.</p>
-			<p class="tacobout-end-subcopy">No more posts down here—grab a snack, or browse 640+ logged movies, comics, and shows over on Trove →</p>
-			<a href="https://trove.schweg.xyz" class="tacobout-sister-nav-pill">Browse 640+ Titles in Trove Vault</a>
+			<p class="tacobout-end-headline">You’re caught up.</p>
+			<p class="tacobout-end-subcopy">There’s more in the archive. The collection continues on Trove.</p>
+			<a href="${config.siteUrl}/in/everything/" class="tacobout-end-archive">Browse the archive →</a>
+			<a href="https://trove.schweg.xyz" class="tacobout-sister-nav-pill">Explore Trove</a>
 		</div>
 	`;
 

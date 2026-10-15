@@ -1,4 +1,9 @@
 <?php
+if (!function_exists('add_query_arg')) {
+    function add_query_arg($key, $value, $url) {
+        return $url . (str_contains($url, '?') ? '&' : '?') . http_build_query([$key => $value]);
+    }
+}
 require_once __DIR__ . '/../vendor/autoload.php';
 
 // Mock WordPress environment
