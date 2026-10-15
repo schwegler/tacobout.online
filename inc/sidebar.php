@@ -38,8 +38,13 @@ function tacobout_trending_shortcode() {
 	if ( ! $trending ) {
 		$posts = get_posts( array( 'numberposts' => 3, 'post_status' => 'publish', 'has_password' => false, 'exclude' => is_single() ? array( get_queried_object_id() ) : array() ) );
 	}
-	$html = '<section class="tacobout-discovery-section"><h3>' . esc_html( $trending ? __( 'Trending this week', 'tacobout' ) : __( 'Latest Posts', 'tacobout' ) ) . '</h3>';
-	$html .= '<p class="tacobout-sidebar-caption">' . esc_html( $trending ? __( 'Most viewed over the past 7 days', 'tacobout' ) : __( 'Recent posts while view stats are unavailable', 'tacobout' ) ) . '</p><ol class="tacobout-sidebar-links tacobout-trending-list">';
+	$bolt_icon = '<svg class="tacobout-sidebar-icon" viewBox="0 0 24 24" fill="currentColor" width="14" height="14" aria-hidden="true"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>';
+	$mascot_hype = esc_url( get_theme_file_uri( 'assets/brand/telly_pose_04_breaking_hype.png' ) );
+	$title = $trending ? __( 'Hot on the Wire', 'tacobout' ) : __( 'Latest Posts', 'tacobout' );
+	$caption = $trending ? __( 'Most read over the past 7 days', 'tacobout' ) : __( 'Recent posts while view stats are unavailable', 'tacobout' );
+
+	$html = '<section class="tacobout-discovery-section"><div class="tacobout-sidebar-heading"><h3>' . $bolt_icon . ' ' . esc_html( $title ) . '</h3><img src="' . $mascot_hype . '" alt="" class="mascot-sticker tacobout-sidebar-mascot" /></div>';
+	$html .= '<p class="tacobout-sidebar-caption">' . esc_html( $caption ) . '</p><ol class="tacobout-sidebar-links tacobout-trending-list">';
 	foreach ( $posts as $index => $post ) {
 		$html .= '<li><a class="tacobout-trending-link" href="' . esc_url( get_permalink( $post ) ) . '"><span class="tacobout-trending-rank">' . esc_html( sprintf( '%02d', $index + 1 ) ) . '</span><span class="tacobout-trending-copy"><strong>' . esc_html( get_the_title( $post ) ) . '</strong><span class="tacobout-sidebar-meta">' . esc_html( get_the_date( '', $post ) ) . '</span></span>' . get_the_post_thumbnail( $post, 'thumbnail', array( 'class' => 'tacobout-trending-image', 'alt' => '', 'loading' => 'lazy' ) ) . '</a></li>';
 	}
@@ -152,7 +157,9 @@ function tacobout_review_section( $reviews ) {
 	if ( empty( $reviews ) ) {
 		return '';
 	}
-	$html = '<section class="tacobout-discovery-section tacobout-review-section"><div class="tacobout-sidebar-heading"><h3>' . esc_html__( 'Latest on Trove', 'tacobout' ) . '</h3><a href="https://trove.schweg.xyz/">' . esc_html__( 'View all', 'tacobout' ) . ' ' . tacobout_sidebar_arrow() . '</a></div><p class="tacobout-sidebar-caption">' . esc_html__( 'From the public review feed', 'tacobout' ) . '</p><ul class="tacobout-sidebar-links tacobout-review-list">';
+	$gem_icon = '<svg class="tacobout-sidebar-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="14" height="14" aria-hidden="true"><path d="M6 3h12l4 7-10 11L2 10l4-7z"/><path d="M2 10h20"/><path d="M12 21L7.5 10 10 3"/><path d="M12 21l4.5-11L14 3"/></svg>';
+	$mascot_facet = esc_url( get_theme_file_uri( 'assets/brand/facet_pose_04_five_star.png' ) );
+	$html = '<section class="tacobout-discovery-section tacobout-review-section"><div class="tacobout-sidebar-heading"><h3>' . $gem_icon . ' ' . esc_html__( 'Freshly Logged in Trove', 'tacobout' ) . '</h3><div class="tacobout-sidebar-heading-right"><img src="' . $mascot_facet . '" alt="" class="mascot-sticker tacobout-sidebar-mascot" /><a href="https://trove.schweg.xyz/">' . esc_html__( 'Explore the shelf', 'tacobout' ) . ' ' . tacobout_sidebar_arrow() . '</a></div></div><p class="tacobout-sidebar-caption">' . esc_html__( 'Live from the public review vault', 'tacobout' ) . '</p><ul class="tacobout-sidebar-links tacobout-review-list">';
 	foreach ( $reviews as $review ) {
 		$html .= '<li><a class="tacobout-review-link" href="' . esc_url( $review['url'] ) . '">';
 		$image = tacobout_sidebar_image_url( $review['image'] ?? '' );

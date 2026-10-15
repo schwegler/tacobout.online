@@ -16,7 +16,7 @@ This plan organizes the `tacobout.online` redesign into self-contained, reviewab
 | **0. Tracking & Brand Assets** | Establish redesign tokens, ligne claire mechanics, `.mascot-sticker` system, and Telly/Trove transparent PNGs | `assets/brand/*`, `style.css`, `tests/RedesignBrandTest.php`, `docs/REDESIGN_IMPLEMENTATION_TRACKING.md` | `DONE` |
 | **1. Global Header & Sister Nav** | Custom speech-bubble taco app icon in header, custom vector glyph sister-brand pill, sticky header offsets | `parts/header.html`, `style.css`, `tests/HeaderNavigationTest.php` | `DONE` |
 | **2. Homepage Hero & Bento Feed** | "On the Air" welcome strip featuring `telly_pose_01_on_the_mic.png`, end-of-feed notice with `telly_pose_02_taco_break.png`, footer tagline | `templates/home.html`, `patterns/on-the-air.php`, `tacobout-infinite-scroll.js`, `tests/HomepageBentoTest.php` | `DONE` |
-| **3. Single Article & Fediverse Prompt** | Post footer discussion card with `telly_pose_02_taco_break.png` and Bluesky CTA, Trove review card with `facet_pose_04_five_star.png`, trending box | `templates/single.html`, `inc/sidebar.php`, sidebar/article tests | `TODO` |
+| **3. Single Article & Fediverse Prompt** | Post footer discussion card with `telly_pose_02_taco_break.png` and Bluesky CTA, Trove review card with `facet_pose_04_five_star.png`, trending box | `templates/single.html`, `inc/sidebar.php`, `patterns/post-discussion.php`, `tests/SingleArticleAndSidebarTest.php` | `DONE` |
 | **4. Channel Banners & 404 Recovery** | Category archive channel cards (`/in/media/tv/`, `/wrestling/`, `/food/`), About page Bento grid, 404 "Dead Air on This Channel" | `templates/archive.html`, `templates/404.html`, archive/404 tests | `TODO` |
 | **5. Quality Gates & Release Verification** | Full PHPUnit test suite, responsive checks (320px–2000px), dark/light mode contrast | All tests pass, zero regressions | `TODO` |
 
@@ -43,6 +43,15 @@ This plan organizes the `tacobout.online` redesign into self-contained, reviewab
   - Upgraded custom SVG glyphs in `assets/icons/` to eliminate emojis across navigation and badges.
   - Bumped theme version to `3.8.8` in `style.css`.
   - Added PHPUnit tests in `tests/HomepageBentoTest.php`.
+
+- **Commit 3:** `Add single post Fediverse discussion card and redesign discovery sidebar widgets`
+  - Added `patterns/post-discussion.php` featuring `telly_pose_02_taco_break.png`, Bluesky CTA, and Mastodon reply link without system emojis.
+  - Updated `templates/single.html` to integrate the post discussion pattern.
+  - Updated `inc/sidebar.php` trending widget to `Hot on the Wire` with `telly_pose_04_breaking_hype.png` and custom SVG lightning icon.
+  - Updated `inc/sidebar.php` Trove widget to `Freshly Logged in Trove` with `facet_pose_04_five_star.png`, `Explore the shelf`, and custom SVG gem icon.
+  - Added styles in `sidebar.css` and `style.css`.
+  - Bumped theme version to `3.8.9` in `style.css`.
+  - Added PHPUnit tests in `tests/SingleArticleAndSidebarTest.php`.
 
 ---
 
