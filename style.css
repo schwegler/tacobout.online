@@ -3092,6 +3092,7 @@ body .tacobout-magazine-grid .wp-block-post .wp-block-post-featured-image img {
     min-width: 13rem;
 }
 .tacobout-primary-navigation .wp-block-navigation__submenu-container a {
+    box-sizing: border-box;
     padding: .5rem .75rem;
     width: 100%;
     border-radius: 6px;
