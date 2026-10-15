@@ -24,7 +24,7 @@ class FunctionsTest extends \PHPUnit\Framework\TestCase {
         // Ensure array starts empty
         $this->assertEmpty($wp_styles_enqueued);
 
-        \Brain\Monkey\Functions\expect('wp_add_inline_style')->once()->with('tacobout-style', \Mockery::on(fn($css) => str_contains($css, '.tacobout-review-link') && str_contains($css, '.tacobout-sidebar-links')));
+        \Brain\Monkey\Functions\expect('wp_add_inline_style')->once()->with('tacobout-style', \Mockery::on(fn($css) => str_contains($css, '.tacobout-review-link') && str_contains($css, '.tacobout-sidebar-links') && str_contains($css, '.tacobout-on-the-air-mascot')));
         // Call the function
         tacobout_enqueue_styles();
 

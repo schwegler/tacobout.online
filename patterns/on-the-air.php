@@ -12,7 +12,7 @@ $mascot_url = add_query_arg( 'ver', wp_get_theme()->get( 'Version' ), get_theme_
 <!-- wp:group {"className":"tacobout-on-the-air-strip","layout":{"type":"flex","flexWrap":"nowrap","verticalAlignment":"center"}} -->
 <div class="wp-block-group tacobout-on-the-air-strip">
 	<div class="tacobout-on-the-air-mascot-wrap">
-		<img src="<?php echo esc_url( $mascot_url ); ?>" alt="" class="mascot-sticker tacobout-on-the-air-mascot" />
+		<img src="<?php echo esc_url( $mascot_url ); ?>" width="69" height="84" alt="" class="mascot-sticker tacobout-on-the-air-mascot" />
 	</div>
 	<div class="tacobout-on-the-air-content">
 		<span class="tacobout-on-the-air-badge">

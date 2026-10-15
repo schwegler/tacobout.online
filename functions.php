@@ -60,7 +60,10 @@ function tacobout_enqueue_styles() {
 
 	// Keep discovery markup and its small structural stylesheet in the same
 	// response, even when an edge cache strips asset version query strings.
-	wp_add_inline_style( 'tacobout-style', file_get_contents( __DIR__ . '/sidebar.css' ) );
+	wp_add_inline_style(
+		'tacobout-style',
+		file_get_contents( __DIR__ . '/sidebar.css' ) . "\n" . file_get_contents( __DIR__ . '/welcome.css' )
+	);
 
 	// Google Fonts — Space Grotesk (headings) + Instrument Sans (body)
 	wp_enqueue_style(
