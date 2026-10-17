@@ -1629,6 +1629,10 @@ body.home:not(.paged) .tacobout-magazine-grid .wp-block-post:first-child .entry-
 	text-decoration: none;
 }
 
+.tacobout-bluesky-cta:active {
+	transform: scale(0.97);
+}
+
 .tacobout-mastodon-cta {
 	display: inline-flex;
 	align-items: center;
@@ -1648,6 +1652,10 @@ body.home:not(.paged) .tacobout-magazine-grid .wp-block-post:first-child .entry-
 	background: rgba(99, 100, 255, 0.22);
 	transform: translateY(-1px);
 	text-decoration: none;
+}
+
+.tacobout-mastodon-cta:active {
+	transform: scale(0.97);
 }
 
 [data-theme="dark"] .tacobout-mastodon-cta {
@@ -1892,6 +1900,10 @@ body.home:not(.paged) .tacobout-magazine-grid .wp-block-post:first-child .entry-
 	background: var(--taco-blue-dark, #2563EB);
 	transform: translateY(-1px);
 	text-decoration: none;
+}
+
+.tacobout-error-primary-btn:active {
+	transform: scale(0.97);
 }
 
 @media (max-width: 640px) {
