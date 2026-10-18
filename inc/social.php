@@ -9,7 +9,8 @@ function tacobout_atproto_record_url( $uri ) {
 	if ( ! is_string( $uri ) || ! preg_match( '~^at://(did:[a-z0-9]+:[A-Za-z0-9._:%-]+)/app\.bsky\.feed\.post/([A-Za-z0-9._\~-]+)$~D', $uri, $parts ) ) {
 		return '';
 	}
-	return 'https://bsky.app/profile/' . rawurlencode( $parts[1] ) . '/post/' . rawurlencode( $parts[2] );
+	// Bluesky's profile router expects literal DID colons in the path.
+	return 'https://bsky.app/profile/' . str_replace( '%3A', ':', rawurlencode( $parts[1] ) ) . '/post/' . rawurlencode( $parts[2] );
 }
 
 /** Never add browser UI to RSS, ActivityPub objects or non-public posts. */

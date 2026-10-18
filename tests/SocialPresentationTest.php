@@ -4,10 +4,17 @@ class SocialPresentationTest extends \PHPUnit\Framework\TestCase {
     protected function tearDown(): void { \Brain\Monkey\tearDown(); parent::tearDown(); }
 
     public function test_record_links_require_a_complete_verified_post_uri() {
-        $this->assertSame('https://bsky.app/profile/did%3Aplc%3Atest/post/3abc', tacobout_atproto_record_url('at://did:plc:test/app.bsky.feed.post/3abc'));
+        $this->assertSame('https://bsky.app/profile/did:plc:test/post/3abc', tacobout_atproto_record_url('at://did:plc:test/app.bsky.feed.post/3abc'));
         foreach (['', false, [], 'javascript:alert(1)', 'at://did:plc:test/site.standard.document/3abc', 'at://did:plc:test/app.bsky.feed.post/3abc/extra', 'at://did:plc:test/app.bsky.feed.post/3abc?token=secret'] as $uri) {
             $this->assertSame('', tacobout_atproto_record_url($uri));
         }
+    }
+
+    public function test_reported_post_link_preserves_did_colons() {
+        $this->assertSame(
+            'https://bsky.app/profile/did:plc:mjtyvn3cgsnkzlpahpu5pksw/post/3my5xz56yyxtf',
+            tacobout_atproto_record_url('at://did:plc:mjtyvn3cgsnkzlpahpu5pksw/app.bsky.feed.post/3my5xz56yyxtf')
+        );
     }
 
     public function test_comment_provenance_requires_approved_known_protocol_and_safe_source() {
