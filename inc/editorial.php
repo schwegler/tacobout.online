@@ -57,3 +57,9 @@ function tacobout_author_mascot_shortcode() {
 	return '<figure class="tacobout-author-mascot"><img src="' . esc_url( get_theme_file_uri( 'assets/brand/schweg-mascot-420.png' ) ) . '" srcset="' . esc_url( get_theme_file_uri( 'assets/brand/schweg-mascot-420.png' ) ) . ' 420w, ' . esc_url( get_theme_file_uri( 'assets/brand/schweg-mascot.png' ) ) . ' 1125w" sizes="130px" width="1125" height="1365" alt="' . esc_attr__( 'Schweg’s illustrated mascot holding a purple pencil', 'tacobout' ) . '" decoding="async" /></figure>';
 }
 add_action( 'init', function () { add_shortcode( 'tacobout_author_mascot', 'tacobout_author_mascot_shortcode' ); } );
+
+
+function tacobout_creator_credit_shortcode() {
+	return '<div class="tacobout-creator-footer"><a class="creator-credit" href="https://schweg.xyz/" aria-label="A schweg.xyz project"><span>a</span><img class="creator-logo-light" src="' . esc_url( get_theme_file_uri( 'assets/brand/schweg-xyz-ink.svg' ) ) . '" alt="schweg.xyz" width="132" height="42" loading="lazy" decoding="async"><img class="creator-logo-dark" src="' . esc_url( get_theme_file_uri( 'assets/brand/schweg-xyz-light.svg' ) ) . '" alt="schweg.xyz" width="132" height="42" loading="lazy" decoding="async"><span>project</span></a><a class="creator-contact" href="mailto:andrew@schweg.xyz">Contact Andrew</a></div>';
+}
+add_action( 'init', function () { add_shortcode( 'tacobout_creator_credit', 'tacobout_creator_credit_shortcode' ); } );
