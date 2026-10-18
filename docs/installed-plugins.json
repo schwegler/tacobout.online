@@ -1,0 +1,110 @@
+[
+  {
+    "active": true,
+    "name": "ActivityPub",
+    "plugin": "activitypub/activitypub.php",
+    "version": "Version 9.3.1"
+  },
+  {
+    "active": true,
+    "name": "Admin and Site Enhancements (ASE)",
+    "plugin": "admin-site-enhancements/admin-site-enhancements.php",
+    "version": "Version 9.2.1"
+  },
+  {
+    "active": true,
+    "name": "Advanced Cron Manager",
+    "plugin": "advanced-cron-manager/advanced-cron-manager.php",
+    "version": "Version 2.7.0"
+  },
+  {
+    "active": true,
+    "name": "Akismet Anti-spam: Spam Protection",
+    "plugin": "akismet/akismet.php",
+    "version": "Version 5.7.2"
+  },
+  {
+    "active": true,
+    "name": "ATmosphere",
+    "plugin": "atmosphere/atmosphere.php",
+    "version": "Version 2.4.1"
+  },
+  {
+    "active": true,
+    "name": "Captcha Code",
+    "plugin": "captcha-code-authentication/wpCaptcha.php",
+    "version": "Version 3.33"
+  },
+  {
+    "active": true,
+    "name": "Enable Mastodon Apps",
+    "plugin": "enable-mastodon-apps/enable-mastodon-apps.php",
+    "version": "Version 1.7.0"
+  },
+  {
+    "active": true,
+    "name": "FediBoost",
+    "plugin": "fediboost/fediboost.php",
+    "version": "Version 1.1.0"
+  },
+  {
+    "active": true,
+    "name": "Jetpack",
+    "plugin": "jetpack/jetpack.php",
+    "version": "Version 16.3.1"
+  },
+  {
+    "active": true,
+    "name": "Open Graph",
+    "plugin": "opengraph/opengraph.php",
+    "version": "Version 3.0.1"
+  },
+  {
+    "active": true,
+    "name": "Press This",
+    "plugin": "press-this/press-this-plugin.php",
+    "version": "Version 2.0.2"
+  },
+  {
+    "active": true,
+    "name": "Revive Social",
+    "plugin": "tweet-old-post/tweet-old-post.php",
+    "version": "Version 9.4.4"
+  },
+  {
+    "active": true,
+    "name": "Revive To Sky - Post old content to Bluesky",
+    "plugin": "revive-to-sky/revive-to-sky.php",
+    "version": "Version 1.1.4"
+  },
+  {
+    "active": true,
+    "name": "Secure MCP Server for Claude, ChatGPT, Gemini and other AI providers",
+    "plugin": "miniorange-secure-mcp-server/miniorange-secure-mcp-server.php",
+    "version": "Version 1.5.2"
+  },
+  {
+    "active": true,
+    "name": "Site Kit by Google",
+    "plugin": "google-site-kit/google-site-kit.php",
+    "version": "Version 1.189.0"
+  },
+  {
+    "active": true,
+    "name": "WebFinger",
+    "plugin": "webfinger/webfinger.php",
+    "version": "Version 4.1.0"
+  },
+  {
+    "active": true,
+    "name": "WordPress Importer",
+    "plugin": "wordpress-importer/wordpress-importer.php",
+    "version": "Version 0.9.6"
+  },
+  {
+    "active": true,
+    "name": "WP Consent API",
+    "plugin": "wp-consent-api/wp-consent-api.php",
+    "version": "Version 2.1.0"
+  }
+]
