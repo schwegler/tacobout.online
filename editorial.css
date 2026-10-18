@@ -70,8 +70,11 @@ html .tacobout-channel-banner,html .tacobout-error-card{background:transparent!i
 html .tacobout-channel-headline{font-size:clamp(34px,4vw,48px)}.tacobout-channel-badge,.tacobout-vault-badge,.tacobout-error-channel-badge{background:transparent!important;color:var(--taco-accent)!important;border:0;box-shadow:none;padding:0;font-size:11px;letter-spacing:.1em}
 html .tacobout-channel-mascot{max-width:75px;max-height:110px}.tacobout-channel-subcopy{color:var(--taco-muted)!important;font-size:18px}
 /* Reading view and native WordPress/Jetpack discussion. */
-html body.single main>.wp-block-post-title{font-size:clamp(35px,4.2vw,58px);line-height:1.1;max-width:950px!important;margin-left:0!important;letter-spacing:-.035em;text-wrap:pretty}
-html body.single main>.wp-block-group{margin-left:0!important;max-width:950px!important;color:var(--taco-muted)}
+/* Header shares the 1200px article/rail grid; its reading lane uses the same 2:1 split. */
+html body.single main>.tacobout-article-header{display:grid;grid-template-columns:minmax(0,2fr) minmax(0,1fr);column-gap:65px;max-width:1200px!important;margin-inline:auto!important}
+html body.single .tacobout-article-header>.wp-block-post-title{grid-column:1;min-width:0;max-width:none!important;margin:0!important;font-size:clamp(32px,3.4vw,48px);line-height:1.14;letter-spacing:-.035em;text-wrap:pretty;overflow-wrap:anywhere}
+html body.single .tacobout-article-header>.wp-block-group{grid-column:1;min-width:0;margin-bottom:0!important;margin-left:0!important;margin-right:0!important;max-width:100%!important;color:var(--taco-muted)}
+@media(max-width:781px){html body.single main>.tacobout-article-header{grid-template-columns:minmax(0,1fr)}html body.single .tacobout-article-header>.wp-block-post-title{font-size:clamp(30px,5.2vw,38px)}}
 html body.single main>.wp-block-columns{gap:65px;margin-top:30px;align-items:flex-start}.wp-block-column{min-width:0}
 html body.single .wp-block-post-content{font-size:19px;line-height:1.78}.wp-block-post-content :is(h2,h3){margin-block:1.4em .6em}.wp-block-post-content h2{font-size:30px;line-height:1.25}
 html body.single .wp-block-post-content>p{margin-bottom:1.3em}.wp-block-post-content a{color:var(--taco-accent);text-decoration:underline;text-underline-offset:3px}.wp-block-post-content :is(pre,.wp-block-table){max-width:100%;overflow:auto}
@@ -143,3 +146,6 @@ html body .tacobout-magazine-grid.tacobout-masonry-active>*{align-self:start;mar
 /* Approved signature PNGs share an identical alpha mask in both treatments. */
 .creator-credit { gap: 8px; align-items: center; }
 .creator-credit img { width: 132px; height: auto; aspect-ratio: 1945 / 576; margin: 0; }
+/* Never clip a tall rail or create a nested scroll area. No-JS defaults to document flow. */
+html body.single .tacobout-sidebar-sticky{position:static!important;max-height:none!important;overflow:visible!important}
+@media(min-width:1024px){html body.single .tacobout-sidebar-sticky.tacobout-sidebar-fits{position:sticky!important;top:var(--tacobout-sidebar-top,110px)!important}}

@@ -1,0 +1,2592 @@
+{
+  "sidebar-matrix": {
+    "wordpress": [
+      {
+        "case": "WordPress",
+        "documentOverflow": false,
+        "fit": true,
+        "headerHeight": 93,
+        "height": 600,
+        "maxHeight": "none",
+        "overflow": "visible",
+        "position": "sticky",
+        "sidebarHeight": 420.09375,
+        "top": "109px",
+        "visualHeight": 600,
+        "width": 1440
+      },
+      {
+        "case": "WordPress",
+        "documentOverflow": false,
+        "fit": true,
+        "headerHeight": 93,
+        "height": 900,
+        "maxHeight": "none",
+        "overflow": "visible",
+        "position": "sticky",
+        "sidebarHeight": 420.09375,
+        "top": "109px",
+        "visualHeight": 900,
+        "width": 1440
+      },
+      {
+        "case": "WordPress",
+        "documentOverflow": false,
+        "fit": true,
+        "headerHeight": 81,
+        "height": 600,
+        "maxHeight": "none",
+        "overflow": "visible",
+        "position": "sticky",
+        "sidebarHeight": 440.65625,
+        "top": "97px",
+        "visualHeight": 600,
+        "width": 1024
+      },
+      {
+        "case": "WordPress",
+        "documentOverflow": false,
+        "fit": false,
+        "headerHeight": 81,
+        "height": 667,
+        "maxHeight": "none",
+        "overflow": "visible",
+        "position": "static",
+        "sidebarHeight": 440.65625,
+        "top": "160px",
+        "visualHeight": 667,
+        "width": 390
+      },
+      {
+        "case": "WordPress",
+        "documentOverflow": false,
+        "fit": false,
+        "headerHeight": 81,
+        "height": 844,
+        "maxHeight": "none",
+        "overflow": "visible",
+        "position": "static",
+        "sidebarHeight": 440.65625,
+        "top": "160px",
+        "visualHeight": 844,
+        "width": 390
+      },
+      {
+        "case": "WordPress",
+        "documentOverflow": false,
+        "fit": false,
+        "headerHeight": 81,
+        "height": 450,
+        "maxHeight": "none",
+        "overflow": "visible",
+        "position": "static",
+        "sidebarHeight": 401.53125,
+        "top": "160px",
+        "visualHeight": 450,
+        "width": 720
+      }
+    ],
+    "dynamic": [
+      {
+        "case": "compact",
+        "documentOverflow": false,
+        "fit": true,
+        "headerHeight": 90,
+        "height": 900,
+        "maxHeight": "none",
+        "overflow": "visible",
+        "position": "sticky",
+        "sidebarHeight": 300.78125,
+        "top": "106px",
+        "visualHeight": 900,
+        "width": 1440
+      },
+      {
+        "case": "tall reviews",
+        "documentOverflow": false,
+        "fit": false,
+        "headerHeight": 90,
+        "height": 600,
+        "maxHeight": "none",
+        "overflow": "visible",
+        "position": "static",
+        "sidebarHeight": 1420.78125,
+        "top": "auto",
+        "visualHeight": 600,
+        "width": 1440
+      },
+      {
+        "case": "tall reviews",
+        "documentOverflow": false,
+        "fit": false,
+        "headerHeight": 90,
+        "height": 900,
+        "maxHeight": "none",
+        "overflow": "visible",
+        "position": "static",
+        "sidebarHeight": 1420.78125,
+        "top": "auto",
+        "visualHeight": 900,
+        "width": 1440
+      },
+      {
+        "case": "tall reviews",
+        "documentOverflow": false,
+        "fit": false,
+        "headerHeight": 90,
+        "height": 600,
+        "maxHeight": "none",
+        "overflow": "visible",
+        "position": "static",
+        "sidebarHeight": 1447.78125,
+        "top": "auto",
+        "visualHeight": 600,
+        "width": 1024
+      },
+      {
+        "case": "tall reviews",
+        "documentOverflow": false,
+        "fit": false,
+        "headerHeight": 90,
+        "height": 667,
+        "maxHeight": "none",
+        "overflow": "visible",
+        "position": "static",
+        "sidebarHeight": 1447.78125,
+        "top": "auto",
+        "visualHeight": 667,
+        "width": 390
+      },
+      {
+        "case": "tall reviews",
+        "documentOverflow": false,
+        "fit": false,
+        "headerHeight": 90,
+        "height": 844,
+        "maxHeight": "none",
+        "overflow": "visible",
+        "position": "static",
+        "sidebarHeight": 1447.78125,
+        "top": "auto",
+        "visualHeight": 844,
+        "width": 390
+      },
+      {
+        "case": "tall reviews",
+        "documentOverflow": false,
+        "fit": false,
+        "headerHeight": 90,
+        "height": 450,
+        "maxHeight": "none",
+        "overflow": "visible",
+        "position": "static",
+        "sidebarHeight": 1204.78125,
+        "top": "auto",
+        "visualHeight": 450,
+        "width": 720
+      }
+    ],
+    "keyboard": {
+      "outline": "solid",
+      "text": "Last sidebar link",
+      "visible": true
+    },
+    "zoomNote": "720x450 is the CSS reflow equivalent of a 1440x900 window at 200%; actual browser zoom was not changed."
+  },
+  "live-sidebar-before": {
+    "documentOverflow": false,
+    "fit": false,
+    "headerHeight": 93,
+    "height": 600,
+    "maxHeight": "none",
+    "overflow": "visible",
+    "position": "sticky",
+    "sidebarHeight": 1078.34375,
+    "top": "160px",
+    "visualHeight": 600,
+    "width": 1440
+  },
+  "title-matrix": {
+    "before": {
+      "body": {
+        "font": "19px",
+        "left": 231.5,
+        "padding": "0px",
+        "width": 756.671875
+      },
+      "columns": {
+        "font": "20px",
+        "left": 231.5,
+        "padding": "0px",
+        "width": 1200
+      },
+      "image": {
+        "font": "20px",
+        "left": 231.5,
+        "padding": "0px",
+        "width": 756.671875
+      },
+      "main": {
+        "font": "20px",
+        "left": 0,
+        "padding": "40px",
+        "width": 1663
+      },
+      "meta": {
+        "font": "14px",
+        "left": 40,
+        "padding": "0px",
+        "width": 51.015625
+      },
+      "overflow": false,
+      "title": {
+        "font": "58px",
+        "left": 40,
+        "padding": "0px",
+        "text": "Tubi Originals to Watch Free: Slay, Lowlifes, and The Z-Suite",
+        "width": 950
+      },
+      "width": 1675
+    },
+    "results": [
+      {
+        "format": "standard",
+        "theme": "light",
+        "body": {
+          "font": "19px",
+          "left": 231.5,
+          "padding": "0px",
+          "width": 756.671875
+        },
+        "columns": {
+          "font": "20px",
+          "left": 231.5,
+          "padding": "0px",
+          "width": 1200
+        },
+        "image": {
+          "font": "20px",
+          "left": 231.5,
+          "padding": "0px",
+          "width": 756.671875
+        },
+        "main": {
+          "font": "20px",
+          "left": 0,
+          "padding": "40px",
+          "width": 1663
+        },
+        "meta": {
+          "font": "14px",
+          "left": 231.5,
+          "padding": "0px",
+          "width": 51.015625
+        },
+        "overflow": false,
+        "title": {
+          "font": "48px",
+          "left": 231.5,
+          "padding": "0px",
+          "text": "Tubi Originals to Watch Free: Slay, Lowlifes, and The Z-Suite",
+          "width": 756.65625
+        },
+        "width": 1675
+      },
+      {
+        "format": "link",
+        "theme": "light",
+        "body": {
+          "font": "19px",
+          "left": 231.5,
+          "padding": "0px",
+          "width": 756.671875
+        },
+        "columns": {
+          "font": "20px",
+          "left": 231.5,
+          "padding": "0px",
+          "width": 1200
+        },
+        "main": {
+          "font": "20px",
+          "left": 0,
+          "padding": "40px",
+          "width": 1663
+        },
+        "meta": {
+          "font": "14px",
+          "left": 231.5,
+          "padding": "0px",
+          "width": 51.015625
+        },
+        "overflow": false,
+        "title": {
+          "font": "48px",
+          "left": 231.5,
+          "padding": "0px",
+          "text": "A small corner of the open web, worth keeping",
+          "width": 756.65625
+        },
+        "width": 1675
+      },
+      {
+        "format": "video",
+        "theme": "light",
+        "body": {
+          "font": "19px",
+          "left": 231.5,
+          "padding": "0px",
+          "width": 756.671875
+        },
+        "columns": {
+          "font": "20px",
+          "left": 231.5,
+          "padding": "0px",
+          "width": 1200
+        },
+        "main": {
+          "font": "20px",
+          "left": 0,
+          "padding": "40px",
+          "width": 1663
+        },
+        "meta": {
+          "font": "14px",
+          "left": 231.5,
+          "padding": "0px",
+          "width": 51.015625
+        },
+        "overflow": false,
+        "title": {
+          "font": "48px",
+          "left": 231.5,
+          "padding": "0px",
+          "text": "A little television, between the long reads",
+          "width": 756.65625
+        },
+        "width": 1675
+      },
+      {
+        "format": "status",
+        "theme": "light",
+        "body": {
+          "font": "19px",
+          "left": 231.5,
+          "padding": "0px",
+          "width": 756.671875
+        },
+        "columns": {
+          "font": "20px",
+          "left": 231.5,
+          "padding": "0px",
+          "width": 1200
+        },
+        "main": {
+          "font": "20px",
+          "left": 0,
+          "padding": "40px",
+          "width": 1663
+        },
+        "meta": {
+          "font": "14px",
+          "left": 231.5,
+          "padding": "0px",
+          "width": 51.015625
+        },
+        "overflow": false,
+        "title": {
+          "font": "48px",
+          "left": 231.5,
+          "padding": "0px",
+          "text": "Status fixture",
+          "width": 756.65625
+        },
+        "width": 1675
+      },
+      {
+        "format": "audio",
+        "theme": "light",
+        "body": {
+          "font": "19px",
+          "left": 231.5,
+          "padding": "0px",
+          "width": 756.671875
+        },
+        "columns": {
+          "font": "20px",
+          "left": 231.5,
+          "padding": "0px",
+          "width": 1200
+        },
+        "main": {
+          "font": "20px",
+          "left": 0,
+          "padding": "40px",
+          "width": 1663
+        },
+        "meta": {
+          "font": "14px",
+          "left": 231.5,
+          "padding": "0px",
+          "width": 51.015625
+        },
+        "overflow": false,
+        "title": {
+          "font": "48px",
+          "left": 231.5,
+          "padding": "0px",
+          "text": "A short dispatch from the feed",
+          "width": 756.65625
+        },
+        "width": 1675
+      },
+      {
+        "format": "aside",
+        "theme": "light",
+        "body": {
+          "font": "19px",
+          "left": 231.5,
+          "padding": "0px",
+          "width": 756.671875
+        },
+        "columns": {
+          "font": "20px",
+          "left": 231.5,
+          "padding": "0px",
+          "width": 1200
+        },
+        "main": {
+          "font": "20px",
+          "left": 0,
+          "padding": "40px",
+          "width": 1663
+        },
+        "meta": {
+          "font": "14px",
+          "left": 231.5,
+          "padding": "0px",
+          "width": 51.015625
+        },
+        "overflow": false,
+        "title": {
+          "font": "48px",
+          "left": 231.5,
+          "padding": "0px",
+          "text": "Aside fixture",
+          "width": 756.65625
+        },
+        "width": 1675
+      },
+      {
+        "format": "image",
+        "theme": "light",
+        "body": {
+          "font": "19px",
+          "left": 231.5,
+          "padding": "0px",
+          "width": 756.671875
+        },
+        "columns": {
+          "font": "20px",
+          "left": 231.5,
+          "padding": "0px",
+          "width": 1200
+        },
+        "main": {
+          "font": "20px",
+          "left": 0,
+          "padding": "40px",
+          "width": 1663
+        },
+        "meta": {
+          "font": "14px",
+          "left": 231.5,
+          "padding": "0px",
+          "width": 51.015625
+        },
+        "overflow": false,
+        "title": {
+          "font": "48px",
+          "left": 231.5,
+          "padding": "0px",
+          "text": "Image fixture",
+          "width": 756.65625
+        },
+        "width": 1675
+      },
+      {
+        "format": "quote",
+        "theme": "light",
+        "body": {
+          "font": "19px",
+          "left": 231.5,
+          "padding": "0px",
+          "width": 756.671875
+        },
+        "columns": {
+          "font": "20px",
+          "left": 231.5,
+          "padding": "0px",
+          "width": 1200
+        },
+        "main": {
+          "font": "20px",
+          "left": 0,
+          "padding": "40px",
+          "width": 1663
+        },
+        "meta": {
+          "font": "14px",
+          "left": 231.5,
+          "padding": "0px",
+          "width": 51.015625
+        },
+        "overflow": false,
+        "title": {
+          "font": "48px",
+          "left": 231.5,
+          "padding": "0px",
+          "text": "Quote fixture",
+          "width": 756.65625
+        },
+        "width": 1675
+      },
+      {
+        "format": "gallery",
+        "theme": "light",
+        "body": {
+          "font": "19px",
+          "left": 231.5,
+          "padding": "0px",
+          "width": 756.671875
+        },
+        "columns": {
+          "font": "20px",
+          "left": 231.5,
+          "padding": "0px",
+          "width": 1200
+        },
+        "main": {
+          "font": "20px",
+          "left": 0,
+          "padding": "40px",
+          "width": 1663
+        },
+        "meta": {
+          "font": "14px",
+          "left": 231.5,
+          "padding": "0px",
+          "width": 51.015625
+        },
+        "overflow": false,
+        "title": {
+          "font": "48px",
+          "left": 231.5,
+          "padding": "0px",
+          "text": "Gallery fixture",
+          "width": 756.65625
+        },
+        "width": 1675
+      },
+      {
+        "format": "chat",
+        "theme": "light",
+        "body": {
+          "font": "19px",
+          "left": 231.5,
+          "padding": "0px",
+          "width": 756.671875
+        },
+        "columns": {
+          "font": "20px",
+          "left": 231.5,
+          "padding": "0px",
+          "width": 1200
+        },
+        "main": {
+          "font": "20px",
+          "left": 0,
+          "padding": "40px",
+          "width": 1663
+        },
+        "meta": {
+          "font": "14px",
+          "left": 231.5,
+          "padding": "0px",
+          "width": 51.015625
+        },
+        "overflow": false,
+        "title": {
+          "font": "48px",
+          "left": 231.5,
+          "padding": "0px",
+          "text": "A conversation between friends",
+          "width": 756.65625
+        },
+        "width": 1675
+      },
+      {
+        "format": "standard",
+        "theme": "light",
+        "body": {
+          "font": "19px",
+          "left": 40,
+          "padding": "0px",
+          "width": 495.34375
+        },
+        "columns": {
+          "font": "17.7816px",
+          "left": 40,
+          "padding": "0px",
+          "width": 808
+        },
+        "image": {
+          "font": "17.7816px",
+          "left": 40,
+          "padding": "0px",
+          "width": 495.34375
+        },
+        "main": {
+          "font": "17.7816px",
+          "left": 0,
+          "padding": "40px",
+          "width": 888
+        },
+        "meta": {
+          "font": "14px",
+          "left": 40,
+          "padding": "0px",
+          "width": 51.015625
+        },
+        "overflow": false,
+        "title": {
+          "font": "32px",
+          "left": 40,
+          "padding": "0px",
+          "text": "Tubi Originals to Watch Free: Slay, Lowlifes, and The Z-Suite",
+          "width": 495.328125
+        },
+        "width": 900
+      },
+      {
+        "format": "link",
+        "theme": "light",
+        "body": {
+          "font": "19px",
+          "left": 40,
+          "padding": "0px",
+          "width": 495.34375
+        },
+        "columns": {
+          "font": "17.7816px",
+          "left": 40,
+          "padding": "0px",
+          "width": 808
+        },
+        "main": {
+          "font": "17.7816px",
+          "left": 0,
+          "padding": "40px",
+          "width": 888
+        },
+        "meta": {
+          "font": "14px",
+          "left": 40,
+          "padding": "0px",
+          "width": 51.015625
+        },
+        "overflow": false,
+        "title": {
+          "font": "32px",
+          "left": 40,
+          "padding": "0px",
+          "text": "A small corner of the open web, worth keeping",
+          "width": 495.328125
+        },
+        "width": 900
+      },
+      {
+        "format": "video",
+        "theme": "light",
+        "body": {
+          "font": "19px",
+          "left": 40,
+          "padding": "0px",
+          "width": 495.34375
+        },
+        "columns": {
+          "font": "17.7816px",
+          "left": 40,
+          "padding": "0px",
+          "width": 808
+        },
+        "main": {
+          "font": "17.7816px",
+          "left": 0,
+          "padding": "40px",
+          "width": 888
+        },
+        "meta": {
+          "font": "14px",
+          "left": 40,
+          "padding": "0px",
+          "width": 51.015625
+        },
+        "overflow": false,
+        "title": {
+          "font": "32px",
+          "left": 40,
+          "padding": "0px",
+          "text": "A little television, between the long reads",
+          "width": 495.328125
+        },
+        "width": 900
+      },
+      {
+        "format": "status",
+        "theme": "light",
+        "body": {
+          "font": "19px",
+          "left": 40,
+          "padding": "0px",
+          "width": 495.34375
+        },
+        "columns": {
+          "font": "17.7816px",
+          "left": 40,
+          "padding": "0px",
+          "width": 808
+        },
+        "main": {
+          "font": "17.7816px",
+          "left": 0,
+          "padding": "40px",
+          "width": 888
+        },
+        "meta": {
+          "font": "14px",
+          "left": 40,
+          "padding": "0px",
+          "width": 51.015625
+        },
+        "overflow": false,
+        "title": {
+          "font": "32px",
+          "left": 40,
+          "padding": "0px",
+          "text": "Status fixture",
+          "width": 495.328125
+        },
+        "width": 900
+      },
+      {
+        "format": "audio",
+        "theme": "light",
+        "body": {
+          "font": "19px",
+          "left": 40,
+          "padding": "0px",
+          "width": 495.34375
+        },
+        "columns": {
+          "font": "17.7816px",
+          "left": 40,
+          "padding": "0px",
+          "width": 808
+        },
+        "main": {
+          "font": "17.7816px",
+          "left": 0,
+          "padding": "40px",
+          "width": 888
+        },
+        "meta": {
+          "font": "14px",
+          "left": 40,
+          "padding": "0px",
+          "width": 51.015625
+        },
+        "overflow": false,
+        "title": {
+          "font": "32px",
+          "left": 40,
+          "padding": "0px",
+          "text": "A short dispatch from the feed",
+          "width": 495.328125
+        },
+        "width": 900
+      },
+      {
+        "format": "aside",
+        "theme": "light",
+        "body": {
+          "font": "19px",
+          "left": 40,
+          "padding": "0px",
+          "width": 495.34375
+        },
+        "columns": {
+          "font": "17.7816px",
+          "left": 40,
+          "padding": "0px",
+          "width": 808
+        },
+        "main": {
+          "font": "17.7816px",
+          "left": 0,
+          "padding": "40px",
+          "width": 888
+        },
+        "meta": {
+          "font": "14px",
+          "left": 40,
+          "padding": "0px",
+          "width": 51.015625
+        },
+        "overflow": false,
+        "title": {
+          "font": "32px",
+          "left": 40,
+          "padding": "0px",
+          "text": "Aside fixture",
+          "width": 495.328125
+        },
+        "width": 900
+      },
+      {
+        "format": "image",
+        "theme": "light",
+        "body": {
+          "font": "19px",
+          "left": 40,
+          "padding": "0px",
+          "width": 495.34375
+        },
+        "columns": {
+          "font": "17.7816px",
+          "left": 40,
+          "padding": "0px",
+          "width": 808
+        },
+        "main": {
+          "font": "17.7816px",
+          "left": 0,
+          "padding": "40px",
+          "width": 888
+        },
+        "meta": {
+          "font": "14px",
+          "left": 40,
+          "padding": "0px",
+          "width": 51.015625
+        },
+        "overflow": false,
+        "title": {
+          "font": "32px",
+          "left": 40,
+          "padding": "0px",
+          "text": "Image fixture",
+          "width": 495.328125
+        },
+        "width": 900
+      },
+      {
+        "format": "quote",
+        "theme": "light",
+        "body": {
+          "font": "19px",
+          "left": 40,
+          "padding": "0px",
+          "width": 495.34375
+        },
+        "columns": {
+          "font": "17.7816px",
+          "left": 40,
+          "padding": "0px",
+          "width": 808
+        },
+        "main": {
+          "font": "17.7816px",
+          "left": 0,
+          "padding": "40px",
+          "width": 888
+        },
+        "meta": {
+          "font": "14px",
+          "left": 40,
+          "padding": "0px",
+          "width": 51.015625
+        },
+        "overflow": false,
+        "title": {
+          "font": "32px",
+          "left": 40,
+          "padding": "0px",
+          "text": "Quote fixture",
+          "width": 495.328125
+        },
+        "width": 900
+      },
+      {
+        "format": "gallery",
+        "theme": "light",
+        "body": {
+          "font": "19px",
+          "left": 40,
+          "padding": "0px",
+          "width": 495.34375
+        },
+        "columns": {
+          "font": "17.7816px",
+          "left": 40,
+          "padding": "0px",
+          "width": 808
+        },
+        "main": {
+          "font": "17.7816px",
+          "left": 0,
+          "padding": "40px",
+          "width": 888
+        },
+        "meta": {
+          "font": "14px",
+          "left": 40,
+          "padding": "0px",
+          "width": 51.015625
+        },
+        "overflow": false,
+        "title": {
+          "font": "32px",
+          "left": 40,
+          "padding": "0px",
+          "text": "Gallery fixture",
+          "width": 495.328125
+        },
+        "width": 900
+      },
+      {
+        "format": "chat",
+        "theme": "light",
+        "body": {
+          "font": "19px",
+          "left": 40,
+          "padding": "0px",
+          "width": 495.34375
+        },
+        "columns": {
+          "font": "17.7816px",
+          "left": 40,
+          "padding": "0px",
+          "width": 808
+        },
+        "main": {
+          "font": "17.7816px",
+          "left": 0,
+          "padding": "40px",
+          "width": 888
+        },
+        "meta": {
+          "font": "14px",
+          "left": 40,
+          "padding": "0px",
+          "width": 51.015625
+        },
+        "overflow": false,
+        "title": {
+          "font": "32px",
+          "left": 40,
+          "padding": "0px",
+          "text": "A conversation between friends",
+          "width": 495.328125
+        },
+        "width": 900
+      },
+      {
+        "format": "standard",
+        "theme": "light",
+        "body": {
+          "font": "18px",
+          "left": 22,
+          "padding": "0px",
+          "width": 334
+        },
+        "columns": {
+          "font": "14.4564px",
+          "left": 22,
+          "padding": "0px",
+          "width": 334
+        },
+        "image": {
+          "font": "14.4564px",
+          "left": 22,
+          "padding": "0px",
+          "width": 334
+        },
+        "main": {
+          "font": "14.4564px",
+          "left": 0,
+          "padding": "22px",
+          "width": 378
+        },
+        "meta": {
+          "font": "14px",
+          "left": 22,
+          "padding": "0px",
+          "width": 51.015625
+        },
+        "overflow": false,
+        "title": {
+          "font": "30px",
+          "left": 22,
+          "padding": "0px",
+          "text": "Tubi Originals to Watch Free: Slay, Lowlifes, and The Z-Suite",
+          "width": 334
+        },
+        "width": 390
+      },
+      {
+        "format": "link",
+        "theme": "light",
+        "body": {
+          "font": "18px",
+          "left": 22,
+          "padding": "0px",
+          "width": 334
+        },
+        "columns": {
+          "font": "14.4564px",
+          "left": 22,
+          "padding": "0px",
+          "width": 334
+        },
+        "main": {
+          "font": "14.4564px",
+          "left": 0,
+          "padding": "22px",
+          "width": 378
+        },
+        "meta": {
+          "font": "14px",
+          "left": 22,
+          "padding": "0px",
+          "width": 51.015625
+        },
+        "overflow": false,
+        "title": {
+          "font": "30px",
+          "left": 22,
+          "padding": "0px",
+          "text": "A small corner of the open web, worth keeping",
+          "width": 334
+        },
+        "width": 390
+      },
+      {
+        "format": "video",
+        "theme": "light",
+        "body": {
+          "font": "18px",
+          "left": 22,
+          "padding": "0px",
+          "width": 334
+        },
+        "columns": {
+          "font": "14.4564px",
+          "left": 22,
+          "padding": "0px",
+          "width": 334
+        },
+        "main": {
+          "font": "14.4564px",
+          "left": 0,
+          "padding": "22px",
+          "width": 378
+        },
+        "meta": {
+          "font": "14px",
+          "left": 22,
+          "padding": "0px",
+          "width": 51.015625
+        },
+        "overflow": false,
+        "title": {
+          "font": "30px",
+          "left": 22,
+          "padding": "0px",
+          "text": "A little television, between the long reads",
+          "width": 334
+        },
+        "width": 390
+      },
+      {
+        "format": "status",
+        "theme": "light",
+        "body": {
+          "font": "18px",
+          "left": 22,
+          "padding": "0px",
+          "width": 334
+        },
+        "columns": {
+          "font": "14.4564px",
+          "left": 22,
+          "padding": "0px",
+          "width": 334
+        },
+        "main": {
+          "font": "14.4564px",
+          "left": 0,
+          "padding": "22px",
+          "width": 378
+        },
+        "meta": {
+          "font": "14px",
+          "left": 22,
+          "padding": "0px",
+          "width": 51.015625
+        },
+        "overflow": false,
+        "title": {
+          "font": "30px",
+          "left": 22,
+          "padding": "0px",
+          "text": "Status fixture",
+          "width": 334
+        },
+        "width": 390
+      },
+      {
+        "format": "audio",
+        "theme": "light",
+        "body": {
+          "font": "18px",
+          "left": 22,
+          "padding": "0px",
+          "width": 334
+        },
+        "columns": {
+          "font": "14.4564px",
+          "left": 22,
+          "padding": "0px",
+          "width": 334
+        },
+        "main": {
+          "font": "14.4564px",
+          "left": 0,
+          "padding": "22px",
+          "width": 378
+        },
+        "meta": {
+          "font": "14px",
+          "left": 22,
+          "padding": "0px",
+          "width": 51.015625
+        },
+        "overflow": false,
+        "title": {
+          "font": "30px",
+          "left": 22,
+          "padding": "0px",
+          "text": "A short dispatch from the feed",
+          "width": 334
+        },
+        "width": 390
+      },
+      {
+        "format": "aside",
+        "theme": "light",
+        "body": {
+          "font": "18px",
+          "left": 22,
+          "padding": "0px",
+          "width": 334
+        },
+        "columns": {
+          "font": "14.4564px",
+          "left": 22,
+          "padding": "0px",
+          "width": 334
+        },
+        "main": {
+          "font": "14.4564px",
+          "left": 0,
+          "padding": "22px",
+          "width": 378
+        },
+        "meta": {
+          "font": "14px",
+          "left": 22,
+          "padding": "0px",
+          "width": 51.015625
+        },
+        "overflow": false,
+        "title": {
+          "font": "30px",
+          "left": 22,
+          "padding": "0px",
+          "text": "Aside fixture",
+          "width": 334
+        },
+        "width": 390
+      },
+      {
+        "format": "image",
+        "theme": "light",
+        "body": {
+          "font": "18px",
+          "left": 22,
+          "padding": "0px",
+          "width": 334
+        },
+        "columns": {
+          "font": "14.4564px",
+          "left": 22,
+          "padding": "0px",
+          "width": 334
+        },
+        "main": {
+          "font": "14.4564px",
+          "left": 0,
+          "padding": "22px",
+          "width": 378
+        },
+        "meta": {
+          "font": "14px",
+          "left": 22,
+          "padding": "0px",
+          "width": 51.015625
+        },
+        "overflow": false,
+        "title": {
+          "font": "30px",
+          "left": 22,
+          "padding": "0px",
+          "text": "Image fixture",
+          "width": 334
+        },
+        "width": 390
+      },
+      {
+        "format": "quote",
+        "theme": "light",
+        "body": {
+          "font": "18px",
+          "left": 22,
+          "padding": "0px",
+          "width": 334
+        },
+        "columns": {
+          "font": "14.4564px",
+          "left": 22,
+          "padding": "0px",
+          "width": 334
+        },
+        "main": {
+          "font": "14.4564px",
+          "left": 0,
+          "padding": "22px",
+          "width": 378
+        },
+        "meta": {
+          "font": "14px",
+          "left": 22,
+          "padding": "0px",
+          "width": 51.015625
+        },
+        "overflow": false,
+        "title": {
+          "font": "30px",
+          "left": 22,
+          "padding": "0px",
+          "text": "Quote fixture",
+          "width": 334
+        },
+        "width": 390
+      },
+      {
+        "format": "gallery",
+        "theme": "light",
+        "body": {
+          "font": "18px",
+          "left": 22,
+          "padding": "0px",
+          "width": 334
+        },
+        "columns": {
+          "font": "14.4564px",
+          "left": 22,
+          "padding": "0px",
+          "width": 334
+        },
+        "main": {
+          "font": "14.4564px",
+          "left": 0,
+          "padding": "22px",
+          "width": 378
+        },
+        "meta": {
+          "font": "14px",
+          "left": 22,
+          "padding": "0px",
+          "width": 51.015625
+        },
+        "overflow": false,
+        "title": {
+          "font": "30px",
+          "left": 22,
+          "padding": "0px",
+          "text": "Gallery fixture",
+          "width": 334
+        },
+        "width": 390
+      },
+      {
+        "format": "chat",
+        "theme": "light",
+        "body": {
+          "font": "18px",
+          "left": 22,
+          "padding": "0px",
+          "width": 334
+        },
+        "columns": {
+          "font": "14.4564px",
+          "left": 22,
+          "padding": "0px",
+          "width": 334
+        },
+        "main": {
+          "font": "14.4564px",
+          "left": 0,
+          "padding": "22px",
+          "width": 378
+        },
+        "meta": {
+          "font": "14px",
+          "left": 22,
+          "padding": "0px",
+          "width": 51.015625
+        },
+        "overflow": false,
+        "title": {
+          "font": "30px",
+          "left": 22,
+          "padding": "0px",
+          "text": "A conversation between friends",
+          "width": 334
+        },
+        "width": 390
+      },
+      {
+        "format": "standard",
+        "theme": "dark",
+        "body": {
+          "font": "19px",
+          "left": 231.5,
+          "padding": "0px",
+          "width": 756.671875
+        },
+        "columns": {
+          "font": "20px",
+          "left": 231.5,
+          "padding": "0px",
+          "width": 1200
+        },
+        "image": {
+          "font": "20px",
+          "left": 231.5,
+          "padding": "0px",
+          "width": 756.671875
+        },
+        "main": {
+          "font": "20px",
+          "left": 0,
+          "padding": "40px",
+          "width": 1663
+        },
+        "meta": {
+          "font": "14px",
+          "left": 231.5,
+          "padding": "0px",
+          "width": 51.015625
+        },
+        "overflow": false,
+        "title": {
+          "font": "48px",
+          "left": 231.5,
+          "padding": "0px",
+          "text": "Tubi Originals to Watch Free: Slay, Lowlifes, and The Z-Suite",
+          "width": 756.65625
+        },
+        "width": 1675
+      },
+      {
+        "format": "link",
+        "theme": "dark",
+        "body": {
+          "font": "19px",
+          "left": 231.5,
+          "padding": "0px",
+          "width": 756.671875
+        },
+        "columns": {
+          "font": "20px",
+          "left": 231.5,
+          "padding": "0px",
+          "width": 1200
+        },
+        "main": {
+          "font": "20px",
+          "left": 0,
+          "padding": "40px",
+          "width": 1663
+        },
+        "meta": {
+          "font": "14px",
+          "left": 231.5,
+          "padding": "0px",
+          "width": 51.015625
+        },
+        "overflow": false,
+        "title": {
+          "font": "48px",
+          "left": 231.5,
+          "padding": "0px",
+          "text": "A small corner of the open web, worth keeping",
+          "width": 756.65625
+        },
+        "width": 1675
+      },
+      {
+        "format": "video",
+        "theme": "dark",
+        "body": {
+          "font": "19px",
+          "left": 231.5,
+          "padding": "0px",
+          "width": 756.671875
+        },
+        "columns": {
+          "font": "20px",
+          "left": 231.5,
+          "padding": "0px",
+          "width": 1200
+        },
+        "main": {
+          "font": "20px",
+          "left": 0,
+          "padding": "40px",
+          "width": 1663
+        },
+        "meta": {
+          "font": "14px",
+          "left": 231.5,
+          "padding": "0px",
+          "width": 51.015625
+        },
+        "overflow": false,
+        "title": {
+          "font": "48px",
+          "left": 231.5,
+          "padding": "0px",
+          "text": "A little television, between the long reads",
+          "width": 756.65625
+        },
+        "width": 1675
+      },
+      {
+        "format": "status",
+        "theme": "dark",
+        "body": {
+          "font": "19px",
+          "left": 231.5,
+          "padding": "0px",
+          "width": 756.671875
+        },
+        "columns": {
+          "font": "20px",
+          "left": 231.5,
+          "padding": "0px",
+          "width": 1200
+        },
+        "main": {
+          "font": "20px",
+          "left": 0,
+          "padding": "40px",
+          "width": 1663
+        },
+        "meta": {
+          "font": "14px",
+          "left": 231.5,
+          "padding": "0px",
+          "width": 51.015625
+        },
+        "overflow": false,
+        "title": {
+          "font": "48px",
+          "left": 231.5,
+          "padding": "0px",
+          "text": "Status fixture",
+          "width": 756.65625
+        },
+        "width": 1675
+      },
+      {
+        "format": "audio",
+        "theme": "dark",
+        "body": {
+          "font": "19px",
+          "left": 231.5,
+          "padding": "0px",
+          "width": 756.671875
+        },
+        "columns": {
+          "font": "20px",
+          "left": 231.5,
+          "padding": "0px",
+          "width": 1200
+        },
+        "main": {
+          "font": "20px",
+          "left": 0,
+          "padding": "40px",
+          "width": 1663
+        },
+        "meta": {
+          "font": "14px",
+          "left": 231.5,
+          "padding": "0px",
+          "width": 51.015625
+        },
+        "overflow": false,
+        "title": {
+          "font": "48px",
+          "left": 231.5,
+          "padding": "0px",
+          "text": "A short dispatch from the feed",
+          "width": 756.65625
+        },
+        "width": 1675
+      },
+      {
+        "format": "aside",
+        "theme": "dark",
+        "body": {
+          "font": "19px",
+          "left": 231.5,
+          "padding": "0px",
+          "width": 756.671875
+        },
+        "columns": {
+          "font": "20px",
+          "left": 231.5,
+          "padding": "0px",
+          "width": 1200
+        },
+        "main": {
+          "font": "20px",
+          "left": 0,
+          "padding": "40px",
+          "width": 1663
+        },
+        "meta": {
+          "font": "14px",
+          "left": 231.5,
+          "padding": "0px",
+          "width": 51.015625
+        },
+        "overflow": false,
+        "title": {
+          "font": "48px",
+          "left": 231.5,
+          "padding": "0px",
+          "text": "Aside fixture",
+          "width": 756.65625
+        },
+        "width": 1675
+      },
+      {
+        "format": "image",
+        "theme": "dark",
+        "body": {
+          "font": "19px",
+          "left": 231.5,
+          "padding": "0px",
+          "width": 756.671875
+        },
+        "columns": {
+          "font": "20px",
+          "left": 231.5,
+          "padding": "0px",
+          "width": 1200
+        },
+        "main": {
+          "font": "20px",
+          "left": 0,
+          "padding": "40px",
+          "width": 1663
+        },
+        "meta": {
+          "font": "14px",
+          "left": 231.5,
+          "padding": "0px",
+          "width": 51.015625
+        },
+        "overflow": false,
+        "title": {
+          "font": "48px",
+          "left": 231.5,
+          "padding": "0px",
+          "text": "Image fixture",
+          "width": 756.65625
+        },
+        "width": 1675
+      },
+      {
+        "format": "quote",
+        "theme": "dark",
+        "body": {
+          "font": "19px",
+          "left": 231.5,
+          "padding": "0px",
+          "width": 756.671875
+        },
+        "columns": {
+          "font": "20px",
+          "left": 231.5,
+          "padding": "0px",
+          "width": 1200
+        },
+        "main": {
+          "font": "20px",
+          "left": 0,
+          "padding": "40px",
+          "width": 1663
+        },
+        "meta": {
+          "font": "14px",
+          "left": 231.5,
+          "padding": "0px",
+          "width": 51.015625
+        },
+        "overflow": false,
+        "title": {
+          "font": "48px",
+          "left": 231.5,
+          "padding": "0px",
+          "text": "Quote fixture",
+          "width": 756.65625
+        },
+        "width": 1675
+      },
+      {
+        "format": "gallery",
+        "theme": "dark",
+        "body": {
+          "font": "19px",
+          "left": 231.5,
+          "padding": "0px",
+          "width": 756.671875
+        },
+        "columns": {
+          "font": "20px",
+          "left": 231.5,
+          "padding": "0px",
+          "width": 1200
+        },
+        "main": {
+          "font": "20px",
+          "left": 0,
+          "padding": "40px",
+          "width": 1663
+        },
+        "meta": {
+          "font": "14px",
+          "left": 231.5,
+          "padding": "0px",
+          "width": 51.015625
+        },
+        "overflow": false,
+        "title": {
+          "font": "48px",
+          "left": 231.5,
+          "padding": "0px",
+          "text": "Gallery fixture",
+          "width": 756.65625
+        },
+        "width": 1675
+      },
+      {
+        "format": "chat",
+        "theme": "dark",
+        "body": {
+          "font": "19px",
+          "left": 231.5,
+          "padding": "0px",
+          "width": 756.671875
+        },
+        "columns": {
+          "font": "20px",
+          "left": 231.5,
+          "padding": "0px",
+          "width": 1200
+        },
+        "main": {
+          "font": "20px",
+          "left": 0,
+          "padding": "40px",
+          "width": 1663
+        },
+        "meta": {
+          "font": "14px",
+          "left": 231.5,
+          "padding": "0px",
+          "width": 51.015625
+        },
+        "overflow": false,
+        "title": {
+          "font": "48px",
+          "left": 231.5,
+          "padding": "0px",
+          "text": "A conversation between friends",
+          "width": 756.65625
+        },
+        "width": 1675
+      },
+      {
+        "format": "standard",
+        "theme": "dark",
+        "body": {
+          "font": "19px",
+          "left": 40,
+          "padding": "0px",
+          "width": 495.34375
+        },
+        "columns": {
+          "font": "17.7816px",
+          "left": 40,
+          "padding": "0px",
+          "width": 808
+        },
+        "image": {
+          "font": "17.7816px",
+          "left": 40,
+          "padding": "0px",
+          "width": 495.34375
+        },
+        "main": {
+          "font": "17.7816px",
+          "left": 0,
+          "padding": "40px",
+          "width": 888
+        },
+        "meta": {
+          "font": "14px",
+          "left": 40,
+          "padding": "0px",
+          "width": 51.015625
+        },
+        "overflow": false,
+        "title": {
+          "font": "32px",
+          "left": 40,
+          "padding": "0px",
+          "text": "Tubi Originals to Watch Free: Slay, Lowlifes, and The Z-Suite",
+          "width": 495.328125
+        },
+        "width": 900
+      },
+      {
+        "format": "link",
+        "theme": "dark",
+        "body": {
+          "font": "19px",
+          "left": 40,
+          "padding": "0px",
+          "width": 495.34375
+        },
+        "columns": {
+          "font": "17.7816px",
+          "left": 40,
+          "padding": "0px",
+          "width": 808
+        },
+        "main": {
+          "font": "17.7816px",
+          "left": 0,
+          "padding": "40px",
+          "width": 888
+        },
+        "meta": {
+          "font": "14px",
+          "left": 40,
+          "padding": "0px",
+          "width": 51.015625
+        },
+        "overflow": false,
+        "title": {
+          "font": "32px",
+          "left": 40,
+          "padding": "0px",
+          "text": "A small corner of the open web, worth keeping",
+          "width": 495.328125
+        },
+        "width": 900
+      },
+      {
+        "format": "video",
+        "theme": "dark",
+        "body": {
+          "font": "19px",
+          "left": 40,
+          "padding": "0px",
+          "width": 495.34375
+        },
+        "columns": {
+          "font": "17.7816px",
+          "left": 40,
+          "padding": "0px",
+          "width": 808
+        },
+        "main": {
+          "font": "17.7816px",
+          "left": 0,
+          "padding": "40px",
+          "width": 888
+        },
+        "meta": {
+          "font": "14px",
+          "left": 40,
+          "padding": "0px",
+          "width": 51.015625
+        },
+        "overflow": false,
+        "title": {
+          "font": "32px",
+          "left": 40,
+          "padding": "0px",
+          "text": "A little television, between the long reads",
+          "width": 495.328125
+        },
+        "width": 900
+      },
+      {
+        "format": "status",
+        "theme": "dark",
+        "body": {
+          "font": "19px",
+          "left": 40,
+          "padding": "0px",
+          "width": 495.34375
+        },
+        "columns": {
+          "font": "17.7816px",
+          "left": 40,
+          "padding": "0px",
+          "width": 808
+        },
+        "main": {
+          "font": "17.7816px",
+          "left": 0,
+          "padding": "40px",
+          "width": 888
+        },
+        "meta": {
+          "font": "14px",
+          "left": 40,
+          "padding": "0px",
+          "width": 51.015625
+        },
+        "overflow": false,
+        "title": {
+          "font": "32px",
+          "left": 40,
+          "padding": "0px",
+          "text": "Status fixture",
+          "width": 495.328125
+        },
+        "width": 900
+      },
+      {
+        "format": "audio",
+        "theme": "dark",
+        "body": {
+          "font": "19px",
+          "left": 40,
+          "padding": "0px",
+          "width": 495.34375
+        },
+        "columns": {
+          "font": "17.7816px",
+          "left": 40,
+          "padding": "0px",
+          "width": 808
+        },
+        "main": {
+          "font": "17.7816px",
+          "left": 0,
+          "padding": "40px",
+          "width": 888
+        },
+        "meta": {
+          "font": "14px",
+          "left": 40,
+          "padding": "0px",
+          "width": 51.015625
+        },
+        "overflow": false,
+        "title": {
+          "font": "32px",
+          "left": 40,
+          "padding": "0px",
+          "text": "A short dispatch from the feed",
+          "width": 495.328125
+        },
+        "width": 900
+      },
+      {
+        "format": "aside",
+        "theme": "dark",
+        "body": {
+          "font": "19px",
+          "left": 40,
+          "padding": "0px",
+          "width": 495.34375
+        },
+        "columns": {
+          "font": "17.7816px",
+          "left": 40,
+          "padding": "0px",
+          "width": 808
+        },
+        "main": {
+          "font": "17.7816px",
+          "left": 0,
+          "padding": "40px",
+          "width": 888
+        },
+        "meta": {
+          "font": "14px",
+          "left": 40,
+          "padding": "0px",
+          "width": 51.015625
+        },
+        "overflow": false,
+        "title": {
+          "font": "32px",
+          "left": 40,
+          "padding": "0px",
+          "text": "Aside fixture",
+          "width": 495.328125
+        },
+        "width": 900
+      },
+      {
+        "format": "image",
+        "theme": "dark",
+        "body": {
+          "font": "19px",
+          "left": 40,
+          "padding": "0px",
+          "width": 495.34375
+        },
+        "columns": {
+          "font": "17.7816px",
+          "left": 40,
+          "padding": "0px",
+          "width": 808
+        },
+        "main": {
+          "font": "17.7816px",
+          "left": 0,
+          "padding": "40px",
+          "width": 888
+        },
+        "meta": {
+          "font": "14px",
+          "left": 40,
+          "padding": "0px",
+          "width": 51.015625
+        },
+        "overflow": false,
+        "title": {
+          "font": "32px",
+          "left": 40,
+          "padding": "0px",
+          "text": "Image fixture",
+          "width": 495.328125
+        },
+        "width": 900
+      },
+      {
+        "format": "quote",
+        "theme": "dark",
+        "body": {
+          "font": "19px",
+          "left": 40,
+          "padding": "0px",
+          "width": 495.34375
+        },
+        "columns": {
+          "font": "17.7816px",
+          "left": 40,
+          "padding": "0px",
+          "width": 808
+        },
+        "main": {
+          "font": "17.7816px",
+          "left": 0,
+          "padding": "40px",
+          "width": 888
+        },
+        "meta": {
+          "font": "14px",
+          "left": 40,
+          "padding": "0px",
+          "width": 51.015625
+        },
+        "overflow": false,
+        "title": {
+          "font": "32px",
+          "left": 40,
+          "padding": "0px",
+          "text": "Quote fixture",
+          "width": 495.328125
+        },
+        "width": 900
+      },
+      {
+        "format": "gallery",
+        "theme": "dark",
+        "body": {
+          "font": "19px",
+          "left": 40,
+          "padding": "0px",
+          "width": 495.34375
+        },
+        "columns": {
+          "font": "17.7816px",
+          "left": 40,
+          "padding": "0px",
+          "width": 808
+        },
+        "main": {
+          "font": "17.7816px",
+          "left": 0,
+          "padding": "40px",
+          "width": 888
+        },
+        "meta": {
+          "font": "14px",
+          "left": 40,
+          "padding": "0px",
+          "width": 51.015625
+        },
+        "overflow": false,
+        "title": {
+          "font": "32px",
+          "left": 40,
+          "padding": "0px",
+          "text": "Gallery fixture",
+          "width": 495.328125
+        },
+        "width": 900
+      },
+      {
+        "format": "chat",
+        "theme": "dark",
+        "body": {
+          "font": "19px",
+          "left": 40,
+          "padding": "0px",
+          "width": 495.34375
+        },
+        "columns": {
+          "font": "17.7816px",
+          "left": 40,
+          "padding": "0px",
+          "width": 808
+        },
+        "main": {
+          "font": "17.7816px",
+          "left": 0,
+          "padding": "40px",
+          "width": 888
+        },
+        "meta": {
+          "font": "14px",
+          "left": 40,
+          "padding": "0px",
+          "width": 51.015625
+        },
+        "overflow": false,
+        "title": {
+          "font": "32px",
+          "left": 40,
+          "padding": "0px",
+          "text": "A conversation between friends",
+          "width": 495.328125
+        },
+        "width": 900
+      },
+      {
+        "format": "standard",
+        "theme": "dark",
+        "body": {
+          "font": "18px",
+          "left": 22,
+          "padding": "0px",
+          "width": 334
+        },
+        "columns": {
+          "font": "14.4564px",
+          "left": 22,
+          "padding": "0px",
+          "width": 334
+        },
+        "image": {
+          "font": "14.4564px",
+          "left": 22,
+          "padding": "0px",
+          "width": 334
+        },
+        "main": {
+          "font": "14.4564px",
+          "left": 0,
+          "padding": "22px",
+          "width": 378
+        },
+        "meta": {
+          "font": "14px",
+          "left": 22,
+          "padding": "0px",
+          "width": 51.015625
+        },
+        "overflow": false,
+        "title": {
+          "font": "30px",
+          "left": 22,
+          "padding": "0px",
+          "text": "Tubi Originals to Watch Free: Slay, Lowlifes, and The Z-Suite",
+          "width": 334
+        },
+        "width": 390
+      },
+      {
+        "format": "link",
+        "theme": "dark",
+        "body": {
+          "font": "18px",
+          "left": 22,
+          "padding": "0px",
+          "width": 334
+        },
+        "columns": {
+          "font": "14.4564px",
+          "left": 22,
+          "padding": "0px",
+          "width": 334
+        },
+        "main": {
+          "font": "14.4564px",
+          "left": 0,
+          "padding": "22px",
+          "width": 378
+        },
+        "meta": {
+          "font": "14px",
+          "left": 22,
+          "padding": "0px",
+          "width": 51.015625
+        },
+        "overflow": false,
+        "title": {
+          "font": "30px",
+          "left": 22,
+          "padding": "0px",
+          "text": "A small corner of the open web, worth keeping",
+          "width": 334
+        },
+        "width": 390
+      },
+      {
+        "format": "video",
+        "theme": "dark",
+        "body": {
+          "font": "18px",
+          "left": 22,
+          "padding": "0px",
+          "width": 334
+        },
+        "columns": {
+          "font": "14.4564px",
+          "left": 22,
+          "padding": "0px",
+          "width": 334
+        },
+        "main": {
+          "font": "14.4564px",
+          "left": 0,
+          "padding": "22px",
+          "width": 378
+        },
+        "meta": {
+          "font": "14px",
+          "left": 22,
+          "padding": "0px",
+          "width": 51.015625
+        },
+        "overflow": false,
+        "title": {
+          "font": "30px",
+          "left": 22,
+          "padding": "0px",
+          "text": "A little television, between the long reads",
+          "width": 334
+        },
+        "width": 390
+      },
+      {
+        "format": "status",
+        "theme": "dark",
+        "body": {
+          "font": "18px",
+          "left": 22,
+          "padding": "0px",
+          "width": 334
+        },
+        "columns": {
+          "font": "14.4564px",
+          "left": 22,
+          "padding": "0px",
+          "width": 334
+        },
+        "main": {
+          "font": "14.4564px",
+          "left": 0,
+          "padding": "22px",
+          "width": 378
+        },
+        "meta": {
+          "font": "14px",
+          "left": 22,
+          "padding": "0px",
+          "width": 51.015625
+        },
+        "overflow": false,
+        "title": {
+          "font": "30px",
+          "left": 22,
+          "padding": "0px",
+          "text": "Status fixture",
+          "width": 334
+        },
+        "width": 390
+      },
+      {
+        "format": "audio",
+        "theme": "dark",
+        "body": {
+          "font": "18px",
+          "left": 22,
+          "padding": "0px",
+          "width": 334
+        },
+        "columns": {
+          "font": "14.4564px",
+          "left": 22,
+          "padding": "0px",
+          "width": 334
+        },
+        "main": {
+          "font": "14.4564px",
+          "left": 0,
+          "padding": "22px",
+          "width": 378
+        },
+        "meta": {
+          "font": "14px",
+          "left": 22,
+          "padding": "0px",
+          "width": 51.015625
+        },
+        "overflow": false,
+        "title": {
+          "font": "30px",
+          "left": 22,
+          "padding": "0px",
+          "text": "A short dispatch from the feed",
+          "width": 334
+        },
+        "width": 390
+      },
+      {
+        "format": "aside",
+        "theme": "dark",
+        "body": {
+          "font": "18px",
+          "left": 22,
+          "padding": "0px",
+          "width": 334
+        },
+        "columns": {
+          "font": "14.4564px",
+          "left": 22,
+          "padding": "0px",
+          "width": 334
+        },
+        "main": {
+          "font": "14.4564px",
+          "left": 0,
+          "padding": "22px",
+          "width": 378
+        },
+        "meta": {
+          "font": "14px",
+          "left": 22,
+          "padding": "0px",
+          "width": 51.015625
+        },
+        "overflow": false,
+        "title": {
+          "font": "30px",
+          "left": 22,
+          "padding": "0px",
+          "text": "Aside fixture",
+          "width": 334
+        },
+        "width": 390
+      },
+      {
+        "format": "image",
+        "theme": "dark",
+        "body": {
+          "font": "18px",
+          "left": 22,
+          "padding": "0px",
+          "width": 334
+        },
+        "columns": {
+          "font": "14.4564px",
+          "left": 22,
+          "padding": "0px",
+          "width": 334
+        },
+        "main": {
+          "font": "14.4564px",
+          "left": 0,
+          "padding": "22px",
+          "width": 378
+        },
+        "meta": {
+          "font": "14px",
+          "left": 22,
+          "padding": "0px",
+          "width": 51.015625
+        },
+        "overflow": false,
+        "title": {
+          "font": "30px",
+          "left": 22,
+          "padding": "0px",
+          "text": "Image fixture",
+          "width": 334
+        },
+        "width": 390
+      },
+      {
+        "format": "quote",
+        "theme": "dark",
+        "body": {
+          "font": "18px",
+          "left": 22,
+          "padding": "0px",
+          "width": 334
+        },
+        "columns": {
+          "font": "14.4564px",
+          "left": 22,
+          "padding": "0px",
+          "width": 334
+        },
+        "main": {
+          "font": "14.4564px",
+          "left": 0,
+          "padding": "22px",
+          "width": 378
+        },
+        "meta": {
+          "font": "14px",
+          "left": 22,
+          "padding": "0px",
+          "width": 51.015625
+        },
+        "overflow": false,
+        "title": {
+          "font": "30px",
+          "left": 22,
+          "padding": "0px",
+          "text": "Quote fixture",
+          "width": 334
+        },
+        "width": 390
+      },
+      {
+        "format": "gallery",
+        "theme": "dark",
+        "body": {
+          "font": "18px",
+          "left": 22,
+          "padding": "0px",
+          "width": 334
+        },
+        "columns": {
+          "font": "14.4564px",
+          "left": 22,
+          "padding": "0px",
+          "width": 334
+        },
+        "main": {
+          "font": "14.4564px",
+          "left": 0,
+          "padding": "22px",
+          "width": 378
+        },
+        "meta": {
+          "font": "14px",
+          "left": 22,
+          "padding": "0px",
+          "width": 51.015625
+        },
+        "overflow": false,
+        "title": {
+          "font": "30px",
+          "left": 22,
+          "padding": "0px",
+          "text": "Gallery fixture",
+          "width": 334
+        },
+        "width": 390
+      },
+      {
+        "format": "chat",
+        "theme": "dark",
+        "body": {
+          "font": "18px",
+          "left": 22,
+          "padding": "0px",
+          "width": 334
+        },
+        "columns": {
+          "font": "14.4564px",
+          "left": 22,
+          "padding": "0px",
+          "width": 334
+        },
+        "main": {
+          "font": "14.4564px",
+          "left": 0,
+          "padding": "22px",
+          "width": 378
+        },
+        "meta": {
+          "font": "14px",
+          "left": 22,
+          "padding": "0px",
+          "width": 51.015625
+        },
+        "overflow": false,
+        "title": {
+          "font": "30px",
+          "left": 22,
+          "padding": "0px",
+          "text": "A conversation between friends",
+          "width": 334
+        },
+        "width": 390
+      }
+    ]
+  },
+  "nojs-sidebar": {
+    "documentOverflow": false,
+    "fit": false,
+    "headerHeight": 93,
+    "height": 900,
+    "maxHeight": "none",
+    "overflow": "visible",
+    "position": "static",
+    "sidebarHeight": 420.09375,
+    "top": "160px",
+    "visualHeight": 900,
+    "width": 1440
+  },
+  "header-resize": {
+    "smallHeader": {
+      "documentOverflow": false,
+      "fit": true,
+      "headerHeight": 90,
+      "height": 500,
+      "maxHeight": "none",
+      "overflow": "visible",
+      "position": "sticky",
+      "sidebarHeight": 300.78125,
+      "top": "106px",
+      "visualHeight": 500,
+      "width": 1440
+    },
+    "largeHeader": {
+      "documentOverflow": false,
+      "fit": false,
+      "headerHeight": 180,
+      "height": 500,
+      "maxHeight": "none",
+      "overflow": "visible",
+      "position": "static",
+      "sidebarHeight": 300.78125,
+      "top": "auto",
+      "visualHeight": 500,
+      "width": 1440
+    }
+  },
+  "live-title-before": {
+    "body": {
+      "font": "19px",
+      "left": 231.5,
+      "padding": "0px",
+      "width": 756.671875
+    },
+    "columns": {
+      "font": "20px",
+      "left": 231.5,
+      "padding": "0px",
+      "width": 1200
+    },
+    "image": {
+      "font": "20px",
+      "left": 231.5,
+      "padding": "0px",
+      "width": 756.671875
+    },
+    "main": {
+      "font": "20px",
+      "left": 0,
+      "padding": "40px",
+      "width": 1663
+    },
+    "meta": {
+      "font": "14px",
+      "left": 40,
+      "padding": "0px",
+      "width": 65.90625
+    },
+    "overflow": false,
+    "title": {
+      "font": "58px",
+      "left": 40,
+      "padding": "0px",
+      "text": "Free Streaming Originals: What to Watch Without a Subscription",
+      "width": 950
+    },
+    "width": 1675
+  }
+}
