@@ -129,3 +129,5 @@ html body .tacobout-on-the-air-strip{box-shadow:none!important}
 @media(max-width:600px){html .tacobout-header-row{gap:6px!important}html .tacobout-header-brand .wp-block-site-title{font-size:19px!important;white-space:nowrap}html .tacobout-header-brand .wp-block-site-logo{width:28px!important;flex-basis:28px}html .tacobout-header-row>.tacobout-primary-navigation{flex:0 0 40px;margin:0!important}html .tacobout-header-brand{gap:6px!important}.tacobout-utilities{gap:2px}}
 
 .creator-footer-links{display:flex;align-items:center;gap:8px 20px;flex-wrap:wrap}.creator-support{display:inline-flex;align-items:center;min-height:44px;color:var(--taco-muted);text-underline-offset:3px}.creator-support:hover,.creator-support:focus-visible{color:var(--taco-accent)}
+
+.creator-support{display:block}.creator-support summary{min-height:44px;align-content:center;cursor:pointer}.creator-support-options{display:flex;gap:4px 16px;flex-wrap:wrap}.creator-support-options a{display:inline-flex;align-items:center;min-height:44px;color:var(--taco-accent)}
