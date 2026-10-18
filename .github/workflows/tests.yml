@@ -26,3 +26,9 @@ jobs:
 
       - name: Run Tests
         run: ./vendor/bin/phpunit
+
+      - name: Check masonry JavaScript and packing regressions
+        run: |
+          node --check tacobout-masonry.js
+          node --check tacobout-infinite-scroll.js
+          node --test tests/masonry.test.cjs
