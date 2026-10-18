@@ -31,4 +31,5 @@ jobs:
         run: |
           node --check tacobout-masonry.js
           node --check tacobout-infinite-scroll.js
-          node --test tests/masonry.test.cjs
+          node --check tacobout-sidebar.js
+          node --test tests/*.test.cjs

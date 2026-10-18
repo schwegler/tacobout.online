@@ -20,7 +20,7 @@
    const headHeight=header?.getBoundingClientRect().height||0;
    const adminHeight=admin?.getBoundingClientRect().height||0;
    const height=Math.min(innerHeight,window.visualViewport?.height||innerHeight);
-   const allowed=fits({width:innerWidth,height,header:headHeight,admin:adminHeight,sidebar:sidebar.getBoundingClientRect().height});
+   const allowed=fits({width:Math.min(innerWidth,window.visualViewport?.width||innerWidth),height,header:headHeight,admin:adminHeight,sidebar:sidebar.getBoundingClientRect().height});
    const top=`${Math.ceil(headHeight+adminHeight+16)}px`;
    if(sidebar.style.getPropertyValue('--tacobout-sidebar-top')!==top) sidebar.style.setProperty('--tacobout-sidebar-top',top);
    sidebar.classList.toggle('tacobout-sidebar-fits',allowed);
