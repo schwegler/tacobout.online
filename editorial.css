@@ -139,3 +139,7 @@ html body .tacobout-magazine-grid.tacobout-masonry-active>*{align-self:start;mar
 
 @media(min-width:1100px){html body .tacobout-grid-with-sidebar{--tacobout-masonry-columns:3}}
 @media(max-width:759px){html body .tacobout-magazine-grid{--tacobout-masonry-columns:1}}
+
+/* Approved signature PNGs share an identical alpha mask in both treatments. */
+.creator-credit { gap: 8px; align-items: center; }
+.creator-credit img { width: 132px; height: auto; aspect-ratio: 1945 / 576; margin: 0; }
