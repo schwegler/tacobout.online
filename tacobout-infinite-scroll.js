@@ -16,16 +16,6 @@
 	}
 
 	/* ============================================
-		 THEME TOGGLE — run before any layout to avoid flash
-		 ============================================ */
-	(function applyThemePreference() {
-		const stored = localStorage.getItem('tacobout-theme');
-		const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-		const theme = stored || (prefersDark ? 'dark' : 'light');
-		document.documentElement.setAttribute('data-theme', theme);
-	})();
-
-	/* ============================================
 		 CONFIG
 		 ============================================ */
 	const config = window.tacoboutScroll;
@@ -305,6 +295,8 @@
 		resizeTimer = setTimeout(layoutMasonryGrid, 100);
 	});
 	document.fonts?.ready.then(layoutMasonryGrid);
+	// Search, author, date and custom-type queries keep native scoped pagination.
+	if (!config.enableLoading) return;
 	document.body.classList.add('tacobout-infinite-scroll-active');
 
 
@@ -696,98 +688,4 @@
 		observer.observe(sentinel);
 	}
 
-	/* ============================================
-		 SCROLL-TO-TOP FAB
-		 ============================================ */
-	const fab = document.createElement("button");
-	fab.setAttribute("type", "button");
-	fab.className = "tacobout-scroll-top";
-	fab.setAttribute("aria-label", "Scroll to top");
-	fab.setAttribute("title", "Scroll to top");
-	fab.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="18 15 12 9 6 15"></polyline></svg>`;
-	document.body.appendChild(fab);
-
-	fab.addEventListener("click", () => {
-		window.scrollTo({ top: 0, behavior: "smooth" });
-		// Reset focus to top of document so keyboard users aren't trapped at the bottom
-		document.body.setAttribute("tabindex", "-1");
-		document.body.focus({ preventScroll: true });
-		// Remove tabindex after focus so it doesn't stay focusable unnecessarily
-		document.body.addEventListener("blur", function onBlur() {
-			document.body.removeAttribute("tabindex");
-			document.body.removeEventListener("blur", onBlur);
-		});
-	});
-
-	let fabVisible = false;
-	let ticking = false;
-
-	function updateFab() {
-		const shouldShow = window.scrollY > 400;
-		if (shouldShow !== fabVisible) {
-			fabVisible = shouldShow;
-			fab.classList.toggle("is-visible", shouldShow);
-			const themeFabEl = document.getElementById("tacobout-theme-toggle");
-			if (themeFabEl) {
-				themeFabEl.classList.toggle("is-stacked", shouldShow);
-			}
-		}
-		ticking = false;
-	}
-
-	window.addEventListener(
-		"scroll",
-		() => {
-			if (!ticking) {
-				requestAnimationFrame(updateFab);
-				ticking = true;
-			}
-		},
-		{ passive: true },
-	);
-
-
-	/* ============================================
-		 THEME TOGGLE FAB
-		 ============================================ */
-	const THEME_KEY = 'tacobout-theme';
-	const SUN_ICON = `<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>`;
-	const MOON_ICON = `<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>`;
-
-	const themeFab = document.createElement('button');
-	themeFab.setAttribute('type', 'button');
-	themeFab.className = 'tacobout-theme-toggle';
-	themeFab.id = 'tacobout-theme-toggle';
-	document.body.appendChild(themeFab);
-
-	function getCurrentTheme() {
-		return document.documentElement.getAttribute('data-theme') || 'light';
-	}
-
-	function applyTheme(theme) {
-		document.documentElement.setAttribute('data-theme', theme);
-		localStorage.setItem(THEME_KEY, theme);
-		const isDark = theme === 'dark';
-		themeFab.innerHTML = isDark ? SUN_ICON : MOON_ICON;
-		themeFab.setAttribute('aria-label', isDark ? 'Switch to light mode' : 'Switch to dark mode');
-		themeFab.setAttribute('title', isDark ? 'Switch to light mode' : 'Switch to dark mode');
-	}
-
-	// Set initial state based on what was already applied by the early script
-	applyTheme(getCurrentTheme());
-
-	themeFab.addEventListener('click', () => {
-		const newTheme = getCurrentTheme() === 'light' ? 'dark' : 'light';
-		applyTheme(newTheme);
-	});
-
-	// Keep in sync if system preference changes and user hasn't set a manual override
-	window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
-		if (!localStorage.getItem(THEME_KEY)) {
-			applyTheme(e.matches ? 'dark' : 'light');
-		}
-	});
-
-	// Initial check (must happen after theme toggle is in the DOM)
-	updateFab();
 })();

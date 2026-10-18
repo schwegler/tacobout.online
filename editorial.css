@@ -1,0 +1,11 @@
+/* Approved editorial system. Loaded after the legacy format/provider styles. */
+.tacobout-header-row{display:flex;align-items:center;flex-wrap:nowrap!important;gap:1.5rem!important}
+.tacobout-header-brand{flex:0 1 auto;min-width:0}.tacobout-primary-navigation{margin-left:auto}
+.tacobout-utilities{display:flex;align-items:center;gap:6px;flex:0 0 auto}
+.tacobout-utilities :is(a,button){display:inline-flex;justify-content:center;align-items:center;min-width:44px;min-height:44px;padding:8px;border:1px solid var(--taco-border);border-radius:5px;background:transparent;color:var(--taco-fg);font:600 14px 'Instrument Sans',sans-serif;cursor:pointer;text-decoration:none}
+.tacobout-utilities [hidden],.tacobout-scroll-top[hidden]{display:none!important}
+.tacobout-utilities :is(a,button):hover{background:var(--taco-surface-2);border-color:var(--taco-accent);color:var(--taco-fg)}
+.tacobout-utilities :is(a,button):focus-visible{outline:3px solid var(--taco-accent);outline-offset:4px}
+.tacobout-scroll-top{width:auto;height:auto;min-height:44px;padding:10px 14px;border-radius:5px;font:600 13px 'Instrument Sans',sans-serif}
+.tacobout-search-summary{color:var(--taco-muted)}
+@media(max-width:600px){.tacobout-header-row{gap:10px!important}.tacobout-header-brand .wp-block-site-title{font-size:clamp(17px,4.8vw,22px)!important}.tacobout-header-brand .wp-block-site-logo{width:32px!important;flex:0 0 32px}.tacobout-utilities{gap:3px}.tacobout-utilities :is(a,button){min-width:40px;padding:8px}.tacobout-header-brand{gap:8px!important}}
