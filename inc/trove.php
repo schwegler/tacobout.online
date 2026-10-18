@@ -33,7 +33,7 @@ function tacobout_trove_item_url( $url ) {
 }
 
 /**
- * Read Open Graph text without executing page scripts or loading external XML.
+ * Read Open Graph and public title facts without scripts or external XML.
  *
  * @param string $html Public page HTML.
  * @return array Open Graph fields.
@@ -57,6 +57,34 @@ function tacobout_trove_parse_metadata( $html ) {
 			$metadata[ $property ] = $meta->getAttribute( 'content' );
 		}
 	}
+	// Trove's OG description can contain schema keys instead of their values.
+	// Use only its public title-facts list, never reviews, profiles or library state.
+	$xpath = new DOMXPath( $document );
+	$facts = array();
+	$labels = array( 'author', 'artist', 'writer', 'publisher', 'year', 'network', 'director', 'actors', 'genre', 'developer', 'platform', 'label' );
+	foreach ( $xpath->query( '(//dl[contains(concat(" ", normalize-space(@class), " "), " media-facts ")])[1]/div' ) as $row ) {
+		$term  = $xpath->query( './dt', $row )->item( 0 );
+		$value = $xpath->query( './dd', $row )->item( 0 );
+		if ( ! $term || ! $value ) {
+			continue;
+		}
+		$label = trim( $term->textContent );
+		$text  = trim( preg_replace( '/\s+/u', ' ', $value->textContent ) );
+		if ( ! in_array( strtolower( $label ), $labels, true ) || '' === $text || in_array( strtolower( $text ), array( '—', '-', 'unknown', 'n/a' ), true ) ) {
+			continue;
+		}
+		$facts[] = $label . ': ' . $text;
+	}
+	$title = preg_replace( '/\s*\|\s*Trove\s*$/u', '', $metadata['og:title'] ?? '' );
+	if ( $facts ) {
+		$metadata['og:description'] = implode( ' • ', array_unique( $facts ) );
+	} elseif ( isset( $metadata['og:description'] ) ) {
+		// Keep useful OG-only descriptions, omitting the repeated title and bare keys.
+		$parts = array_filter( array_map( 'trim', explode( '•', $metadata['og:description'] ) ), function ( $part ) use ( $title, $labels ) {
+			return '' !== $part && $part !== $title && ! in_array( strtolower( $part ), array_merge( $labels, array( 'release_year' ) ), true );
+		} );
+		$metadata['og:description'] = implode( ' • ', $parts );
+	}
 	return $metadata;
 }
 
@@ -71,7 +99,7 @@ function tacobout_trove_metadata( $url ) {
 	if ( '' === $url ) {
 		return array();
 	}
-	$key    = 'tacobout_trove_' . md5( $url );
+	$key    = 'tacobout_trove_v2_' . md5( $url );
 	$cached = get_transient( $key );
 	if ( is_array( $cached ) ) {
 		return $cached;

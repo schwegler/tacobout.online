@@ -39,7 +39,7 @@ class TroveTest extends \PHPUnit\Framework\TestCase {
         $url = 'https://trove.schweg.xyz/comics/9-uncanny-x-men-2024';
         $this->assertSame($url, tacobout_trove_item_url($url . '/#review'));
         $this->mock_rendering_functions();
-        \Brain\Monkey\Functions\expect('get_transient')->once()->with('tacobout_trove_' . md5($url))->andReturn([
+        \Brain\Monkey\Functions\expect('get_transient')->once()->with('tacobout_trove_v2_' . md5($url))->andReturn([
             'og:title' => 'Uncanny X-Men (2024) | Trove',
             'og:description' => 'Comic by Gail Simone • Marvel',
             'og:image' => 'https://trove.schweg.xyz/media/covers/comic/9',
@@ -89,7 +89,7 @@ class TroveTest extends \PHPUnit\Framework\TestCase {
         \Brain\Monkey\Functions\when('is_wp_error')->justReturn(false);
         \Brain\Monkey\Functions\when('wp_remote_retrieve_response_code')->justReturn(200);
         \Brain\Monkey\Functions\when('wp_remote_retrieve_body')->justReturn('<meta property="og:title" content="A book | Trove">');
-        \Brain\Monkey\Functions\expect('set_transient')->once()->with('tacobout_trove_' . md5('https://trove.schweg.xyz/books/13'), ['og:title' => 'A book | Trove'], 21600)->andReturn(true);
+        \Brain\Monkey\Functions\expect('set_transient')->once()->with('tacobout_trove_v2_' . md5('https://trove.schweg.xyz/books/13'), ['og:title' => 'A book | Trove'], 21600)->andReturn(true);
         $this->assertSame(['og:title' => 'A book | Trove'], tacobout_trove_metadata('https://trove.schweg.xyz/books/13'));
     }
 
@@ -99,7 +99,7 @@ class TroveTest extends \PHPUnit\Framework\TestCase {
         \Brain\Monkey\Functions\when('is_wp_error')->justReturn(false);
         \Brain\Monkey\Functions\when('wp_remote_retrieve_response_code')->justReturn(302);
         \Brain\Monkey\Functions\expect('wp_remote_retrieve_body')->never();
-        \Brain\Monkey\Functions\expect('set_transient')->once()->with('tacobout_trove_' . md5('https://trove.schweg.xyz/books/13'), [], 300)->andReturn(true);
+        \Brain\Monkey\Functions\expect('set_transient')->once()->with('tacobout_trove_v2_' . md5('https://trove.schweg.xyz/books/13'), [], 300)->andReturn(true);
         $this->assertSame([], tacobout_trove_metadata('https://trove.schweg.xyz/books/13'));
     }
 
@@ -108,8 +108,46 @@ class TroveTest extends \PHPUnit\Framework\TestCase {
         \Brain\Monkey\Functions\expect('wp_safe_remote_get')->once()->andReturn(['error' => true]);
         \Brain\Monkey\Functions\when('is_wp_error')->justReturn(true);
         \Brain\Monkey\Functions\expect('wp_remote_retrieve_response_code')->never();
-        \Brain\Monkey\Functions\expect('set_transient')->once()->with('tacobout_trove_' . md5('https://trove.schweg.xyz/books/13'), [], 300)->andReturn(true);
+        \Brain\Monkey\Functions\expect('set_transient')->once()->with('tacobout_trove_v2_' . md5('https://trove.schweg.xyz/books/13'), [], 300)->andReturn(true);
         $this->assertSame([], tacobout_trove_metadata('https://trove.schweg.xyz/books/13'));
+    }
+
+    public function test_real_public_title_facts_replace_broken_og_descriptions() {
+        $expected = [
+            'book' => "Author: Andrew Joseph White • Publisher: Titan Books Limited • Year: 2025",
+            'comic' => 'Writer: Eve L. Ewing • Artist: Tiago Palma • Publisher: Marvel',
+            'tv' => 'Network: CBS • Director: Robyn Kass, Chris Salomon • Year: 2000',
+        ];
+        $this->mock_rendering_functions();
+        foreach ($expected as $type => $description) {
+            $metadata = tacobout_trove_parse_metadata(file_get_contents(__DIR__ . '/fixtures/trove-' . $type . '-metadata.html'));
+            $this->assertSame($description, $metadata['og:description']);
+            $this->assertStringNotContainsString('release_year', $metadata['og:description']);
+            \Brain\Monkey\Functions\expect('get_transient')->once()->andReturn($metadata);
+            $html = tacobout_trove_shortcode(['url' => 'https://trove.schweg.xyz/books/13']);
+            $this->assertStringContainsString($description, $html);
+            $title = preg_replace('/\s*\|\s*Trove\s*$/u', '', $metadata['og:title']);
+            $this->assertSame(1, substr_count($html, htmlspecialchars($title, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8')));
+            $this->assertStringContainsString(htmlspecialchars($metadata['og:image'], ENT_QUOTES), $html);
+        }
+    }
+
+    public function test_missing_facts_omit_bare_keys_and_repeated_title() {
+        $head = '<meta property="og:title" content="A book | Trove"><meta property="og:description" content="A book • author • publisher • release_year">';
+        $this->assertSame('', tacobout_trove_parse_metadata($head)['og:description']);
+        $html = $head . '<dl class="media-facts"><div><dt>Author</dt><dd> </dd></div><div><dt>Year</dt><dd>—</dd></div><div><dt>Publisher</dt></div></dl><dl><div><dt>Author</dt><dd>Unrelated user</dd></div></dl>';
+        $this->assertSame('', tacobout_trove_parse_metadata($html)['og:description']);
+        $this->assertSame('A useful description', tacobout_trove_parse_metadata(str_replace('A book • author • publisher • release_year', 'A book • A useful description', $head))['og:description']);
+    }
+
+    public function test_fact_values_decode_entities_and_escape_only_when_rendered() {
+        $this->mock_rendering_functions();
+        $metadata = tacobout_trove_parse_metadata('<meta property="og:title" content="Book | Trove"><dl class="media-facts"><div><dt>Author</dt><dd><a>Björk &amp; &lt;script&gt;unsafe&lt;/script&gt;</a></dd></div></dl>');
+        $this->assertSame('Author: Björk & <script>unsafe</script>', $metadata['og:description']);
+        \Brain\Monkey\Functions\expect('get_transient')->once()->andReturn($metadata);
+        $html = tacobout_trove_shortcode(['url' => 'https://trove.schweg.xyz/books/13']);
+        $this->assertStringContainsString('Björk &amp; &lt;script&gt;unsafe&lt;/script&gt;', $html);
+        $this->assertStringNotContainsString('<script>', $html);
     }
 
     private function mock_rendering_functions() {
