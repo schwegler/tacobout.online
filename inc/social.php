@@ -1,5 +1,5 @@
 <?php
-/** Presentation adapters for the installed plugins; no publishing or remote polling. */
+/** Presentation adapters for the installed plugins; no publishing; original-post links use public verification. */
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
@@ -11,6 +11,36 @@ function tacobout_atproto_record_url( $uri ) {
 	}
 	// Bluesky's profile router expects literal DID colons in the path.
 	return 'https://bsky.app/profile/' . str_replace( '%3A', ':', rawurlencode( $parts[1] ) ) . '/post/' . rawurlencode( $parts[2] );
+}
+
+/** Stored mappings can be copied or deleted; verify the article before linking. */
+function tacobout_verified_bluesky_url( $post_id, $uri ) {
+	$url = tacobout_atproto_record_url( $uri );
+	$permalink = get_permalink( $post_id );
+	if ( ! $url || ! $permalink ) { return ''; }
+	$key = 'tacobout_bsky_v1_' . md5( $uri . '|' . $permalink );
+	$cached = get_transient( $key );
+	if ( false !== $cached ) { return 'verified' === $cached ? $url : ''; }
+	$response = wp_remote_get( 'https://public.api.bsky.app/xrpc/app.bsky.feed.getPosts?uris=' . rawurlencode( $uri ), array( 'timeout' => 3, 'redirection' => 0 ) );
+	$verified = false;
+	if ( ! is_wp_error( $response ) && 200 === wp_remote_retrieve_response_code( $response ) ) {
+		$data = json_decode( wp_remote_retrieve_body( $response ), true );
+		foreach ( (array) ( $data['posts'] ?? array() ) as $post ) {
+			if ( $uri !== ( $post['uri'] ?? '' ) ) { continue; }
+			$record = $post['record'] ?? array();
+			$links = array( $record['embed']['external']['uri'] ?? '', $record['embed']['media']['external']['uri'] ?? '' );
+			foreach ( (array) ( $record['facets'] ?? array() ) as $facet ) {
+				foreach ( (array) ( $facet['features'] ?? array() ) as $feature ) {
+					if ( 'app.bsky.richtext.facet#link' === ( $feature['$type'] ?? '' ) ) { $links[] = $feature['uri'] ?? ''; }
+				}
+			}
+			foreach ( $links as $link ) {
+				if ( is_string( $link ) && rtrim( $permalink, '/' ) === rtrim( $link, '/' ) ) { $verified = true; }
+			}
+		}
+	}
+	set_transient( $key, $verified ? 'verified' : 'unavailable', $verified ? 300 : 60 );
+	return $verified ? $url : '';
 }
 
 /** Never add browser UI to RSS, ActivityPub objects or non-public posts. */
@@ -53,7 +83,7 @@ function tacobout_social_summary_shortcode() {
 	// This is the plugin's stored record URI. No TID is allocated or publish attempted.
 	if ( class_exists( 'Atmosphere\\Transformer\\Post' ) ) {
 		$uri = get_post_meta( $post_id, \Atmosphere\Transformer\Post::META_URI, true );
-		$url = tacobout_atproto_record_url( $uri );
+		$url = tacobout_verified_bluesky_url( $post_id, $uri );
 		if ( $url ) {
 			$html .= '<p><a class="tacobout-social-original" href="' . esc_url( $url ) . '" rel="syndication">' . esc_html__( 'Open this post on Bluesky', 'tacobout' ) . '</a></p>';
 		}

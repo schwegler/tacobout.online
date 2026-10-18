@@ -319,3 +319,18 @@ Posts, integrations, public Trove reviews, masonry, and tracking are retained.
 Bluesky embed scripts are consolidated into one footer loader to avoid duplicate
 global declarations on multi-post feeds. New infinite-scroll cards call the
 provider scanner without executing its loader again.
+
+### Bluesky original-post links
+
+A stored ATmosphere URI is not proof that a public Bluesky post still exists or
+belongs to this article. Before rendering the original-post link, the theme checks
+the public Bluesky API and requires an external card or link facet that matches
+the article permalink. Deleted records, copied mappings, API failures, and
+unmatched records hide the link. Verification is cached for five minutes; failures
+are cached for one minute. Each uncached check has a three-second timeout.
+
+This guards presentation; it does not repair ATmosphere metadata or republish
+articles. Purge cached single-post HTML after deployment so existing broken links
+are removed. Full-page caches can retain the verification result until their HTML
+expires. Investigate duplicated ATmosphere metadata separately before backfilling
+records; do not infer a replacement post ID from dates or titles alone.
