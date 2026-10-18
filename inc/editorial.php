@@ -47,3 +47,13 @@ function tacobout_enqueue_ui() {
 	wp_enqueue_script( 'tacobout-ui', get_theme_file_uri( 'tacobout-ui.js' ), array(), wp_get_theme()->get( 'Version' ), false );
 }
 add_action( 'wp_enqueue_scripts', 'tacobout_enqueue_ui' );
+
+/** One intentional author portrait, without assigning it to guest contributors. */
+function tacobout_author_mascot_shortcode() {
+	$author = get_queried_object();
+	if ( ! is_author() || ! $author || 'schwegler' !== ( $author->user_nicename ?? '' ) ) {
+		return '';
+	}
+	return '<figure class="tacobout-author-mascot"><img src="' . esc_url( get_theme_file_uri( 'assets/brand/schweg-mascot-420.png' ) ) . '" srcset="' . esc_url( get_theme_file_uri( 'assets/brand/schweg-mascot-420.png' ) ) . ' 420w, ' . esc_url( get_theme_file_uri( 'assets/brand/schweg-mascot.png' ) ) . ' 1125w" sizes="130px" width="1125" height="1365" alt="' . esc_attr__( 'Schweg’s illustrated mascot holding a purple pencil', 'tacobout' ) . '" decoding="async" /></figure>';
+}
+add_action( 'init', function () { add_shortcode( 'tacobout_author_mascot', 'tacobout_author_mascot_shortcode' ); } );

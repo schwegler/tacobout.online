@@ -13,9 +13,9 @@ class HomepageBentoTest extends \PHPUnit\Framework\TestCase {
         $pattern = file_get_contents(__DIR__ . '/../patterns/on-the-air.php');
 
         $this->assertStringContainsString('telly_pose_01_on_the_mic.png', $pattern);
-        $this->assertStringContainsString('ON THE AIR', $pattern);
-        $this->assertStringContainsString('tacobout-badge-icon', $pattern);
-        $this->assertStringContainsString('Culture, technology, and the internet. Plenty to talk about.', $pattern);
+        $this->assertStringContainsString('Plenty to talk about.', $pattern);
+        $this->assertStringContainsString('tacobout-welcome-title', $pattern);
+        $this->assertStringContainsString('Commentary, discoveries, and a well-earned side-eye.', $pattern);
         // Ensure no emoji is used in the badge
         $this->assertStringNotContainsString('⚡', $pattern);
     }

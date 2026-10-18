@@ -50,94 +50,15 @@
 		if (classMatch) seenPostIds.add(parseInt(classMatch[1], 10));
 	});
 
-	// Four-pixel tracks give each card its own height without equal-height rows.
-	// Keep DOM order intact and place cards against the shortest column.
-	let layoutFrame = 0;
+	// Ordered editorial grid: CSS owns placement; DOM, visual and keyboard order agree.
 	const preparedCards = new WeakSet();
-	const resizeObserver = typeof ResizeObserver !== 'undefined'
-		? new ResizeObserver(layoutMasonryGrid) : null;
-
+	const resizeObserver = null;
 	function layoutMasonryGrid() {
-		if (layoutFrame) return;
-		layoutFrame = requestAnimationFrame(() => {
-			layoutFrame = 0;
-			grid.classList.add('tacobout-bento-ready');
-			const columns = parseInt(getComputedStyle(grid).getPropertyValue('--tacobout-columns'), 10) || 1;
-			const skyline = Array(columns).fill(0);
-			const sidebar = grid.querySelector('.tacobout-grid-sidebar');
-			const wideSidebar = sidebar && window.matchMedia('(min-width: 2000px)').matches;
-
-			// ⚡ Bolt: Cache sidebar height to prevent layout thrashing
-			const sidebarHeight = sidebar ? sidebar.getBoundingClientRect().height : 0;
-			grid.style.minHeight = wideSidebar ? sidebarHeight + 'px' : '';
-
-			if (grid.dataset.bentoColumns !== String(columns)) {
-				Array.from(grid.children).forEach(card => { card.style.gridColumn = ''; card.style.gridRow = ''; });
-				grid.dataset.bentoColumns = String(columns);
-			}
-
-			// ⚡ Bolt: Prevent layout thrashing by measuring all card heights upfront before any grid modifications.
-			// This reduces synchronous layout recalculations from O(N) to O(1) in the common case.
-			const cards = Array.from(grid.children);
-			const cachedHeights = new Map();
-			const cachedSpans = new Map();
-
-			cards.forEach(card => {
-				cachedHeights.set(card, card.getBoundingClientRect().height);
-				const match = card.style.gridColumn.match(/span (\d+)/);
-				cachedSpans.set(card, match ? parseInt(match[1], 10) : 1);
-			});
-
-			// Reserve the upper-right slot before placing posts in the shortest column.
-			if (sidebar && !wideSidebar && columns > 1) {
-				sidebar.style.gridColumn = String(columns);
-				const rows = Math.ceil((sidebarHeight + 20) / 4);
-				sidebar.style.gridRow = '1 / span ' + rows;
-				skyline[columns - 1] = rows;
-			}
-
-			cards.forEach(card => {
-				if (card === sidebar && (wideSidebar || columns > 1)) {
-					if (wideSidebar) { card.style.gridColumn = ''; card.style.gridRow = ''; }
-					return;
-				}
-				const separator = card.classList.contains('tacobout-overflow-separator');
-				let span = separator ? columns : 1;
-				let column = skyline.indexOf(Math.min(...skyline));
-				let top = skyline[column];
-				if (separator) {
-					column = 0;
-					top = Math.max(...skyline);
-				} else if (columns > 1 && card.classList.contains('tacobout-card-wide')) {
-					// Only bridge columns when their bottoms nearly line up. Otherwise
-					// a wide card would seal a large, unfillable hole beneath itself.
-					let candidate = -1;
-					let lowest = Infinity;
-					for (let i = 0; i < columns - 1; i++) {
-						const edge = Math.max(skyline[i], skyline[i + 1]);
-						if (Math.abs(skyline[i] - skyline[i + 1]) <= 8 && edge < lowest) {
-							candidate = i; lowest = edge;
-						}
-					}
-					if (candidate !== -1 && lowest <= top + 8) { span = 2; column = candidate; top = lowest; }
-				}
-				card.classList.toggle('tacobout-card-spanning', span > 1 && !separator);
-				const placement = (column + 1) + ' / span ' + span;
-
-				let height = cachedHeights.get(card);
-				if (card.style.gridColumn !== placement) {
-					card.style.gridColumn = placement;
-					// If the card's width (span) changed, its height likely changed, so we must remeasure
-					if (cachedSpans.get(card) !== span) {
-						height = card.getBoundingClientRect().height;
-					}
-				}
-
-				const rows = Math.ceil((height + 20) / 4);
-				const row = (top + 1) + ' / span ' + rows;
-				if (card.style.gridRow !== row) card.style.gridRow = row;
-				for (let i = column; i < column + span; i++) skyline[i] = top + rows;
-			});
+		grid.classList.add('tacobout-editorial-ready');
+		grid.style.minHeight = '';
+		Array.from(grid.children).forEach(card => {
+			card.style.gridColumn = '';
+			card.style.gridRow = '';
 		});
 	}
 
