@@ -1184,6 +1184,8 @@ body.home:not(.paged) .tacobout-magazine-grid .wp-block-post:first-child::after 
 	z-index: 9;
 	pointer-events: none;
 	animation: pulse-badge 2s infinite;
+	/* ⚡ Bolt: Hint browser to promote to composite layer to prevent main-thread painting */
+	will-change: transform, opacity;
 }
 
 body.home:not(.paged) .tacobout-magazine-grid .wp-block-post:first-child .entry-content:last-child {
