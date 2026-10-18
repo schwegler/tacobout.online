@@ -567,10 +567,12 @@ function tacobout_enqueue_infinite_scroll() {
 		true
 	);
 
+	wp_enqueue_script( 'tacobout-masonry', get_theme_file_uri( 'tacobout-masonry.js' ), array(), wp_get_theme()->get( 'Version' ), true );
+
 	wp_enqueue_script(
 		'tacobout-infinite-scroll',
 		get_template_directory_uri() . '/tacobout-infinite-scroll.js',
-		array( 'dompurify' ),
+		array( 'dompurify', 'tacobout-masonry' ),
 		wp_get_theme()->get( 'Version' ),
 		true // Load in footer
 	);

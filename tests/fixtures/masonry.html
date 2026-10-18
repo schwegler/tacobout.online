@@ -1,0 +1,22 @@
+<!doctype html><html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Masonry regression fixture</title>
+<style>
+body{margin:30px;font:17px/1.5 system-ui;background:#f7f6fa;color:#201d2b}button,a,summary{min-height:44px;cursor:pointer}button{margin:0 8px 16px 0}a:focus-visible,button:focus-visible,summary:focus-visible{outline:3px solid #6240a3;outline-offset:3px}
+.tacobout-magazine-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:30px;--tacobout-masonry-gap:30px;--tacobout-masonry-columns:2;max-width:1100px;margin:auto;padding:0;list-style:none;align-items:start}.wp-block-post{padding:20px;border:1px solid #d5cedf;background:white;box-sizing:border-box;min-width:0}.wp-block-post a{display:block}h2{margin:0;font-size:24px}.tall{height:330px}.short{min-height:120px}.resize{height:150px;width:100%;border:0;background:#e9e2f3}img{max-width:100%;height:auto}.separator{grid-column:1/-1;background:#e9e2f3;padding:20px}.tacobout-masonry-active{grid-auto-rows:4px;row-gap:0}.tacobout-masonry-active>*{align-self:start;margin-block:0}
+@media(max-width:759px){.tacobout-magazine-grid{grid-template-columns:minmax(0,1fr);--tacobout-masonry-columns:1}body{margin:20px}}
+</style><h1>Mixed-height feed regression</h1><p>Synthetic content. Real shipping masonry controller; no external services.</p><button id="media">Load portrait image</button><button id="embed">Resize embed</button><button id="append">Append posts</button><button id="section">Append section</button><button id="font">Change text metrics</button>
+<ul class="tacobout-magazine-grid" id="feed">
+<li class="wp-block-post short" id="p1"><h2>1 · A short link</h2><a href="#p1">Read link</a><p>Quick context.</p></li>
+<li class="wp-block-post tall" id="p2"><h2>2 · A taller post</h2><a href="#p2">Read article</a><p>A longer entry reserves its space.</p></li>
+<li class="wp-block-post short" id="p3"><h2>3 · An expanding note</h2><a href="#p3">Read note</a><details><summary>Read the full note</summary><p>Extra content changes the actual card height. This tests overlap prevention, keyboard focus and repacking without moving the card in the document.</p></details></li>
+<li class="wp-block-post" id="p4"><h2>4 · Embedded media</h2><a href="#p4">Read media</a><iframe class="resize" title="Synthetic embed" srcdoc="<p>Local embedded content</p>"></iframe></li>
+<li class="wp-block-post" id="p5"><h2>5 · Late portrait artwork</h2><a href="#p5">Read image</a><img id="portrait" alt="Synthetic purple portrait placeholder"></li>
+<li class="wp-block-post short" id="p6"><h2>6 · A quick discovery</h2><a href="#p6">Read discovery</a><p>Another short card to fill the next available space.</p></li>
+</ul><script src="../../tacobout-masonry.js"></script><script>
+const feed=document.getElementById('feed');if(!location.search.includes('nojs'))TacoboutMasonry.create(feed);
+document.getElementById('media').onclick=()=>{document.getElementById('portrait').src='data:image/svg+xml,'+encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="400" height="650"><rect width="400" height="650" fill="#6240a3"/><text x="30" y="60" fill="white" font-size="30">Portrait fixture</text></svg>');};
+document.getElementById('embed').onclick=()=>{document.querySelector('iframe').style.height='470px';};
+let next=7;function append(){const el=document.createElement('li');el.className='wp-block-post short';el.id='p'+next;el.innerHTML='<h2>'+next+' · Appended post</h2><a href="#p'+next+'">Read appended post '+next+'</a><p>New feed content.</p>';next++;feed.append(el);}
+document.getElementById('append').onclick=()=>{append();append();};
+document.getElementById('section').onclick=()=>{const el=document.createElement('li');el.className='separator';el.textContent='A new editorial section';feed.append(el);append();};
+document.getElementById('font').onclick=()=>{feed.style.fontSize='24px';};
+</script></html>

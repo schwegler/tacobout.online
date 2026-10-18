@@ -50,17 +50,10 @@
 		if (classMatch) seenPostIds.add(parseInt(classMatch[1], 10));
 	});
 
-	// Ordered editorial grid: CSS owns placement; DOM, visual and keyboard order agree.
+	// Keep chronological DOM order; the measured grid fills the shortest column.
 	const preparedCards = new WeakSet();
-	const resizeObserver = null;
-	function layoutMasonryGrid() {
-		grid.classList.add('tacobout-editorial-ready');
-		grid.style.minHeight = '';
-		Array.from(grid.children).forEach(card => {
-			card.style.gridColumn = '';
-			card.style.gridRow = '';
-		});
-	}
+	const masonry = window.TacoboutMasonry?.create(grid);
+	function layoutMasonryGrid() { masonry?.schedule(); }
 
 	function prepareCards(cards) {
 		// ⚡ Bolt: Cache all posts array outside the loop to prevent O(N²) DOM queries
@@ -152,9 +145,8 @@
 					content.append(view);
 				}
 			}
-			resizeObserver?.observe(card);
 		});
-		layoutMasonryGrid();
+		masonry?.refresh();
 	}
 
 	function openMedia(images) {
@@ -203,19 +195,7 @@
 	window.layoutMasonryGrid = layoutMasonryGrid;
 	window._tacoboutObserveCards = prepareCards;
 	prepareCards(Array.from(grid.querySelectorAll('.wp-block-post')));
-	resizeObserver?.observe(grid);
-	const discovery = grid.querySelector('.tacobout-discovery-sidebar');
-	if (discovery) resizeObserver?.observe(discovery);
-	grid.addEventListener('load', layoutMasonryGrid, true);
-	grid.addEventListener('loadedmetadata', layoutMasonryGrid, true);
-	grid.addEventListener('toggle', layoutMasonryGrid, true);
-	// ⚡ Bolt: Debounce the window resize event listener to avoid continuous layout recalculations during rapid resizing.
-	let resizeTimer;
-	window.addEventListener('resize', () => {
-		clearTimeout(resizeTimer);
-		resizeTimer = setTimeout(layoutMasonryGrid, 100);
-	});
-	document.fonts?.ready.then(layoutMasonryGrid);
+
 	// Search, author, date and custom-type queries keep native scoped pagination.
 	if (!config.enableLoading) return;
 	document.body.classList.add('tacobout-infinite-scroll-active');
@@ -456,7 +436,6 @@
 			? window.DOMPurify.sanitize(sepRawHtml, { USE_PROFILES: { html: true, svg: true } })
 			: sepRawHtml;
 		grid.appendChild(sep);
-		resizeObserver?.observe(sep);
 		// Separator spans both columns — trigger a layout pass
 		setTimeout(layoutMasonryGrid, 50);
 	}

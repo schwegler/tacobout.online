@@ -131,3 +131,11 @@ html body .tacobout-on-the-air-strip{box-shadow:none!important}
 .creator-footer-links{display:flex;align-items:center;gap:8px 20px;flex-wrap:wrap}.creator-support{display:inline-flex;align-items:center;min-height:44px;color:var(--taco-muted);text-underline-offset:3px}.creator-support:hover,.creator-support:focus-visible{color:var(--taco-accent)}
 
 .creator-support{display:block}.creator-support summary{min-height:44px;align-content:center;cursor:pointer}.creator-support-options{display:flex;gap:4px 16px;flex-wrap:wrap}.creator-support-options a{display:inline-flex;align-items:center;min-height:44px;color:var(--taco-accent)}
+
+/* Measured row spans progressively enhance the native row-grid fallback. */
+html body .tacobout-magazine-grid{--tacobout-masonry-gap:30px;--tacobout-masonry-columns:2}
+html body .tacobout-magazine-grid.tacobout-masonry-active{grid-auto-rows:4px!important;row-gap:0!important}
+html body .tacobout-magazine-grid.tacobout-masonry-active>*{align-self:start;margin-block:0!important}
+
+@media(min-width:1100px){html body .tacobout-grid-with-sidebar{--tacobout-masonry-columns:3}}
+@media(max-width:759px){html body .tacobout-magazine-grid{--tacobout-masonry-columns:1}}
