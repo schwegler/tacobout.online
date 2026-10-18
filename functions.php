@@ -563,7 +563,7 @@ function tacobout_enqueue_infinite_scroll() {
 		'dompurify',
 		get_template_directory_uri() . '/dompurify.min.js',
 		array(),
-		'3.0.6',
+		'3.4.17',
 		true
 	);
 
