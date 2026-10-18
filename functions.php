@@ -784,3 +784,10 @@ function tacobout_flush_rewrite_rules() {
 	}
 }
 add_action( 'init', 'tacobout_flush_rewrite_rules', 999 );
+
+/** Optional, locally saved seasonal appearance; never activated by calendar dates. */
+function tacobout_enqueue_seasonal_appearance() {
+	wp_enqueue_style( 'tacobout-seasonal', get_theme_file_uri( 'seasonal/seasonal.css' ), array(), wp_get_theme()->get( 'Version' ) );
+	wp_enqueue_script( 'tacobout-seasonal', get_theme_file_uri( 'seasonal/controller.js' ), array(), wp_get_theme()->get( 'Version' ), true );
+}
+add_action( 'wp_enqueue_scripts', 'tacobout_enqueue_seasonal_appearance' );
