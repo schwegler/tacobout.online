@@ -43,6 +43,9 @@ function tacobout_enqueue_ui() {
 		return;
 	}
 	wp_enqueue_style( 'tacobout-editorial', get_theme_file_uri( 'editorial.css' ), array( 'tacobout-style' ), wp_get_theme()->get( 'Version' ) );
+	if ( is_single() ) {
+		wp_enqueue_script( 'tacobout-sidebar-fit', get_theme_file_uri( 'tacobout-sidebar.js' ), array(), wp_get_theme()->get( 'Version' ), true );
+	}
 	// Head execution applies a stored preference before body paint on every template.
 	wp_enqueue_script( 'tacobout-ui', get_theme_file_uri( 'tacobout-ui.js' ), array(), wp_get_theme()->get( 'Version' ), false );
 }

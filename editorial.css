@@ -146,3 +146,6 @@ html body .tacobout-magazine-grid.tacobout-masonry-active>*{align-self:start;mar
 /* Approved signature PNGs share an identical alpha mask in both treatments. */
 .creator-credit { gap: 8px; align-items: center; }
 .creator-credit img { width: 132px; height: auto; aspect-ratio: 1945 / 576; margin: 0; }
+/* Never clip a tall rail or create a nested scroll area. No-JS defaults to document flow. */
+html body.single .tacobout-sidebar-sticky{position:static!important;max-height:none!important;overflow:visible!important}
+@media(min-width:1024px){html body.single .tacobout-sidebar-sticky.tacobout-sidebar-fits{position:sticky!important;top:var(--tacobout-sidebar-top,110px)!important}}

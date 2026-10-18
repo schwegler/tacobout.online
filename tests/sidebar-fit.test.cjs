@@ -1,0 +1,5 @@
+const {test}=require('node:test');const assert=require('node:assert/strict');const {fits}=require('../tacobout-sidebar.js');
+test('tall reviews fall back to document flow in short windows',()=>{assert.equal(fits({width:1440,height:600,header:94,sidebar:600}),false);assert.equal(fits({width:1440,height:900,header:94,sidebar:600}),true);});
+test('header, admin bar and edge clearance all count against the available height',()=>{assert.equal(fits({width:1440,height:900,header:100,admin:32,sidebar:736}),false);assert.equal(fits({width:1440,height:900,header:100,admin:32,sidebar:734}),true);});
+test('narrow/zoomed viewports use normal flow, regardless of sidebar height',()=>{for(const width of [390,720,900,1023])assert.equal(fits({width,height:900,sidebar:100}),false);});
+test('dynamic widget growth disables sticking and shrinking restores it',()=>{const viewport={width:1024,height:900,header:96};assert.equal(fits({...viewport,sidebar:500}),true);assert.equal(fits({...viewport,sidebar:1000}),false);assert.equal(fits({...viewport,sidebar:500}),true);});
