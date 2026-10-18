@@ -7,12 +7,14 @@
  */
 if ( ! defined( 'ABSPATH' ) ) { exit; }
 
-$mascot_url = add_query_arg( 'ver', wp_get_theme()->get( 'Version' ), get_theme_file_uri( 'assets/brand/mascot_duo_telly_and_facet_transparent.png' ) );
+$mascot_asset = is_page( 'about' ) ? 'assets/brand/creative-team.png' : 'assets/brand/mascot_duo_telly_and_facet_transparent.png';
+$mascot_small = is_page( 'about' ) ? 'assets/brand/creative-team-768.png' : $mascot_asset;
+$mascot_url = add_query_arg( 'ver', wp_get_theme()->get( 'Version' ), get_theme_file_uri( $mascot_asset ) );
 ?>
 <!-- wp:group {"className":"tacobout-companion-vault-card","layout":{"type":"flex","flexWrap":"wrap","verticalAlignment":"center"}} -->
 <div class="wp-block-group tacobout-companion-vault-card">
 	<div class="tacobout-vault-mascot-wrap">
-		<img src="<?php echo esc_url( $mascot_url ); ?>" width="1536" height="1024" alt="" class="mascot-sticker tacobout-vault-mascot" />
+		<img src="<?php echo esc_url( get_theme_file_uri( $mascot_small ) ); ?>" srcset="<?php echo esc_url( get_theme_file_uri( $mascot_small ) ); ?> 768w, <?php echo esc_url( $mascot_url ); ?> 1536w" sizes="(max-width: 759px) 100px, 220px" width="1536" height="1024" loading="lazy" decoding="async" alt="" class="mascot-sticker tacobout-vault-mascot" />
 	</div>
 	<div class="tacobout-vault-content">
 		<span class="tacobout-vault-badge">

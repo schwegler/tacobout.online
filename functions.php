@@ -9,6 +9,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 require_once __DIR__ . '/inc/trove.php';
 require_once __DIR__ . '/inc/sidebar.php';
+require_once __DIR__ . '/inc/editorial.php';
+require_once __DIR__ . '/inc/social.php';
 
 if ( ! function_exists( 'tacobout_support' ) ) :
 	function tacobout_support() {
@@ -20,6 +22,7 @@ if ( ! function_exists( 'tacobout_support' ) ) :
 			array(
 				'style.css',
 				'editor-style.css',
+				'editorial.css',
 				'https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap',
 			)
 		);
@@ -236,48 +239,10 @@ function tacobout_bluesky_embed_loader( $content ) {
 }
 add_filter( 'the_content', 'tacobout_bluesky_embed_loader', 20 );
 
-/**
- * CRITICAL: Clear saved template customizations from the database.
- * When templates are edited in the Site Editor, WordPress saves them to the
- * database as wp_template / wp_template_part custom post types. These saved
- * versions OVERRIDE the theme's file-based templates permanently.
- *
- * This runs once on version 2.0.0 to ensure the new templates take effect.
- * After running, it sets a flag so it won't run again.
- */
+/** Legacy entry point retained for callers; saved Site Editor work is never deleted. */
 function tacobout_clear_saved_templates() {
-	$version_flag = 'tacobout_templates_cleared_v2';
-	if ( get_option( $version_flag ) ) {
-		return; // Already cleared for this version
-	}
-
-	// Delete all saved template customizations for this theme
-	$template_types = array( 'wp_template', 'wp_template_part' );
-	$stylesheet     = get_stylesheet();
-	foreach ( $template_types as $post_type ) {
-		$posts = get_posts(
-			array(
-				'post_type'   => $post_type,
-				'post_status' => 'any',
-				'numberposts' => -1,
-				'tax_query'   => array(
-					array(
-						'taxonomy' => 'wp_theme',
-						'field'    => 'slug',
-						'terms'    => $stylesheet,
-					),
-				),
-				'fields'      => 'ids',
-			)
-		);
-		foreach ( $posts as $post_id ) {
-			wp_delete_post( $post_id, true );
-		}
-	}
-
-	update_option( $version_flag, true );
+	// Template changes belong in files or an explicit Site Editor action.
 }
-add_action( 'after_setup_theme', 'tacobout_clear_saved_templates' );
 
 /**
  * Add body class when query block pagination is active.
@@ -598,7 +563,7 @@ function tacobout_enqueue_infinite_scroll() {
 		'dompurify',
 		get_template_directory_uri() . '/dompurify.min.js',
 		array(),
-		'3.0.6',
+		'3.4.17',
 		true
 	);
 
@@ -631,6 +596,7 @@ function tacobout_enqueue_infinite_scroll() {
 			'termName'       => $tax_context['term_name'] ? esc_html( $tax_context['term_name'] ) : null,
 			'termType'       => $tax_context['term_type'],
 			'termTotalPages' => $tax_context['term_total_pages'],
+			'enableLoading'  => is_home() || is_category() || is_tag(),
 			'mascotTacoBreak'=> esc_url_raw( add_query_arg( 'ver', wp_get_theme()->get( 'Version' ), get_template_directory_uri() . '/assets/brand/telly_pose_02_taco_break.png' ) ),
 		)
 	);

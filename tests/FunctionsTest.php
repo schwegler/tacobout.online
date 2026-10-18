@@ -58,65 +58,18 @@ class FunctionsTest extends \PHPUnit\Framework\TestCase {
             [
                 'style.css',
                 'editor-style.css',
+                'editorial.css',
                 'https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap',
             ],
             $editor_styles_added
         );
     }
 
-    public function test_tacobout_clear_saved_templates_already_cleared() {
-        \Brain\Monkey\Functions\expect('get_option')
-            ->once()
-            ->with('tacobout_templates_cleared_v2')
-            ->andReturn(true);
-
+    public function test_saved_site_editor_templates_are_never_deleted_automatically() {
         \Brain\Monkey\Functions\expect('get_posts')->never();
         \Brain\Monkey\Functions\expect('wp_delete_post')->never();
         \Brain\Monkey\Functions\expect('update_option')->never();
-        \Brain\Monkey\Functions\expect('get_stylesheet')->never();
-
         tacobout_clear_saved_templates();
-
-        // BrainMonkey expect functions handle assertions under the hood, but PHPUnit doesn't know this.
-        // We can add a dummy assertion to prevent the risky test warning, or we can configure PHPUnit to ignore it.
-        $this->assertTrue(true);
-    }
-
-    public function test_tacobout_clear_saved_templates_clears_templates() {
-        \Brain\Monkey\Functions\expect('get_option')
-            ->once()
-            ->with('tacobout_templates_cleared_v2')
-            ->andReturn(false);
-
-        \Brain\Monkey\Functions\expect('get_stylesheet')
-            ->once()
-            ->andReturn('tacobout');
-
-        // Mock get_posts to return different results based on the arguments
-        // Since functions.php uses 'fields' => 'ids', we return an array of IDs
-        \Brain\Monkey\Functions\expect('get_posts')
-            ->twice()
-            ->andReturnUsing(function($args) {
-                if ($args['post_type'] === 'wp_template') {
-                    return [10, 20];
-                } elseif ($args['post_type'] === 'wp_template_part') {
-                    return [30];
-                }
-                return [];
-            });
-
-        // We expect wp_delete_post to be called with the ID of each post returned by get_posts
-        \Brain\Monkey\Functions\expect('wp_delete_post')
-            ->times(3)
-            ->with(\Mockery::anyOf(10, 20, 30), true);
-
-        // We expect update_option to be called at the end
-        \Brain\Monkey\Functions\expect('update_option')
-            ->once()
-            ->with('tacobout_templates_cleared_v2', true);
-
-        tacobout_clear_saved_templates();
-
         $this->assertTrue(true);
     }
 

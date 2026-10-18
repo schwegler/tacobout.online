@@ -16,16 +16,6 @@
 	}
 
 	/* ============================================
-		 THEME TOGGLE — run before any layout to avoid flash
-		 ============================================ */
-	(function applyThemePreference() {
-		const stored = localStorage.getItem('tacobout-theme');
-		const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-		const theme = stored || (prefersDark ? 'dark' : 'light');
-		document.documentElement.setAttribute('data-theme', theme);
-	})();
-
-	/* ============================================
 		 CONFIG
 		 ============================================ */
 	const config = window.tacoboutScroll;
@@ -60,94 +50,15 @@
 		if (classMatch) seenPostIds.add(parseInt(classMatch[1], 10));
 	});
 
-	// Four-pixel tracks give each card its own height without equal-height rows.
-	// Keep DOM order intact and place cards against the shortest column.
-	let layoutFrame = 0;
+	// Ordered editorial grid: CSS owns placement; DOM, visual and keyboard order agree.
 	const preparedCards = new WeakSet();
-	const resizeObserver = typeof ResizeObserver !== 'undefined'
-		? new ResizeObserver(layoutMasonryGrid) : null;
-
+	const resizeObserver = null;
 	function layoutMasonryGrid() {
-		if (layoutFrame) return;
-		layoutFrame = requestAnimationFrame(() => {
-			layoutFrame = 0;
-			grid.classList.add('tacobout-bento-ready');
-			const columns = parseInt(getComputedStyle(grid).getPropertyValue('--tacobout-columns'), 10) || 1;
-			const skyline = Array(columns).fill(0);
-			const sidebar = grid.querySelector('.tacobout-grid-sidebar');
-			const wideSidebar = sidebar && window.matchMedia('(min-width: 2000px)').matches;
-
-			// ⚡ Bolt: Cache sidebar height to prevent layout thrashing
-			const sidebarHeight = sidebar ? sidebar.getBoundingClientRect().height : 0;
-			grid.style.minHeight = wideSidebar ? sidebarHeight + 'px' : '';
-
-			if (grid.dataset.bentoColumns !== String(columns)) {
-				Array.from(grid.children).forEach(card => { card.style.gridColumn = ''; card.style.gridRow = ''; });
-				grid.dataset.bentoColumns = String(columns);
-			}
-
-			// ⚡ Bolt: Prevent layout thrashing by measuring all card heights upfront before any grid modifications.
-			// This reduces synchronous layout recalculations from O(N) to O(1) in the common case.
-			const cards = Array.from(grid.children);
-			const cachedHeights = new Map();
-			const cachedSpans = new Map();
-
-			cards.forEach(card => {
-				cachedHeights.set(card, card.getBoundingClientRect().height);
-				const match = card.style.gridColumn.match(/span (\d+)/);
-				cachedSpans.set(card, match ? parseInt(match[1], 10) : 1);
-			});
-
-			// Reserve the upper-right slot before placing posts in the shortest column.
-			if (sidebar && !wideSidebar && columns > 1) {
-				sidebar.style.gridColumn = String(columns);
-				const rows = Math.ceil((sidebarHeight + 20) / 4);
-				sidebar.style.gridRow = '1 / span ' + rows;
-				skyline[columns - 1] = rows;
-			}
-
-			cards.forEach(card => {
-				if (card === sidebar && (wideSidebar || columns > 1)) {
-					if (wideSidebar) { card.style.gridColumn = ''; card.style.gridRow = ''; }
-					return;
-				}
-				const separator = card.classList.contains('tacobout-overflow-separator');
-				let span = separator ? columns : 1;
-				let column = skyline.indexOf(Math.min(...skyline));
-				let top = skyline[column];
-				if (separator) {
-					column = 0;
-					top = Math.max(...skyline);
-				} else if (columns > 1 && card.classList.contains('tacobout-card-wide')) {
-					// Only bridge columns when their bottoms nearly line up. Otherwise
-					// a wide card would seal a large, unfillable hole beneath itself.
-					let candidate = -1;
-					let lowest = Infinity;
-					for (let i = 0; i < columns - 1; i++) {
-						const edge = Math.max(skyline[i], skyline[i + 1]);
-						if (Math.abs(skyline[i] - skyline[i + 1]) <= 8 && edge < lowest) {
-							candidate = i; lowest = edge;
-						}
-					}
-					if (candidate !== -1 && lowest <= top + 8) { span = 2; column = candidate; top = lowest; }
-				}
-				card.classList.toggle('tacobout-card-spanning', span > 1 && !separator);
-				const placement = (column + 1) + ' / span ' + span;
-
-				let height = cachedHeights.get(card);
-				if (card.style.gridColumn !== placement) {
-					card.style.gridColumn = placement;
-					// If the card's width (span) changed, its height likely changed, so we must remeasure
-					if (cachedSpans.get(card) !== span) {
-						height = card.getBoundingClientRect().height;
-					}
-				}
-
-				const rows = Math.ceil((height + 20) / 4);
-				const row = (top + 1) + ' / span ' + rows;
-				if (card.style.gridRow !== row) card.style.gridRow = row;
-				for (let i = column; i < column + span; i++) skyline[i] = top + rows;
-			});
+		grid.classList.add('tacobout-editorial-ready');
+		grid.style.minHeight = '';
+		Array.from(grid.children).forEach(card => {
+			card.style.gridColumn = '';
+			card.style.gridRow = '';
 		});
 	}
 
@@ -305,6 +216,8 @@
 		resizeTimer = setTimeout(layoutMasonryGrid, 100);
 	});
 	document.fonts?.ready.then(layoutMasonryGrid);
+	// Search, author, date and custom-type queries keep native scoped pagination.
+	if (!config.enableLoading) return;
 	document.body.classList.add('tacobout-infinite-scroll-active');
 
 
@@ -696,98 +609,4 @@
 		observer.observe(sentinel);
 	}
 
-	/* ============================================
-		 SCROLL-TO-TOP FAB
-		 ============================================ */
-	const fab = document.createElement("button");
-	fab.setAttribute("type", "button");
-	fab.className = "tacobout-scroll-top";
-	fab.setAttribute("aria-label", "Scroll to top");
-	fab.setAttribute("title", "Scroll to top");
-	fab.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="18 15 12 9 6 15"></polyline></svg>`;
-	document.body.appendChild(fab);
-
-	fab.addEventListener("click", () => {
-		window.scrollTo({ top: 0, behavior: "smooth" });
-		// Reset focus to top of document so keyboard users aren't trapped at the bottom
-		document.body.setAttribute("tabindex", "-1");
-		document.body.focus({ preventScroll: true });
-		// Remove tabindex after focus so it doesn't stay focusable unnecessarily
-		document.body.addEventListener("blur", function onBlur() {
-			document.body.removeAttribute("tabindex");
-			document.body.removeEventListener("blur", onBlur);
-		});
-	});
-
-	let fabVisible = false;
-	let ticking = false;
-
-	function updateFab() {
-		const shouldShow = window.scrollY > 400;
-		if (shouldShow !== fabVisible) {
-			fabVisible = shouldShow;
-			fab.classList.toggle("is-visible", shouldShow);
-			const themeFabEl = document.getElementById("tacobout-theme-toggle");
-			if (themeFabEl) {
-				themeFabEl.classList.toggle("is-stacked", shouldShow);
-			}
-		}
-		ticking = false;
-	}
-
-	window.addEventListener(
-		"scroll",
-		() => {
-			if (!ticking) {
-				requestAnimationFrame(updateFab);
-				ticking = true;
-			}
-		},
-		{ passive: true },
-	);
-
-
-	/* ============================================
-		 THEME TOGGLE FAB
-		 ============================================ */
-	const THEME_KEY = 'tacobout-theme';
-	const SUN_ICON = `<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>`;
-	const MOON_ICON = `<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>`;
-
-	const themeFab = document.createElement('button');
-	themeFab.setAttribute('type', 'button');
-	themeFab.className = 'tacobout-theme-toggle';
-	themeFab.id = 'tacobout-theme-toggle';
-	document.body.appendChild(themeFab);
-
-	function getCurrentTheme() {
-		return document.documentElement.getAttribute('data-theme') || 'light';
-	}
-
-	function applyTheme(theme) {
-		document.documentElement.setAttribute('data-theme', theme);
-		localStorage.setItem(THEME_KEY, theme);
-		const isDark = theme === 'dark';
-		themeFab.innerHTML = isDark ? SUN_ICON : MOON_ICON;
-		themeFab.setAttribute('aria-label', isDark ? 'Switch to light mode' : 'Switch to dark mode');
-		themeFab.setAttribute('title', isDark ? 'Switch to light mode' : 'Switch to dark mode');
-	}
-
-	// Set initial state based on what was already applied by the early script
-	applyTheme(getCurrentTheme());
-
-	themeFab.addEventListener('click', () => {
-		const newTheme = getCurrentTheme() === 'light' ? 'dark' : 'light';
-		applyTheme(newTheme);
-	});
-
-	// Keep in sync if system preference changes and user hasn't set a manual override
-	window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
-		if (!localStorage.getItem(THEME_KEY)) {
-			applyTheme(e.matches ? 'dark' : 'light');
-		}
-	});
-
-	// Initial check (must happen after theme toggle is in the DOM)
-	updateFab();
 })();
