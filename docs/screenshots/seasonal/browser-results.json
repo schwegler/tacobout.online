@@ -1,0 +1,12 @@
+{
+  "site": "blog",
+  "title": "taco 'bout it \u2013 find something to taco 'bout",
+  "desktop": 1440,
+  "mobile": 390,
+  "persistence": true,
+  "off": true,
+  "reset": true,
+  "print": true,
+  "emptyAlt": true,
+  "errors": []
+}
