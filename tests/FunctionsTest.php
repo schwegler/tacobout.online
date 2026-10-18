@@ -262,4 +262,50 @@ class FunctionsTest extends \PHPUnit\Framework\TestCase {
         $this->assertSame('', tacobout_pre_render_hidden_blocks(null, ['blockName' => 'core/post-featured-image'], $parent));
     }
 
+    public function test_video_cards_keep_one_complete_player_and_bound_prose() {
+        \Brain\Monkey\Functions\expect('get_post_format')->once()->with(810)->andReturn('video');
+        \Brain\Monkey\Functions\when('get_post_field')->justReturn('');
+        \Brain\Monkey\Functions\when('strip_shortcodes')->returnArg();
+        \Brain\Monkey\Functions\when('wp_strip_all_tags')->alias('strip_tags');
+        \Brain\Monkey\Functions\when('wp_trim_words')->alias(function ($text, $count, $more) {
+            $words = preg_split('/\s+/', trim($text));
+            return implode(' ', array_slice($words, 0, $count)) . (count($words) > $count ? $more : '');
+        });
+        \Brain\Monkey\Functions\when('esc_html')->alias('htmlspecialchars');
+        \Brain\Monkey\Functions\when('esc_url')->returnArg();
+        \Brain\Monkey\Functions\when('esc_html__')->returnArg();
+        \Brain\Monkey\Functions\when('get_permalink')->justReturn('https://example.com/full-article/');
+        \Brain\Monkey\Functions\when('get_the_title')->justReturn('Video article');
+        $block = (object) ['context' => ['queryId' => 0, 'postId' => 810]];
+        $cases = [
+            file_get_contents(__DIR__ . '/fixtures/simpsons-video-rendered.html'),
+            '<div class="wp-block-post-content"><figure class="wp-block-embed"><div class="wp-block-embed__wrapper"><iframe title="Accessible player" src="https://example.com/embed"></iframe></div><figcaption>Player credit</figcaption></figure><p>' . str_repeat('Long prose ', 150) . '</p><h2>Full article</h2></div>',
+            '<div class="wp-block-post-content"><div class="wp-video"><video controls><source src="movie.mp4"><track kind="captions" src="captions.vtt"></video></div><p>Intro before More.</p><span id="more-1"></span><p>Full article</p><video src="second.mp4"></video></div>',
+        ];
+        foreach ($cases as $input) {
+            $output = tacobout_video_card_content($input, [], $block);
+            $dom = new DOMDocument();
+            @$dom->loadHTML($output);
+            $xpath = new DOMXPath($dom);
+            $this->assertSame(1, $xpath->query('//video | //iframe')->length);
+            $this->assertSame(0, $xpath->query('//img | //h2')->length);
+            $this->assertStringNotContainsString('Full article', $output);
+            $this->assertStringContainsString('Read more', $output);
+            $this->assertStringContainsString('https://example.com/full-article/', $output);
+            $this->assertLessThanOrEqual(30, count(explode(' ', $xpath->query('//div[contains(@class,"wp-block-post-content")]/p')->item(0)->textContent)));
+            unset($block->context['queryId']);
+            $this->assertSame($input, tacobout_video_card_content($input, [], $block));
+            $block->context['queryId'] = 0;
+        }
+        \Brain\Monkey\Functions\when('get_post_field')->justReturn('<strong>Explicit excerpt</strong> ' . str_repeat('word ', 100));
+        $manual = tacobout_video_card_content($cases[0], [], $block);
+        $this->assertStringContainsString('Explicit excerpt', $manual);
+        $this->assertStringNotContainsString('<strong>', $manual);
+        $this->assertStringNotContainsString('municipal emergency', $manual);
+        \Brain\Monkey\Functions\expect('get_post_format')->once()->with(811)->andReturn('audio');
+        $this->assertSame($cases[0], tacobout_video_card_content($cases[0], [], (object) ['context' => ['queryId' => 0, 'postId' => 811]]));
+        $this->assertStringContainsString('<track', $output);
+        $this->assertStringContainsString('controls', $output);
+    }
+
 }
