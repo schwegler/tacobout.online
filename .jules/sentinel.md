@@ -25,3 +25,8 @@
 **Vulnerability:** Cross-Site Scripting (XSS) via `innerHTML` assignment of post content fetched from the REST API.
 **Learning:** When adding `DOMPurify` to sanitize HTML assembled in JavaScript from the WordPress REST API, the default configuration strips `iframe` elements and `target` attributes, which breaks legitimate WordPress features like embedded YouTube videos and external links.
 **Prevention:** To avoid breaking legitimate WordPress content when fixing XSS vulnerabilities with `DOMPurify`, always configure the sanitizer to explicitly allow necessary tags and attributes. For example: `DOMPurify.sanitize(html, { USE_PROFILES: { html: true, svg: true }, ADD_TAGS: ['iframe'], ADD_ATTR: ['target'] })`. Also ensure that `svg` profiles are enabled if the layout contains inline SVG icons.
+
+## 2024-10-19 - Fail Securely with DOMPurify
+**Vulnerability:** Fallback to injecting raw, unescaped HTML when `DOMPurify` fails to load (e.g., due to ad blockers or network failures).
+**Learning:** Checking for the existence of a security dependency and falling back to the insecure method defeats the purpose of the security dependency. If the dependency is missing, the application must fail securely (e.g., abort the operation).
+**Prevention:** When a security library like `DOMPurify` is required to sanitize untrusted input, never fall back to raw assignment (like `innerHTML = rawHtml`) if the library is unavailable.
