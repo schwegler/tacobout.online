@@ -18,6 +18,8 @@ html body::before{display:none!important}html .tacobout-header{background:var(--
 html h1,html h2,html h3{font-family:'Space Grotesk',system-ui,sans-serif;letter-spacing:-.035em;line-height:1.17;font-weight:600;color:var(--taco-fg)}
 html .wp-site-blocks{--wp--style--root--padding-left:40px;--wp--style--root--padding-right:40px}
 html .wp-site-blocks>main{padding-top:36px!important;padding-bottom:48px!important}
+/* Keep the home intro close to the header without changing sticky/admin-bar offsets. */
+html body.home .wp-site-blocks>main:has(>.tacobout-on-the-air-strip){margin-block-start:0;padding-top:16px!important}
 html .tacobout-header-row{max-width:1240px;margin:auto;padding-inline:0}.tacobout-header .wp-block-site-title{font-size:26px!important;letter-spacing:-.04em}.tacobout-header .wp-block-site-logo img{width:44px;height:auto}
 html .tacobout-header .tacobout-sister-nav-pill a{background:transparent;border:0;border-radius:0;box-shadow:none;color:var(--taco-fg)!important;padding:8px;min-height:44px;font-size:14px}
 html .tacobout-header .tacobout-sister-nav-pill a::before{display:none}.tacobout-header .wp-block-navigation-item{font-size:14px}
