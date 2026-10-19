@@ -55,3 +55,5 @@ html[data-season="halloween"] .seasonal-appearance-panel,html[data-theme="dark"]
 .tacobout-utilities .seasonal-controls > button{width:auto;height:auto;min-width:80px;padding:8px 10px;white-space:nowrap;}
 .tacobout-utilities .seasonal-controls .seasonal-appearance-panel{grid-template-columns:minmax(0,1fr);}
 .tacobout-utilities .seasonal-controls .seasonal-appearance-panel button{width:100%;height:auto;min-height:44px;max-width:none;display:block;white-space:normal;padding:9px 12px;text-align:left;line-height:1.4;}
+
+.tacobout-theme-control span{display:none}.seasonal-appearance-panel .tacobout-theme-control span{display:inline;margin-left:8px;}

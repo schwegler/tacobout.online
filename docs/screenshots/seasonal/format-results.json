@@ -1,0 +1,57 @@
+[
+  {
+    "format": "single",
+    "title": "baseball and i have a seasonal situationship – taco 'bout it",
+    "widths": [
+      1440,
+      390,
+      320
+    ],
+    "menu": true,
+    "overlayOnly": true
+  },
+  {
+    "format": "about",
+    "title": "about – taco 'bout it",
+    "widths": [
+      1440,
+      390,
+      320
+    ],
+    "menu": true,
+    "overlayOnly": true
+  },
+  {
+    "format": "archive",
+    "title": "October 2026 – taco 'bout it",
+    "widths": [
+      1440,
+      390,
+      320
+    ],
+    "menu": true,
+    "overlayOnly": true
+  },
+  {
+    "format": "search",
+    "title": "Search Results for “streaming” – taco 'bout it",
+    "widths": [
+      1440,
+      390,
+      320
+    ],
+    "menu": true,
+    "overlayOnly": true
+  },
+  {
+    "format": "404",
+    "title": "taco 'bout it – find something to taco 'bout",
+    "widths": [
+      1440,
+      390,
+      320
+    ],
+    "menu": true,
+    "overlayOnly": true
+  }
+]
