@@ -24,7 +24,7 @@ class FunctionsTest extends \PHPUnit\Framework\TestCase {
         // Ensure array starts empty
         $this->assertEmpty($wp_styles_enqueued);
 
-        \Brain\Monkey\Functions\expect('wp_add_inline_style')->once()->with('tacobout-style', \Mockery::on(fn($css) => str_contains($css, '.tacobout-review-link') && str_contains($css, '.tacobout-sidebar-links') && str_contains($css, '.tacobout-on-the-air-mascot')));
+        \Brain\Monkey\Functions\expect('wp_add_inline_style')->once()->with('tacobout-style', \Mockery::on(fn($css) => str_contains($css, '.tacobout-review-link') && str_contains($css, '.tacobout-sidebar-links') && str_contains($css, '.tacobout-on-the-air-mascot') && str_contains($css, 'a.tacobout-trove-card')));
         // Call the function
         tacobout_enqueue_styles();
 
@@ -59,6 +59,7 @@ class FunctionsTest extends \PHPUnit\Framework\TestCase {
                 'style.css',
                 'editor-style.css',
                 'editorial.css',
+                'trove.css',
                 'https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap',
             ],
             $editor_styles_added

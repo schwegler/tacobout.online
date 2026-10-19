@@ -23,6 +23,7 @@ if ( ! function_exists( 'tacobout_support' ) ) :
 				'style.css',
 				'editor-style.css',
 				'editorial.css',
+				'trove.css',
 				'https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap',
 			)
 		);
@@ -65,7 +66,7 @@ function tacobout_enqueue_styles() {
 	// response, even when an optimizer strips asset version query strings.
 	wp_add_inline_style(
 		'tacobout-style',
-		file_get_contents( __DIR__ . '/sidebar.css' ) . "\n" . file_get_contents( __DIR__ . '/welcome.css' )
+		file_get_contents( __DIR__ . '/sidebar.css' ) . "\n" . file_get_contents( __DIR__ . '/welcome.css' ) . "\n" . file_get_contents( __DIR__ . '/trove.css' )
 	);
 
 	// Google Fonts — Space Grotesk (headings) + Instrument Sans (body)

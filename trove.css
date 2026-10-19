@@ -1,0 +1,49 @@
+/* Small structural layer travels inline with shortcode markup, like sidebar.css.
+   Keep this available even when a cache serves an older external theme sheet. */
+a.tacobout-trove-card,
+.wp-block-post-content a.tacobout-trove-card {
+	display: flex;
+	align-items: flex-start;
+	gap: 20px;
+	box-sizing: border-box;
+	width: 100%;
+	min-width: 0;
+	margin-block: 24px;
+	padding: 20px;
+	border: 1px solid var(--taco-border, #d4d4d8);
+	border-radius: 8px;
+	background: var(--taco-surface, #fff);
+	color: var(--taco-fg, #0f0e17);
+	text-decoration: none;
+	text-align: left;
+	font: 400 14px/1.5 'Instrument Sans', sans-serif;
+	letter-spacing: normal;
+	white-space: normal;
+}
+a.tacobout-trove-card:hover { border-color: var(--taco-accent, #2563eb); color: var(--taco-fg, #0f0e17); }
+a.tacobout-trove-card:focus-visible { outline: 2px solid var(--taco-accent, #2563eb); outline-offset: 4px; }
+.tacobout-trove-card .tacobout-trove-card__cover {
+	display: block;
+	float: none;
+	flex: 0 0 auto;
+	width: 96px;
+	max-width: 30%;
+	height: auto;
+	object-fit: contain;
+	margin: 0;
+	border-radius: 3px;
+	background: var(--taco-surface-2, #e4e4e7);
+}
+.tacobout-trove-card__body { display: grid; gap: 7px; min-width: 0; overflow-wrap: anywhere; }
+.tacobout-trove-card__label { font-size: 11px; font-weight: 600; line-height: 1.4; letter-spacing: .05em; text-transform: uppercase; color: var(--taco-muted, #71717a); }
+.tacobout-trove-card__title { font: 600 20px/1.3 'Space Grotesk', sans-serif; color: var(--taco-fg, #0f0e17); }
+.tacobout-trove-card__description { font-size: 13px; line-height: 1.5; color: var(--taco-muted, #71717a); }
+.tacobout-trove-card__note { font-size: 14px; line-height: 1.5; color: var(--taco-fg, #0f0e17); }
+.tacobout-trove-card__cta { display: inline-flex; align-items: center; gap: 4px; justify-self: start; margin-top: 5px; font-size: 13px; font-weight: 600; color: var(--taco-accent, #2563eb); }
+.tacobout-trove-card__cta svg { flex: 0 0 auto; }
+a.tacobout-trove-card:hover .tacobout-trove-card__cta { text-decoration: underline; text-underline-offset: 3px; }
+@media (max-width: 480px) {
+	a.tacobout-trove-card, .wp-block-post-content a.tacobout-trove-card { gap: 14px; padding: 16px; }
+	.tacobout-trove-card .tacobout-trove-card__cover { width: 64px; }
+	.tacobout-trove-card__title { font-size: 17px; }
+}
