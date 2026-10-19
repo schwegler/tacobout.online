@@ -546,8 +546,12 @@ a.tacobout-sister-nav-pill::after {
 }
 
 .tacobout-header .tacobout-sister-nav-pill a:hover,
+.tacobout-header .tacobout-sister-nav-pill a:focus-visible,
 .wp-block-navigation__container .tacobout-sister-nav-pill a:hover,
-a.tacobout-sister-nav-pill:hover {
+.wp-block-navigation__container .tacobout-sister-nav-pill a:focus-visible,
+a.tacobout-sister-nav-pill:hover,
+a.tacobout-sister-nav-pill:focus-visible,
+a.tacobout-sister-nav-pill:active {
 	background: var(--shared-lavender-mid);
 	border-color: var(--trove-violet);
 	color: var(--trove-violet-hover) !important;
@@ -556,8 +560,12 @@ a.tacobout-sister-nav-pill:hover {
 }
 
 .tacobout-header .tacobout-sister-nav-pill a:hover::after,
+.tacobout-header .tacobout-sister-nav-pill a:focus-visible::after,
 .wp-block-navigation__container .tacobout-sister-nav-pill a:hover::after,
-a.tacobout-sister-nav-pill:hover::after {
+.wp-block-navigation__container .tacobout-sister-nav-pill a:focus-visible::after,
+a.tacobout-sister-nav-pill:hover::after,
+a.tacobout-sister-nav-pill:focus-visible::after,
+a.tacobout-sister-nav-pill:active::after {
 	transform: translate(1px, -1px);
 }
 
@@ -570,8 +578,12 @@ a.tacobout-sister-nav-pill:hover::after {
 }
 
 [data-theme="dark"] .tacobout-header .tacobout-sister-nav-pill a:hover,
+[data-theme="dark"] .tacobout-header .tacobout-sister-nav-pill a:focus-visible,
 [data-theme="dark"] .wp-block-navigation__container .tacobout-sister-nav-pill a:hover,
-[data-theme="dark"] a.tacobout-sister-nav-pill:hover {
+[data-theme="dark"] .wp-block-navigation__container .tacobout-sister-nav-pill a:focus-visible,
+[data-theme="dark"] a.tacobout-sister-nav-pill:hover,
+[data-theme="dark"] a.tacobout-sister-nav-pill:focus-visible,
+[data-theme="dark"] a.tacobout-sister-nav-pill:active {
 	background: rgba(124, 58, 237, 0.28);
 	border-color: var(--trove-violet);
 	color: #FFFFFF !important;
@@ -1801,7 +1813,9 @@ body.home:not(.paged) .tacobout-magazine-grid .wp-block-post:first-child .entry-
 	transition: background 0.15s ease, transform 0.15s ease;
 }
 
-.tacobout-error-primary-btn:hover {
+.tacobout-error-primary-btn:hover,
+.tacobout-error-primary-btn:focus-visible,
+.tacobout-error-primary-btn:active {
 	background: var(--taco-blue-dark, #2563EB);
 	transform: translateY(-1px);
 	text-decoration: none;
