@@ -51,3 +51,7 @@ html[data-season="halloween"] .seasonal-appearance-panel,html[data-theme="dark"]
 @media print{.seasonal-controls{display:none!important;}}
 
 @media(max-width:600px){.seasonal-appearance-panel{position:fixed;left:12px;right:12px;top:var(--appearance-top,80px);width:auto;max-width:none;max-height:calc(100dvh - var(--appearance-top,80px) - 12px);}}
+/* Utility icon sizing must not constrain text controls inside Appearance. */
+.tacobout-utilities .seasonal-controls > button{width:auto;height:auto;min-width:80px;padding:8px 10px;white-space:nowrap;}
+.tacobout-utilities .seasonal-controls .seasonal-appearance-panel{grid-template-columns:minmax(0,1fr);}
+.tacobout-utilities .seasonal-controls .seasonal-appearance-panel button{width:100%;height:auto;min-height:44px;max-width:none;display:block;white-space:normal;padding:9px 12px;text-align:left;line-height:1.4;}
