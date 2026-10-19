@@ -25,10 +25,11 @@ from the affected phone has been captured.
 
 ## Deployment verification (requires separate deployment approval)
 
-1. Preserve version query strings through WordPress plugins and HTML optimization,
-   and confirm the CDN cache key includes them. The theme version is now 3.8.16.
-   If the host cannot preserve queries, configure content-fingerprinted static asset
-   paths at the build/hosting layer; a version bump alone cannot fix stripped queries.
+1. Version 3.8.23 provides actual content-fingerprinted frontend CSS/JS paths;
+   follow [the asset build and deployment instructions](frontend-asset-cache.md).
+   A version bump alone cannot fix stripped queries. Deploy the complete release,
+   retain old fingerprinted files while cached HTML may reference them, and verify
+   the anonymous HTML's new asset paths.
 2. Purge old HTML and stylesheet objects at the host/CDN after deployment. Ensure
    the new HTML includes the inline welcome rules, even for saved welcome blocks.
 3. Replace the ten-year policy for unversioned mutable CSS with revalidation or a
