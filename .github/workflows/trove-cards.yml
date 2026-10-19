@@ -1,0 +1,21 @@
+name: Responsive Trove cards
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+permissions:
+  contents: read
+jobs:
+  browsers:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: npm install --prefix /tmp/trove-card-browser --no-save playwright@1.62.1
+      - run: /tmp/trove-card-browser/node_modules/.bin/playwright install --with-deps chromium webkit
+      - run: node tests/trove-card-browser.cjs
+        env:
+          PLAYWRIGHT_MODULE: /tmp/trove-card-browser/node_modules/playwright
