@@ -54,7 +54,8 @@ from that screenshot alone.
   Desktop 1188 × 913 and phone 390 × 844 render without horizontal overflow.
   Phone menu opens/closes, contains 22 links, has a 44 × 44 close control, and
   includes working Appearance controls. Halloween's decorative PNG loads with
-  empty alt text; the choice survives reload. No captured console warnings/errors.
+  empty alt text; the choice survives reload. No theme errors were captured.
+  Google Sign-In logged one FedCM abort after reloading the isolated local origin.
 - The initial local fixture could not apply the cross-origin core navigation
   stylesheet; copying the healthy live page's loaded stylesheet resolved the
   fixture dependency. No production page or cache was modified for this check.
