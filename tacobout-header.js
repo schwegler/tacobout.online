@@ -53,3 +53,29 @@ document.addEventListener( 'DOMContentLoaded', () => {
 		header.classList.remove( 'is-hidden' );
 	} );
 } );
+
+/** Keep core WordPress dialog focus/scroll behavior, with the site's utilities inside it. */
+document.addEventListener('DOMContentLoaded', () => {
+ const nav=document.querySelector('.tacobout-primary-navigation');
+ const modal=nav?.querySelector('.wp-block-navigation__responsive-container');
+ const content=modal?.querySelector('.wp-block-navigation__responsive-container-content');
+ if(!modal||!content)return;
+ const heading=document.createElement('div');heading.className='tacobout-menu-heading';
+ const home=document.createElement('a');home.href=document.querySelector('.wp-block-site-title a')?.href||'/';home.textContent='taco ’bout it';
+ const label=document.createElement('span');label.textContent='Channel guide';heading.append(home,label);
+ const extras=document.createElement('div');extras.className='tacobout-menu-extras';
+ let utilities=null,anchor=null;
+ const sync=()=>{
+  if(modal.classList.contains('is-menu-open')){
+   if(!heading.isConnected){content.prepend(heading);content.append(extras);}
+   utilities=document.querySelector('.tacobout-utilities');
+   if(utilities&&!extras.contains(utilities)){anchor=document.createComment('Header utilities');utilities.before(anchor);extras.append(utilities);}
+   document.querySelector('.tacobout-header')?.classList.remove('is-hidden');
+  }else{
+   if(anchor&&utilities){anchor.replaceWith(utilities);anchor=null;}
+   heading.remove();extras.remove();
+   const appearance=document.querySelector('.seasonal-appearance-toggle[aria-expanded="true"]');if(appearance)appearance.click();
+  }
+ };
+ new MutationObserver(sync).observe(modal,{attributes:true,attributeFilter:['class']});sync();
+});
