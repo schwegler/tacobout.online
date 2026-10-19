@@ -77,5 +77,15 @@ document.addEventListener('DOMContentLoaded', () => {
    const appearance=document.querySelector('.seasonal-appearance-toggle[aria-expanded="true"]');if(appearance)appearance.click();
   }
  };
+ // Core snapshots endpoints before utilities move. Include the current visible
+ // controls on every Tab, including an expanded Appearance panel in WebKit.
+ modal.addEventListener('keydown',event=>{
+  if(event.key!=='Tab'||!modal.classList.contains('is-menu-open'))return;
+  const nodes=[...modal.querySelectorAll('a[href],button:not([disabled]),input:not([disabled]),select:not([disabled]),textarea:not([disabled]),summary,[tabindex]:not([tabindex^="-"])')].filter(node=>node.getClientRects().length&&!node.closest('[hidden],[inert]')&&getComputedStyle(node).visibility!=='hidden');
+  if(!nodes.length)return;
+  const current=nodes.indexOf(document.activeElement);
+  const next=current<0?(event.shiftKey?nodes.length-1:0):(current+(event.shiftKey?-1:1)+nodes.length)%nodes.length;
+  event.preventDefault();event.stopImmediatePropagation();nodes[next].focus();
+ },true);
  new MutationObserver(sync).observe(modal,{attributes:true,attributeFilter:['class']});sync();
 });
