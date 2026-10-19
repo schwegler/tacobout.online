@@ -1,0 +1,3192 @@
+/*
+Theme Name: Tacobout Social
+Theme URI: https://tacobout.online
+Author: schwegler
+Author URI: https://tacobout.online
+Description: An independent publication theme with format-aware feeds, responsive navigation, light and dark modes, and optional Bluesky/AT Protocol and ActivityPub integrations.
+Version: 3.8.23
+Requires at least: 6.4
+Tested up to: 6.8
+Requires PHP: 8.0
+License: GNU General Public License v2 or later
+License URI: http://www.gnu.org/licenses/gpl-2.0.html
+Text Domain: tacobout
+Tags: full-site-editing, block-theme, blog, dark-mode, post-formats, one-column, wide-blocks
+*/
+
+/* ============================
+   DESIGN TOKENS — DARK MODE
+   ============================ */
+:root {
+	--taco-bg: #f3effa;
+	--taco-callout: #f3effa;
+	--taco-callout-border: #ddd6fe;
+	--taco-callout-shadow: 0 3px 14px rgba(15,14,23,.06);
+	--taco-fg: #0f0e17;
+	--taco-accent: #2563eb;
+	--taco-accent-fill: #2563eb;
+	--taco-accent-fill-hover: #1d4ed8;
+	--taco-accent-2: #1d4ed8;
+	--taco-muted: #71717a;
+	--taco-surface: #f4f4f5;
+	--taco-surface-2: #e4e4e7;
+	--taco-border: #d4d4d8;
+	--taco-radius: 12px;
+	--taco-shadow: 0 1px 3px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04);
+	--taco-shadow-lg: 0 10px 30px rgba(0, 0, 0, 0.08);
+	--taco-transition: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+
+	/* Sister Brand Primaries */
+	--taco-blue: #3B82F6;
+	--taco-blue-hover: #2563EB;
+	--trove-violet: #7C3AED;
+	--trove-violet-hover: #6D28D9;
+
+	/* Shared Bridge Accents */
+	--shared-gold: #F59E0B;
+	--shared-lavender: #F3EFFA;
+	--shared-lavender-mid: #DDD6FE;
+
+	/* Ligne Claire Ink & Card Mechanics */
+	--ink-black: #0F0E17;
+	--ink-charcoal: #111827;
+	--stroke-weight-outer: 2.5px;
+	--radius-card: 14px;
+	--radius-pill: 999px;
+	--shadow-comic: 4px 4px 0px #0F0E17;
+	--shadow-comic-sm: 2px 2px 0px #0F0E17;
+}
+
+/* Crisp die-cut sticker treatment for transparent PNG mascots in both Light & Dark Mode */
+.mascot-sticker {
+	display: inline-block;
+	max-width: 100%;
+	height: auto;
+	object-fit: contain;
+	filter: drop-shadow(2px 3px 0px rgba(15, 14, 23, 0.22));
+	transition: transform 0.18s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.mascot-sticker:hover {
+	transform: translateY(-3px) rotate(-2deg);
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.mascot-sticker, .mascot-sticker:hover {
+		transition: none;
+		transform: none;
+	}
+}
+
+@media (prefers-color-scheme: dark) {
+	:root:not([data-theme="light"]) {
+		--taco-bg: #09090b;
+	--taco-callout: #1c1a29;
+	--taco-callout-border: #2e2b44;
+	--taco-callout-shadow: 0 3px 14px rgba(0,0,0,.2);
+		--taco-fg: #fafafa;
+		--taco-accent: #60a5fa;
+		--taco-accent-2: #93c5fd;
+		--taco-muted: #a1a1aa;
+		--taco-surface: #18181b;
+		--taco-surface-2: #27272a;
+		--taco-border: #3f3f46;
+		--taco-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+		--taco-shadow-lg: 0 10px 30px rgba(0, 0, 0, 0.4);
+	}
+
+	/* Override WP theme.json colors for dark mode */
+	body {
+		background-color: var(--taco-bg) !important;
+		color: var(--taco-fg) !important;
+	}
+
+	/* Fix all surfaces */
+	/* Base */
+	.has-base-color {
+		color: var(--taco-bg) !important;
+	}
+
+	.has-base-background-color {
+		background-color: var(--taco-bg) !important;
+	}
+
+	/* Contrast */
+	.has-contrast-color {
+		color: var(--taco-fg) !important;
+	}
+
+	.has-contrast-background-color {
+		background-color: var(--taco-fg) !important;
+	}
+
+	/* Accent */
+	.has-accent-color {
+		color: var(--taco-accent) !important;
+	}
+
+	.has-accent-background-color {
+		background-color: var(--taco-accent-fill) !important;
+	}
+
+	/* Accent 2 */
+	.has-accent-2-color {
+		color: var(--taco-accent-2) !important;
+	}
+
+	.has-accent-2-background-color {
+		background-color: var(--taco-accent-fill-hover) !important;
+	}
+
+	/* Muted */
+	.has-muted-color {
+		color: var(--taco-muted) !important;
+	}
+
+	.has-muted-background-color {
+		background-color: var(--taco-muted) !important;
+	}
+
+	/* Surface */
+	.has-surface-color {
+		color: var(--taco-surface) !important;
+	}
+
+	.has-surface-background-color {
+		background-color: var(--taco-surface) !important;
+	}
+
+	/* Surface 2 */
+	.has-surface-2-color {
+		color: var(--taco-surface-2) !important;
+	}
+
+	.has-surface-2-background-color {
+		background-color: var(--taco-surface-2) !important;
+	}
+
+	a {
+		color: var(--taco-accent);
+	}
+
+	a:hover,
+	a:focus-visible {
+		color: var(--taco-accent-2);
+	}
+
+	.wp-block-site-title a,
+	.wp-block-post-title,
+	.wp-block-post-title a {
+		color: var(--taco-fg) !important;
+	}
+}
+
+/* ============================
+   MANUAL DARK MODE OVERRIDE
+   Applied when data-theme="dark" is set on <html> by the theme toggle JS.
+   Setting variables here propagates to all child elements automatically.
+   Hardcoded rgba values (non-variable) need explicit selectors below.
+   ============================ */
+[data-theme="dark"] {
+	--taco-bg: #09090b;
+	--taco-callout: #1c1a29;
+	--taco-callout-border: #2e2b44;
+	--taco-callout-shadow: 0 3px 14px rgba(0,0,0,.2);
+	--taco-fg: #fafafa;
+	--taco-accent: #60a5fa;
+	--taco-accent-2: #93c5fd;
+	--taco-muted: #a1a1aa;
+	--taco-surface: #18181b;
+	--taco-surface-2: #27272a;
+	--taco-border: #3f3f46;
+	--taco-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+	--taco-shadow-lg: 0 10px 30px rgba(0, 0, 0, 0.4);
+}
+
+[data-theme="dark"] body {
+	background-color: var(--taco-bg) !important;
+	color: var(--taco-fg) !important;
+}
+
+[data-theme="dark"] .has-base-color { color: var(--taco-bg) !important; }
+[data-theme="dark"] .has-base-background-color { background-color: var(--taco-bg) !important; }
+[data-theme="dark"] .has-contrast-color { color: var(--taco-fg) !important; }
+[data-theme="dark"] .has-contrast-background-color { background-color: var(--taco-fg) !important; }
+[data-theme="dark"] .has-accent-color { color: var(--taco-accent) !important; }
+[data-theme="dark"] .has-accent-background-color { background-color: var(--taco-accent-fill) !important; }
+[data-theme="dark"] .has-accent-2-color { color: var(--taco-accent-2) !important; }
+[data-theme="dark"] .has-accent-2-background-color { background-color: var(--taco-accent-fill-hover) !important; }
+[data-theme="dark"] .has-muted-color { color: var(--taco-muted) !important; }
+[data-theme="dark"] .has-muted-background-color { background-color: var(--taco-muted) !important; }
+[data-theme="dark"] .has-surface-color { color: var(--taco-surface) !important; }
+[data-theme="dark"] .has-surface-background-color { background-color: var(--taco-surface) !important; }
+[data-theme="dark"] .has-surface-2-color { color: var(--taco-surface-2) !important; }
+[data-theme="dark"] .has-surface-2-background-color { background-color: var(--taco-surface-2) !important; }
+[data-theme="dark"] a { color: var(--taco-accent); }
+[data-theme="dark"] a:hover,
+[data-theme="dark"] a:focus-visible { color: var(--taco-accent-2); }
+[data-theme="dark"] .wp-block-site-title a,
+[data-theme="dark"] .wp-block-post-title,
+[data-theme="dark"] .wp-block-post-title a { color: var(--taco-fg) !important; }
+
+[data-theme="dark"] body::before {
+	background-image:
+		radial-gradient(at 0% 0%, rgba(59, 130, 246, 0.25) 0px, transparent 50%),
+		radial-gradient(at 100% 0%, rgba(244, 114, 182, 0.25) 0px, transparent 50%),
+		radial-gradient(at 100% 100%, rgba(59, 130, 246, 0.25) 0px, transparent 50%),
+		radial-gradient(at 0% 100%, rgba(244, 114, 182, 0.25) 0px, transparent 50%);
+}
+
+[data-theme="dark"] .tacobout-header::before {
+	background: rgba(9, 9, 11, 0.85);
+}
+
+[data-theme="dark"] .tacobout-magazine-grid .wp-block-post {
+	background: rgba(255, 255, 255, 0.05);
+	border-color: rgba(255, 255, 255, 0.1);
+}
+
+[data-theme="dark"] .tacobout-magazine-grid .wp-block-post:hover,
+[data-theme="dark"] .tacobout-magazine-grid .wp-block-post:focus-within {
+	box-shadow: 0 15px 35px rgba(139, 92, 246, 0.15), 0 5px 15px rgba(0, 0, 0, 0.2);
+	border-color: rgba(255, 255, 255, 0.15);
+}
+
+[data-theme="dark"] .tacobout-interaction-badge {
+	background: rgba(39, 39, 42, 0.75);
+	border-color: rgba(255, 255, 255, 0.1);
+	box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+[data-theme="dark"] .tacobout-interaction-badge:hover,
+[data-theme="dark"] .tacobout-interaction-badge:focus-visible {
+	background: rgba(39, 39, 42, 0.9);
+	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+}
+
+[data-theme="dark"] .tacobout-scroll-top {
+	background: rgba(24, 24, 27, 0.75);
+	border-color: rgba(255, 255, 255, 0.1);
+	box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+}
+
+[data-theme="dark"] .tacobout-scroll-top:hover,
+[data-theme="dark"] .tacobout-scroll-top:focus-visible {
+	background: var(--taco-accent-fill);
+	border-color: var(--taco-accent);
+	box-shadow: 0 6px 20px rgba(59, 130, 246, 0.4);
+}
+
+[data-theme="dark"] .tacobout-theme-toggle {
+	background: rgba(24, 24, 27, 0.75);
+	border-color: rgba(255, 255, 255, 0.1);
+	box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+}
+
+[data-theme="dark"] .tacobout-theme-toggle:hover,
+[data-theme="dark"] .tacobout-theme-toggle:focus-visible {
+	background: var(--taco-accent-fill);
+	border-color: var(--taco-accent);
+	box-shadow: 0 6px 20px rgba(59, 130, 246, 0.4);
+}
+
+[data-theme="dark"] body.author .wp-block-post {
+	background: rgba(255, 255, 255, 0.05);
+	border-color: rgba(255, 255, 255, 0.1);
+}
+
+[data-theme="dark"] body.author .wp-block-post:hover,
+[data-theme="dark"] body.author .wp-block-post:focus-within {
+	box-shadow: 0 15px 35px rgba(139, 92, 246, 0.15), 0 5px 15px rgba(0, 0, 0, 0.2);
+	border-color: rgba(255, 255, 255, 0.15);
+}
+
+[data-theme="dark"] .wp-block-navigation__responsive-container-close,
+[data-theme="dark"] .wp-block-navigation__responsive-container-close svg {
+	color: var(--taco-fg) !important;
+	fill: currentColor !important;
+}
+
+/* ============================
+   BASE
+   ============================ */
+/* Global Focus Styles */
+*:focus-visible {
+	outline: 2px solid var(--taco-accent);
+	outline-offset: 2px;
+	border-radius: 2px;
+}
+
+body {
+	background-color: var(--taco-bg);
+	color: var(--taco-fg);
+	transition: background-color var(--taco-transition), color var(--taco-transition);
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+}
+
+p,
+li,
+figcaption,
+.wp-block-post-excerpt {
+	text-wrap: pretty;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+.wp-block-post-title {
+	text-wrap: balance;
+}
+
+body::before {
+	content: "";
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 200vw;
+	height: 200vh;
+	z-index: -2;
+	background-image:
+		radial-gradient(at 0% 0%, rgba(139, 92, 246, 0.15) 0px, transparent 50%),
+		radial-gradient(at 100% 0%, rgba(217, 70, 239, 0.15) 0px, transparent 50%),
+		radial-gradient(at 100% 100%, rgba(139, 92, 246, 0.15) 0px, transparent 50%),
+		radial-gradient(at 0% 100%, rgba(217, 70, 239, 0.15) 0px, transparent 50%);
+
+	/* ⚡ Bolt Optimization: Using transform instead of background-position offloads animation to the GPU to reduce CPU repaints */
+	animation: meshMovement 20s ease-in-out infinite alternate;
+	will-change: transform;
+}
+
+::selection {
+	background: var(--taco-accent-fill);
+	color: white;
+}
+
+::-webkit-scrollbar {
+	width: 12px;
+	height: 12px;
+}
+
+::-webkit-scrollbar-track {
+	background: var(--taco-bg);
+}
+
+::-webkit-scrollbar-thumb {
+	background: var(--taco-border);
+	border-radius: 10px;
+	border: 3px solid var(--taco-bg);
+}
+
+::-webkit-scrollbar-thumb:hover {
+	background: var(--taco-muted);
+}
+
+@keyframes meshMovement {
+	0% {
+		transform: translate(0%, 0%);
+	}
+
+	50% {
+		transform: translate(-50%, -50%);
+	}
+
+	100% {
+		transform: translate(0%, -50%);
+	}
+}
+
+@media (prefers-color-scheme: dark) {
+	html:not([data-theme="light"]) body::before {
+		background-image:
+			radial-gradient(at 0% 0%, rgba(59, 130, 246, 0.25) 0px, transparent 50%),
+			radial-gradient(at 100% 0%, rgba(244, 114, 182, 0.25) 0px, transparent 50%),
+			radial-gradient(at 100% 100%, rgba(59, 130, 246, 0.25) 0px, transparent 50%),
+			radial-gradient(at 0% 100%, rgba(244, 114, 182, 0.25) 0px, transparent 50%);
+	}
+}
+
+
+/* ============================
+   HEADER
+   ============================ */
+/* Site Logo */
+.wp-block-site-logo {
+	line-height: 0;
+}
+
+.wp-block-site-logo img,
+.wp-block-site-logo .custom-logo {
+	max-height: 48px;
+	width: auto;
+	height: auto;
+	max-width: 100%;
+	object-fit: contain;
+}
+
+header:has(.tacobout-header) {
+	display: contents;
+}
+
+.tacobout-header {
+	border-bottom: 1px solid var(--taco-border);
+	position: sticky;
+	top: 0;
+	z-index: 100;
+	transition: transform var(--taco-transition);
+}
+
+.tacobout-header.is-hidden {
+	transform: translateY(-100%);
+}
+
+/* Move the blur effect to a pseudo-element so it doesn't trap the fixed mobile menu */
+.tacobout-header::before {
+	content: "";
+	position: absolute;
+	inset: 0;
+	backdrop-filter: blur(16px) saturate(180%);
+	-webkit-backdrop-filter: blur(16px) saturate(180%);
+	background: rgba(250, 250, 250, 0.65);
+	z-index: -1;
+}
+
+@media (prefers-color-scheme: dark) {
+	.tacobout-header {
+		border-bottom-color: var(--taco-border);
+	}
+
+	html:not([data-theme="light"]) .tacobout-header::before {
+		background: rgba(9, 9, 11, 0.65);
+	}
+}
+
+
+/* When WP admin bar is showing */
+.admin-bar .tacobout-header {
+	top: 32px;
+}
+
+.admin-bar .tacobout-header.is-hidden {
+	transform: translateY(-100%);
+}
+
+@media screen and (max-width: 782px) {
+	.admin-bar .tacobout-header {
+		top: 46px;
+	}
+
+	.admin-bar .tacobout-header.is-hidden {
+		transform: translateY(-100%);
+	}
+
+	/* Admin bar overflow fixes */
+	#wpadminbar {
+		overflow-x: hidden;
+	}
+
+	#wpadminbar #wp-admin-bar-friends-menu .ab-label {
+		display: none !important;
+	}
+
+	#wpadminbar #wp-admin-bar-command-palette,
+	#wpadminbar #wp-admin-bar-stats,
+	#wpadminbar #wp-admin-bar-hack-guardian,
+	#wpadminbar #wp-admin-bar-wpnceasywp-admin-menu {
+		display: none !important;
+	}
+}
+
+/* Sister Brand Pill in Top Navigation */
+.tacobout-header .tacobout-sister-nav-pill a,
+.wp-block-navigation__container .tacobout-sister-nav-pill a,
+a.tacobout-sister-nav-pill {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.45rem;
+	padding: 0.35rem 0.85rem;
+	border-radius: var(--radius-pill);
+	background: var(--shared-lavender);
+	color: var(--trove-violet) !important;
+	border: 1.5px solid var(--shared-lavender-mid);
+	font-weight: 600;
+	font-size: 0.85rem;
+	text-decoration: none;
+	transition: background 0.15s ease, border-color 0.15s ease, transform 0.15s ease;
+}
+
+.tacobout-header .tacobout-sister-nav-pill a::before,
+.wp-block-navigation__container .tacobout-sister-nav-pill a::before,
+a.tacobout-sister-nav-pill::before {
+	content: "";
+	display: inline-block;
+	width: 14px;
+	height: 14px;
+	flex-shrink: 0;
+	background-color: currentColor;
+	-webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 3h12l4 7-10 11L2 10l4-7z'/%3E%3Cpath d='M2 10h20'/%3E%3Cpath d='M12 21L7.5 10 10 3'/%3E%3Cpath d='M12 21l4.5-11L14 3'/%3E%3C/svg%3E") no-repeat center / contain;
+	mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 3h12l4 7-10 11L2 10l4-7z'/%3E%3Cpath d='M2 10h20'/%3E%3Cpath d='M12 21L7.5 10 10 3'/%3E%3Cpath d='M12 21l4.5-11L14 3'/%3E%3C/svg%3E") no-repeat center / contain;
+}
+
+.tacobout-header .tacobout-sister-nav-pill a::after,
+.wp-block-navigation__container .tacobout-sister-nav-pill a::after,
+a.tacobout-sister-nav-pill::after {
+	content: "";
+	display: inline-block;
+	width: 12px;
+	height: 12px;
+	flex-shrink: 0;
+	background-color: currentColor;
+	-webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cline x1='7' y1='17' x2='17' y2='7'/%3E%3Cpolyline points='7 7 17 7 17 17'/%3E%3C/svg%3E") no-repeat center / contain;
+	mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cline x1='7' y1='17' x2='17' y2='7'/%3E%3Cpolyline points='7 7 17 7 17 17'/%3E%3C/svg%3E") no-repeat center / contain;
+	transition: transform 0.15s ease;
+}
+
+.tacobout-header .tacobout-sister-nav-pill a:hover,
+.wp-block-navigation__container .tacobout-sister-nav-pill a:hover,
+a.tacobout-sister-nav-pill:hover {
+	background: var(--shared-lavender-mid);
+	border-color: var(--trove-violet);
+	color: var(--trove-violet-hover) !important;
+	transform: translateY(-1px);
+	text-decoration: none;
+}
+
+.tacobout-header .tacobout-sister-nav-pill a:hover::after,
+.wp-block-navigation__container .tacobout-sister-nav-pill a:hover::after,
+a.tacobout-sister-nav-pill:hover::after {
+	transform: translate(1px, -1px);
+}
+
+[data-theme="dark"] .tacobout-header .tacobout-sister-nav-pill a,
+[data-theme="dark"] .wp-block-navigation__container .tacobout-sister-nav-pill a,
+[data-theme="dark"] a.tacobout-sister-nav-pill {
+	background: rgba(124, 58, 237, 0.16);
+	border-color: rgba(124, 58, 237, 0.36);
+	color: #DDD6FE !important;
+}
+
+[data-theme="dark"] .tacobout-header .tacobout-sister-nav-pill a:hover,
+[data-theme="dark"] .wp-block-navigation__container .tacobout-sister-nav-pill a:hover,
+[data-theme="dark"] a.tacobout-sister-nav-pill:hover {
+	background: rgba(124, 58, 237, 0.28);
+	border-color: var(--trove-violet);
+	color: #FFFFFF !important;
+}
+
+/* ============================
+   ON THE AIR — HERO WELCOME STRIP
+   ============================ */
+.tacobout-on-the-air-strip {
+	background: var(--bg-surface, #F3EFFA);
+	border: 2px solid var(--border-comic, #18181B);
+	box-shadow: var(--shadow-comic, 4px 4px 0px #18181B);
+	border-radius: var(--radius-card, 16px);
+	padding: 1.25rem 1.75rem;
+	margin-bottom: 2rem;
+	display: flex;
+	align-items: center;
+	gap: 1.5rem;
+	position: relative;
+	overflow: hidden;
+}
+
+[data-theme="dark"] .tacobout-on-the-air-strip {
+	background: #1C1A29;
+	border-color: #2E2B44;
+	box-shadow: 4px 4px 0px #09090D;
+}
+
+body:not(.home) .tacobout-on-the-air-strip {
+	display: none !important;
+}
+
+.tacobout-on-the-air-mascot-wrap {
+	flex-shrink: 0;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.tacobout-on-the-air-mascot {
+	width: auto;
+	height: 84px;
+	max-height: 84px;
+	object-fit: contain;
+	display: block;
+	transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.tacobout-on-the-air-mascot:hover {
+	transform: scale(1.08) rotate(-2deg);
+}
+
+.tacobout-on-the-air-content {
+	flex: 1;
+	min-width: 0;
+}
+
+.tacobout-on-the-air-badge {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.35rem;
+	padding: 0.2rem 0.65rem;
+	border-radius: var(--radius-pill, 9999px);
+	background: var(--shared-gold, #F59E0B);
+	color: #18181B;
+	font-family: var(--wp--preset--font-family--mono, monospace);
+	font-weight: 800;
+	font-size: 0.725rem;
+	letter-spacing: 0.08em;
+	text-transform: uppercase;
+	margin-bottom: 0.45rem;
+	box-shadow: 1px 1px 0px rgba(0, 0, 0, 0.3);
+}
+
+.tacobout-badge-icon {
+	display: inline-block;
+	flex-shrink: 0;
+}
+
+.tacobout-on-the-air-text {
+	font-size: 0.95rem;
+	line-height: 1.45;
+	color: var(--text-primary, #0F0E17);
+	margin: 0;
+	font-weight: 500;
+}
+
+[data-theme="dark"] .tacobout-on-the-air-text {
+	color: #F3EFFA;
+}
+
+@media (max-width: 640px) {
+	.tacobout-on-the-air-strip {
+		padding: 1rem 1.25rem;
+		gap: 1rem;
+	}
+
+	.tacobout-on-the-air-mascot {
+		height: 64px;
+		max-height: 64px;
+	}
+
+	.tacobout-on-the-air-text {
+		font-size: 0.875rem;
+	}
+}
+
+/* ============================
+   END-OF-FEED MASCOT CARD
+   ============================ */
+.tacobout-end-of-feed {
+	text-align: center;
+	padding: 2.5rem 1rem;
+	margin: 2.5rem auto 1.5rem auto;
+	max-width: 600px;
+}
+
+.tacobout-end-card {
+	background: var(--bg-surface, #F3EFFA);
+	border: 2px solid var(--border-comic, #18181B);
+	box-shadow: var(--shadow-comic, 4px 4px 0px #18181B);
+	border-radius: var(--radius-card, 16px);
+	padding: 2rem 1.75rem;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 0.75rem;
+}
+
+[data-theme="dark"] .tacobout-end-card {
+	background: #1C1A29;
+	border-color: #2E2B44;
+	box-shadow: 4px 4px 0px #09090D;
+}
+
+.tacobout-end-mascot {
+	width: auto;
+	height: 96px;
+	max-height: 96px;
+	object-fit: contain;
+	display: block;
+	margin: 0 auto 0.5rem auto;
+	transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.tacobout-end-mascot:hover {
+	transform: scale(1.08) rotate(-2deg);
+}
+
+.tacobout-end-headline {
+	font-family: var(--wp--preset--font-family--heading, inherit);
+	font-weight: 700;
+	font-size: 1.15rem;
+	margin: 0;
+	color: var(--text-primary, #0F0E17);
+}
+
+[data-theme="dark"] .tacobout-end-headline {
+	color: #F3EFFA;
+}
+
+.tacobout-end-subcopy {
+	font-size: 0.925rem;
+	line-height: 1.45;
+	color: var(--wp--preset--color--muted, #71717A);
+	margin: 0 0 0.5rem 0;
+	max-width: 480px;
+}
+
+[data-theme="dark"] .tacobout-end-subcopy {
+	color: #A0A0B0;
+}
+
+/* ============================
+   MAGAZINE GRID — THE FEED
+   ============================ */
+/* ============================
+   MAGAZINE GRID — 2026 DYNAMIC BENTO LAYOUT
+   ============================ */
+.tacobout-magazine-grid {
+	display: grid;
+	grid-template-columns: repeat(3, minmax(0, 1fr));
+	grid-auto-flow: dense;
+	gap: 1.75rem;
+	align-items: stretch;
+
+	list-style: none;
+	padding: 0;
+	margin: 0 0 2.5rem 0;
+}
+
+@media (max-width: 1024px) {
+	.tacobout-magazine-grid {
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+		gap: 1.5rem;
+	}
+}
+
+@media (max-width: 640px) {
+	.tacobout-magazine-grid {
+		grid-template-columns: 1fr;
+		gap: 1.25rem;
+	}
+
+	body.home:not(.paged) .tacobout-magazine-grid .wp-block-post:first-child {
+		grid-column: 1 / -1;
+	}
+}
+
+@media (max-width: 900px) {
+	/* Tighter card padding on tablet/mobile */
+	.tacobout-magazine-grid .wp-block-post {
+		padding: 1.25rem;
+	}
+
+	/* Format-specific cards: tighter padding */
+	.tacobout-format-status,
+	.tacobout-format-aside {
+		padding: 1.25rem !important;
+	}
+
+	.tacobout-format-quote {
+		padding: 1.25rem 1.5rem !important;
+	}
+
+	.tacobout-format-link {
+		padding: 1.25rem !important;
+	}
+
+	.tacobout-format-audio .wp-block-post-content {
+		padding: 1.25rem;
+	}
+
+	/* Reinforce flex context on card-inner so order works on mobile */
+	.tacobout-magazine-grid .tacobout-card-inner,
+	.tacobout-magazine-grid .tacobout-card-inner.is-layout-flow,
+	.tacobout-magazine-grid .tacobout-card-inner.wp-block-group-is-layout-flow {
+		display: flex !important;
+		flex-direction: column !important;
+	}
+
+	.tacobout-magazine-grid .tacobout-card-inner>.wp-block-template-part,
+	.tacobout-magazine-grid .tacobout-card-inner>.wp-block-template-part.is-layout-flow {
+		display: contents !important;
+	}
+
+	/* Re-assert order values inside mobile breakpoint */
+	.tacobout-format-video .wp-block-post-content,
+	.tacobout-format-audio .wp-block-post-content,
+	.tacobout-format-status .wp-block-post-content,
+	.tacobout-format-aside .wp-block-post-content,
+	.tacobout-format-image .wp-block-post-content,
+	.tacobout-format-quote .wp-block-post-content,
+	.tacobout-format-link .wp-block-post-content {
+		order: -1 !important;
+	}
+
+	.tacobout-format-video .tacobout-post-meta,
+	.tacobout-format-audio .tacobout-post-meta,
+	.tacobout-format-status .tacobout-post-meta,
+	.tacobout-format-aside .tacobout-post-meta,
+	.tacobout-format-image .tacobout-post-meta,
+	.tacobout-format-quote .tacobout-post-meta,
+	.tacobout-format-link .tacobout-post-meta {
+		order: 2 !important;
+	}
+
+	/* Post meta row — tighter spacing */
+	.tacobout-post-meta {
+		gap: 0.5rem;
+	}
+
+	.tacobout-format-standard .tacobout-post-meta {
+		margin: 0.25rem 0 !important;
+	}
+}
+
+/* Phone-specific refinements */
+@media (max-width: 600px) {
+	.tacobout-magazine-grid .wp-block-post {
+		padding: 1rem;
+		margin-bottom: 1rem;
+	}
+
+	/* Compact hero on small phones */
+	body.home:not(.paged) .tacobout-magazine-grid .wp-block-post:first-child {
+		padding: 2.25rem 1.25rem 1.25rem 1.25rem !important;
+	}
+
+	body.home:not(.paged) .tacobout-magazine-grid .wp-block-post:first-child .wp-block-post-title {
+		font-size: clamp(1.75rem, 7vw, 2.5rem) !important;
+	}
+
+	body.home:not(.paged) .tacobout-magazine-grid .wp-block-post:first-child .wp-block-post-excerpt {
+		font-size: 1rem;
+	}
+
+	/* LATEST badge — slightly smaller on phones */
+	body.home:not(.paged) .tacobout-magazine-grid .wp-block-post:first-child::before {
+		top: 0.75rem;
+		left: 1rem;
+		font-size: 0.65rem;
+		padding: 3px 10px;
+	}
+
+	/* Reinforce flex context on phones */
+	.tacobout-magazine-grid .tacobout-card-inner,
+	.tacobout-magazine-grid .tacobout-card-inner.is-layout-flow,
+	.tacobout-magazine-grid .tacobout-card-inner.wp-block-group-is-layout-flow {
+		display: flex !important;
+		flex-direction: column !important;
+	}
+
+	.tacobout-magazine-grid .tacobout-card-inner>.wp-block-template-part,
+	.tacobout-magazine-grid .tacobout-card-inner>.wp-block-template-part.is-layout-flow {
+		display: contents !important;
+	}
+
+	/* Re-assert order values on phones */
+	.tacobout-format-video .wp-block-post-content,
+	.tacobout-format-audio .wp-block-post-content,
+	.tacobout-format-status .wp-block-post-content,
+	.tacobout-format-aside .wp-block-post-content,
+	.tacobout-format-image .wp-block-post-content,
+	.tacobout-format-quote .wp-block-post-content,
+	.tacobout-format-link .wp-block-post-content {
+		order: -1 !important;
+	}
+
+	.tacobout-format-video .tacobout-post-meta,
+	.tacobout-format-audio .tacobout-post-meta,
+	.tacobout-format-status .tacobout-post-meta,
+	.tacobout-format-aside .tacobout-post-meta,
+	.tacobout-format-image .tacobout-post-meta,
+	.tacobout-format-quote .tacobout-post-meta,
+	.tacobout-format-link .tacobout-post-meta {
+		order: 2 !important;
+	}
+
+	/* Format cards */
+	.tacobout-format-status,
+	.tacobout-format-aside {
+		padding: 1rem !important;
+	}
+
+	.tacobout-format-quote {
+		padding: 1rem 1.25rem !important;
+	}
+
+	.tacobout-format-link {
+		padding: 1rem !important;
+	}
+
+	.tacobout-format-audio .wp-block-post-content {
+		padding: 1rem;
+	}
+
+	/* Tighter meta on phones */
+	.tacobout-format-video .tacobout-post-meta,
+	.tacobout-format-audio .tacobout-post-meta,
+	.tacobout-format-status .tacobout-post-meta,
+	.tacobout-format-aside .tacobout-post-meta,
+	.tacobout-format-image .tacobout-post-meta,
+	.tacobout-format-quote .tacobout-post-meta,
+	.tacobout-format-link .tacobout-post-meta {
+		margin-top: 0.75rem !important;
+	}
+}
+
+/* ============================
+   BENTO CARD BASE & MEDIA UNIFORMITY
+   ============================ */
+.tacobout-magazine-grid .wp-block-post {
+	margin-bottom: 0;
+	overflow: hidden;
+	min-width: 0;
+	box-sizing: border-box;
+	height: 100%;
+	/* Glassmorphism 2026 */
+	background: rgba(255, 255, 255, 0.6);
+	backdrop-filter: blur(24px);
+	-webkit-backdrop-filter: blur(24px);
+	border: 1px solid rgba(255, 255, 255, 0.45);
+	border-radius: var(--taco-radius);
+	padding: 1.5rem;
+	box-shadow: var(--taco-shadow);
+	transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.35s ease, border-color 0.35s ease;
+	display: flex;
+	flex-direction: column;
+	position: relative;
+}
+
+.tacobout-magazine-grid .wp-block-post:hover,
+.tacobout-magazine-grid .wp-block-post:focus-within {
+	transform: translateY(-4px);
+	box-shadow: 0 16px 36px rgba(0, 102, 255, 0.12), 0 4px 12px rgba(0, 0, 0, 0.06);
+	border-color: rgba(255, 255, 255, 0.85);
+}
+
+@media (prefers-color-scheme: dark) {
+	html:not([data-theme="light"]) .tacobout-magazine-grid .wp-block-post {
+		background: rgba(255, 255, 255, 0.04);
+		border-color: rgba(255, 255, 255, 0.08);
+	}
+
+	html:not([data-theme="light"]) .tacobout-magazine-grid .wp-block-post:hover,
+	html:not([data-theme="light"]) .tacobout-magazine-grid .wp-block-post:focus-within {
+		transform: translateY(-4px);
+		box-shadow: 0 20px 40px rgba(139, 92, 246, 0.22), 0 4px 16px rgba(0, 0, 0, 0.35);
+		border-color: rgba(139, 92, 246, 0.45);
+	}
+}
+
+/* Card inner flex layout */
+.tacobout-magazine-grid .tacobout-card-inner {
+	height: 100%;
+	display: flex;
+	flex-direction: column;
+	gap: 0.75rem;
+}
+
+/* Uniform media sizing for standard bento cards */
+.tacobout-magazine-grid .wp-block-post:not(:first-child) .wp-block-post-featured-image {
+	aspect-ratio: 16 / 9;
+	width: 100%;
+	overflow: hidden;
+	border-radius: calc(var(--taco-radius) - 2px);
+	margin: 0 0 0.5rem 0;
+	background: var(--taco-surface-2);
+}
+
+.tacobout-magazine-grid .wp-block-post:not(:first-child) .wp-block-post-featured-image a,
+.tacobout-magazine-grid .wp-block-post:not(:first-child) .wp-block-post-featured-image img {
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+	display: block;
+	transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.tacobout-magazine-grid .wp-block-post:hover .wp-block-post-featured-image img {
+	transform: scale(1.03);
+}
+
+/* Clean typography on standard bento cards */
+.tacobout-magazine-grid .wp-block-post:not(:first-child) .wp-block-post-title {
+	font-size: clamp(1.15rem, 1.35vw, 1.45rem) !important;
+	line-height: 1.25 !important;
+	font-weight: 600;
+	letter-spacing: -0.02em;
+}
+
+.tacobout-magazine-grid .wp-block-post:not(:first-child) .wp-block-post-excerpt {
+	font-size: 0.9375rem;
+	line-height: 1.5;
+	color: var(--taco-muted);
+}
+
+/* ============================
+   BENTO HERO: 2-COLUMN LEAD POST
+   ============================ */
+body.home:not(.paged) .tacobout-magazine-grid .wp-block-post:first-child {
+	grid-column: span 2;
+	position: relative;
+	border: 1px solid var(--taco-accent);
+	box-shadow: 0 0 40px rgba(139, 92, 246, 0.18);
+	padding: 2.25rem 2rem 2rem 2rem !important;
+	background: linear-gradient(135deg, rgba(255, 255, 255, 0.75), rgba(255, 255, 255, 0.45));
+}
+
+@media (prefers-color-scheme: dark) {
+	html:not([data-theme="light"]) body.home:not(.paged) .tacobout-magazine-grid .wp-block-post:first-child {
+		background: linear-gradient(135deg, rgba(139, 92, 246, 0.08), rgba(255, 255, 255, 0.03));
+		border-color: rgba(139, 92, 246, 0.6);
+		box-shadow: 0 0 45px rgba(139, 92, 246, 0.22);
+	}
+}
+
+[data-theme="dark"] body.home:not(.paged) .tacobout-magazine-grid .wp-block-post:first-child {
+	background: linear-gradient(135deg, rgba(139, 92, 246, 0.08), rgba(255, 255, 255, 0.03));
+	border-color: rgba(139, 92, 246, 0.6);
+	box-shadow: 0 0 45px rgba(139, 92, 246, 0.22);
+}
+
+/* Latest Badge */
+body.home:not(.paged) .tacobout-magazine-grid .wp-block-post:first-child::before {
+	content: "LATEST DROP";
+	position: absolute;
+	top: 1rem;
+	left: 1.5rem;
+	background: var(--taco-blue, #3B82F6);
+	color: white;
+	padding: 4px 12px;
+	border-radius: 100px;
+	font-size: 0.725rem;
+	font-weight: 800;
+	letter-spacing: 0.08em;
+	z-index: 10;
+}
+
+/* ⚡ Bolt: Optimize pulse animation by offloading to compositor thread */
+body.home:not(.paged) .tacobout-magazine-grid .wp-block-post:first-child::after {
+	content: "LATEST DROP" / "";
+	position: absolute;
+	top: 1rem;
+	left: 1.5rem;
+	background: var(--taco-blue, #3B82F6);
+	padding: 4px 12px;
+	border-radius: 100px;
+	font-size: 0.725rem;
+	font-weight: 800;
+	letter-spacing: 0.08em;
+	z-index: 9;
+	pointer-events: none;
+	animation: pulse-badge 2s infinite;
+	/* ⚡ Bolt: Hint browser to promote to composite layer to prevent main-thread painting */
+	will-change: transform, opacity;
+}
+
+body.home:not(.paged) .tacobout-magazine-grid .wp-block-post:first-child .entry-content:last-child {
+	margin-bottom: 0;
+}
+
+@keyframes pulse-badge {
+	0% {
+		transform: scale(1);
+		opacity: 0.7;
+	}
+
+	70% {
+		transform: scale(1.15);
+		opacity: 0;
+	}
+
+	100% {
+		transform: scale(1);
+		opacity: 0;
+	}
+}
+
+/* ============================
+   POST FORMAT CARDS
+   The tacobout_post_class filter in functions.php
+   adds .tacobout-format-{type} to each post.
+
+   STRATEGY: All formats render ALL blocks (featured-image,
+   post-meta, post-title, post-excerpt, post-content).
+   We use display:none to hide what we don't want per format.
+   For STANDARD: hide post-content.
+   For VIDEO/AUDIO/STATUS/QUOTE/LINK: hide excerpt and/or image,
+   show post-content instead.
+   ============================ */
+
+/* --- STANDARD FORMAT — hide full content, show excerpt --- */
+
+.tacobout-magazine-grid .tacobout-format-standard .wp-block-post-content {
+	display: none !important;
+}
+
+/* --- VIDEO FORMAT --- */
+
+.tacobout-magazine-grid .tacobout-format-video .wp-block-post-featured-image,
+.tacobout-magazine-grid .tacobout-format-video .wp-block-post-excerpt {
+	display: none !important;
+}
+
+.tacobout-magazine-grid .tacobout-format-video .wp-block-post-content {
+	margin-bottom: 1rem;
+	order: -1;
+	/* Place above title */
+}
+
+.tacobout-magazine-grid .tacobout-format-video .wp-block-post-title {
+	font-size: 1.5rem !important;
+	/* Smaller title */
+}
+
+.tacobout-magazine-grid .tacobout-format-video .wp-block-post-content .wp-block-embed {
+	margin: 0;
+}
+
+.tacobout-magazine-grid .tacobout-format-video .wp-block-post-content .wp-block-embed__wrapper {
+	border-radius: var(--taco-radius);
+	overflow: hidden;
+}
+
+/* --- AUDIO FORMAT --- */
+
+.tacobout-magazine-grid .tacobout-format-audio .wp-block-post-featured-image,
+.tacobout-magazine-grid .tacobout-format-audio .wp-block-post-excerpt {
+	display: none !important;
+}
+
+.tacobout-magazine-grid .tacobout-format-audio .wp-block-post-content {
+	background: var(--taco-surface);
+	border-radius: var(--taco-radius);
+	padding: 1.5rem;
+	margin-bottom: 1rem;
+	order: -1;
+	/* Place above title */
+}
+
+.tacobout-magazine-grid .tacobout-format-audio .wp-block-post-title {
+	font-size: 1.5rem !important;
+	/* Smaller title */
+}
+
+/* --- STATUS & ASIDE FORMATS (microblog) --- */
+
+.tacobout-magazine-grid .tacobout-format-status .wp-block-post-featured-image,
+.tacobout-magazine-grid .tacobout-format-status .wp-block-post-excerpt,
+.tacobout-magazine-grid .tacobout-format-aside .wp-block-post-featured-image,
+.tacobout-magazine-grid .tacobout-format-aside .wp-block-post-excerpt {
+	display: none !important;
+}
+
+.tacobout-magazine-grid .tacobout-format-status .wp-block-post-content,
+.tacobout-magazine-grid .tacobout-format-aside .wp-block-post-content {
+	font-size: 1.15rem;
+	line-height: 1.6;
+	order: -1;
+}
+
+.tacobout-magazine-grid .tacobout-format-status .wp-block-post-title,
+.tacobout-magazine-grid .tacobout-format-aside .wp-block-post-title {
+	font-size: 1.25rem !important;
+	opacity: 0.7;
+	margin-top: 0.5rem !important;
+}
+
+.tacobout-magazine-grid .tacobout-format-status,
+.tacobout-magazine-grid .tacobout-format-aside {
+	background: var(--taco-surface);
+	border-radius: var(--taco-radius);
+	padding: 1.5rem !important;
+	border: 1px solid var(--taco-border);
+}
+
+/* --- IMAGE FORMAT --- */
+
+.tacobout-magazine-grid .tacobout-format-image .wp-block-post-featured-image,
+.tacobout-magazine-grid .tacobout-format-image .wp-block-post-excerpt {
+	display: none !important;
+}
+
+.tacobout-magazine-grid .tacobout-format-image .wp-block-post-content {
+	margin-bottom: 1rem;
+	order: -1;
+}
+
+.tacobout-magazine-grid .tacobout-format-image .wp-block-post-title {
+	font-size: 1.5rem !important;
+}
+
+.tacobout-magazine-grid .tacobout-format-image .wp-block-post-content img {
+	border-radius: var(--taco-radius);
+}
+
+/* --- QUOTE FORMAT --- */
+
+.tacobout-magazine-grid .tacobout-format-quote .wp-block-post-featured-image,
+.tacobout-magazine-grid .tacobout-format-quote .wp-block-post-excerpt {
+	display: none !important;
+}
+
+.tacobout-magazine-grid .tacobout-format-quote .wp-block-post-content {
+	order: -1;
+}
+
+.tacobout-magazine-grid .tacobout-format-quote .wp-block-post-title {
+	font-size: 1.25rem !important;
+	margin-top: 1rem !important;
+}
+
+.tacobout-magazine-grid .tacobout-format-quote {
+	background: var(--taco-surface);
+	border: 1px solid var(--taco-border);
+	border-left: 4px solid var(--taco-accent);
+	border-radius: var(--taco-radius);
+	padding: 1.75rem !important;
+}
+
+/* --- LINK FORMAT --- */
+.tacobout-magazine-grid .tacobout-format-link .wp-block-post-featured-image {
+	display: none !important;
+}
+
+.tacobout-magazine-grid .tacobout-format-link .wp-block-post-excerpt {
+	display: none !important;
+}
+
+.tacobout-magazine-grid .tacobout-format-link .wp-block-post-content {
+	order: -1;
+}
+
+.tacobout-magazine-grid .tacobout-format-link .wp-block-post-title {
+	font-size: 1.5rem !important;
+}
+
+.tacobout-magazine-grid .tacobout-format-link {
+	background: var(--taco-surface);
+	border-radius: var(--taco-radius);
+	padding: 1.5rem !important;
+	border: 1px solid var(--taco-border);
+}
+
+/* --- HIDE ACTIVITYPUB / FEDIVERSE REACTIONS IN ALL FEEDS (badge replaces them) --- */
+.tacobout-magazine-grid .wp-block-activitypub-reactions,
+.tacobout-magazine-grid .activitypub-reactions,
+.tacobout-magazine-grid .fediverse-reactions,
+.tacobout-magazine-grid #activitypub-reactions {
+	display: none !important;
+}
+
+/* ============================
+   FEATURED IMAGE
+   ============================ */
+.wp-block-post-featured-image a {
+	display: block;
+	width: 100%;
+	height: 100%;
+}
+
+.wp-block-post-featured-image .tacobout-alt-wrapper {
+	width: 100%;
+	height: 100%;
+}
+
+.wp-block-post-featured-image img {
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+	border-radius: var(--taco-radius);
+	transition: transform var(--taco-transition), box-shadow var(--taco-transition);
+}
+
+.wp-block-post-featured-image:hover img,
+.wp-block-post-featured-image:focus-within img {
+	transform: scale(1.02);
+	box-shadow: var(--taco-shadow-lg);
+}
+
+/* ============================
+   POST META — CATEGORY PILLS
+   ============================ */
+.tacobout-post-meta {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	flex-wrap: wrap;
+}
+
+.wp-block-post-terms {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.5rem;
+}
+
+.wp-block-post-terms .wp-block-post-terms__separator {
+	display: none;
+}
+
+.wp-block-post-terms a {
+	display: inline-flex;
+	background: var(--taco-surface);
+	padding: 0.2rem 0.6rem;
+	border-radius: 100px;
+	border: 1px solid var(--taco-border);
+	transition: all var(--taco-transition);
+	text-decoration: none !important;
+	color: var(--taco-muted) !important;
+}
+
+.wp-block-post-terms a:hover,
+.wp-block-post-terms a:focus-visible {
+	background: var(--taco-accent-fill);
+	color: white !important;
+	border-color: var(--taco-accent);
+}
+
+.wp-block-post-terms a:active {
+	transform: scale(0.95);
+}
+
+/* ============================
+   READ MORE LINK
+   ============================ */
+.wp-block-post-excerpt__more-link {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.35rem;
+	font-family: 'Space Grotesk', system-ui, sans-serif;
+	font-weight: 600;
+	font-size: 0.875rem;
+	color: var(--taco-accent) !important;
+	text-decoration: none !important;
+	transition: gap var(--taco-transition);
+}
+
+.wp-block-post-excerpt__more-link:hover,
+.wp-block-post-excerpt__more-link:focus-visible {
+	gap: 0.6rem;
+	color: var(--taco-accent-2) !important;
+}
+
+.wp-block-post-excerpt__more-link:active {
+	gap: 0.8rem;
+}
+
+/* ============================
+   COMMENTS — Fediverse-aware
+   ============================ */
+.wp-block-comments {
+	border-top: 1px solid var(--taco-border);
+	padding-top: 2rem;
+}
+
+.comment-body {
+	background: var(--taco-surface);
+	border: 1px solid var(--taco-border);
+	border-radius: var(--taco-radius);
+	padding: 1.25rem;
+	margin-bottom: 1rem;
+	transition: box-shadow var(--taco-transition);
+}
+
+.comment-body:hover,
+.comment-body:focus-within {
+	box-shadow: var(--taco-shadow);
+}
+
+.comment-body .comment-reply-link,
+.comment-body a.activitypub-interaction-link,
+.comment-body .activitypub-like,
+.comment-body .activitypub-reply {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.25rem;
+	line-height: normal !important;
+	overflow: visible !important;
+	padding-bottom: 2px;
+	white-space: nowrap;
+}
+
+/* ============================
+   AUTHOR BIO CARD
+   ============================ */
+.tacobout-author-card {
+	background: var(--taco-surface);
+	border: 1px solid var(--taco-border);
+	border-radius: var(--taco-radius);
+	padding: 2rem;
+	transition: box-shadow var(--taco-transition);
+}
+
+.tacobout-author-card .wp-block-post-author {
+	flex-shrink: 0;
+}
+
+.tacobout-author-card:hover,
+.tacobout-author-card:focus-within {
+	box-shadow: var(--taco-shadow);
+}
+
+/* ============================
+   POST DISCUSSION & FEDIVERSE CARD
+   ============================ */
+.tacobout-discussion-card {
+	background: var(--bg-surface, #F3EFFA);
+	border: 2px solid var(--border-comic, #18181B);
+	box-shadow: var(--shadow-comic, 4px 4px 0px #18181B);
+	border-radius: var(--radius-card, 16px);
+	padding: 1.75rem 2rem;
+	display: flex;
+	align-items: center;
+	gap: 1.5rem;
+}
+
+[data-theme="dark"] .tacobout-discussion-card {
+	background: #1C1A29;
+	border-color: #2E2B44;
+	box-shadow: 4px 4px 0px #09090D;
+}
+
+.tacobout-discussion-mascot-wrap {
+	flex-shrink: 0;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.tacobout-discussion-mascot {
+	width: auto;
+	height: 84px;
+	max-height: 84px;
+	object-fit: contain;
+	display: block;
+	transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.tacobout-discussion-mascot:hover {
+	transform: scale(1.08) rotate(-2deg);
+}
+
+.tacobout-discussion-content {
+	flex: 1;
+	min-width: 0;
+}
+
+.tacobout-discussion-author {
+	font-size: 0.95rem;
+	line-height: 1.45;
+	color: var(--text-primary, #0F0E17);
+	margin: 0 0 0.35rem 0;
+	font-weight: 500;
+}
+
+[data-theme="dark"] .tacobout-discussion-author {
+	color: #F3EFFA;
+}
+
+.tacobout-discussion-prompt {
+	font-size: 0.875rem;
+	line-height: 1.5;
+	color: var(--wp--preset--color--muted, #71717A);
+	margin: 0 0 1rem 0;
+}
+
+[data-theme="dark"] .tacobout-discussion-prompt {
+	color: #A0A0B0;
+}
+
+.tacobout-discussion-actions {
+	display: flex;
+	align-items: center;
+	gap: 0.75rem;
+	flex-wrap: wrap;
+}
+
+.tacobout-bluesky-cta {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.45rem;
+	padding: 0.45rem 1rem;
+	border-radius: var(--radius-pill, 9999px);
+	background: #0085FF;
+	color: #FFFFFF !important;
+	font-weight: 600;
+	font-size: 0.85rem;
+	text-decoration: none;
+	border: 1.5px solid #0066CC;
+	box-shadow: 2px 2px 0px rgba(0, 0, 0, 0.2);
+	transition: background 0.15s ease, transform 0.15s ease;
+}
+
+.tacobout-bluesky-cta:hover {
+	background: #0066CC;
+	transform: translateY(-1px);
+	color: #FFFFFF !important;
+	text-decoration: none;
+}
+
+.tacobout-bluesky-cta:active {
+	transform: scale(0.97);
+}
+
+.tacobout-mastodon-cta {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.45rem;
+	padding: 0.45rem 0.9rem;
+	border-radius: var(--radius-pill, 9999px);
+	background: rgba(99, 100, 255, 0.12);
+	color: #6364FF !important;
+	font-weight: 600;
+	font-size: 0.85rem;
+	text-decoration: none;
+	border: 1.5px solid rgba(99, 100, 255, 0.3);
+	transition: background 0.15s ease, transform 0.15s ease;
+}
+
+.tacobout-mastodon-cta:hover {
+	background: rgba(99, 100, 255, 0.22);
+	transform: translateY(-1px);
+	text-decoration: none;
+}
+
+.tacobout-mastodon-cta:active {
+	transform: scale(0.97);
+}
+
+[data-theme="dark"] .tacobout-mastodon-cta {
+	background: rgba(99, 100, 255, 0.18);
+	border-color: rgba(99, 100, 255, 0.45);
+	color: #9C9DFF !important;
+}
+
+.tacobout-action-icon {
+	display: inline-block;
+	flex-shrink: 0;
+}
+
+@media (max-width: 640px) {
+	.tacobout-discussion-card {
+		padding: 1.25rem 1.25rem;
+		flex-direction: column;
+		align-items: flex-start;
+		gap: 1rem;
+	}
+
+	.tacobout-discussion-mascot {
+		height: 64px;
+		max-height: 64px;
+	}
+}
+
+/* ============================
+   CHANNEL ARCHIVE BANNER CARD
+   ============================ */
+.tacobout-channel-banner {
+	background: var(--bg-surface, #F3EFFA);
+	border: 2px solid var(--border-comic, #18181B);
+	box-shadow: var(--shadow-comic, 4px 4px 0px #18181B);
+	border-radius: var(--radius-card, 16px);
+	padding: 1.75rem 2rem;
+	margin-bottom: 2.25rem;
+	display: flex;
+	align-items: center;
+	gap: 1.75rem;
+}
+
+[data-theme="dark"] .tacobout-channel-banner {
+	background: #1C1A29;
+	border-color: #2E2B44;
+	box-shadow: 4px 4px 0px #09090D;
+}
+
+.tacobout-channel-mascot-wrap {
+	flex-shrink: 0;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.tacobout-channel-mascot {
+	width: auto;
+	height: 96px;
+	max-height: 96px;
+	object-fit: contain;
+	display: block;
+	transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.tacobout-channel-mascot:hover {
+	transform: scale(1.08) rotate(-2deg);
+}
+
+.tacobout-channel-content {
+	flex: 1;
+	min-width: 0;
+}
+
+.tacobout-channel-badge {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.35rem;
+	padding: 0.2rem 0.65rem;
+	border-radius: var(--radius-pill, 9999px);
+	background: var(--taco-blue, #3B82F6);
+	color: #FFFFFF;
+	font-family: var(--wp--preset--font-family--mono, monospace);
+	font-weight: 800;
+	font-size: 0.725rem;
+	letter-spacing: 0.08em;
+	text-transform: uppercase;
+	margin-bottom: 0.45rem;
+	box-shadow: 1px 1px 0px rgba(0, 0, 0, 0.3);
+}
+
+.tacobout-channel-headline {
+	font-family: var(--wp--preset--font-family--heading, inherit);
+	font-size: clamp(1.4rem, 2.8vw, 1.85rem);
+	font-weight: 800;
+	letter-spacing: -0.02em;
+	line-height: 1.25;
+	margin: 0 0 0.5rem 0;
+	color: var(--text-primary, #0F0E17);
+}
+
+[data-theme="dark"] .tacobout-channel-headline {
+	color: #F3EFFA;
+}
+
+.tacobout-channel-subcopy {
+	font-size: 0.95rem;
+	line-height: 1.45;
+	color: var(--wp--preset--color--muted, #71717A);
+	margin: 0 0 1rem 0;
+}
+
+[data-theme="dark"] .tacobout-channel-subcopy {
+	color: #A0A0B0;
+}
+
+@media (max-width: 640px) {
+	.tacobout-channel-banner {
+		padding: 1.25rem 1.25rem;
+		flex-direction: column;
+		align-items: flex-start;
+		gap: 1rem;
+	}
+
+	.tacobout-channel-mascot {
+		height: 72px;
+		max-height: 72px;
+	}
+}
+
+/* ============================
+   404 ERROR DEAD AIR CARD
+   ============================ */
+.tacobout-error-card {
+	background: var(--bg-surface, #F3EFFA);
+	border: 2px solid var(--border-comic, #18181B);
+	box-shadow: var(--shadow-comic, 4px 4px 0px #18181B);
+	border-radius: var(--radius-card, 16px);
+	padding: 2.25rem;
+	margin-bottom: 2rem;
+	display: flex;
+	align-items: center;
+	gap: 2rem;
+}
+
+[data-theme="dark"] .tacobout-error-card {
+	background: #1C1A29;
+	border-color: #2E2B44;
+	box-shadow: 4px 4px 0px #09090D;
+}
+
+.tacobout-error-mascot-wrap {
+	flex-shrink: 0;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.tacobout-error-mascot {
+	width: auto;
+	height: 120px;
+	max-height: 120px;
+	object-fit: contain;
+	display: block;
+	transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.tacobout-error-mascot:hover {
+	transform: scale(1.08) rotate(-3deg);
+}
+
+.tacobout-error-content {
+	flex: 1;
+	min-width: 0;
+}
+
+.tacobout-error-channel-badge {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.35rem;
+	padding: 0.2rem 0.65rem;
+	border-radius: var(--radius-pill, 9999px);
+	background: #EF4444;
+	color: #FFFFFF;
+	font-family: var(--wp--preset--font-family--mono, monospace);
+	font-weight: 800;
+	font-size: 0.725rem;
+	letter-spacing: 0.08em;
+	text-transform: uppercase;
+	margin-bottom: 0.5rem;
+	box-shadow: 1px 1px 0px rgba(0, 0, 0, 0.3);
+}
+
+.tacobout-error-title {
+	font-family: var(--wp--preset--font-family--heading, inherit);
+	font-size: clamp(1.5rem, 3vw, 2.25rem);
+	font-weight: 800;
+	letter-spacing: -0.03em;
+	line-height: 1.2;
+	margin: 0 0 0.5rem 0;
+	color: var(--text-primary, #0F0E17);
+}
+
+[data-theme="dark"] .tacobout-error-title {
+	color: #F3EFFA;
+}
+
+.tacobout-error-text {
+	font-size: 1.05rem;
+	line-height: 1.5;
+	color: var(--wp--preset--color--muted, #71717A);
+	margin: 0 0 1.25rem 0;
+}
+
+[data-theme="dark"] .tacobout-error-text {
+	color: #A0A0B0;
+}
+
+.tacobout-error-actions {
+	display: flex;
+	align-items: center;
+	gap: 0.75rem;
+	flex-wrap: wrap;
+}
+
+.tacobout-error-primary-btn {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.45rem;
+	padding: 0.45rem 1.15rem;
+	border-radius: var(--radius-pill, 9999px);
+	background: var(--taco-blue, #3B82F6);
+	color: #FFFFFF !important;
+	font-weight: 700;
+	font-size: 0.85rem;
+	text-decoration: none;
+	border: 1.5px solid var(--taco-blue-dark, #2563EB);
+	box-shadow: 2px 2px 0px rgba(0, 0, 0, 0.2);
+	transition: background 0.15s ease, transform 0.15s ease;
+}
+
+.tacobout-error-primary-btn:hover {
+	background: var(--taco-blue-dark, #2563EB);
+	transform: translateY(-1px);
+	text-decoration: none;
+}
+
+.tacobout-error-primary-btn:active {
+	transform: scale(0.97);
+}
+
+@media (max-width: 640px) {
+	.tacobout-error-card {
+		padding: 1.5rem 1.25rem;
+		flex-direction: column;
+		align-items: flex-start;
+		gap: 1.25rem;
+	}
+
+	.tacobout-error-mascot {
+		height: 80px;
+		max-height: 80px;
+	}
+}
+
+/* ============================
+   COMPANION VAULT CALLOUT CARD
+   ============================ */
+.tacobout-companion-vault-card {
+	background: var(--bg-surface, #F3EFFA);
+	border: 2px solid var(--border-comic, #18181B);
+	box-shadow: var(--shadow-comic, 4px 4px 0px #18181B);
+	border-radius: var(--radius-card, 16px);
+	padding: 2rem 2.25rem;
+	margin: 2.5rem 0;
+	display: flex;
+	align-items: center;
+	gap: 2rem;
+}
+
+[data-theme="dark"] .tacobout-companion-vault-card {
+	background: #1C1A29;
+	border-color: #2E2B44;
+	box-shadow: 4px 4px 0px #09090D;
+}
+
+.tacobout-vault-mascot-wrap {
+	flex-shrink: 0;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.tacobout-vault-mascot {
+	width: auto;
+	height: 110px;
+	max-height: 110px;
+	object-fit: contain;
+	display: block;
+	transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.tacobout-vault-mascot:hover {
+	transform: scale(1.06) rotate(-2deg);
+}
+
+.tacobout-vault-content {
+	flex: 1;
+	min-width: 0;
+}
+
+.tacobout-vault-badge {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.35rem;
+	padding: 0.2rem 0.65rem;
+	border-radius: var(--radius-pill, 9999px);
+	background: var(--trove-violet, #7C3AED);
+	color: #FFFFFF;
+	font-family: var(--wp--preset--font-family--mono, monospace);
+	font-weight: 800;
+	font-size: 0.725rem;
+	letter-spacing: 0.08em;
+	text-transform: uppercase;
+	margin-bottom: 0.5rem;
+	box-shadow: 1px 1px 0px rgba(0, 0, 0, 0.3);
+}
+
+.tacobout-vault-headline {
+	font-family: var(--wp--preset--font-family--heading, inherit);
+	font-size: clamp(1.35rem, 2.5vw, 1.75rem);
+	font-weight: 800;
+	letter-spacing: -0.02em;
+	line-height: 1.25;
+	margin: 0 0 0.5rem 0;
+	color: var(--text-primary, #0F0E17);
+}
+
+[data-theme="dark"] .tacobout-vault-headline {
+	color: #F3EFFA;
+}
+
+.tacobout-vault-subcopy {
+	font-size: 0.95rem;
+	line-height: 1.5;
+	color: var(--wp--preset--color--muted, #71717A);
+	margin: 0 0 1.25rem 0;
+}
+
+[data-theme="dark"] .tacobout-vault-subcopy {
+	color: #A0A0B0;
+}
+
+@media (max-width: 640px) {
+	.tacobout-companion-vault-card {
+		padding: 1.5rem 1.25rem;
+		flex-direction: column;
+		align-items: flex-start;
+		gap: 1.25rem;
+	}
+
+	.tacobout-vault-mascot {
+		height: 80px;
+		max-height: 80px;
+	}
+}
+
+/* ============================
+   FOOTER
+   ============================ */
+.tacobout-footer {
+	border-top: 1px solid var(--taco-border);
+}
+
+/* ============================
+   PAGINATION
+   ============================ */
+.wp-block-query-pagination {
+	gap: 0.5rem;
+}
+
+.wp-block-query-pagination-numbers .page-numbers {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	min-width: 2.25rem;
+	height: 2.25rem;
+	padding: 0.25rem 0.75rem;
+	border-radius: 100px;
+	border: 1px solid var(--taco-border);
+	background: transparent;
+	text-decoration: none;
+	font-weight: 500;
+	font-size: 0.875rem;
+	color: var(--taco-fg);
+	transition: all var(--taco-transition);
+}
+
+.wp-block-query-pagination-numbers .page-numbers:hover,
+.wp-block-query-pagination-numbers .page-numbers.current,
+.wp-block-query-pagination-numbers .page-numbers:focus-visible {
+	background: var(--taco-accent-fill);
+	border-color: var(--taco-accent);
+	color: white;
+}
+
+.wp-block-query-pagination-numbers .page-numbers:active {
+	transform: scale(0.95);
+}
+
+/* ============================
+   MICRO ANIMATIONS
+   ============================ */
+@media (prefers-reduced-motion: no-preference) {
+	.tacobout-magazine-grid .wp-block-post {
+		animation: fadeIn 0.4s ease both;
+	}
+
+	.tacobout-magazine-grid .wp-block-post:nth-child(1) {
+		animation-delay: 0s;
+	}
+
+	.tacobout-magazine-grid .wp-block-post:nth-child(2) {
+		animation-delay: 0.05s;
+	}
+
+	.tacobout-magazine-grid .wp-block-post:nth-child(3) {
+		animation-delay: 0.1s;
+	}
+
+	.tacobout-magazine-grid .wp-block-post:nth-child(4) {
+		animation-delay: 0.15s;
+	}
+
+	.tacobout-magazine-grid .wp-block-post:nth-child(5) {
+		animation-delay: 0.2s;
+	}
+
+	.tacobout-magazine-grid .wp-block-post:nth-child(6) {
+		animation-delay: 0.25s;
+	}
+
+	@keyframes fadeIn {
+		from {
+			opacity: 0;
+		}
+
+		to {
+			opacity: 1;
+		}
+	}
+}
+
+/* ============================
+   EMBEDS (YOUTUBE ETC)
+   ============================ */
+.wp-block-embed,
+.wp-block-embed__wrapper {
+	max-width: 100%;
+	width: 100%;
+}
+
+.wp-block-embed iframe,
+.wp-block-embed object,
+.wp-block-embed embed {
+	max-width: 100% !important;
+	width: 100% !important;
+	height: revert-layer;
+}
+
+/* 2. force the card inner to actually be flex and ignore WP's layout-flow */
+.tacobout-magazine-grid .tacobout-card-inner,
+.tacobout-magazine-grid .tacobout-card-inner.is-layout-flow,
+.tacobout-magazine-grid .tacobout-card-inner.wp-block-group-is-layout-flow {
+	height: 100%;
+	display: flex !important;
+	flex-direction: column !important;
+}
+
+/* 3. vaporize the template part wrapper so the meta becomes a direct child */
+.tacobout-magazine-grid .tacobout-card-inner>.wp-block-template-part,
+.tacobout-magazine-grid .tacobout-card-inner>.wp-block-template-part.is-layout-flow {
+	display: contents !important;
+}
+
+/* 4. shove the meta down below the title */
+.tacobout-format-video .tacobout-post-meta,
+.tacobout-format-audio .tacobout-post-meta,
+.tacobout-format-status .tacobout-post-meta,
+.tacobout-format-aside .tacobout-post-meta,
+.tacobout-format-image .tacobout-post-meta,
+.tacobout-format-quote .tacobout-post-meta,
+.tacobout-format-link .tacobout-post-meta {
+	order: 2 !important;
+	margin-top: 1rem !important;
+}
+
+.tacobout-format-standard .tacobout-post-meta {
+	margin: 0.5rem 0 !important;
+}
+
+/* ============================
+   INTERACTION BADGE
+   ============================ */
+.tacobout-interaction-badge {
+	position: absolute;
+	top: 0.75rem;
+	right: 0.75rem;
+	z-index: 10;
+	display: inline-flex;
+	align-items: center;
+	gap: 0.25rem;
+	padding: 0.3rem 0.65rem;
+	font-size: 0.75rem;
+	font-weight: 600;
+	font-family: 'Space Grotesk', system-ui, sans-serif;
+	line-height: 1;
+	color: var(--taco-fg);
+	background: rgba(255, 255, 255, 0.7);
+	backdrop-filter: blur(12px);
+	-webkit-backdrop-filter: blur(12px);
+	border: 1px solid rgba(255, 255, 255, 0.5);
+	border-radius: 100px;
+	box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+	transition: transform var(--taco-transition), box-shadow var(--taco-transition), background var(--taco-transition);
+	pointer-events: auto;
+	cursor: pointer;
+	text-decoration: none;
+}
+
+.tacobout-interaction-badge:hover,
+.tacobout-interaction-badge:focus-visible {
+	transform: scale(1.08);
+	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+	background: rgba(255, 255, 255, 0.9);
+}
+
+.tacobout-interaction-badge:active {
+	transform: scale(0.95);
+}
+
+@media (prefers-color-scheme: dark) {
+	html:not([data-theme="light"]) .tacobout-interaction-badge {
+		background: rgba(39, 39, 42, 0.75);
+		border-color: rgba(255, 255, 255, 0.1);
+		box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+	}
+
+	html:not([data-theme="light"]) .tacobout-interaction-badge:hover,
+	html:not([data-theme="light"]) .tacobout-interaction-badge:focus-visible {
+		background: rgba(39, 39, 42, 0.9);
+		box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+	}
+}
+
+/* Card needs position:relative for the badge */
+.tacobout-magazine-grid .wp-block-post {
+	position: relative;
+}
+
+/* Avoid badge overlapping the LATEST badge on hero card */
+body.home:not(.paged) .tacobout-magazine-grid .wp-block-post:first-child .tacobout-interaction-badge {
+	top: 1rem;
+	right: 1.5rem;
+}
+
+@media (max-width: 600px) {
+	.tacobout-interaction-badge {
+		top: 0.5rem;
+		right: 0.5rem;
+		font-size: 0.65rem;
+		padding: 0.25rem 0.5rem;
+	}
+
+	body.home:not(.paged) .tacobout-magazine-grid .wp-block-post:first-child .tacobout-interaction-badge {
+		top: 0.75rem;
+		right: 1rem;
+	}
+}
+
+/* ============================
+   INFINITE SCROLL
+   ============================ */
+/* Hide traditional pagination when JS infinite scroll is active */
+.tacobout-infinite-scroll-active .wp-block-query-pagination,
+.tacobout-infinite-scroll-active .wp-block-query .wp-block-spacer {
+	display: none !important;
+}
+
+/* Scroll sentinel — invisible trigger */
+.tacobout-scroll-sentinel {
+	height: 1px;
+	width: 100%;
+}
+
+/* Loading spinner */
+.tacobout-infinite-scroll-spinner {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	padding: 2rem 0;
+}
+
+.tacobout-spinner-dots {
+	display: flex;
+	gap: 0.5rem;
+}
+
+.tacobout-spinner-dots span {
+	width: 10px;
+	height: 10px;
+	border-radius: 50%;
+	background: var(--taco-accent-fill);
+	animation: tacoboutBounce 1.4s ease-in-out infinite both;
+}
+
+.tacobout-spinner-dots span:nth-child(1) {
+	animation-delay: -0.32s;
+}
+
+.tacobout-spinner-dots span:nth-child(2) {
+	animation-delay: -0.16s;
+}
+
+.tacobout-spinner-dots span:nth-child(3) {
+	animation-delay: 0s;
+}
+
+@keyframes tacoboutBounce {
+
+	0%,
+	80%,
+	100% {
+		transform: scale(0.4);
+		opacity: 0.4;
+	}
+
+	40% {
+		transform: scale(1);
+		opacity: 1;
+	}
+}
+
+/* ============================
+   SCROLL-TO-TOP FAB
+   ============================ */
+.tacobout-scroll-top {
+	position: fixed;
+	bottom: 2rem;
+	right: 2rem;
+	z-index: 999;
+	width: 48px;
+	height: 48px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	border: 1px solid rgba(255, 255, 255, 0.4);
+	border-radius: 50%;
+	background: rgba(255, 255, 255, 0.7);
+	backdrop-filter: blur(16px);
+	-webkit-backdrop-filter: blur(16px);
+	box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+	color: var(--taco-fg);
+	cursor: pointer;
+	opacity: 0;
+	visibility: hidden;
+	transform: translateY(16px);
+	transition: opacity 0.3s ease, visibility 0.3s ease, transform 0.3s ease, background 0.2s ease, box-shadow 0.2s ease;
+}
+
+.tacobout-scroll-top.is-visible {
+	opacity: 1;
+	visibility: visible;
+	transform: translateY(0);
+}
+
+.tacobout-scroll-top:hover,
+.tacobout-scroll-top:focus-visible {
+	background: var(--taco-accent-fill);
+	color: white;
+	border-color: var(--taco-accent);
+	box-shadow: 0 6px 20px rgba(0, 102, 255, 0.3);
+}
+
+.tacobout-scroll-top:active {
+	transform: translateY(-2px) scale(0.95);
+}
+
+@media (prefers-color-scheme: dark) {
+	html:not([data-theme="light"]) .tacobout-scroll-top {
+		background: rgba(24, 24, 27, 0.75);
+		border-color: rgba(255, 255, 255, 0.1);
+		box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+	}
+
+	html:not([data-theme="light"]) .tacobout-scroll-top:hover,
+	html:not([data-theme="light"]) .tacobout-scroll-top:focus-visible {
+		background: var(--taco-accent-fill);
+		border-color: var(--taco-accent);
+		box-shadow: 0 6px 20px rgba(59, 130, 246, 0.4);
+	}
+}
+
+/* ============================
+   THEME TOGGLE FAB
+   ============================ */
+.tacobout-theme-toggle {
+	position: fixed;
+	bottom: 2rem;
+	right: 2rem;
+	z-index: 999;
+	width: 48px;
+	height: 48px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	border: 1px solid rgba(0, 0, 0, 0.12);
+	border-radius: 50%;
+	background: rgba(255, 255, 255, 0.7);
+	backdrop-filter: blur(16px);
+	-webkit-backdrop-filter: blur(16px);
+	box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+	color: var(--taco-fg);
+	cursor: pointer;
+	transition: background 0.2s ease, box-shadow 0.2s ease, transform 0.15s ease, border-color 0.2s ease, bottom 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+	font-size: 1.1rem;
+	line-height: 1;
+}
+
+.tacobout-theme-toggle:hover,
+.tacobout-theme-toggle:focus-visible {
+	background: var(--taco-accent-fill);
+	color: white;
+	border-color: var(--taco-accent);
+	box-shadow: 0 6px 20px rgba(0, 102, 255, 0.3);
+}
+
+.tacobout-theme-toggle:active {
+	transform: scale(0.92);
+}
+
+.tacobout-theme-toggle.is-stacked {
+	bottom: 5.5rem;
+}
+
+@media (prefers-color-scheme: dark) {
+	html:not([data-theme="light"]) .tacobout-theme-toggle {
+		background: rgba(24, 24, 27, 0.75);
+		border-color: rgba(255, 255, 255, 0.1);
+		box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+	}
+
+	html:not([data-theme="light"]) .tacobout-theme-toggle:hover,
+	html:not([data-theme="light"]) .tacobout-theme-toggle:focus-visible {
+		background: var(--taco-accent-fill);
+		border-color: var(--taco-accent);
+		box-shadow: 0 6px 20px rgba(59, 130, 246, 0.4);
+	}
+}
+
+@media (max-width: 600px) {
+	.tacobout-theme-toggle {
+		bottom: 1.25rem;
+		right: 1.25rem;
+		width: 42px;
+		height: 42px;
+		font-size: 1rem;
+	}
+
+	.tacobout-theme-toggle.is-stacked {
+		bottom: 4.75rem;
+	}
+}
+
+@media (max-width: 600px) {
+	.tacobout-scroll-top {
+		bottom: 1.25rem;
+		right: 1.25rem;
+		width: 42px;
+		height: 42px;
+	}
+}
+
+/* ============================
+   AUTHOR ARCHIVE & ACTIVITYPUB
+   ============================ */
+body.author .tacobout-magazine-grid {
+	display: grid;
+	grid-template-columns: 1fr;
+	gap: 2rem;
+	align-items: stretch;
+
+	list-style: none;
+	padding: 0;
+}
+
+@media (max-width: 900px) {
+	body.author .tacobout-magazine-grid {
+		grid-template-columns: 1fr;
+		gap: 1.25rem;
+	}
+}
+
+body.author .wp-block-post {
+	position: relative;
+
+	margin-bottom: 2rem;
+	overflow: hidden;
+	min-width: 0;
+	background: rgba(255, 255, 255, 0.5);
+	backdrop-filter: blur(20px);
+	-webkit-backdrop-filter: blur(20px);
+	border: 1px solid rgba(255, 255, 255, 0.4);
+	border-radius: var(--taco-radius);
+	padding: 1.5rem;
+	box-shadow: var(--taco-shadow);
+	transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.4s ease, border-color 0.4s ease;
+	display: flex;
+	flex-direction: column;
+}
+
+body.author .wp-block-post:hover,
+body.author .wp-block-post:focus-within {
+	box-shadow: 0 15px 35px rgba(0, 102, 255, 0.1), 0 5px 15px rgba(0, 0, 0, 0.05);
+	border-color: rgba(255, 255, 255, 0.8);
+}
+
+@media (prefers-color-scheme: dark) {
+	html:not([data-theme="light"]) body.author .wp-block-post {
+		background: rgba(255, 255, 255, 0.05);
+		border-color: rgba(255, 255, 255, 0.1);
+	}
+
+	html:not([data-theme="light"]) body.author .wp-block-post:hover,
+	html:not([data-theme="light"]) body.author .wp-block-post:focus-within {
+		box-shadow: 0 15px 35px rgba(139, 92, 246, 0.15), 0 5px 15px rgba(0, 0, 0, 0.2);
+		border-color: rgba(255, 255, 255, 0.15);
+	}
+
+	html:not([data-theme="light"]) .wp-block-navigation__responsive-container-close,
+	html:not([data-theme="light"]) .wp-block-navigation__responsive-container-close svg {
+		color: var(--taco-fg) !important;
+		fill: currentColor !important;
+	}
+}
+
+/* ============================
+   COMMENT FORM
+   ============================ */
+#respond {
+	background: var(--taco-surface);
+	border: 1px solid var(--taco-border);
+	border-radius: var(--taco-radius);
+	padding: 1.5rem;
+	margin-top: 1.5rem;
+}
+
+#respond .comment-reply-title {
+	font-size: 1.5rem;
+	font-weight: 700;
+	margin: 0 0 1rem;
+	color: var(--taco-fg);
+}
+
+#respond .logged-in-as,
+#respond .comment-notes {
+	color: var(--taco-muted);
+	font-size: 0.875rem;
+	margin-bottom: 1rem;
+}
+
+#respond .comment-form label {
+	color: var(--taco-fg);
+	font-size: 0.875rem;
+	font-weight: 500;
+	display: block;
+	margin-bottom: 0.375rem;
+}
+
+#respond .comment-form textarea,
+#respond .comment-form input[type="text"],
+#respond .comment-form input[type="email"],
+#respond .comment-form input[type="url"] {
+	background: var(--taco-surface-2);
+	color: var(--taco-fg);
+	border: 1px solid var(--taco-border);
+	border-radius: 8px;
+	padding: 0.625rem 0.875rem;
+	width: 100%;
+	box-sizing: border-box;
+	font-size: 0.9375rem;
+	font-family: inherit;
+	transition: border-color 0.2s ease, box-shadow 0.2s ease;
+	outline: none;
+}
+
+#respond .comment-form textarea {
+	min-height: 120px;
+	resize: vertical;
+}
+
+#respond .comment-form textarea:focus,
+#respond .comment-form input[type="text"]:focus,
+#respond .comment-form input[type="email"]:focus,
+#respond .comment-form input[type="url"]:focus {
+	border-color: var(--taco-accent);
+	box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+}
+
+#respond .comment-form textarea::placeholder {
+	color: var(--taco-muted);
+}
+
+#respond .form-submit #submit,
+#respond .form-submit input[type="submit"] {
+	background: var(--taco-accent-fill);
+	color: white;
+	border: none;
+	border-radius: 8px;
+	padding: 0.625rem 1.5rem;
+	font-size: 0.9375rem;
+	font-weight: 600;
+	font-family: inherit;
+	cursor: pointer;
+	transition: background 0.2s ease, box-shadow 0.2s ease, transform 0.15s ease;
+}
+
+#respond .form-submit #submit:hover,
+#respond .form-submit input[type="submit"]:hover,
+#respond .form-submit #submit:focus-visible,
+#respond .form-submit input[type="submit"]:focus-visible {
+	background: var(--taco-accent-fill-hover);
+	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+#respond .form-submit #submit:active,
+#respond .form-submit input[type="submit"]:active {
+	transform: scale(0.97);
+}
+
+/* ============================
+   OVERFLOW SEPARATOR
+   ============================ */
+.tacobout-overflow-separator {
+	grid-column: 1 / -1;
+	display: flex;
+	align-items: center;
+	gap: 1rem;
+	padding: 1.5rem 0 0.5rem;
+	animation: tacobout-fade-in 0.5s ease;
+}
+
+.tacobout-overflow-separator::before,
+.tacobout-overflow-separator::after {
+	content: "";
+	flex: 1;
+	height: 1px;
+	background: var(--taco-border);
+}
+
+.tacobout-overflow-separator-label {
+	display: flex;
+	align-items: center;
+	gap: 0.5rem;
+	white-space: nowrap;
+	background: var(--taco-surface);
+	border: 1px solid var(--taco-border);
+	border-radius: 100px;
+	padding: 0.375rem 1rem;
+	font-size: 0.8rem;
+	font-weight: 600;
+	letter-spacing: 0.03em;
+	color: var(--taco-muted);
+	box-shadow: var(--taco-shadow);
+}
+
+.tacobout-overflow-separator-label svg {
+	color: var(--taco-accent);
+	flex-shrink: 0;
+}
+
+body.author .tacobout-card-inner {
+	height: 100%;
+	display: flex;
+	flex-direction: column;
+}
+
+/* ============================================
+   ALT TEXT BADGE
+   ============================================ */
+.tacobout-alt-wrapper {
+	position: relative;
+	display: block;
+	/* Ensures wrapper behaves like a block element, taking full width if necessary */
+	width: fit-content;
+	max-width: 100%;
+}
+
+.tacobout-alt-wrapper img {
+	display: block;
+	max-width: 100%;
+	height: auto;
+}
+
+.tacobout-alt-badge {
+	position: absolute;
+	bottom: 8px;
+	right: 8px;
+	background: rgba(0, 0, 0, 0.7);
+	color: #fff;
+	border: 1px solid rgba(255, 255, 255, 0.2);
+	border-radius: 4px;
+	padding: 2px 6px;
+	font-size: 0.65rem;
+	font-weight: 700;
+	letter-spacing: 0.5px;
+	cursor: pointer;
+	z-index: 10;
+	transition: var(--taco-transition);
+	backdrop-filter: blur(4px);
+}
+
+.tacobout-alt-badge:hover,
+.tacobout-alt-badge:focus-visible {
+	background: rgba(0, 0, 0, 0.9);
+	transform: scale(1.05);
+	outline: 2px solid var(--taco-accent);
+	outline-offset: 2px;
+}
+
+.tacobout-alt-badge:active {
+	transform: scale(0.95);
+}
+
+.tacobout-alt-tooltip {
+	position: absolute;
+	bottom: 36px;
+	right: 8px;
+	background: var(--taco-surface);
+	color: var(--taco-fg);
+	padding: 12px;
+	border-radius: var(--taco-radius);
+	font-size: 0.875rem;
+	line-height: 1.4;
+	max-width: 280px;
+	width: max-content;
+	z-index: 20;
+	box-shadow: var(--taco-shadow-lg);
+	border: 1px solid var(--taco-border);
+	opacity: 1;
+	transform: translateY(0);
+	transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.tacobout-alt-tooltip[hidden] {
+	display: none;
+	opacity: 0;
+	transform: translateY(4px);
+}
+
+
+
+body.admin-bar .wp-block-navigation__responsive-container.is-menu-open {
+	padding-top: 48px !important;
+}
+/* ============================
+   SIDEBAR
+   ============================ */
+.tacobout-sidebar-sticky {
+	position: sticky;
+	top: 10rem;
+	align-self: flex-start;
+}
+
+@media (max-width: 782px) {
+	.tacobout-sidebar-sticky {
+		position: static;
+	}
+}
+
+/* ============================
+   BASIC LIST LAYOUT
+   Overrides format-specific styles
+   for sidebars and user profiles
+   ============================ */
+
+.tacobout-basic-list .wp-block-post {
+	padding: 0 !important;
+	background: transparent !important;
+	border: none !important;
+}
+
+.tacobout-basic-list .tacobout-interaction-badge {
+	display: none !important;
+}
+
+.tacobout-basic-list .wp-block-post-featured-image,
+.tacobout-basic-list .wp-block-post-title,
+.tacobout-basic-list .wp-block-post-date {
+	display: block !important;
+}
+
+.tacobout-basic-list .wp-block-post-featured-image:empty {
+	display: none !important;
+}
+
+.tacobout-basic-list .wp-block-post-title:empty {
+	display: none !important;
+}
+
+/* Mobile Safari fixes for Navigation Overlay */
+@supports (-webkit-touch-callout: none) {
+	.wp-block-navigation__responsive-container.is-menu-open {
+		height: 100dvh;
+		max-height: 100dvh;
+	}
+}
+
+/* Mobile Safari fixes and theming for Navigation Overlay */
+.wp-block-navigation__responsive-container.is-menu-open {
+	position: fixed !important;
+	inset: 0 !important;
+	top: 0 !important;
+	bottom: 0 !important;
+	left: 0 !important;
+	right: 0 !important;
+	width: 100vw !important;
+	height: 100dvh !important;
+	background: var(--taco-bg) !important;
+	backdrop-filter: none !important;
+	-webkit-backdrop-filter: none !important;
+	color: var(--taco-fg) !important;
+	z-index: 100000 !important;
+}
+
+.wp-block-navigation__responsive-container.is-menu-open .wp-block-navigation-item__content {
+	color: var(--taco-fg) !important;
+}
+
+/* Sidebar / list items horizontal layout fixes */
+.tacobout-list-item .wp-block-post-featured-image {
+	width: 80px !important;
+	height: 80px !important;
+	flex-shrink: 0;
+	margin: 0 !important;
+}
+
+.tacobout-list-item .wp-block-post-featured-image img,
+.tacobout-list-item .wp-block-post-featured-image a {
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+	border-radius: 8px;
+}
+
+/* CONTENT-AWARE BENTO
+ * Natural-height fallback first. JS measures cards into tiny row tracks, so
+ * neither a long post nor a late-loading embed stretches its neighbours.
+ */
+body .tacobout-magazine-grid {
+	--tacobout-columns: 3;
+	display: grid !important;
+	grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+	grid-auto-flow: row dense;
+	align-items: start;
+	gap: 20px !important;
+	padding: 0;
+}
+body .tacobout-magazine-grid.tacobout-bento-ready {
+	grid-auto-rows: 4px !important;
+	row-gap: 0 !important;
+}
+body .tacobout-magazine-grid > .wp-block-post {
+	margin: 0 !important;
+	height: auto !important;
+	min-height: 0 !important;
+	align-self: start;
+	grid-column: span 1;
+	padding: 1.25rem !important;
+	border-radius: 20px;
+	background: var(--taco-surface);
+	border: 1px solid var(--taco-border);
+	box-shadow: 0 4px 20px rgb(0 0 0 / 4%);
+	backdrop-filter: none;
+	-webkit-backdrop-filter: none;
+	overflow: hidden;
+	animation: none;
+	transition: border-color .2s ease, box-shadow .2s ease;
+}
+body .tacobout-magazine-grid > .wp-block-post:hover,
+body .tacobout-magazine-grid > .wp-block-post:focus-within {
+	transform: none;
+	border-color: var(--taco-accent);
+}
+body .tacobout-magazine-grid .tacobout-card-inner {
+	display: flex !important;
+	height: auto !important;
+	min-width: 0;
+	gap: .85rem;
+}
+body .tacobout-magazine-grid .tacobout-card-inner > * {
+	min-width: 0;
+	max-width: 100%;
+	margin-block: 0 !important;
+}
+body .tacobout-magazine-grid .wp-block-post-title {
+	font-size: clamp(1.2rem, 1.5vw, 1.55rem) !important;
+	line-height: 1.22 !important;
+	letter-spacing: -.035em;
+	text-wrap: pretty;
+	opacity: 1;
+}
+body .tacobout-magazine-grid .wp-block-post-title a {
+	color: var(--taco-fg);
+	-webkit-text-fill-color: currentColor;
+}
+body .tacobout-magazine-grid .wp-block-post-excerpt,
+body .tacobout-magazine-grid .wp-block-post-content {
+	font-size: .96rem;
+	line-height: 1.6;
+	overflow-wrap: anywhere;
+}
+body .tacobout-magazine-grid .wp-block-post-excerpt { color: var(--taco-muted); }
+body .tacobout-magazine-grid .wp-block-post-content > :first-child { margin-top: 0; }
+body .tacobout-magazine-grid .wp-block-post-content > :last-child { margin-bottom: 0; }
+body .tacobout-magazine-grid .tacobout-post-meta {
+	order: 5 !important;
+	margin: .25rem 0 0 !important;
+	gap: .5rem;
+	flex-wrap: wrap;
+	font-size: .72rem !important;
+}
+body .tacobout-magazine-grid .tacobout-post-meta .wp-block-post-date { font-size: .72rem !important; }
+body .tacobout-magazine-grid .wp-block-post-featured-image {
+	display: block !important;
+	aspect-ratio: auto !important;
+	height: auto !important;
+	min-height: 0 !important;
+	max-height: none !important;
+	margin: 0 !important;
+	border-radius: 12px;
+	overflow: hidden;
+}
+body .tacobout-magazine-grid .wp-block-post-featured-image :is(a, img, .tacobout-alt-wrapper) {
+	height: auto !important;
+	width: 100%;
+	max-width: 100%;
+	object-fit: contain;
+	transform: none !important;
+}
+body .tacobout-magazine-grid :is(.tacobout-format-gallery, .tacobout-format-chat) .wp-block-post-excerpt { display: none; }
+body .tacobout-magazine-grid :is(.tacobout-format-gallery, .tacobout-format-chat) .wp-block-post-content { display: block; }
+body .tacobout-magazine-grid .tacobout-format-gallery .wp-block-post-content { order: -1; }
+body .tacobout-magazine-grid .wp-block-post-content :is(figure, .alignwide, .alignfull) {
+	width: auto;
+	max-width: 100%;
+	margin-inline: 0;
+}
+body .tacobout-magazine-grid .wp-block-post-content :is(img, video) {
+	display: block;
+	width: 100%;
+	height: auto !important;
+	max-width: 100%;
+	object-fit: contain;
+	border-radius: 12px;
+}
+body .tacobout-magazine-grid .wp-block-post-content :is(audio, iframe) { max-width: 100%; }
+body .tacobout-magazine-grid .wp-block-post-content audio { width: 100%; }
+body .tacobout-magazine-grid .tacobout-video-frame {
+	display: block;
+	position: static !important;
+	width: 100% !important;
+	height: auto !important;
+	border: 0;
+	border-radius: 12px;
+}
+body .tacobout-magazine-grid .wp-block-embed__wrapper:has(.tacobout-video-frame)::before { display: none !important; }
+body .tacobout-magazine-grid .wp-block-post-content :is(.wp-block-gallery, .gallery) {
+	display: block !important;
+	columns: 2;
+	column-gap: 10px;
+}
+body .tacobout-magazine-grid .wp-block-post-content :is(.wp-block-gallery > figure, .gallery-item) {
+	display: inline-block !important;
+	break-inside: avoid;
+	width: 100% !important;
+	margin: 0 0 10px !important;
+}
+body .tacobout-magazine-grid .wp-block-gallery figure figcaption {
+	position: static !important;
+	max-height: none !important;
+	background: none !important;
+	color: var(--taco-muted) !important;
+	padding: .5rem 0 0 !important;
+	font-size: .8rem;
+}
+body .tacobout-magazine-grid .tacobout-format-audio .wp-block-post-content {
+	padding: 0;
+	background: transparent;
+}
+body .tacobout-magazine-grid .tacobout-format-quote blockquote {
+	margin: 0;
+	padding: .3rem 0 .3rem 1rem;
+	border-left: 3px solid var(--taco-accent);
+	font-size: 1.2rem;
+	line-height: 1.45;
+}
+body .tacobout-magazine-grid :is(.tacobout-format-status, .tacobout-format-aside) .wp-block-post-content { font-size: 1.1rem; }
+.tacobout-card-more { margin-top: 1rem; }
+.tacobout-card-more summary {
+	cursor: pointer;
+	color: var(--taco-accent);
+	font-weight: 600;
+	padding-block: .4rem;
+	width: max-content;
+	transition: color var(--taco-transition), transform var(--taco-transition);
+}
+.tacobout-card-more summary:hover,
+.tacobout-card-more summary:focus-visible {
+	color: var(--taco-accent-2);
+}
+.tacobout-card-more summary:active {
+	transform: scale(0.96);
+}
+.tacobout-link-source {
+	display: block;
+	margin-top: 1rem;
+	padding: .75rem 1rem;
+	border: 1px solid var(--taco-border);
+	border-radius: 10px;
+	font-size: .82rem;
+	font-weight: 600;
+	overflow-wrap: anywhere;
+}
+body.home:not(.paged) .tacobout-magazine-grid .wp-block-post:first-child {
+	grid-column: span 1;
+	padding: 3rem 1.25rem 1.25rem !important;
+	box-shadow: none;
+}
+body.home:not(.paged) .tacobout-magazine-grid .wp-block-post:first-child::after { display: none; }
+body .tacobout-magazine-grid .tacobout-overflow-separator { grid-column: 1 / -1; height: auto; }
+@media (min-width: 760px) {
+	body .tacobout-magazine-grid > .tacobout-card-wide,
+	body.home:not(.paged) .tacobout-magazine-grid > .tacobout-card-wide:first-child { grid-column: span 2; }
+	body .tacobout-magazine-grid .tacobout-card-spanning.tacobout-card-horizontal .tacobout-card-inner {
+		display: grid !important;
+		grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr);
+		column-gap: 1.5rem;
+		align-items: start;
+	}
+	body .tacobout-magazine-grid .tacobout-card-spanning.tacobout-card-horizontal .wp-block-post-featured-image {
+		grid-column: 1;
+		grid-row: 1 / span 4;
+	}
+	body .tacobout-magazine-grid .tacobout-card-spanning.tacobout-card-horizontal :is(.wp-block-post-title, .wp-block-post-excerpt, .tacobout-post-meta) { grid-column: 2; }
+	body .tacobout-magazine-grid .tacobout-card-spanning .wp-block-post-title { font-size: clamp(1.5rem, 2.2vw, 2rem) !important; }
+}
+@media (min-width: 760px) and (max-width: 1050px) {
+	body .tacobout-magazine-grid { --tacobout-columns: 2; grid-template-columns: repeat(2, minmax(0, 1fr)) !important; }
+}
+@media (max-width: 759px) {
+	body .tacobout-magazine-grid { --tacobout-columns: 1; grid-template-columns: minmax(0, 1fr) !important; }
+	body .tacobout-magazine-grid > .wp-block-post { grid-column: 1 !important; }
+}
+@media (prefers-reduced-motion: reduce) {
+	body .tacobout-magazine-grid *, body .tacobout-magazine-grid *::before { animation: none !important; transition: none !important; }
+}
+.tacobout-view-media, .tacobout-media-dialog button {
+	font: inherit;
+	color: var(--taco-fg);
+	background: var(--taco-surface);
+	border: 1px solid var(--taco-border);
+	border-radius: 10px;
+	padding: .6rem .9rem;
+	cursor: pointer;
+}
+.tacobout-view-media { margin-top: .75rem; font-size: .85rem; }
+.tacobout-view-media:hover, .tacobout-view-media:focus-visible, .tacobout-media-dialog button:not(:disabled):hover, .tacobout-media-dialog button:not(:disabled):focus-visible {
+	background: var(--taco-surface-2);
+	border-color: var(--taco-accent);
+	color: var(--taco-accent);
+	outline: none;
+}
+.tacobout-view-media:active, .tacobout-media-dialog button:not(:disabled):active {
+	transform: scale(0.96);
+}
+.tacobout-media-dialog {
+	width: min(1100px, 94vw);
+	max-height: 94dvh;
+	box-sizing: border-box;
+	padding: 1rem;
+	border: 1px solid var(--taco-border);
+	border-radius: 18px;
+	background: var(--taco-bg);
+	color: var(--taco-fg);
+}
+.tacobout-media-dialog::backdrop { background: rgb(0 0 0 / 85%); }
+.tacobout-media-toolbar { display: flex; align-items: center; gap: .75rem; }
+.tacobout-media-toolbar [data-close] { margin-right: auto; }
+.tacobout-media-dialog button:disabled { opacity: .4; cursor: default; }
+.tacobout-media-dialog figure { margin: 1rem 0 0; }
+.tacobout-media-dialog img { width: 100%; height: 72dvh; object-fit: contain; }
+.tacobout-media-dialog figcaption { margin-top: .75rem; text-align: center; }
+/* Override dimensions baked into older saved Query blocks as well. */
+body .tacobout-magazine-grid .wp-block-post .wp-block-post-featured-image img {
+	object-fit: contain !important;
+}
+
+/* Reset-safe navigation: native WordPress dialog semantics, theme-owned layout. */
+.tacobout-header-row {
+    max-width: 1440px;
+    margin-inline: auto;
+    padding-inline: clamp(1rem, 3vw, 2rem);
+    flex-wrap: nowrap !important;
+    gap: 1.5rem;
+    min-height: 3rem;
+}
+.tacobout-header-brand { min-width: 0; flex-shrink: 1; gap: .75rem; }
+.tacobout-header-brand .wp-block-site-logo { flex: 0 0 auto; }
+.tacobout-header-brand .wp-block-site-title {
+    font-size: clamp(1.1rem, 2.4vw, 1.65rem);
+    line-height: 1.15;
+    white-space: nowrap;
+}
+.tacobout-header-brand .wp-block-site-title a { color: var(--taco-fg); }
+.tacobout-primary-navigation { flex: 0 0 auto; }
+.tacobout-primary-navigation a { text-decoration: none; }
+.tacobout-primary-navigation .wp-block-navigation-item__content,
+.tacobout-primary-navigation .wp-block-navigation-submenu__toggle {
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
+}
+.tacobout-primary-navigation a:focus-visible,
+.tacobout-primary-navigation button:focus-visible {
+    outline: 2px solid var(--taco-accent);
+    outline-offset: 4px;
+    border-radius: 6px;
+}
+.tacobout-primary-navigation .wp-block-navigation__submenu-container {
+    background: var(--taco-surface) !important;
+    color: var(--taco-fg) !important;
+    border: 1px solid var(--taco-border);
+    border-radius: 12px;
+    box-shadow: var(--taco-shadow-lg);
+    padding: .5rem;
+    min-width: 13rem;
+}
+.tacobout-primary-navigation .wp-block-navigation__submenu-container a {
+    box-sizing: border-box;
+    padding: .5rem .75rem;
+    width: 100%;
+    border-radius: 6px;
+    color: var(--taco-fg) !important;
+}
+.tacobout-primary-navigation .wp-block-navigation__submenu-container a:hover,
+.tacobout-primary-navigation .wp-block-navigation__submenu-container a:focus-visible {
+    background: var(--taco-surface-2);
+    color: var(--taco-fg) !important;
+}
+/* No transform, containment, or filter may become the open dialog's viewport. */
+.tacobout-header:has(.is-menu-open) {
+    transform: none !important;
+    transition: none;
+    z-index: 100000;
+}
+.tacobout-primary-navigation .is-menu-open {
+    box-sizing: border-box;
+    animation: none !important;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    padding: calc(4.5rem + env(safe-area-inset-top)) max(1.25rem, env(safe-area-inset-right)) max(2rem, env(safe-area-inset-bottom)) max(1.25rem, env(safe-area-inset-left)) !important;
+}
+.tacobout-primary-navigation .is-menu-open .wp-block-navigation__responsive-container-content {
+    align-items: stretch !important;
+    padding: 0;
+    max-width: 40rem;
+    margin-inline: auto;
+}
+.tacobout-primary-navigation .is-menu-open .wp-block-navigation__container {
+    align-items: stretch !important;
+    justify-content: flex-start !important;
+    width: 100%;
+    gap: 1rem;
+}
+.tacobout-primary-navigation .is-menu-open .wp-block-navigation-item {
+    align-items: stretch !important;
+    text-align: left;
+    width: 100%;
+}
+.tacobout-primary-navigation .is-menu-open .wp-block-navigation__submenu-container {
+    box-sizing: border-box;
+    width: 100%;
+    min-width: 0;
+    padding: .5rem 0 .5rem 1rem !important;
+    margin-top: .25rem;
+    border: 0;
+    border-left: 2px solid var(--taco-border);
+    border-radius: 0;
+    box-shadow: none;
+    gap: .125rem !important;
+}
+.tacobout-primary-navigation .is-menu-open .has-child > .wp-block-navigation-item__content { font-weight: 700; }
+.tacobout-primary-navigation .is-menu-open .tacobout-sister-nav-pill { align-self: flex-start; width: auto; }
+.tacobout-primary-navigation .is-menu-open .tacobout-sister-nav-pill a { color: #6d28d9 !important; }
+[data-theme="dark"] .tacobout-primary-navigation .is-menu-open .tacobout-sister-nav-pill a { color: #c4b5fd !important; }
+.tacobout-primary-navigation .is-menu-open .wp-block-navigation__responsive-container-close {
+    position: fixed;
+    top: max(1rem, env(safe-area-inset-top));
+    right: max(1.25rem, env(safe-area-inset-right));
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: var(--taco-surface-2);
+    color: var(--taco-fg);
+}
+body.admin-bar .tacobout-primary-navigation .is-menu-open .wp-block-navigation__responsive-container-close { top: 3.75rem; }
+@media (max-width: 1099px) {
+    .tacobout-primary-navigation .wp-block-navigation__responsive-container:not(.is-menu-open) { display: none !important; }
+    .tacobout-primary-navigation .wp-block-navigation__responsive-container-open { display: flex !important; width: 44px; height: 44px; align-items: center; justify-content: center; }
+}
+@media (min-width: 1100px) {
+    .tacobout-primary-navigation .wp-block-navigation__responsive-container:not(.is-menu-open) { display: block !important; }
+    .tacobout-primary-navigation .wp-block-navigation__responsive-container-open { display: none !important; }
+}
+@media (max-width: 480px) {
+    .tacobout-header-row { gap: .75rem; padding-inline: .75rem; }
+    .tacobout-header-brand .wp-block-site-logo img { width: 36px; }
+    .wp-site-blocks { --wp--style--root--padding-left: 1rem; --wp--style--root--padding-right: 1rem; }
+    .wp-block-post-content { overflow-wrap: anywhere; }
+    .wp-block-post-content pre { max-width: 100%; overflow-x: auto; }
+    .wp-block-post-content .wp-block-table { overflow-x: auto; }
+    .wp-block-columns > .wp-block-column { min-width: 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+    .tacobout-header { transition: none; }
+}
+
+/* Navigation colors must win over WordPress preset colors in every theme state. */
+.tacobout-primary-navigation .wp-block-navigation__responsive-container.is-menu-open {
+    background: var(--taco-bg) !important;
+    color: var(--taco-fg) !important;
+}
+.tacobout-primary-navigation .wp-block-navigation-item:not(.tacobout-sister-nav-pill) > a {
+    color: var(--taco-fg) !important;
+}
+.tacobout-primary-navigation .wp-block-navigation-item:not(.tacobout-sister-nav-pill) > a:is(:hover, :focus-visible) {
+    color: var(--taco-accent-2) !important;
+}
+.tacobout-primary-navigation .wp-block-navigation__submenu-container a:is(:hover, :focus-visible) {
+    color: var(--taco-fg) !important;
+    background: var(--taco-surface-2) !important;
+}
+.tacobout-discussion-actions > a, .tacobout-vault-actions > a,
+.tacobout-channel-actions > a, .tacobout-error-actions > a { min-height: 44px; box-sizing: border-box; }
+.tacobout-on-the-air-text { max-width: 65ch; }
+.tacobout-bluesky-cta { background: #0066cc; border-color: #0055aa; }
+.tacobout-bluesky-cta:is(:hover, :focus-visible) { background: #0055aa; }
+.tacobout-mastodon-cta { color: #4f46c7 !important; }
+[data-theme="dark"] .tacobout-mastodon-cta { color: #c4b5fd !important; }
+@media (prefers-color-scheme: dark) {
+    html:not([data-theme="light"]) .tacobout-mastodon-cta { color: #c4b5fd !important; }
+    html:not([data-theme="light"]) a.tacobout-sister-nav-pill,
+    html:not([data-theme="light"]) .tacobout-sister-nav-pill a {
+        background: rgba(124,58,237,.16); border-color: rgba(124,58,237,.36); color: #ddd6fe !important;
+    }
+    html:not([data-theme="light"]) .tacobout-sister-nav-pill a:is(:hover,:focus-visible),
+    html:not([data-theme="light"]) a.tacobout-sister-nav-pill:is(:hover,:focus-visible) {
+        background: rgba(124,58,237,.28); color: #fff !important;
+    }
+}
+@media (max-width: 480px) {
+    .wp-block-post-content .wp-block-image.alignright { max-width: 40%; margin-inline-start: 1rem; }
+}
+
+.tacobout-end-archive { display: inline-flex; align-items: center; min-height: 44px; margin-inline-end: 1rem; }
+
+/* One surface and text treatment for all editorial callouts in both themes. */
+html :is(.tacobout-on-the-air-strip, .tacobout-discussion-card, .tacobout-channel-banner,
+.tacobout-error-card, .tacobout-companion-vault-card, .tacobout-end-card) {
+    background: var(--taco-callout);
+    border: 1px solid var(--taco-callout-border);
+    box-shadow: var(--taco-callout-shadow);
+}
+html :is(.tacobout-on-the-air-text, .tacobout-discussion-author, .tacobout-channel-headline,
+.tacobout-error-title, .tacobout-vault-headline, .tacobout-end-headline) { color: var(--taco-fg); }
+html :is(.tacobout-discussion-prompt, .tacobout-channel-subcopy,
+.tacobout-error-text, .tacobout-vault-subcopy, .tacobout-end-subcopy) { color: var(--taco-muted); }
+.tacobout-error-channel-badge { background: #b91c1c; }
+.tacobout-channel-badge { background: #2563eb; }
+.tacobout-end-archive { margin-inline-end: 0; }
+
+.tacobout-error-primary-btn { background: var(--taco-accent-fill); }
+
+/* Responsive channel guide: use tablet width, retain every core navigation link. */
+.tacobout-primary-navigation .is-menu-open {padding:calc(5.5rem + env(safe-area-inset-top)) max(1rem,env(safe-area-inset-right)) max(1.5rem,env(safe-area-inset-bottom)) max(1rem,env(safe-area-inset-left))!important;}
+.tacobout-primary-navigation .is-menu-open .wp-block-navigation__responsive-container-content {max-width:74rem!important;width:100%;gap:1.5rem;box-sizing:border-box;}
+.tacobout-menu-heading{display:flex;align-items:baseline;justify-content:space-between;gap:1rem;border-bottom:1px solid var(--taco-border);padding-bottom:1.25rem;width:100%;}
+.tacobout-menu-heading a{font:700 clamp(1.25rem,3vw,1.75rem)/1.2 var(--wp--preset--font-family--space-grotesk,system-ui);text-decoration:none;color:var(--taco-fg);}
+.tacobout-menu-heading span{font:600 .68rem/1.4 system-ui;letter-spacing:.14em;text-transform:uppercase;color:var(--taco-muted);}
+.tacobout-primary-navigation .is-menu-open .wp-block-navigation__container{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr));gap:1rem!important;align-items:start!important;}
+.tacobout-primary-navigation .is-menu-open .wp-block-navigation__container>li{box-sizing:border-box;min-width:0;}
+.tacobout-primary-navigation .is-menu-open .wp-block-navigation__container>li.has-child{display:flex;flex-direction:column;align-items:stretch!important;padding:1.25rem;background:var(--taco-surface);border:1px solid var(--taco-border);border-radius:16px;}
+.tacobout-primary-navigation .is-menu-open .wp-block-navigation__container>li.has-child>a{padding:0 0 .75rem!important;font-size:1.15rem!important;line-height:1.3;}
+.tacobout-primary-navigation .is-menu-open .wp-block-navigation__submenu-container{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr));position:static!important;visibility:visible!important;opacity:1!important;gap:.25rem .75rem!important;padding:0!important;border:0!important;margin:0!important;background:transparent!important;}
+.tacobout-primary-navigation .is-menu-open .wp-block-navigation__submenu-container li{margin:0!important;width:100%!important;}
+.tacobout-primary-navigation .is-menu-open .wp-block-navigation__submenu-container a{display:flex;align-items:center;min-height:44px;box-sizing:border-box;padding:.5rem .625rem!important;border-radius:8px;font-size:.95rem!important;line-height:1.35;white-space:normal;}
+.tacobout-primary-navigation .is-menu-open .wp-block-navigation__container>.tacobout-sister-nav-pill{grid-column:1/-1;width:auto!important;justify-self:start;}
+.tacobout-primary-navigation .is-menu-open .wp-block-navigation__container>li:last-child:not(.has-child){grid-column:1/-1;}
+.tacobout-primary-navigation .is-menu-open .wp-block-navigation__container>li:last-child>a{display:inline-flex;align-items:center;min-height:44px;padding:.5rem .625rem!important;font-size:1rem!important;}
+.tacobout-menu-extras{width:100%;padding-top:1rem;border-top:1px solid var(--taco-border);}
+.tacobout-menu-extras .tacobout-utilities{justify-content:flex-start;gap:.75rem;}
+.tacobout-menu-extras .seasonal-controls{margin:0;}
+.tacobout-menu-extras .seasonal-appearance-panel{top:auto;bottom:calc(100% + 8px);right:auto;left:0;}
+html.has-modal-open{overflow:hidden;}
+@media(max-width:599px){.tacobout-primary-navigation .is-menu-open .wp-block-navigation__container{grid-template-columns:minmax(0,1fr);}.tacobout-primary-navigation .is-menu-open .wp-block-navigation__container>li.has-child{padding:1rem;}.tacobout-menu-heading span{display:none;}.tacobout-menu-extras .seasonal-appearance-panel{position:fixed;top:var(--appearance-top,80px);bottom:auto;left:12px;right:12px;}}
+@media(min-width:768px) and (max-height:650px){.tacobout-primary-navigation .is-menu-open .wp-block-navigation__responsive-container-content{gap:1rem;}.tacobout-primary-navigation .is-menu-open{padding-top:calc(4rem + env(safe-area-inset-top))!important;}}
+.tacobout-primary-navigation .is-menu-open .wp-block-navigation__responsive-container-content{padding:0!important;}
+.tacobout-menu-extras{order:2;}
+
+/* Center the core SVG inside its tap target, including Safari's native button reset. */
+.tacobout-primary-navigation .is-menu-open .wp-block-navigation__responsive-container-close {
+ display:grid!important;place-items:center;box-sizing:border-box;
+ width:44px;height:44px;min-width:44px;min-height:44px;aspect-ratio:1;
+ padding:0!important;margin:0;appearance:none;-webkit-appearance:none;
+ border:1px solid var(--taco-border);border-radius:50%;line-height:1;
+}
+.tacobout-primary-navigation .is-menu-open .wp-block-navigation__responsive-container-close svg {
+ display:block;width:24px;height:24px;margin:0!important;flex:none;fill:currentColor;
+}

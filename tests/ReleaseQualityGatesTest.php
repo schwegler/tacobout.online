@@ -23,7 +23,7 @@ class ReleaseQualityGatesTest extends \PHPUnit\Framework\TestCase {
     public function test_style_css_version_and_companion_vault_rules() {
         $css = file_get_contents(__DIR__ . '/../style.css');
 
-        $this->assertStringContainsString('Version: 3.8.22', $css);
+        $this->assertStringContainsString('Version: 3.8.23', $css);
         $this->assertStringContainsString('.tacobout-companion-vault-card', $css);
         $this->assertStringContainsString('.tacobout-vault-mascot', $css);
         $this->assertStringContainsString('.tacobout-vault-badge', $css);
