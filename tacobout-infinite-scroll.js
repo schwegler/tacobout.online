@@ -383,9 +383,11 @@
 				${contentHtml}
 			</div>
 		`;
-		li.innerHTML = window.DOMPurify
-			? window.DOMPurify.sanitize(rawHtml, { USE_PROFILES: { html: true, svg: true }, ADD_TAGS: ['iframe'], ADD_ATTR: ['target'] })
-			: rawHtml;
+		if (!window.DOMPurify) {
+			console.error("DOMPurify not loaded. Aborting feed rendering to prevent XSS.");
+			return document.createElement("li");
+		}
+		li.innerHTML = window.DOMPurify.sanitize(rawHtml, { USE_PROFILES: { html: true, svg: true }, ADD_TAGS: ['iframe'], ADD_ATTR: ['target'] });
 
 		// REST excerpts do not inherit the Query block's moreText setting.
 		// Match the server-rendered cards without duplicating an existing link.
@@ -432,9 +434,8 @@
 				You've seen all <strong>${escHtml(config.termName)}</strong> posts &mdash; here's everything else
 			</span>
 		`;
-		sep.innerHTML = window.DOMPurify
-			? window.DOMPurify.sanitize(sepRawHtml, { USE_PROFILES: { html: true, svg: true } })
-			: sepRawHtml;
+		if (!window.DOMPurify) return;
+		sep.innerHTML = window.DOMPurify.sanitize(sepRawHtml, { USE_PROFILES: { html: true, svg: true } });
 		grid.appendChild(sep);
 		// Separator spans both columns — trigger a layout pass
 		setTimeout(layoutMasonryGrid, 50);
