@@ -64,8 +64,9 @@ function tacobout_render_author_profile() {
 }
 
 add_action( 'init', function () {
-	register_block_type( 'tacobout/author-banner', array( 'api_version' => 3, 'render_callback' => 'tacobout_render_author_banner' ) );
-	register_block_type( 'tacobout/author-profile', array( 'api_version' => 3, 'render_callback' => 'tacobout_render_author_profile' ) );
+	wp_register_script( 'tacobout-author-profile-editor', get_theme_file_uri( 'tacobout-author-profile-editor.js' ), array( 'wp-blocks', 'wp-block-editor', 'wp-element', 'wp-i18n' ), wp_get_theme()->get( 'Version' ), true );
+	register_block_type( 'tacobout/author-banner', array( 'api_version' => 3, 'editor_script' => 'tacobout-author-profile-editor', 'supports' => array( 'html' => false, 'inserter' => false ), 'render_callback' => 'tacobout_render_author_banner' ) );
+	register_block_type( 'tacobout/author-profile', array( 'api_version' => 3, 'editor_script' => 'tacobout-author-profile-editor', 'supports' => array( 'html' => false, 'inserter' => false ), 'render_callback' => 'tacobout_render_author_profile' ) );
 } );
 add_action( 'wp_enqueue_scripts', function () {
 	if ( is_author() ) {

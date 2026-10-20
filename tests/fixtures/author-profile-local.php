@@ -24,7 +24,7 @@ $cases = array(
 	array( 'the halloween comics shelf has a serious woods problem', '<!-- wp:paragraph --><p>Zombies, missing memories, hungry forests, monster hunters, and pop-star gods. A review roundup from the shelf, with a little room to read.</p><!-- /wp:paragraph -->', 'standard' ),
 	array( 'Reply fixture: keep the conversation attached', '<!-- wp:activitypub/reply {"url":"https://example.invalid/original-post"} /--><!-- wp:paragraph --><p>This local reply must disappear only in the Posts filter.</p><!-- /wp:paragraph -->', 'status' ),
 );
-for ( $i = 0; $i < 13; ++$i ) {
+for ( $i = 0; $i < 16; ++$i ) {
 	$case = $cases[ $i % 3 ];
 	$title = 'Profile fixture ' . $i . ': ' . $case[0];
 	$existing = get_posts( array( 'title' => $title, 'post_status' => 'any', 'posts_per_page' => 1 ) );
