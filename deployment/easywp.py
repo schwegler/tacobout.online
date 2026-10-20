@@ -26,7 +26,7 @@ def config_file(path, writing=False):
     require(c.get('approval_mode') in {'environment-reviewers', 'manual-dispatch'}, 'Invalid approval policy')
     require(isinstance(c.get('smoke_paths'), list) and c['smoke_paths'], 'Smoke routes required')
     for p in c['smoke_paths']:
-        require(isinstance(p, str) and p.startswith('/') and not p.startswith('//') and not any(x in p for x in ['..', '?', '#', '\\']) and not any(ord(x)<32 for x in p), 'Invalid smoke path')
+        require(p in {'/', '/author/schwegler/'}, 'Only the reviewed public homepage/author smoke routes are allowed')
     if writing:
         require(c.get('enabled') is True, 'Production writes are disabled')
     return c
@@ -208,6 +208,7 @@ def unseal(cipher, key):
     files = {}; total = 0
     with zipfile.ZipFile(io.BytesIO(plain)) as z:
         require(len(z.infolist()) <= MAX_FILES + 1 and len(set(z.namelist())) == len(z.namelist()), 'Invalid backup archive')
+        require(z.getinfo('plan.json').file_size <= 8 * 1024 * 1024, 'Backup plan too large')
         plan = json.loads(z.read('plan.json'))
         for entry in z.infolist():
             if entry.filename == 'plan.json':
@@ -303,11 +304,14 @@ def http_read(url):
 
 
 def smoke(c, desired=None):
+    bodies = []
     for path in c['smoke_paths']:
         body = http_read(urljoin(c['site_url'], path)).lower()
+        bodies.append(body)
         require(not any(x in body for x in [b'fatal error:', b'there has been a critical error on this website']), 'WordPress error page detected')
     if desired:
         assets = json.loads(desired['asset-manifest.json'][0])
+        require(all(assets['style.css'].encode() in body for body in bodies), 'Cached HTML does not reference the deployed theme style; purge via supported UI then run verify')
         for target in assets.values():
             relative(target, True)
             url = c['public_theme_url'] + '/' + quote(target, safe='/') + '?deploy=' + sha(desired[target][0])[:16]

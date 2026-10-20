@@ -7,7 +7,7 @@ MAX_FILE = 32 * 1024 * 1024
 MAX_TOTAL = 128 * 1024 * 1024
 MAX_FILES = 5000
 FORBIDDEN = {'wp-config.php', 'uploads', 'plugins', '.git', '.env'}
-ROOT_FILES = {'functions.php', 'index.php', 'theme.json', 'LICENSE', 'README.md', 'screenshot.png'}
+ROOT_FILES = {'functions.php', 'index.php', 'theme.json', 'asset-manifest.json', 'LICENSE', 'README.md', 'screenshot.png'}
 DIRECTORIES = {'assets', 'inc', 'parts', 'patterns', 'seasonal', 'templates'}
 
 class Refused(ValueError):
@@ -99,6 +99,7 @@ def load(directory, expected_commit, expected_zip_sha):
     hex_value(expected_commit, 40); hex_value(expected_zip_sha)
     directory = Path(directory)
     require(not (directory / 'theme.zip').is_symlink() and not (directory / 'release.json').is_symlink(), 'Artifact links rejected')
+    require((directory / 'theme.zip').stat().st_size <= MAX_TOTAL and (directory / 'release.json').stat().st_size <= 8 * 1024 * 1024, 'Artifact file size limit')
     archive = (directory / 'theme.zip').read_bytes()
     require(len(archive) <= MAX_TOTAL and sha(archive) == expected_zip_sha, 'Release ZIP checksum mismatch')
     manifest = json.loads((directory / 'release.json').read_bytes())
@@ -118,9 +119,13 @@ def load(directory, expected_commit, expected_zip_sha):
     require('style.css' in files and 'functions.php' in files and 'theme.json' in files, 'Incomplete runtime theme')
     version(files['style.css'][0])
     assets = json.loads(files['asset-manifest.json'][0])
+    require(isinstance(assets, dict) and assets, 'Asset manifest missing')
     for source, target in assets.items():
+        require(PurePosixPath(source).suffix in {'.css', '.js'}, 'Only frontend CSS/JS may be HTTP-verified')
         relative(source, True); relative(target, True)
         require(source in files and target in files and files[source][0] == files[target][0], 'Generated asset mismatch')
+        base, ext = source.rsplit('.', 1)
+        require(target == base + '.' + sha(files[source][0])[:16] + '.' + ext, 'Generated filename digest mismatch')
     return manifest, files
 
 

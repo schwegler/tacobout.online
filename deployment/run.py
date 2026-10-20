@@ -78,11 +78,19 @@ def publish():
     print('Theme file readback and HTTP smoke passed.')
 
 
+def verify():
+    _, source = directories()
+    c = config_file('.github/deployment/production.json')
+    _, desired = load(source, os.environ['EXPECTED_COMMIT'], os.environ['ARTIFACT_SHA256'])
+    smoke(c, desired)
+    print('HTTP-only readback passed; no SFTP credentials or writes used.')
+
+
 if __name__ == '__main__':
     os.umask(0o077)
     try:
-        require(len(sys.argv) == 2 and sys.argv[1] in {'preflight', 'publish'}, 'Unknown fixed workflow phase')
-        (preflight if sys.argv[1] == 'preflight' else publish)()
+        require(len(sys.argv) == 2 and sys.argv[1] in {'preflight', 'publish', 'verify'}, 'Unknown fixed workflow phase')
+        {'preflight': preflight, 'publish': publish, 'verify': verify}[sys.argv[1]]()
     except Exception as e:
         from theme_release import Refused
         print('Deployment stopped: ' + (str(e) if isinstance(e, Refused) else type(e).__name__))

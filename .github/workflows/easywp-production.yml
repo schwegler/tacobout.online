@@ -5,7 +5,7 @@ on:
     inputs:
       operation:
         type: choice
-        options: [inspect, deploy, rollback]
+        options: [inspect, verify, deploy, rollback]
         default: inspect
         required: true
       artifact_run_id:
@@ -57,7 +57,8 @@ jobs:
         with:
           python-version: '3.12'
       - name: Install hash-locked SFTP dependencies
-        run: python -m pip install --index-url https://pypi.org/simple --require-hashes --only-binary=:all: -r deployment/requirements.txt
+        run: |
+          python -m pip install --index-url https://pypi.org/simple --require-hashes --only-binary=:all: -r deployment/requirements.txt
       - name: Validate manual dispatch, environment and immutable source
         id: gate
         env:
@@ -88,7 +89,8 @@ jobs:
         with:
           python-version: '3.12'
       - name: Install hash-locked SFTP dependencies
-        run: python -m pip install --index-url https://pypi.org/simple --require-hashes --only-binary=:all: -r deployment/requirements.txt
+        run: |
+          python -m pip install --index-url https://pypi.org/simple --require-hashes --only-binary=:all: -r deployment/requirements.txt
       - name: Download exact source artifact without executing it
         if: inputs.operation != 'inspect'
         uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
@@ -99,6 +101,7 @@ jobs:
           path: ${{ runner.temp }}/easywp-source
           merge-multiple: true
       - name: Read-only drift preflight and encrypted theme-file backup
+        if: inputs.operation != 'verify'
         env:
           OPERATION: ${{ inputs.operation }}
           EXPECTED_COMMIT: ${{ inputs.expected_commit }}
@@ -115,6 +118,7 @@ jobs:
         run: python deployment/run.py preflight
       - name: Persist encrypted backup before any managed theme replacement
         id: backup
+        if: inputs.operation != 'verify'
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
           name: theme-backup-${{ github.run_id }}-${{ github.run_attempt }}
@@ -122,14 +126,14 @@ jobs:
           if-no-files-found: error
           retention-days: 30
       - name: Read the persisted backup back from GitHub
-        if: inputs.operation != 'inspect'
+        if: inputs.operation == 'deploy' || inputs.operation == 'rollback'
         uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
         with:
           artifact-ids: ${{ steps.backup.outputs.artifact-id }}
           path: ${{ runner.temp }}/easywp-durable-backup
           merge-multiple: true
       - name: Apply the unchanged plan, verify SFTP bytes and HTTP smoke
-        if: inputs.operation != 'inspect'
+        if: inputs.operation == 'deploy' || inputs.operation == 'rollback'
         env:
           OPERATION: ${{ inputs.operation }}
           EXPECTED_COMMIT: ${{ inputs.expected_commit }}
@@ -145,6 +149,12 @@ jobs:
           EASYWP_KNOWN_HOSTS: ${{ secrets.EASYWP_KNOWN_HOSTS }}
           THEME_BACKUP_KEY: ${{ secrets.THEME_BACKUP_KEY }}
         run: python deployment/run.py publish
+      - name: HTTP-only readback after a supported cache purge
+        if: inputs.operation == 'verify'
+        env:
+          EXPECTED_COMMIT: ${{ inputs.expected_commit }}
+          ARTIFACT_SHA256: ${{ inputs.artifact_sha256 }}
+        run: python deployment/run.py verify
       - name: Preserve non-secret publication audit even after failure
         if: always()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4

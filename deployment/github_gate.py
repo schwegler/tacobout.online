@@ -61,23 +61,24 @@ def verify_source(operation, run_id, attempt, commit, get=api):
     value = selected[0].get('digest', '')
     require(value.startswith('sha256:'), 'GitHub artifact digest missing')
     hex_value(value[7:])
-    return {'artifact_id': str(selected[0]['id']), 'artifact_name': name, 'artifact_digest': value[7:]}
+    return {'artifact_id': positive(str(selected[0]['id'])), 'artifact_name': name, 'artifact_digest': value[7:]}
 
 
 def main():
     from easywp import config_file
     require(os.environ.get('GITHUB_REPOSITORY') == REPOSITORY and os.environ.get('GITHUB_REF') == 'refs/heads/main' and os.environ.get('GITHUB_EVENT_NAME') == 'workflow_dispatch', 'Production workflow is main-only, explicitly dispatched')
     operation = os.environ.get('OPERATION')
-    require(operation in {'inspect', 'deploy', 'rollback'}, 'Invalid operation')
-    policy = config_file('.github/deployment/production.json', writing=operation != 'inspect')
+    require(operation in {'inspect', 'verify', 'deploy', 'rollback'}, 'Invalid operation')
+    policy = config_file('.github/deployment/production.json', writing=operation in {'deploy', 'rollback'})
     verify_environment(policy)
     output = {'artifact_id': '', 'artifact_name': '', 'artifact_digest': ''}
     if operation != 'inspect':
         hex_value(os.environ.get('ARTIFACT_SHA256', ''))
-        hex_value(os.environ.get('EXPECTED_LIVE_DIGEST', ''))
-        from easywp import confirm_backup
-        confirm_backup(os.environ.get('HOST_BACKUP_REFERENCE'), os.environ.get('HOST_BACKUP_CREATED_UTC'), os.environ.get('BACKUP_CONFIRMATION'))
-        output = verify_source(operation, os.environ.get('ARTIFACT_RUN_ID'), os.environ.get('ARTIFACT_ATTEMPT'), os.environ.get('EXPECTED_COMMIT', ''))
+        if operation != 'verify':
+            hex_value(os.environ.get('EXPECTED_LIVE_DIGEST', ''))
+            from easywp import confirm_backup
+            confirm_backup(os.environ.get('HOST_BACKUP_REFERENCE'), os.environ.get('HOST_BACKUP_CREATED_UTC'), os.environ.get('BACKUP_CONFIRMATION'))
+        output = verify_source('deploy' if operation == 'verify' else operation, os.environ.get('ARTIFACT_RUN_ID'), os.environ.get('ARTIFACT_ATTEMPT'), os.environ.get('EXPECTED_COMMIT', ''))
     with open(os.environ['GITHUB_OUTPUT'], 'a') as f:
         for k, v in output.items(): f.write(k + '=' + v + '\n')
     print('Manual workflow/ref, environment policy and immutable source identity validated.')
