@@ -11,6 +11,7 @@ require_once __DIR__ . '/inc/assets.php';
 require_once __DIR__ . '/inc/trove.php';
 require_once __DIR__ . '/inc/sidebar.php';
 require_once __DIR__ . '/inc/editorial.php';
+require_once __DIR__ . '/inc/author-profile.php';
 require_once __DIR__ . '/inc/social.php';
 
 if ( ! function_exists( 'tacobout_support' ) ) :

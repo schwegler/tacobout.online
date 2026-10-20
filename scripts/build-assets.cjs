@@ -4,7 +4,7 @@ const path = require('node:path');
 const crypto = require('node:crypto');
 
 const sources = [
-  'style.css', 'editorial.css', 'dompurify.min.js',
+  'style.css', 'editorial.css', 'dompurify.min.js', 'tacobout-author-profile.js',
   'tacobout-masonry.js', 'tacobout-infinite-scroll.js', 'tacobout-alt-badge.js',
   'tacobout-header.js', 'tacobout-ui.js', 'tacobout-sidebar.js', 'tacobout-reviews.js',
   'seasonal/seasonal.css', 'seasonal/season-config.js', 'seasonal/controller.js',

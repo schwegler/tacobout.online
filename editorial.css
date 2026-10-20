@@ -153,3 +153,52 @@ html body .tacobout-magazine-grid.tacobout-masonry-active>*{align-self:start;mar
 /* Never clip a tall rail or create a nested scroll area. No-JS defaults to document flow. */
 html body.single .tacobout-sidebar-sticky{position:static!important;max-height:none!important;overflow:visible!important}
 @media(min-width:1024px){html body.single .tacobout-sidebar-sticky.tacobout-sidebar-fits{position:sticky!important;top:var(--tacobout-sidebar-top,110px)!important}}
+
+/* Approved ordinary-author profile: compact details rail, one chronological feed. */
+html body.author .tacobout-author-page{width:calc(100% - 64px);max-width:1000px!important;margin-inline:auto;padding:36px 0 64px!important}
+.tacobout-profile-banner{height:168px;padding:28px 40px;display:flex;align-items:center;justify-content:space-between;gap:24px;background:var(--taco-surface-2);border-radius:14px;position:relative;overflow:hidden;margin:0!important}
+.tacobout-profile-banner p{margin:8px 0 0;font-size:14px;color:var(--taco-muted)}
+.tacobout-profile-banner .tacobout-profile-tagline{font-size:25px;line-height:1.2;font-weight:700;letter-spacing:-.035em;color:var(--taco-fg);margin:0}
+.tacobout-profile-art{height:158px;width:110px;object-fit:contain;align-self:end;margin-bottom:-28px;flex-shrink:0}
+.tacobout-profile-banner.has-user-banner{padding:0}.tacobout-profile-banner-image{width:100%;height:100%;object-fit:cover}
+html .tacobout-profile-columns{display:grid;grid-template-columns:248px minmax(0,1fr);gap:40px;margin:0!important;align-items:start}
+html .tacobout-profile-rail{min-width:0;padding:0 24px 26px 0;border-right:1px solid var(--taco-border);margin:0!important;position:relative}
+html .tacobout-profile-timeline{min-width:0;padding-top:4px;margin:0!important}
+html .tacobout-profile-rail .activitypub-follow-me-block-wrapper{margin:0;border:0;border-radius:0;box-shadow:none;overflow:visible;background:transparent}
+html .tacobout-profile-rail .activitypub-profile{padding:0!important}
+html .tacobout-profile-rail .activitypub-profile__header{display:none}
+html .tacobout-profile-rail .activitypub-profile__body{padding:0;display:block}
+html .tacobout-profile-rail .activitypub-profile__avatar,html .tacobout-profile-fallback .avatar{display:block;position:relative;box-sizing:border-box;width:100px;height:100px;object-fit:contain;border:5px solid var(--taco-bg);border-radius:24px;background:var(--taco-surface-2);margin:-34px 0 16px}
+html .tacobout-profile-rail .activitypub-profile__content{display:flex;flex-direction:column;align-items:stretch;gap:0}
+html .tacobout-profile-rail .activitypub-profile__name,.tacobout-profile-name{font-size:28px;line-height:1.2;letter-spacing:-.035em;font-weight:700;color:var(--taco-fg);overflow-wrap:anywhere;margin:0 0 8px}
+html .tacobout-profile-rail .activitypub-profile__handle{font-size:13px;color:var(--taco-muted);overflow-wrap:anywhere}
+html .tacobout-profile-rail .activitypub-profile__info{flex:auto}
+html .tacobout-profile-rail .activitypub-profile .wp-block-button{width:100%;margin:22px 0 0}
+html .tacobout-profile-rail .activitypub-profile .wp-block-button__link{display:flex;align-items:center;justify-content:center;width:100%;min-height:44px;padding:10px 12px;border-radius:7px;background:var(--taco-accent-fill);color:#fff;font-size:14px;font-weight:600;line-height:1.4;text-decoration:none}
+html .tacobout-profile-copy{width:100%;min-height:44px;border:1px solid var(--taco-border);border-radius:7px;background:var(--taco-surface);color:var(--taco-fg);font-size:14px;font-weight:600;padding:10px 12px;margin:10px 0 0}
+html .tacobout-profile-copy[hidden]{display:none}
+html .tacobout-profile-rail .activitypub-profile__bio,.tacobout-profile-bio{font-size:15px;line-height:1.6;margin-top:22px;width:100%}
+html .tacobout-profile-rail .activitypub-profile__stats{display:flex;flex-wrap:wrap;gap:16px;margin-top:20px;font-size:14px;color:var(--taco-muted)}
+html .tacobout-profile-rail .activitypub-profile__stats strong{color:var(--taco-fg)}
+html .tacobout-profile-rail .activitypub-extra-fields{display:block;border:0;margin:24px 0 0;padding:0;font-size:13px}
+html .tacobout-profile-rail .activitypub-extra-field{display:block;border:0;background:none;padding:0;margin:0 0 16px;min-width:0}
+html .tacobout-profile-rail .activitypub-extra-field dt{color:var(--taco-muted);font-weight:400;font-size:12px;margin:0 0 3px}
+html .tacobout-profile-rail .activitypub-extra-field dd{margin:0;overflow-wrap:anywhere;font-size:14px}
+html .tacobout-profile-rail .activitypub-extra-field a{word-break:normal;overflow-wrap:anywhere}
+html .tacobout-profile-timeline .ap-tabs{display:flex;gap:30px;border:0;border-bottom:1px solid var(--taco-border);padding:0;margin:0}
+html .tacobout-profile-timeline .ap-tabs__tab{display:inline-flex;align-items:center;min-height:56px;border:0;border-bottom:3px solid transparent;margin:0;padding:14px 0 12px;color:var(--taco-muted);background:transparent;font-size:15px;text-decoration:none;border-radius:0}
+html .tacobout-profile-timeline .ap-tabs__tab.is-active{border-bottom-color:var(--taco-accent);color:var(--taco-fg);font-weight:600}
+html body.author .tacobout-author-feed{display:block!important;--tacobout-masonry-columns:1;margin:0!important;padding:0!important}
+html body.author .tacobout-author-feed>.wp-block-post{display:block;margin:0!important;padding:24px 0!important;border-bottom:1px solid var(--taco-border);backdrop-filter:none;-webkit-backdrop-filter:none}
+html body.author .tacobout-author-feed .tacobout-card-inner{display:flex;flex-direction:column;gap:14px}
+html body.author .tacobout-author-feed .wp-block-post-title{font-size:25px!important;line-height:1.28!important;margin:0!important}
+html body.author .tacobout-author-feed .wp-block-post-content,html body.author .tacobout-author-feed .wp-block-post-excerpt{font-size:16px!important;line-height:1.65;max-width:66ch;width:100%;margin:0!important}
+html body.author .tacobout-author-feed .wp-block-post-featured-image{order:0!important}
+html body.author .tacobout-author-feed .wp-block-post-featured-image img{aspect-ratio:auto!important;object-fit:contain!important;height:auto;width:100%}
+html .tacobout-profile-timeline .wp-block-query-pagination{gap:8px;flex-wrap:wrap}
+html .tacobout-profile-timeline .wp-block-query-pagination :is(a,span.page-numbers){display:inline-flex;align-items:center;justify-content:center;min-width:44px;min-height:44px;padding:8px;border-radius:7px}
+html .tacobout-profile-timeline :is(a,button):focus-visible,html .tacobout-profile-rail :is(a,button,input):focus-visible{outline:3px solid var(--taco-accent);outline-offset:4px}
+@media(min-width:801px) and (max-width:1159px){html .tacobout-profile-columns{grid-template-columns:224px minmax(0,1fr);gap:32px}html .tacobout-profile-rail{padding-right:20px}}
+@media(max-width:800px){html body.author .tacobout-author-page{width:100%;max-width:680px!important;padding-top:24px!important}.tacobout-profile-banner{margin:0 24px!important;height:155px;padding:24px 30px}.tacobout-profile-art{height:142px;margin-bottom:-24px}html .tacobout-profile-columns{display:block}html .tacobout-profile-rail{padding:0 32px 24px;border-right:0;border-bottom:1px solid var(--taco-border)}html .tacobout-profile-rail .activitypub-profile__avatar,html .tacobout-profile-fallback .avatar{margin-top:-28px;width:92px;height:92px}html .tacobout-profile-timeline{padding:0 32px}html .tacobout-profile-rail .activitypub-profile__stats{gap:22px}.tacobout-profile-banner .tacobout-profile-tagline{font-size:24px}}
+@media(max-width:650px){html body.author .tacobout-author-page{padding-top:18px!important;padding-bottom:35px!important}.tacobout-profile-banner{height:142px;margin:0 16px!important;padding:24px;gap:12px}.tacobout-profile-banner .tacobout-profile-tagline{font-size:21px}.tacobout-profile-banner p{font-size:12px;max-width:190px}.tacobout-profile-art{width:84px;height:126px;margin-right:-4px}html .tacobout-profile-rail{padding:0 24px 23px}html .tacobout-profile-timeline{padding-inline:24px}html .tacobout-profile-rail .activitypub-profile__avatar,html .tacobout-profile-fallback .avatar{width:78px;height:78px;margin-top:-23px;border-radius:20px}html .tacobout-profile-rail .activitypub-profile__name,.tacobout-profile-name{font-size:25px}html body.author .tacobout-author-feed .wp-block-post-title{font-size:23px!important}html body.author .tacobout-author-feed .wp-block-post-content,html body.author .tacobout-author-feed .wp-block-post-excerpt{font-size:15px!important}html .tacobout-profile-timeline .ap-tabs{gap:28px}}
+@media(prefers-reduced-motion:reduce){.tacobout-profile-rail .activitypub-modal__frame{animation:none!important}}

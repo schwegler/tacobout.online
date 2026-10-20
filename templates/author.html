@@ -1,23 +1,23 @@
 <!-- wp:template-part {"slug":"header","tagName":"header"} /-->
 
-<!-- wp:group {"tagName":"main","layout":{"type":"constrained","contentSize":"720px","wideSize":"720px"},"style":{"spacing":{"padding":{"top":"var:preset|spacing|60","bottom":"var:preset|spacing|60"}}}} -->
-<main class="wp-block-group" style="padding-top:var(--wp--preset--spacing--60);padding-bottom:var(--wp--preset--spacing--60)">
-	<!-- wp:query-title {"type":"archive","showPrefix":false} /-->
-	<!-- wp:shortcode -->
-	[tacobout_author_mascot]
-	<!-- /wp:shortcode -->
-	<!-- wp:activitypub/follow-me {"selectedUser":"inherit","className":"is-style-profile"} /-->
-
-	<!-- wp:activitypub/extra-fields {"selectedUser":"inherit"} /-->
-	<!-- wp:activitypub/posts-and-replies /-->
-
-	<!-- wp:spacer {"height":"var:preset|spacing|40"} -->
-	<div style="height:var(--wp--preset--spacing--40)" aria-hidden="true" class="wp-block-spacer"></div>
-	<!-- /wp:spacer -->
-
+<!-- wp:group {"tagName":"main","className":"tacobout-author-page","layout":{"type":"default"}} -->
+<main class="wp-block-group tacobout-author-page">
+<!-- wp:query-title {"type":"archive","showPrefix":false,"className":"screen-reader-text"} /-->
+<!-- wp:shortcode -->[tacobout_author_banner]<!-- /wp:shortcode -->
+<!-- wp:group {"className":"tacobout-profile-columns","layout":{"type":"default"}} -->
+<div class="wp-block-group tacobout-profile-columns">
+<!-- wp:group {"tagName":"aside","className":"tacobout-profile-rail","layout":{"type":"default"}} -->
+<aside class="wp-block-group tacobout-profile-rail">
+<!-- wp:shortcode -->[tacobout_author_profile]<!-- /wp:shortcode -->
+<!-- wp:activitypub/extra-fields {"selectedUser":"inherit"} /-->
+</aside>
+<!-- /wp:group -->
+<!-- wp:group {"className":"tacobout-profile-timeline","layout":{"type":"default"}} -->
+<div class="wp-block-group tacobout-profile-timeline">
+<!-- wp:activitypub/posts-and-replies /-->
 	<!-- wp:query {"namespace":"tacobout/feed","queryId":1,"query":{"perPage":10,"pages":0,"offset":0,"postType":"post","order":"desc","orderBy":"date","author":"","search":"","exclude":[],"sticky":"","inherit":true}} -->
 	<div class="wp-block-query">
-		<!-- wp:post-template {"className":"tacobout-magazine-grid"} -->
+		<!-- wp:post-template {"className":"tacobout-magazine-grid tacobout-author-feed"} -->
 
 	<!-- wp:group {"className":"tacobout-card-inner","layout":{"type":"default"},"style":{"spacing":{"blockGap":"0.75rem"}}} -->
 	<div class="wp-block-group tacobout-card-inner">
@@ -55,6 +55,10 @@
 	</div>
 	<!-- /wp:query -->
 
+</div>
+<!-- /wp:group -->
+</div>
+<!-- /wp:group -->
 </main>
 <!-- /wp:group -->
 
