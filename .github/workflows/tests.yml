@@ -34,3 +34,17 @@ jobs:
           node --check tacobout-infinite-scroll.js
           node --check tacobout-sidebar.js
           node --test tests/*.test.cjs
+
+  seasonal-placement:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install browser test runtime
+        run: |
+          pip install playwright
+          playwright install --with-deps chromium
+      - name: Check seasonal reading clearance and controls
+        run: python tests/seasonal-placement-browser.py
