@@ -52,5 +52,7 @@ jobs:
         run: python tests/author-profile-browser.py
       - name: Check configured author banner proportions
         run: python tests/author-banner-browser.py
+      - name: Check post metadata avatars and REST-loaded cards
+        run: python tests/post-avatars-browser.py
       - name: Check seasonal reading clearance and controls
         run: python tests/seasonal-placement-browser.py

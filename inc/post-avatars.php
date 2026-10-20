@@ -32,7 +32,7 @@ function tacobout_render_metadata_avatar( $content, $parsed, $block ) {
 	if ( ! $name ) {
 		return '';
 	}
-	$url = get_avatar_url( $author, array( 'size' => 48 ) );
+	$url = esc_url_raw( get_avatar_url( $author, array( 'size' => 48 ) ) );
 	if ( ! $url ) {
 		return '';
 	}
@@ -54,10 +54,17 @@ function tacobout_render_metadata_avatar( $content, $parsed, $block ) {
 	if ( $card ) {
 		$tags = new WP_HTML_Tag_Processor( $content );
 		if ( $tags->next_tag( 'A' ) ) {
-			$tags->set_attribute( 'href', get_author_posts_url( $author ) );
+			$tags->set_attribute( 'href', esc_url_raw( get_author_posts_url( $author ) ) );
 			$tags->set_attribute( 'aria-label', sprintf( __( 'Posts by %s', 'tacobout' ), $name ) );
 		}
 		$content = $tags->get_updated_html();
+		if ( ! str_contains( $content, '<a ' ) ) {
+			$tags = new WP_HTML_Tag_Processor( $content );
+			if ( $tags->next_tag( 'IMG' ) ) {
+				$tags->set_attribute( 'alt', sprintf( __( 'Avatar of %s', 'tacobout' ), $name ) );
+			}
+			$content = $tags->get_updated_html();
+		}
 	}
 	return $content;
 }
