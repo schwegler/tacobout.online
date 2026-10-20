@@ -50,5 +50,7 @@ jobs:
         run: python tests/video-sizing-browser.py
       - name: Check responsive author profile against native markup
         run: python tests/author-profile-browser.py
+      - name: Check configured author banner proportions
+        run: python tests/author-banner-browser.py
       - name: Check seasonal reading clearance and controls
         run: python tests/seasonal-placement-browser.py

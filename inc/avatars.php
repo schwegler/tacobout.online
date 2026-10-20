@@ -49,7 +49,10 @@ function tacobout_explicit_activitypub_icon( $identity ) {
 			return '';
 		}
 		$url = wp_get_attachment_url( (int) $icon );
-		return is_string( $url ) ? esc_url_raw( $url, array( 'http', 'https' ) ) : '';
+		if ( ! is_string( $url ) || ! in_array( wp_parse_url( $url, PHP_URL_SCHEME ), array( 'http', 'https' ), true ) ) {
+			return '';
+		}
+		return esc_url_raw( $url, array( 'http', 'https' ) );
 	} finally {
 		$resolving = false;
 	}

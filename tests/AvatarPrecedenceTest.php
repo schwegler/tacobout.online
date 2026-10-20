@@ -38,7 +38,7 @@ class AvatarPrecedenceTest extends \PHPUnit\Framework\TestCase {
         \Brain\Monkey\Functions\when('wp_attachment_is_image')->justReturn(false);
         $this->assertSame($this->fallback,tacobout_explicit_icon_avatar_data($this->fallback,7));
         \Brain\Monkey\Functions\when('wp_attachment_is_image')->justReturn(true);
-        foreach ([false,'','javascript:alert(1)'] as $url) {
+        foreach ([false,'','javascript:alert(1)','/icon.png','//example.test/icon.png'] as $url) {
             \Brain\Monkey\Functions\when('wp_get_attachment_url')->justReturn($url);
             $this->assertSame($this->fallback,tacobout_explicit_icon_avatar_data($this->fallback,7));
         }
@@ -74,4 +74,12 @@ class AvatarPrecedenceTest extends \PHPUnit\Framework\TestCase {
         $this->assertSame('https://example.test/icon.png',tacobout_explicit_icon_avatar_data($this->fallback,7)['url']);
         $this->assertSame(2,$calls);
     }
+    public function test_exception_does_not_leave_the_recursion_guard_locked() {
+        \Brain\Monkey\Functions\when('wp_get_attachment_url')->alias(function(){throw new \RuntimeException('upstream');});
+        try { tacobout_explicit_activitypub_icon(7); $this->fail('Expected upstream exception'); }
+        catch (\RuntimeException $e) { $this->assertSame('upstream',$e->getMessage()); }
+        \Brain\Monkey\Functions\when('wp_get_attachment_url')->justReturn('https://example.test/icon.png');
+        $this->assertSame('https://example.test/icon.png',tacobout_explicit_activitypub_icon(7));
+    }
+
 }
