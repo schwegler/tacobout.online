@@ -48,5 +48,7 @@ jobs:
           playwright install --with-deps chromium
       - name: Check archive portrait video sizing
         run: python tests/video-sizing-browser.py
+      - name: Check responsive author profile against native markup
+        run: python tests/author-profile-browser.py
       - name: Check seasonal reading clearance and controls
         run: python tests/seasonal-placement-browser.py
