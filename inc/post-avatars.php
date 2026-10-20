@@ -52,13 +52,15 @@ function tacobout_render_metadata_avatar( $content, $parsed, $block ) {
 	}
 	$content = $tags->get_updated_html();
 	if ( $card ) {
+		$linked = false;
 		$tags = new WP_HTML_Tag_Processor( $content );
 		if ( $tags->next_tag( 'A' ) ) {
+			$linked = true;
 			$tags->set_attribute( 'href', esc_url_raw( get_author_posts_url( $author ) ) );
 			$tags->set_attribute( 'aria-label', sprintf( __( 'Posts by %s', 'tacobout' ), $name ) );
 		}
 		$content = $tags->get_updated_html();
-		if ( ! str_contains( $content, '<a ' ) ) {
+		if ( ! $linked ) {
 			$tags = new WP_HTML_Tag_Processor( $content );
 			if ( $tags->next_tag( 'IMG' ) ) {
 				$tags->set_attribute( 'alt', sprintf( __( 'Avatar of %s', 'tacobout' ), $name ) );
