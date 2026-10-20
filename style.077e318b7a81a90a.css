@@ -2868,6 +2868,7 @@ body .tacobout-magazine-grid .wp-block-post-content :is(.wp-block-embed.is-type-
 	width: min(100%, 640px) !important;
 	height: auto !important;
 	max-height: 360px;
+	border: 0;
 	aspect-ratio: 16 / 9 !important;
 	margin-inline: auto;
 	object-fit: contain;
