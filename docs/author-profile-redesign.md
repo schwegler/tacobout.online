@@ -108,3 +108,8 @@ Escape dismissal, native video playback, Posts reply exclusion and filtered page
    Keep mascot bios brief and identify the editorial mascot role; claim no human
    expertise, personal history or fabricated experience. Assign only articles the
    user deliberately selects; no automatic historical reassignment is included.
+
+Additional local checks passed for the optional Clipboard API button and the existing
+Halloween controller at 1440/390px with reduced motion: the author feed remains
+usable, motion is paused, and the mascot is obscured while the native follow dialog
+is open. Tab opacity is reset so the inactive native tab retains readable contrast.

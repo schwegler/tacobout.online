@@ -46,6 +46,7 @@ with sync_playwright() as p:
             assert all(a['y'] + a['height'] <= b['y'] + 2 for a,b in zip(boxes, boxes[1:])), 'chronology overlaps'
             assert page.locator('.tacobout-author-feed').evaluate('(n)=>getComputedStyle(n).display') == 'block'
             expect(page.locator('.ap-tabs__tab[aria-current="page"]')).to_have_text('Posts & Replies')
+            assert page.locator('.ap-tabs__tab').last.evaluate('(n)=>getComputedStyle(n).opacity') == '1'
             assert page.locator('video[controls]').count() > 0
             assert all(n['height'] >= 44 for n in page.locator('.ap-tabs__tab, .activitypub-profile .wp-block-button__link').evaluate_all('(ns)=>ns.map(n=>n.getBoundingClientRect().toJSON())'))
             assert page.locator('.activitypub-profile__avatar').evaluate('(n)=>getComputedStyle(n).objectFit') == 'contain'
@@ -57,6 +58,11 @@ with sync_playwright() as p:
                 page.wait_for_timeout(150)  # Native plugin installs focus trap/document listeners asynchronously.
                 page.keyboard.press('Escape')
                 expect(page.locator('.activitypub-modal__overlay')).to_be_hidden()
+                if width == 1440 and theme == 'light':
+                    page.context.grant_permissions(['clipboard-read', 'clipboard-write'], origin=BASE)
+                    page.locator('.tacobout-profile-copy').click()
+                    expect(page.locator('.tacobout-profile-copy-status')).to_have_text('Handle copied')
+                    assert page.evaluate('navigator.clipboard.readText()') == page.locator('.tacobout-profile-copy').get_attribute('data-profile-handle')
                 video = page.locator('video').first
                 video.evaluate('(v)=>{v.muted=true;v.load();return v.play()}')
                 page.wait_for_timeout(150)
