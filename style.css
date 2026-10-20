@@ -2851,6 +2851,29 @@ body .tacobout-magazine-grid .tacobout-video-frame {
 	border-radius: 12px;
 }
 body .tacobout-magazine-grid .wp-block-embed__wrapper:has(.tacobout-video-frame)::before { display: none !important; }
+/* Feed players live in a horizontal viewport, even when the source is a Short.
+ * YouTube letterboxes inside its iframe; native video uses contain. Single posts
+ * keep their authored ratios. Reset WordPress's portrait spacer before JS runs. */
+body .tacobout-magazine-grid .wp-block-post-content .wp-block-embed.is-type-video .wp-block-embed__wrapper {
+	position: relative;
+	padding: 0 !important;
+}
+body .tacobout-magazine-grid .wp-block-embed.is-type-video .wp-block-embed__wrapper::before {
+	display: none !important;
+}
+body .tacobout-magazine-grid .wp-block-post-content :is(.wp-block-embed.is-type-video iframe, .tacobout-video-frame, video) {
+	display: block;
+	position: static !important;
+	inset: auto !important;
+	width: min(100%, 640px) !important;
+	height: auto !important;
+	max-height: 360px;
+	border: 0;
+	aspect-ratio: 16 / 9 !important;
+	margin-inline: auto;
+	object-fit: contain;
+	background: #000;
+}
 body .tacobout-magazine-grid .wp-block-post-content :is(.wp-block-gallery, .gallery) {
 	display: block !important;
 	columns: 2;

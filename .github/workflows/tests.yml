@@ -46,5 +46,7 @@ jobs:
         run: |
           pip install playwright
           playwright install --with-deps chromium
+      - name: Check archive portrait video sizing
+        run: python tests/video-sizing-browser.py
       - name: Check seasonal reading clearance and controls
         run: python tests/seasonal-placement-browser.py
