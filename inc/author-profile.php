@@ -60,7 +60,7 @@ function tacobout_render_author_profile() {
 			return $profile;
 		}
 	}
-	return '<div class="tacobout-profile-fallback">' . get_avatar( $author->ID, 100 ) . '<p class="tacobout-profile-name">' . esc_html( $author->display_name ) . '</p><div class="tacobout-profile-bio">' . wp_kses_post( wpautop( $author->description ) ) . '</div></div>';
+	return '<div class="tacobout-profile-fallback">' . get_avatar( $author->ID, 100, '', $author->display_name ) . '<p class="tacobout-profile-name">' . esc_html( $author->display_name ) . '</p><div class="tacobout-profile-bio">' . wp_kses_post( wpautop( $author->description ) ) . '</div></div>';
 }
 
 add_action( 'init', function () {

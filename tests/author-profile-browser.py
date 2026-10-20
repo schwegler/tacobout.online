@@ -51,6 +51,8 @@ with sync_playwright() as p:
             assert all(n['height'] >= 44 for n in page.locator('.ap-tabs__tab, .activitypub-profile .wp-block-button__link').evaluate_all('(ns)=>ns.map(n=>n.getBoundingClientRect().toJSON())'))
             assert page.locator('.activitypub-profile__avatar').evaluate('(n)=>getComputedStyle(n).objectFit') == 'contain'
             assert page.locator('h1').count() == 1
+            expected_size = '23px' if width <= 650 else '25px'
+            assert all(size == expected_size for size in page.locator('.tacobout-author-feed .wp-block-post-title').evaluate_all('(ns)=>ns.map(n=>getComputedStyle(n).fontSize)')), 'later posts lost the author title scale'
             if BASE:
                 follow = page.locator('.activitypub-profile .wp-block-button__link')
                 follow.focus();page.keyboard.press('Enter')
