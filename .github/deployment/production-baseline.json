@@ -1,0 +1,12 @@
+{
+  "schema": 1,
+  "status": "unreconciled",
+  "snapshot_reference": "libfile_06811f4cb8988191b0c6b23ec7731303",
+  "files": null,
+  "digest": null,
+  "approved_commit": null,
+  "approved_zip_sha256": null,
+  "approved_replacements": null,
+  "note": "Installed snapshot bytes reconciled; content-only evidence recorded. Actual SFTP file modes/current digest, reviewed immutable main release commit/checksum and approved replacement map still pending. Production remains disabled.",
+  "content_evidence": ".github/deployment/live-snapshot-content.json"
+}

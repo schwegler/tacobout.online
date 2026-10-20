@@ -1,0 +1,12 @@
+{
+  "schema": 1,
+  "enabled": false,
+  "theme_slug": "tacobout.online-main",
+  "theme_root": null,
+  "active_theme_verified_at": null,
+  "site_url": "https://tacobout.online",
+  "public_theme_url": "https://tacobout.online/wp-content/themes/tacobout.online-main",
+  "approval_mode": "environment-reviewers",
+  "smoke_paths": ["/", "/author/schwegler/"],
+  "baseline": ".github/deployment/production-baseline.json"
+}

@@ -58,3 +58,7 @@ vendor/
 composer.lock
 .phpunit.cache/
 .DS_Store
+
+# Deployment Python bytecode is local-only.
+/deployment/__pycache__/
+/deployment/tests/__pycache__/

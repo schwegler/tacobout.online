@@ -1,0 +1,225 @@
+{
+  "schema": 1,
+  "status": "content-reviewed-awaiting-current-sftp-metadata-and-main-artifact",
+  "snapshot_archive_sha256": "71bca237c0de13651d04cbe07a92b6bbebd1fabece28279c6f998ab936e539a7",
+  "candidate_theme_version": "3.8.25",
+  "candidate_zip_sha256": "331730079a6d1fb4a8f40990729461741bebad2975ac8ac1d57464197b4bd005",
+  "runtime_file_count": 115,
+  "changes": {
+    "asset-manifest.json": {
+      "from": "4a44c00f512890e97fe1a8cc1547c9809714548e0512a8c8e34087bad9a9e5ea",
+      "to": "a0fda75ea00c82dddaccc5a3ff1b40fe744fa8ebc6127ccae56c90a69a7bcb3b"
+    },
+    "assets/brand/author-facet.png": {
+      "from": null,
+      "to": "bab40b333eb19e2f70344b3226dc48865de788f14f222be5eea87c13bb8e2013"
+    },
+    "assets/brand/author-hitch.png": {
+      "from": null,
+      "to": "4b97b3026cd6f88c5d82009951a0b61078b5afe3d35c26038ba3e21e8d485447"
+    },
+    "assets/brand/author-telly.png": {
+      "from": null,
+      "to": "d81496d1d62ef2ca9ee665c5436d30f1cb0f94cd08025830d96fdca8efafff9e"
+    },
+    "editorial.2addfc3144daa0f2.css": {
+      "from": null,
+      "to": "2addfc3144daa0f23767b13afd85ffddefe44075dda6ecee8f33345c31f3e63e"
+    },
+    "editorial.css": {
+      "from": "76eb5476fb7975d1f4b0bc8a2d8189e406e77fe9f7a9fbe423fcfff1f6d92829",
+      "to": "2addfc3144daa0f23767b13afd85ffddefe44075dda6ecee8f33345c31f3e63e"
+    },
+    "functions.php": {
+      "from": "b4a097d72db75cd85e61f0b263c70a8ccabea55645725469f1bf6617d65510dc",
+      "to": "d8a5723c71ed89081f5c47aad7460c027121cd536e590549b71934b11e2afe29"
+    },
+    "inc/author-profile.php": {
+      "from": null,
+      "to": "7445d3cd6be56fef98acbc8218c43d05c71196eaa7a855cb96d3338b513b91ae"
+    },
+    "inc/avatars.php": {
+      "from": null,
+      "to": "24cbe4e7c6dd8afafbc12295eb1f25dbed9906718ecab580e80b02f417a28e55"
+    },
+    "inc/post-avatars.php": {
+      "from": null,
+      "to": "5542f9e1128875c5ca3a8c250579a39f00d35ae8d61ab97068798ffa58043794"
+    },
+    "parts/post-meta.html": {
+      "from": "ed8767726bbbe053820a0604d57233781da9596ec9b7838826c96bb0f120a173",
+      "to": "ae0844017b597e3102e9d082f7ebd2213a13d1e0a884fa416c0713c113cf0908"
+    },
+    "seasonal/controller.687610a29e8ea9fb.js": {
+      "from": null,
+      "to": "687610a29e8ea9fb539c1297515a579050cc979b91bd2e02feeb0d73b6e7eff1"
+    },
+    "seasonal/controller.js": {
+      "from": "54f466ce8d81b59b0606baa4101a9e45bebc712b4dbe1838855696a2ec322547",
+      "to": "687610a29e8ea9fb539c1297515a579050cc979b91bd2e02feeb0d73b6e7eff1"
+    },
+    "seasonal/seasonal.20a08dff7539803d.css": {
+      "from": null,
+      "to": "20a08dff7539803d349d565a19f5b2f430f3a1fb19178ff306ce0b47fd0b71e5"
+    },
+    "seasonal/seasonal.css": {
+      "from": "44789e2653e462961fafd1e53c42108e06621cb60ca46465ef4aba9caa565951",
+      "to": "20a08dff7539803d349d565a19f5b2f430f3a1fb19178ff306ce0b47fd0b71e5"
+    },
+    "style.05121baa710fe277.css": {
+      "from": null,
+      "to": "05121baa710fe277a42eede2753e3764bbfeafbabb7563a2735b702d68b01553"
+    },
+    "style.css": {
+      "from": "fa11f6d6798ef886490dafc3728e0a4ea7fa562c4c22b1cbd6d6e5cff16c9745",
+      "to": "05121baa710fe277a42eede2753e3764bbfeafbabb7563a2735b702d68b01553"
+    },
+    "tacobout-author-profile-editor.cdd40ad3267f6d9b.js": {
+      "from": null,
+      "to": "cdd40ad3267f6d9b11c74dbf3082531a2e1e508061f7ca01d356819237266963"
+    },
+    "tacobout-author-profile-editor.js": {
+      "from": null,
+      "to": "cdd40ad3267f6d9b11c74dbf3082531a2e1e508061f7ca01d356819237266963"
+    },
+    "tacobout-author-profile.e0983e6cb94ac46e.js": {
+      "from": null,
+      "to": "e0983e6cb94ac46e496e8ca4dcd46d6a3571d6e9fa838679b5a03efc049d298b"
+    },
+    "tacobout-author-profile.js": {
+      "from": null,
+      "to": "e0983e6cb94ac46e496e8ca4dcd46d6a3571d6e9fa838679b5a03efc049d298b"
+    },
+    "tacobout-infinite-scroll.eb2a99bb1124bd97.js": {
+      "from": null,
+      "to": "eb2a99bb1124bd971657b7a82ce087cab1e1be3ffc6584696c03be0532494691"
+    },
+    "tacobout-infinite-scroll.js": {
+      "from": "65d890f4e882a1cc2d6f9d1d1081ff5511a5572b70f363089a0e65128ccac84f",
+      "to": "eb2a99bb1124bd971657b7a82ce087cab1e1be3ffc6584696c03be0532494691"
+    },
+    "templates/author.html": {
+      "from": "622f436def60b32c32353dcd3b8761292158d3c714d512b32e5e0c790c91e885",
+      "to": "0ece61ae6ed6ea71b631e61b0e00487880baf00e6e3d447df2980718eb9d3847"
+    },
+    "templates/single.html": {
+      "from": "cfd21e47103fb0d231f7ba5329521e0f5c56b15799a22da81fd06ff43cc019c3",
+      "to": "ab4e5475502e4794a40caeafaa8f8f4275fc131127d2471dad91fed58adfa163"
+    }
+  },
+  "preserved_snapshot_files": [
+    ".gitattributes",
+    ".github/workflows/public-email.yml",
+    ".github/workflows/tests.yml",
+    ".github/workflows/trove-cards.yml",
+    ".gitignore",
+    ".jules/bolt.md",
+    ".jules/palette.md",
+    ".jules/sentinel.md",
+    "composer.json",
+    "composer.lock",
+    "docs/EDITORIAL_REVIEW_QA.md",
+    "docs/MASONRY_QA.md",
+    "docs/PLUGIN_FEATURE_COVERAGE.md",
+    "docs/REDESIGN_IMPLEMENTATION_TRACKING.md",
+    "docs/SINGLE_LAYOUT_QA.md",
+    "docs/approved-signature-logo.md",
+    "docs/browser-qa.json",
+    "docs/frontend-asset-cache.md",
+    "docs/installed-plugins.json",
+    "docs/masonry-browser-measurements.json",
+    "docs/masonry-infinite-measurements.json",
+    "docs/mobile-mascot-cache.md",
+    "docs/navigation-close.md",
+    "docs/open-social-engagement-audit.md",
+    "docs/public-email-obfuscation.md",
+    "docs/screenshots/editorial-about-mobile.jpg",
+    "docs/screenshots/editorial-home-320.jpg",
+    "docs/screenshots/editorial-home-desktop.jpg",
+    "docs/screenshots/editorial-home-mobile.jpg",
+    "docs/screenshots/editorial-native-social.jpg",
+    "docs/screenshots/editorial-single-dark.jpg",
+    "docs/screenshots/masonry/desktop.png",
+    "docs/screenshots/masonry/mobile.png",
+    "docs/screenshots/masonry/tablet.png",
+    "docs/screenshots/navigation-close/chromium-390x844.png",
+    "docs/screenshots/navigation-close/chromium-820x1180.png",
+    "docs/screenshots/navigation-close/close-regression-results.json",
+    "docs/screenshots/navigation-close/webkit-390x844.png",
+    "docs/screenshots/navigation-close/webkit-820x1180.png",
+    "docs/screenshots/navigation/browser-results.json",
+    "docs/screenshots/navigation/menu-1024x768.png",
+    "docs/screenshots/navigation/menu-320x844.png",
+    "docs/screenshots/navigation/menu-390x844.png",
+    "docs/screenshots/navigation/menu-820x1180.png",
+    "docs/screenshots/navigation/menu-844x390.png",
+    "docs/screenshots/seasonal/appearance-desktop.png",
+    "docs/screenshots/seasonal/appearance-mobile.png",
+    "docs/screenshots/seasonal/browser-results.json",
+    "docs/screenshots/seasonal/format-results.json",
+    "docs/screenshots/seasonal/halloween-desktop.png",
+    "docs/screenshots/seasonal/halloween-mobile.png",
+    "docs/screenshots/seasonal/invitation-desktop.png",
+    "docs/screenshots/seasonal/invitation-mobile.png",
+    "docs/screenshots/seasonal/overlay-demo.gif",
+    "docs/screenshots/seasonal/overlay-demo.webm",
+    "docs/screenshots/single-layout/before.png",
+    "docs/screenshots/single-layout/desktop.png",
+    "docs/screenshots/single-layout/mobile.png",
+    "docs/screenshots/single-layout/sidebar-short-window.png",
+    "docs/screenshots/single-layout/tablet-dark.png",
+    "docs/screenshots/trove-cards/after-320.png",
+    "docs/screenshots/trove-cards/after-768.png",
+    "docs/screenshots/trove-cards/after-mobile.png",
+    "docs/screenshots/trove-cards/after-webkit-mobile.png",
+    "docs/screenshots/trove-cards/before-mobile.png",
+    "docs/screenshots/trove-dark.png",
+    "docs/screenshots/trove-desktop.png",
+    "docs/screenshots/trove-mobile.png",
+    "docs/seasonal-appearance.md",
+    "docs/single-layout-measurements.json",
+    "docs/theme-thumbnail.md",
+    "docs/trove-card-responsive-review.md",
+    "docs/trove-integration.md",
+    "editorial.4691e0651a462988.css",
+    "editorial.76eb5476fb7975d1.css",
+    "phpunit.xml",
+    "scripts/build-assets.cjs",
+    "scripts/check_public_email.py",
+    "seasonal/controller.54f466ce8d81b59b.js",
+    "seasonal/seasonal.44789e2653e46296.css",
+    "style.ec869b15b70d9796.css",
+    "style.fa11f6d6798ef886.css",
+    "tacobout-infinite-scroll.65d890f4e882a1cc.js",
+    "tacobout-infinite-scroll.b8d084cd61361c35.js",
+    "tests/ApprovedCreatorLogoTest.php",
+    "tests/AssetFingerprintTest.php",
+    "tests/ChannelBannerAndError404Test.php",
+    "tests/EditorialQueryTest.php",
+    "tests/EngagementTest.php",
+    "tests/FunctionsTest.php",
+    "tests/HeaderNavigationTest.php",
+    "tests/HomepageBentoTest.php",
+    "tests/RedesignBrandTest.php",
+    "tests/ReleaseQualityGatesTest.php",
+    "tests/SidebarTest.php",
+    "tests/SingleArticleAndSidebarTest.php",
+    "tests/SocialPresentationTest.php",
+    "tests/TroveTest.php",
+    "tests/assets.test.cjs",
+    "tests/bootstrap.php",
+    "tests/check_navigation_close.py",
+    "tests/engagement-integration.php",
+    "tests/fixtures/local-site.php",
+    "tests/fixtures/masonry.html",
+    "tests/fixtures/sidebar-height.html",
+    "tests/fixtures/simpsons-video-rendered.html",
+    "tests/fixtures/trove-book-metadata.html",
+    "tests/fixtures/trove-comic-metadata.html",
+    "tests/fixtures/trove-tv-metadata.html",
+    "tests/masonry.test.cjs",
+    "tests/sidebar-fit.test.cjs",
+    "tests/trove-card-browser.cjs"
+  ],
+  "note": "Content review only. Not approved_replacements for deployment. Actual file modes/live digest and exact tested main artifact must be verified separately. Normal deployment preserves all snapshot files omitted from the runtime artifact."
+}
