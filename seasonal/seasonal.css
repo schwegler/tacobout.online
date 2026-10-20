@@ -60,4 +60,8 @@ html[data-season="halloween"] .seasonal-appearance-panel,html[data-theme="dark"]
 
 /* A reserved invitation slot replaces unsafe floating positions at narrow widths/zoom. */
 .seasonal-invitation-slot{display:flow-root;clear:both;max-width:1200px;margin-inline:auto;padding-inline:12px;box-sizing:border-box}
-.seasonal-overlay[data-docked]{position:relative;left:auto!important;top:auto!important;margin:12px 0 12px auto;max-width:100%;z-index:1}
+.seasonal-overlay[data-docked]:not([hidden]){display:grid!important;position:relative;left:auto!important;top:auto!important;margin:12px 0 12px auto;max-width:100%;z-index:1}
+.seasonal-overlay[data-docked]{grid-template-columns:56px 44px}
+.seasonal-overlay[data-docked] :is(.seasonal-character,.seasonal-flight,img){width:56px;height:72px}
+
+.seasonal-overlay[data-measuring]:not([hidden]){display:grid!important}

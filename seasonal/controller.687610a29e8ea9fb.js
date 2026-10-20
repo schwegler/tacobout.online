@@ -1,4 +1,4 @@
-/* Seasonal overlay contract v2. No layout insertion, polling or animation loop. */
+/* Seasonal overlay contract v2. Safe gutters with a reserved fallback; no polling or animation loop. */
 (() => {
   const base = new URL('.', document.currentScript.src);
   const config = window.SchwegSeasonalConfig;
@@ -57,8 +57,10 @@
       if([...document.querySelectorAll('dialog[open],[role="dialog"][aria-modal="true"]')].some(n=>n.getClientRects().length&&getComputedStyle(n).visibility!=='hidden')){overlay.dataset.obscured='true';return;}
       const view=window.visualViewport,width=view?.width||innerWidth,height=view?.height||innerHeight,offsetX=view?.offsetLeft||0,offsetY=view?.offsetTop||0;
       const style=getComputedStyle(overlay),safe=side=>parseFloat(style.getPropertyValue(`--seasonal-safe-${side}`))||0;
-      delete overlay.dataset.docked;
+      // Measure fixed dimensions even on articles with an older mobile hiding rule.
+      delete overlay.dataset.docked;overlay.dataset.measuring='true';
       const box=overlay.getBoundingClientRect(),pad=12;
+      delete overlay.dataset.measuring;
       const left=offsetX+pad+safe('left'),right=offsetX+width-pad-safe('right')-box.width,top=offsetY+pad+safe('top'),bottom=offsetY+height-(width<=600?64:16)-safe('bottom')-box.height;
       const protectedRects=[...document.querySelectorAll('main,article,aside,footer,p,h1,h2,h3,h4,h5,h6,blockquote,pre,header,nav,[role="alert"],[role="status"],[role="dialog"],dialog[open],button,a,input,select,textarea,summary,[role="button"],.notice,[data-seasonal-avoid]')].filter(node=>!overlay.contains(node)).map(node=>node.getBoundingClientRect()).filter(r=>r.width&&r.height&&r.bottom>offsetY&&r.top<offsetY+height&&r.right>offsetX&&r.left<offsetX+width);
       const clear=p=>p.x>=left&&p.y>=top&&p.x<=right&&p.y<=bottom&&!protectedRects.some(r=>p.x-8<r.right&&p.x+box.width+8>r.left&&p.y-10<r.bottom&&p.y+box.height+10>r.top);
