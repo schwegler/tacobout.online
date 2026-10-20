@@ -9,7 +9,12 @@
 	
 	<!-- wp:group {"layout":{"type":"flex","flexWrap":"wrap"},"style":{"spacing":{"blockGap":"0.75rem","margin":{"top":"1rem","bottom":"2rem"}},"typography":{"fontSize":"0.875rem"}},"textColor":"muted"} -->
 	<div class="wp-block-group has-muted-color has-text-color" style="font-size:0.875rem;margin-top:1rem;margin-bottom:2rem">
-		<!-- wp:post-author-name {"isLink":true} /-->
+		<!-- wp:group {"className":"tacobout-author-byline","layout":{"type":"flex","flexWrap":"nowrap"},"style":{"spacing":{"blockGap":"0.5rem"}}} -->
+		<div class="wp-block-group tacobout-author-byline">
+			<!-- wp:avatar {"size":24,"className":"tacobout-byline-avatar"} /-->
+			<!-- wp:post-author-name {"isLink":true} /-->
+		</div>
+		<!-- /wp:group -->
 		<!-- wp:post-date /-->
 		<!-- wp:post-terms {"term":"category","separator":" "} /-->
 	</div>
