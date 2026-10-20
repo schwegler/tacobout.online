@@ -57,3 +57,7 @@ html[data-season="halloween"] .seasonal-appearance-panel,html[data-theme="dark"]
 .tacobout-utilities .seasonal-controls .seasonal-appearance-panel button{width:100%;height:auto;min-height:44px;max-width:none;display:block;white-space:normal;padding:9px 12px;text-align:left;line-height:1.4;}
 
 .tacobout-theme-control span{display:none}.seasonal-appearance-panel .tacobout-theme-control span{display:inline;margin-left:8px;}
+
+/* A reserved invitation slot replaces unsafe floating positions at narrow widths/zoom. */
+.seasonal-invitation-slot{display:flow-root;clear:both;max-width:1200px;margin-inline:auto;padding-inline:12px;box-sizing:border-box}
+.seasonal-overlay[data-docked]{position:relative;left:auto!important;top:auto!important;margin:12px 0 12px auto;max-width:100%;z-index:1}
