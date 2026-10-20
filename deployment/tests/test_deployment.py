@@ -19,6 +19,26 @@ def plan(before=BEFORE):
     return deploy_plan({'theme_root':ROOT},baseline(),before,{'source_commit':COMMIT,'zip_sha256':'b'*64},DESIRED,digest(describe(before)))
 
 class PolicyTests(unittest.TestCase):
+    def test_reviewed_snapshot_content_cannot_enable_deployment(self):
+        root=Path(__file__).resolve().parents[2]
+        evidence=json.loads((root/'.github/deployment/live-snapshot-content.json').read_bytes())
+        review=json.loads((root/'.github/deployment/release-content-review.json').read_bytes())
+        baseline=json.loads((root/'.github/deployment/production-baseline.json').read_bytes())
+        self.assertEqual(212,len(evidence['files']))
+        self.assertFalse(evidence['permissions_verified'])
+        self.assertEqual('unreconciled',baseline['status'])
+        self.assertIsNone(baseline['files']);self.assertIsNone(baseline['approved_commit'])
+        self.assertTrue(all('mode' not in meta for meta in evidence['files'].values()))
+        self.assertGreater(version((root/'style.css').read_bytes()),version(('Version: '+evidence['theme_version']).encode()))
+        with tempfile.TemporaryDirectory() as temp:
+            manifest=build(root,temp)
+            _,files=load(temp,manifest['source_commit'],manifest['zip_sha256'])
+            self.assertEqual(review['candidate_zip_sha256'],manifest['zip_sha256'])
+            self.assertEqual(review['changes'],changes(evidence['files'],describe(files)))
+            self.assertTrue(all(p in evidence['files'] and p not in files for p in review['preserved_snapshot_files']))
+            before={p:(b'',0o644) for p in evidence['files']}
+            with self.assertRaises(Refused):
+                deploy_plan({'theme_root':ROOT},baseline,before,manifest,files,digest(describe(before)))
     def test_initial_policy_cannot_connect_or_write(self):
         with self.assertRaises(Refused):config_file('.github/deployment/production.json',True)
     def test_paths_reject_escape_and_non_theme_targets(self):

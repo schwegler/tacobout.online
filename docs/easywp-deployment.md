@@ -24,8 +24,9 @@ editing files; freeze theme edits throughout the run.
 ## Setup prerequisites — separate approval required
 
 1. Obtain a completed current EasyWP dashboard backup and a complete installed
-   theme snapshot. The known live 3.8.24/seasonal drift versus repository 3.8.23 is
-   unresolved. Do not substitute repository files or publicly fetched assets for
+   theme snapshot. The supplied live 3.8.24 snapshot has now been reconciled at the content
+   level; see [the full comparison](live-theme-reconciliation.md). Actual current
+   SFTP metadata and the immutable main release identity remain unresolved. Do not substitute repository files or publicly fetched assets for
    the installed snapshot. Review and reconcile every intended replacement,
    preserving unrelated live changes, and increase the release version.
 2. Verify the active theme and its canonical absolute SFTP directory independently.
@@ -64,7 +65,8 @@ editing files; freeze theme edits throughout the run.
    repository differences. Set `enabled: true` only after all prerequisites pass.
 
 No setup action above was performed by this PR. The baseline remains unreconciled,
-the root unset, and production disabled.
+the root unset, and production disabled. Content-only snapshot evidence does not
+replace the required current SFTP modes/digest or exact tested main artifact.
 
 ## Explicit operations
 
