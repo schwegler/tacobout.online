@@ -28,6 +28,10 @@ function tacobout_render_metadata_avatar( $content, $parsed, $block ) {
 	}
 	// Use the URL/data API, including explicit AP icon precedence, even if an HTML
 	// avatar plugin supplied different markup/srcset to the native avatar block.
+	$name = get_the_author_meta( 'display_name', $author );
+	if ( ! $name ) {
+		return '';
+	}
 	$url = get_avatar_url( $author, array( 'size' => 48 ) );
 	if ( ! $url ) {
 		return '';
@@ -50,7 +54,8 @@ function tacobout_render_metadata_avatar( $content, $parsed, $block ) {
 	if ( $card ) {
 		$tags = new WP_HTML_Tag_Processor( $content );
 		if ( $tags->next_tag( 'A' ) ) {
-			$tags->set_attribute( 'aria-label', sprintf( __( 'Posts by %s', 'tacobout' ), get_the_author_meta( 'display_name', $author ) ) );
+			$tags->set_attribute( 'href', get_author_posts_url( $author ) );
+			$tags->set_attribute( 'aria-label', sprintf( __( 'Posts by %s', 'tacobout' ), $name ) );
 		}
 		$content = $tags->get_updated_html();
 	}

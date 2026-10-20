@@ -656,6 +656,8 @@ function tacobout_enqueue_infinite_scroll() {
 			'perPage'        => $per_page,
 			'totalPages'     => $total_pages,
 			'siteUrl'        => esc_url( home_url() ),
+			'showAuthorAvatars' => (bool) get_option( 'show_avatars' ),
+			'authorPostsLabel' => __( 'Posts by %s', 'tacobout' ),
 			'termId'         => $tax_context['term_id'],
 			'termName'       => $tax_context['term_name'] ? esc_html( $tax_context['term_name'] ) : null,
 			'termType'       => $tax_context['term_type'],
