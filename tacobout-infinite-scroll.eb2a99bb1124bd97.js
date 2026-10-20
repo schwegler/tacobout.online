@@ -302,6 +302,15 @@
 			`;
 		}
 
+		// Use native embedded public author data, including the avatar URL/data filters.
+		const author = post._embedded?.author?.[0];
+		const avatarUrl = author?.avatar_urls?.['48'] || author?.avatar_urls?.['24'];
+		let authorAvatarHtml = '';
+		if (config.showAuthorAvatars && !document.body.classList.contains('author') && author?.name && author?.link && avatarUrl) {
+			const label = (config.authorPostsLabel || 'Posts by %s').replace('%s', author.name);
+			authorAvatarHtml = `<div class="wp-block-avatar tacobout-card-author-avatar"><a class="wp-block-avatar__link" href="${escHtml(author.link)}" aria-label="${escHtml(label)}"><img src="${escHtml(avatarUrl)}" alt="" width="24" height="24" loading="lazy" decoding="async" /></a></div>`;
+		}
+
 		// Build post meta (categories + date)
 		let categoriesHtml = "";
 		if (
@@ -323,6 +332,7 @@
 		const postMetaHtml = `
 			<div class="wp-block-template-part">
 				<div class="wp-block-group tacobout-post-meta" style="font-size:0.8125rem">
+					${authorAvatarHtml}
 					${categoriesHtml}
 					<p class="has-muted-color has-text-color" style="font-size:0.8125rem">·</p>
 					<time datetime="${escHtml(post.date)}" class="wp-block-post-date">
@@ -452,8 +462,8 @@
 				url.searchParams.set('per_page', perPage);
 				url.searchParams.set('orderby', 'date');
 				url.searchParams.set('order', 'desc');
-				url.searchParams.set('_embed', 'wp:featuredmedia,wp:term');
-				url.searchParams.set('_fields', 'id,date,link,title,excerpt,content,post_format,interaction_count,_links,_embedded');
+				url.searchParams.set('_embed', 'author,wp:featuredmedia,wp:term');
+				url.searchParams.set('_fields', 'id,author,date,link,title,excerpt,content,post_format,interaction_count,_links,_embedded');
 
 				let nextPage;
 				if (termPhase) {

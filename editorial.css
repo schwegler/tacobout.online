@@ -221,3 +221,12 @@ html .tacobout-profile-timeline :is(a,button):focus-visible,html .tacobout-profi
 /* Configured profile headers retain the supplied 3:1 composition at every width. */
 html .tacobout-author-page .tacobout-profile-banner.has-user-banner{height:auto;aspect-ratio:3/1;padding:0}
 html .tacobout-author-page .tacobout-profile-banner-image{display:block;width:100%;height:100%;object-fit:contain}
+
+/* Native avatar blocks reserve exactly one 24px slot; byline name stays adjacent. */
+html body .tacobout-magazine-grid .tacobout-post-meta{display:flex;align-items:center;flex-wrap:wrap}
+html :is(.tacobout-card-author-avatar,.tacobout-byline-avatar){display:inline-flex;align-items:center;justify-content:center;flex:0 0 24px;width:24px;height:24px;margin:0!important;line-height:1}
+html :is(.tacobout-card-author-avatar,.tacobout-byline-avatar) img{display:block;width:24px!important;height:24px!important;max-width:24px;aspect-ratio:1;object-fit:contain;border-radius:50%;background:var(--taco-surface-2);box-shadow:0 0 0 1px var(--taco-border)}
+html .tacobout-card-author-avatar a{display:inline-flex;align-items:center;justify-content:center;min-width:24px;min-height:24px;border-radius:50%}
+html .tacobout-card-author-avatar a:focus-visible{outline:2px solid var(--taco-accent);outline-offset:4px}
+html .tacobout-author-byline{display:inline-flex;align-items:center;gap:8px;flex-wrap:nowrap;margin:0;min-width:0}
+html .tacobout-author-byline .wp-block-post-author-name{margin:0;min-width:0;overflow-wrap:anywhere}
