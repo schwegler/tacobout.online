@@ -1,0 +1,11 @@
+{
+  "schema": 1,
+  "status": "unreconciled",
+  "snapshot_reference": null,
+  "files": null,
+  "digest": null,
+  "approved_commit": null,
+  "approved_zip_sha256": null,
+  "approved_replacements": null,
+  "note": "Live 3.8.24/seasonal drift is unresolved. No installed-theme backup/snapshot has been supplied. Never fabricate this baseline from git or public assets."
+}
