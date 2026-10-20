@@ -13,6 +13,7 @@ require_once __DIR__ . '/inc/sidebar.php';
 require_once __DIR__ . '/inc/editorial.php';
 require_once __DIR__ . '/inc/author-profile.php';
 require_once __DIR__ . '/inc/social.php';
+require_once __DIR__ . '/inc/avatars.php';
 
 if ( ! function_exists( 'tacobout_support' ) ) :
 	function tacobout_support() {
