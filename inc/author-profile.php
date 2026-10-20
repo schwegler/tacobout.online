@@ -20,7 +20,7 @@ function tacobout_profile_actor( $author ) {
 }
 
 /** Full-width banner. An explicitly configured plugin banner takes precedence. */
-function tacobout_author_banner_shortcode() {
+function tacobout_render_author_banner() {
 	$author = tacobout_profile_author();
 	if ( ! $author ) {
 		return '';
@@ -44,25 +44,28 @@ function tacobout_author_banner_shortcode() {
 }
 
 /** Keep the plugin's entire profile and modal intact, with a native-user fallback. */
-function tacobout_author_profile_shortcode() {
+function tacobout_render_author_profile() {
 	$author = tacobout_profile_author();
 	if ( ! $author ) {
 		return '';
 	}
 	$actor = tacobout_profile_actor( $author );
 	if ( $actor && WP_Block_Type_Registry::get_instance()->is_registered( 'activitypub/follow-me' ) ) {
-		$profile = do_blocks( '<!-- wp:activitypub/follow-me {"selectedUser":"inherit","className":"is-style-profile"} /-->' );
+		$handle = '@' . $actor->get_webfinger();
+		$copy = '<button type="button" class="tacobout-profile-copy" data-profile-handle="' . esc_attr( $handle ) . '" data-copied-label="' . esc_attr__( 'Handle copied', 'tacobout' ) . '" data-failed-label="' . esc_attr__( 'Copy unavailable; use Follow to copy your handle.', 'tacobout' ) . '" hidden>' . esc_html__( 'Copy handle', 'tacobout' ) . '</button><span class="screen-reader-text tacobout-profile-copy-status" role="status"></span>';
+		// The plugin accepts inner content for its follow button and attaches its own
+		// Interactivity API actions. Keep our optional copy button outside that class.
+		$profile = do_blocks( '<!-- wp:activitypub/follow-me {"selectedUser":"inherit","className":"is-style-profile"} --><!-- wp:html --><div class="wp-block-button"><a class="wp-element-button wp-block-button__link">' . esc_html__( 'Follow on the fediverse', 'tacobout' ) . '</a></div>' . $copy . '<!-- /wp:html --><!-- /wp:activitypub/follow-me -->' );
 		if ( trim( $profile ) ) {
-			$handle = '@' . $actor->get_webfinger();
-			return $profile . '<button type="button" class="tacobout-profile-copy" data-profile-handle="' . esc_attr( $handle ) . '" data-copied-label="' . esc_attr__( 'Handle copied', 'tacobout' ) . '" data-failed-label="' . esc_attr__( 'Copy unavailable; use Follow to copy your handle.', 'tacobout' ) . '" hidden>' . esc_html__( 'Copy handle', 'tacobout' ) . '</button><span class="screen-reader-text tacobout-profile-copy-status" role="status"></span>';
+			return $profile;
 		}
 	}
 	return '<div class="tacobout-profile-fallback">' . get_avatar( $author->ID, 100 ) . '<p class="tacobout-profile-name">' . esc_html( $author->display_name ) . '</p><div class="tacobout-profile-bio">' . wp_kses_post( wpautop( $author->description ) ) . '</div></div>';
 }
 
 add_action( 'init', function () {
-	add_shortcode( 'tacobout_author_banner', 'tacobout_author_banner_shortcode' );
-	add_shortcode( 'tacobout_author_profile', 'tacobout_author_profile_shortcode' );
+	register_block_type( 'tacobout/author-banner', array( 'api_version' => 3, 'render_callback' => 'tacobout_render_author_banner' ) );
+	register_block_type( 'tacobout/author-profile', array( 'api_version' => 3, 'render_callback' => 'tacobout_render_author_profile' ) );
 } );
 add_action( 'wp_enqueue_scripts', function () {
 	if ( is_author() ) {
