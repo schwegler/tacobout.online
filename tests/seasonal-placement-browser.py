@@ -72,6 +72,12 @@ with sync_playwright() as p:
                 session.send('Emulation.setPageScaleFactor', {'pageScaleFactor': 2})
                 page.wait_for_timeout(100)
                 assert page.evaluate('visualViewport.width') == 720
+                if overlay.get_attribute('data-docked') is None:
+                    box = overlay.bounding_box()
+                    assert box['x'] >= 0 and box['x'] + box['width'] <= 720
+                session.send('Emulation.setPageScaleFactor', {'pageScaleFactor': 1})
+                page.set_viewport_size({'width': 720, 'height': 900})
+                page.wait_for_timeout(100)
                 assert overlay.get_attribute('data-docked') == 'true'
             assert not errors, errors
             page.close()
