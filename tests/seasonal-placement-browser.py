@@ -32,13 +32,13 @@ with sync_playwright() as p:
             # Keep the seasonal boundary deterministic, including outside October.
             page.clock.set_fixed_time('2026-10-20T12:00:00Z')
             page.goto('http://localhost/')
+            main_top = page.locator('main').evaluate('n => n.getBoundingClientRect().top')
             page.wait_for_timeout(1200)
             overlay = page.locator('.seasonal-overlay')
-            assert overlay.is_visible()
-            if width < 1440:
-                assert overlay.get_attribute('data-docked') == 'true'
-            else:
-                assert overlay.get_attribute('data-docked') is None
+            assert page.locator('main').evaluate('n => n.getBoundingClientRect().top') == main_top
+            assert page.locator('.seasonal-invitation-slot').count() == 0
+            assert page.locator('.seasonal-character img').get_attribute('alt') == ''
+            assert overlay.is_visible() == (width >= 1440)
             if reduced == 'reduce':
                 assert page.locator('.seasonal-character img').evaluate("n => getComputedStyle(n).animationName") == 'none'
             for scroll in [0, 500, 1500]:
@@ -46,6 +46,7 @@ with sync_playwright() as p:
                 page.wait_for_timeout(80)
                 assert page.evaluate('''() => {
                     const o=document.querySelector('.seasonal-overlay'),a=o.getBoundingClientRect();
+                    if(getComputedStyle(o).visibility==='hidden')return true;
                     return ![...document.querySelectorAll('main,header,footer')].some(n=>{
                         const b=n.getBoundingClientRect();
                         return a.left<b.right&&a.right>b.left&&a.top<b.bottom&&a.bottom>b.top;
@@ -53,15 +54,24 @@ with sync_playwright() as p:
                 }'''), (width, reduced, scroll)
             page.evaluate('scrollTo(0,0)')
             page.wait_for_timeout(80)
-            page.get_by_role('button', name='Turn on Halloween mode', exact=True).click()
+            if overlay.is_visible():
+                page.get_by_role('button', name='Turn on Halloween mode', exact=True).click()
+            else:
+                page.get_by_role('button', name='Appearance', exact=True).click()
+                page.get_by_role('button', name='Halloween appearance', exact=True).click()
+                page.get_by_role('button', name='Appearance', exact=True).click()
             assert page.locator('html').get_attribute('data-season') == 'halloween'
             dismiss = page.get_by_role('button', name='Dismiss Halloween character', exact=True)
-            dismiss.focus()
-            page.keyboard.press('Enter')
+            if overlay.is_visible():
+                dismiss.focus()
+                page.keyboard.press('Enter')
+            else:
+                # A concealed decoration must never cover reading content.
+                assert overlay.get_attribute('data-obscured') == 'true'
             assert overlay.is_hidden()
             page.get_by_role('button', name='Appearance', exact=True).click()
             page.get_by_role('button', name='Show Halloween character', exact=True).click()
-            assert overlay.is_visible()
+            assert overlay.is_visible() == (width >= 1440)
             page.get_by_role('button', name='Appearance', exact=True).click()
             page.get_by_role('button', name='Restore original appearance', exact=True).click()
             assert page.locator('html').get_attribute('data-season') is None
@@ -72,13 +82,13 @@ with sync_playwright() as p:
                 session.send('Emulation.setPageScaleFactor', {'pageScaleFactor': 2})
                 page.wait_for_timeout(100)
                 assert page.evaluate('visualViewport.width') == 720
-                if overlay.get_attribute('data-docked') is None:
+                if overlay.is_visible():
                     box = overlay.bounding_box()
                     assert box['x'] >= 0 and box['x'] + box['width'] <= 720
                 session.send('Emulation.setPageScaleFactor', {'pageScaleFactor': 1})
                 page.set_viewport_size({'width': 720, 'height': 900})
                 page.wait_for_timeout(100)
-                assert overlay.get_attribute('data-docked') == 'true'
+                assert overlay.is_hidden()
             assert not errors, errors
             page.close()
             print(f'PASS {width}px motion={reduced}: clearance, activation, dismissal, restore, undo')
