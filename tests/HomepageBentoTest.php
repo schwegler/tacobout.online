@@ -20,12 +20,12 @@ class HomepageBentoTest extends \PHPUnit\Framework\TestCase {
         $this->assertStringNotContainsString('⚡', $pattern);
     }
 
-    public function test_query_and_infinite_scroll_use_broadcast_cta() {
+    public function test_query_and_infinite_scroll_use_consistent_read_more_cta() {
         $query_pattern = file_get_contents(__DIR__ . '/../patterns/query.php');
         $scroll_js = file_get_contents(__DIR__ . '/../tacobout-infinite-scroll.js');
 
-        $this->assertStringContainsString('Tune in & read →', $query_pattern);
-        $this->assertStringContainsString('Tune in & read →', $scroll_js);
+        $this->assertStringContainsString('Read more', $query_pattern);
+        $this->assertStringContainsString('Read more', $scroll_js);
     }
 
     public function test_end_of_feed_notice_pairs_telly_taco_break_with_trove_link() {

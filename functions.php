@@ -416,62 +416,7 @@ function tacobout_pre_render_hidden_blocks( $pre_render, $parsed_block, $parent_
 }
 add_filter( 'pre_render_block', 'tacobout_pre_render_hidden_blocks', 10, 3 );
 
-/**
- * Keep video query cards concise without cutting HTML or rendering a second player.
- * Work on the already rendered body so core embeds, shortcodes and player attributes
- * survive. Single posts and every other post format retain core rendering.
- */
-function tacobout_video_card_content( $html, $parsed_block, $block ) {
-	if ( ! isset( $block->context['queryId'], $block->context['postId'] ) ) {
-		return $html;
-	}
-	$post_id = $block->context['postId'];
-	if ( 'video' !== tacobout_get_memoized_post_format( $post_id ) || ! class_exists( 'DOMDocument' ) ) {
-		return $html;
-	}
-
-	$document = new DOMDocument();
-	$previous = libxml_use_internal_errors( true );
-	$document->loadHTML( '<?xml encoding="utf-8" ?>' . $html );
-	libxml_clear_errors();
-	libxml_use_internal_errors( $previous );
-	$xpath = new DOMXPath( $document );
-	$root  = $xpath->query( '//div[contains(concat(" ", normalize-space(@class), " "), " wp-block-post-content ")]' )->item( 0 );
-	if ( ! $root ) {
-		return $html;
-	}
-
-	$player = $xpath->query( './/video | .//iframe | .//object | .//embed', $root )->item( 0 );
-	if ( $player ) {
-		// Retain the complete responsive embed/shortcode wrapper, tracks and caption.
-		for ( $ancestor = $player->parentNode; $ancestor && $ancestor !== $root; $ancestor = $ancestor->parentNode ) {
-			if ( 'figure' === $ancestor->nodeName || preg_match( '/(?:^|\s)(?:wp-block-embed|wp-video)(?:\s|$)/', $ancestor->getAttribute( 'class' ) ) ) {
-				$player = $ancestor;
-			}
-		}
-	}
-
-	$blurb = get_post_field( 'post_excerpt', $post_id );
-	if ( ! trim( $blurb ) ) {
-		// Prefer introductory prose, never captions or text inside the player.
-		$paragraph = $xpath->query( './/p[not(ancestor::figure) and not(ancestor::blockquote)]', $root )->item( 0 );
-		$blurb     = $paragraph ? $paragraph->textContent : '';
-	}
-	$blurb = wp_trim_words( wp_strip_all_tags( strip_shortcodes( $blurb ) ), 30, '…' );
-	$media = $player ? $document->saveHTML( $player ) : '';
-	while ( $root->firstChild ) {
-		$root->removeChild( $root->firstChild );
-	}
-	// Serialize only the emptied wrapper; media is a complete DOM subtree.
-	$wrapper = $document->saveHTML( $root );
-	$content = $media;
-	if ( $blurb ) {
-		$content .= '<p>' . esc_html( $blurb ) . '</p>';
-	}
-	$content .= '<p><a class="wp-block-post-excerpt__more-link" href="' . esc_url( get_permalink( $post_id ) ) . '">' . esc_html__( 'Read more', 'tacobout' ) . '<span class="screen-reader-text">: ' . esc_html( get_the_title( $post_id ) ) . '</span></a></p>';
-	return substr_replace( $wrapper, $content, strrpos( $wrapper, '</div>' ), 0 );
-}
-add_filter( 'render_block_core/post-content', 'tacobout_video_card_content', 10, 3 );
+require_once __DIR__ . '/inc/feed.php';
 
 /**
  * Inject an interaction badge into each post card in query loops.
