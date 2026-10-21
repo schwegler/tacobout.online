@@ -55,6 +55,37 @@
 	const masonry = window.TacoboutMasonry?.create(grid);
 	function layoutMasonryGrid() { masonry?.schedule(); }
 
+	function normalizeFeedPreview(card, content) {
+		const permalink = card.querySelector('.wp-block-post-title a, .wp-block-post-date a')?.href;
+		if (!permalink) return;
+		const title = card.querySelector('.wp-block-post-title')?.textContent.trim() || 'post';
+		const format = ['image', 'video', 'link'].find(type => card.classList.contains('tacobout-format-' + type));
+		if (format && content && !content.dataset.feedPreview) {
+			const source = Array.from(content.querySelectorAll('a[href]')).find(link => {
+				try { const url = new URL(link.href, location.href); return /^https?:$/.test(url.protocol) && url.hostname !== location.hostname; } catch { return false; }
+			});
+			let primary = content.querySelector(format === 'image' ? 'img' : format === 'video' ? 'video, iframe, object, embed' : 'blockquote, p');
+			if (primary && format !== 'link') primary = primary.closest('figure, .wp-block-embed, .wp-video') || primary;
+			if (primary && format === 'link') {
+				const quote = document.createElement(primary.tagName === 'BLOCKQUOTE' ? 'blockquote' : 'p');
+				const words = primary.textContent.trim().split(/\s+/);
+				quote.textContent = words.slice(0, 55).join(' ') + (words.length > 55 ? '…' : ''); primary = quote;
+			}
+			content.replaceChildren(...(primary ? [primary] : []));
+			if (source) {
+				const row = document.createElement('p'), link = document.createElement('a');
+				row.className = 'tacobout-card-source'; link.className = 'tacobout-link-source'; link.href = source.href;
+				link.textContent = 'Open source · ' + new URL(source.href).hostname.replace(/^www\./, '') + ' ↗'; row.append(link); content.append(row);
+			}
+			const row = document.createElement('p'), jump = document.createElement('a');
+			row.className = 'tacobout-card-jump'; jump.href = permalink; jump.className = 'wp-block-post-excerpt__more-link'; row.append(jump); content.append(row);
+			content.dataset.feedPreview = format;
+		}
+		card.querySelectorAll('a.more-link, a.wp-block-post-excerpt__more-link').forEach(link => {
+			link.textContent = 'Read more'; link.setAttribute('aria-label', 'Read more: ' + title);
+		});
+	}
+
 	function prepareCards(cards) {
 		// ⚡ Bolt: Cache all posts array outside the loop to prevent O(N²) DOM queries
 		const allPosts = Array.from(grid.querySelectorAll('.wp-block-post'));
@@ -63,12 +94,15 @@
 			if (preparedCards.has(card)) return;
 			preparedCards.add(card);
 			const content = card.querySelector('.wp-block-post-content');
+			normalizeFeedPreview(card, content);
 			const featured = card.querySelector('.wp-block-post-featured-image');
 			const media = !card.classList.contains('tacobout-format-standard') && content?.querySelector('img, video, iframe, audio, .wp-block-gallery');
 			if (featured && media && !card.classList.contains('tacobout-format-standard')) featured.remove();
 			// Explicit intrinsic ratios also avoid the 1500px containment placeholder
 			// browsers can give WordPress lazy images with sizes="auto".
 			card.querySelectorAll('img').forEach(img => {
+				const sizes = img.getAttribute('sizes');
+				if (sizes?.startsWith('auto,')) img.setAttribute('sizes', sizes.replace(/^auto,\s*/, ''));
 				const sizeImage = () => {
 					const width = img.naturalWidth || Number(img.getAttribute('width'));
 					const height = img.naturalHeight || Number(img.getAttribute('height'));
@@ -100,40 +134,6 @@
 				if (!frame.title) frame.title = 'Video player';
 			});
 
-			// Collapse long prose at block boundaries, never halfway through a player.
-			if (content && !card.classList.contains('tacobout-format-standard') && content.textContent.trim().length > 650 && !content.querySelector('details')) {
-				const blocks = Array.from(content.children);
-				let length = 0;
-				let cutoff = blocks.length;
-				for (let i = 0; i < blocks.length; i++) {
-					length += blocks[i].textContent.length;
-					if (length > 300) { cutoff = i + 1; break; }
-				}
-				const firstMedia = blocks.findIndex(block => block.matches('figure, video, audio, iframe') || block.querySelector('img, video, audio, iframe'));
-				cutoff = Math.max(cutoff, firstMedia + 1);
-				if (cutoff < blocks.length) {
-					const details = document.createElement('details');
-					details.className = 'tacobout-card-more';
-					const summary = document.createElement('summary');
-					summary.textContent = 'Keep reading';
-					details.append(summary);
-					blocks.slice(cutoff).forEach(block => details.append(block));
-					content.append(details);
-				}
-			}
-			if (card.classList.contains('tacobout-format-link') && content) {
-				const source = Array.from(content.querySelectorAll('a[href]')).find(link => {
-					const url = new URL(link.href, location.href);
-					return /^https?:$/.test(url.protocol) && url.hostname !== location.hostname;
-				});
-				if (source) {
-					const link = document.createElement('a');
-					link.className = 'tacobout-link-source';
-					link.href = source.href;
-					link.textContent = new URL(source.href).hostname.replace(/^www\./, '') + ' ↗';
-					content.append(link);
-				}
-			}
 			if (content && card.matches('.tacobout-format-gallery, .tacobout-format-image')) {
 				const images = Array.from(card.querySelectorAll('.wp-block-post-content img, .wp-block-post-featured-image img'));
 				if (images.length) {
@@ -361,7 +361,9 @@
 
 		// Build content (for non-standard formats)
 		let contentHtml = "";
-		if (showContent && post.content && post.content.rendered) {
+		if (showContent && post.tacobout_feed_content) {
+			contentHtml = post.tacobout_feed_content;
+		} else if (showContent && post.content && post.content.rendered) {
 			contentHtml = `
 				<div class="wp-block-post-content entry-content">
 					${post.content.rendered}
@@ -406,7 +408,7 @@
 			const more = document.createElement('a');
 			more.className = 'wp-block-post-excerpt__more-link';
 			more.href = post.link;
-			more.textContent = 'Tune in & read →';
+			more.textContent = 'Read more';
 			const target = excerpt.querySelector('p:last-child') || excerpt;
 			target.append(document.createTextNode(' '), more);
 		}
@@ -463,7 +465,7 @@
 				url.searchParams.set('orderby', 'date');
 				url.searchParams.set('order', 'desc');
 				url.searchParams.set('_embed', 'author,wp:featuredmedia,wp:term');
-				url.searchParams.set('_fields', 'id,author,date,link,title,excerpt,content,post_format,interaction_count,_links,_embedded');
+				url.searchParams.set('_fields', 'id,author,date,link,title,excerpt,content,tacobout_feed_content,post_format,interaction_count,_links,_embedded');
 
 				let nextPage;
 				if (termPhase) {
