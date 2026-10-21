@@ -10,7 +10,7 @@ HTML = '''<!doctype html><html><head><meta name="viewport" content="width=device
 <style>body{margin:0}header{height:80px;position:sticky;top:0;z-index:2}main{max-width:1000px;margin:auto}p{line-height:2}footer{height:100px}</style>
 <link rel="stylesheet" href="/seasonal/seasonal.css"></head><body>
 <header><button class="tacobout-theme-control">Theme</button></header>
-<main><h1>Reading without overlap</h1>''' + ('<p>Plain article text without links. ' + 'Reading space. ' * 60 + '</p>') * 20 + '''</main>
+<main><h1>Floating over article content</h1>''' + ('<p>Plain article text without links. ' + 'Reading space. ' * 60 + '</p>') * 20 + '''</main>
 <footer><button>Footer control</button></footer>
 <script src="/seasonal/season-config.js"></script><script src="/seasonal/controller.js"></script></body></html>'''
 
@@ -47,34 +47,18 @@ with sync_playwright() as p:
                 page.wait_for_timeout(80)
                 box = page.locator('.seasonal-character img').bounding_box()
                 assert box and box['y'] >= 0 and box['y'] + box['height'] <= 900, (width, scroll, box)
-                assert page.evaluate('''() => {
-                    const o=document.querySelector('.seasonal-overlay'),a=o.getBoundingClientRect();
-                    if(o.dataset.docked==='true'){
-                        const h=o.closest('header').getBoundingClientRect();
-                        return a.top>=h.top&&a.bottom<=h.bottom&&![...document.querySelectorAll('header button,header a')].filter(n=>!o.contains(n)&&!n.closest('[hidden]')).some(n=>{const b=n.getBoundingClientRect();return b.width&&b.height&&a.left<b.right&&a.right>b.left&&a.top<b.bottom&&a.bottom>b.top;});
-                    }
-                    return ![...document.querySelectorAll('main,footer')].some(n=>{
-                        const b=n.getBoundingClientRect();
-                        return a.left<b.right&&a.right>b.left&&a.top<b.bottom&&a.bottom>b.top;
-                    });
-                }'''), (width, reduced, scroll)
+                assert overlay.evaluate("n => getComputedStyle(n).position") == 'fixed'
+                assert overlay.get_attribute('data-docked') is None
+                dismiss_box = page.get_by_role('button', name='Dismiss Halloween character', exact=True).bounding_box()
+                assert dismiss_box and dismiss_box['x'] >= 0 and dismiss_box['x'] + dismiss_box['width'] <= width
+                assert dismiss_box['y'] >= 0 and dismiss_box['y'] + dismiss_box['height'] <= 900
+                assert page.get_by_role('button', name='Dismiss Halloween character', exact=True).evaluate("n => { const r=n.getBoundingClientRect();return n===document.elementFromPoint(r.x+r.width/2,r.y+r.height/2); }")
             page.evaluate('scrollTo(0,0)')
             page.wait_for_timeout(80)
-            if overlay.is_visible():
-                page.get_by_role('button', name='Turn on Halloween mode', exact=True).click()
-            else:
-                page.get_by_role('button', name='Appearance', exact=True).click()
-                page.get_by_role('button', name='Halloween appearance', exact=True).click()
-                page.get_by_role('button', name='Appearance', exact=True).click()
+            page.get_by_role('button', name='Turn on Halloween mode', exact=True).click()
             assert page.locator('html').get_attribute('data-season') == 'halloween'
             dismiss = page.get_by_role('button', name='Dismiss Halloween character', exact=True)
-            if overlay.is_visible():
-                page.get_by_role('button', name='Appearance', exact=True).click()
-                dismiss.focus()
-                page.keyboard.press('Enter')
-            else:
-                # A concealed decoration must never cover reading content.
-                assert overlay.get_attribute('data-obscured') == 'true'
+            dismiss.click()
             assert overlay.is_hidden()
             if page.get_by_role('button', name='Appearance', exact=True).get_attribute('aria-expanded') != 'true':
                 page.get_by_role('button', name='Appearance', exact=True).click()
@@ -101,5 +85,5 @@ with sync_playwright() as p:
                 assert overlay.is_visible()
             assert not errors, errors
             page.close()
-            print(f'PASS {width}px motion={reduced}: clearance, activation, dismissal, restore, undo')
+            print(f'PASS {width}px motion={reduced}: visible floating, reachable X, no layout gap, activation, restore, undo')
     browser.close()
