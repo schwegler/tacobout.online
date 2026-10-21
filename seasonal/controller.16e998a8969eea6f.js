@@ -1,4 +1,4 @@
-/* Seasonal overlay contract v2. Safe gutters with a reserved fallback; no polling or animation loop. */
+/* Seasonal overlay contract v2. No layout insertion, polling or animation loop. */
 (() => {
   const base = new URL('.', document.currentScript.src);
   const config = window.SchwegSeasonalConfig;
@@ -27,9 +27,7 @@
     const dismiss = button('×','seasonal-dismiss');dismiss.setAttribute('aria-label',`Dismiss ${season.label} character`);
     const notice=el('span','seasonal-notice',season.notice||`${season.label} on`);notice.hidden=true;
     const undo=button('Undo','seasonal-undo');undo.setAttribute('aria-label','Restore original appearance');
-    overlay.append(character,dismiss);
-    const invitationSlot=el('div','seasonal-invitation-slot');
-    document.querySelector('main').before(invitationSlot);invitationSlot.append(overlay);
+    overlay.append(character,dismiss);document.body.append(overlay);
     const atmosphere=el('div','seasonal-atmosphere');atmosphere.setAttribute('aria-hidden','true');atmosphere.hidden=true;
     for(const name of season.decorations||[])atmosphere.append(el('span',`seasonal-${name}`));document.body.prepend(atmosphere);
     const originals = selector => [...document.querySelectorAll(selector)].map(image=>({image,attributes:Object.fromEntries(['src','srcset','sizes','alt'].map(key=>[key,image.getAttribute(key)])),aspect:image.style.aspectRatio,fit:image.style.objectFit,ratio:(image.naturalWidth&&image.naturalHeight)?`${image.naturalWidth}/${image.naturalHeight}`:(image.getAttribute('width')&&image.getAttribute('height'))?`${image.getAttribute('width')}/${image.getAttribute('height')}`:null}));
@@ -57,18 +55,18 @@
       if([...document.querySelectorAll('dialog[open],[role="dialog"][aria-modal="true"]')].some(n=>n.getClientRects().length&&getComputedStyle(n).visibility!=='hidden')){overlay.dataset.obscured='true';return;}
       const view=window.visualViewport,width=view?.width||innerWidth,height=view?.height||innerHeight,offsetX=view?.offsetLeft||0,offsetY=view?.offsetTop||0;
       const style=getComputedStyle(overlay),safe=side=>parseFloat(style.getPropertyValue(`--seasonal-safe-${side}`))||0;
-      // Measure fixed dimensions even on articles with an older mobile hiding rule.
-      delete overlay.dataset.docked;overlay.dataset.measuring='true';
       const box=overlay.getBoundingClientRect(),pad=12;
-      delete overlay.dataset.measuring;
       const left=offsetX+pad+safe('left'),right=offsetX+width-pad-safe('right')-box.width,top=offsetY+pad+safe('top'),bottom=offsetY+height-(width<=600?64:16)-safe('bottom')-box.height;
-      const protectedRects=[...document.querySelectorAll('main,article,aside,footer,p,h1,h2,h3,h4,h5,h6,blockquote,pre,header,nav,[role="alert"],[role="status"],[role="dialog"],dialog[open],button,a,input,select,textarea,summary,[role="button"],.notice,[data-seasonal-avoid]')].filter(node=>!overlay.contains(node)).map(node=>node.getBoundingClientRect()).filter(r=>r.width&&r.height&&r.bottom>offsetY&&r.top<offsetY+height&&r.right>offsetX&&r.left<offsetX+width);
+      const protectedRects=[...document.querySelectorAll('header,nav,[role="alert"],[role="status"],[role="dialog"],dialog[open],button,a,input,select,textarea,summary,[role="button"],.notice,[data-seasonal-avoid]')].filter(node=>!overlay.contains(node)).map(node=>node.getBoundingClientRect()).filter(r=>r.width&&r.height&&r.bottom>offsetY&&r.top<offsetY+height&&r.right>offsetX&&r.left<offsetX+width);
       const clear=p=>p.x>=left&&p.y>=top&&p.x<=right&&p.y<=bottom&&!protectedRects.some(r=>p.x-8<r.right&&p.x+box.width+8>r.left&&p.y-10<r.bottom&&p.y+box.height+10>r.top);
       let point=lastPosition&&clear(lastPosition)?lastPosition:null;
       if(!point){const headerBottom=Math.max(top,...[...document.querySelectorAll('header,nav')].map(n=>n.getBoundingClientRect()).filter(r=>r.width&&r.height&&r.top<offsetY+height*.25).map(r=>r.bottom+12));const ys=[bottom,bottom-(bottom-top)*.33,bottom-(bottom-top)*.66,headerBottom,top];for(const y of ys){for(const x of [right,left]){if(clear({x,y})){point={x,y};break;}}if(point)break;}}
       if(!point){
-        // No safe outer gutter: give the invitation its own space before reading content.
-        overlay.dataset.docked='true';delete overlay.dataset.obscured;lastPosition=null;return;
+        // Content overlap is intentional. Prefer the corner covering the fewest controls;
+        // a narrow gutter must never hide the character or its reachable dismiss X.
+        const candidates=[{x:Math.max(left,right),y:Math.max(top,bottom)},{x:left,y:Math.max(top,bottom)},{x:Math.max(left,right),y:top},{x:left,y:top}];
+        const overlaps=p=>protectedRects.reduce((score,r)=>score+(p.x<r.right&&p.x+box.width>r.left&&p.y<r.bottom&&p.y+box.height>r.top?1:0),0);
+        point=candidates.reduce((best,p)=>overlaps(p)<overlaps(best)?p:best);
       }
       delete overlay.dataset.obscured;lastPosition=point;overlay.style.left=`${point.x}px`;overlay.style.top=`${point.y}px`;
     };
@@ -111,7 +109,7 @@
     const expire = () => {
       expired=true;clearTimeout(timer);if(frame)cancelAnimationFrame(frame);events.abort();sizeObserver?.disconnect();
       portraits.forEach(restore);marks.forEach(restore);Object.keys(snapshot).forEach(restoreAttribute);
-      if(overlay.contains(document.activeElement))focusContent();invitationSlot.remove();atmosphere.remove();if(existingMode)controls.before(existingMode);controls.remove();
+      if(overlay.contains(document.activeElement))focusContent();overlay.remove();atmosphere.remove();if(existingMode)controls.before(existingMode);controls.remove();
       window.dispatchEvent(new CustomEvent('schweg:seasonal-change',{detail:{schemaVersion:2,seasonId:season.id,theme:season.theme,active:false,motion:snapshot['data-season-motion']||'auto',source:'expired'}}));
     };
     const armBoundary = () => { const remaining=boundary-Date.now();if(remaining<=0)expire();else deadlineTimer=setTimeout(armBoundary,Math.min(remaining,2147483647)); };

@@ -1,0 +1,112 @@
+[
+  {
+    "state": "before",
+    "width": 320,
+    "mainTop": 196,
+    "headerBottom": 76,
+    "slot": 96,
+    "alt": "",
+    "overlayVisibility": "visible",
+    "overflow": false,
+    "errors": []
+  },
+  {
+    "state": "before",
+    "width": 390,
+    "mainTop": 196,
+    "headerBottom": 76,
+    "slot": 96,
+    "alt": "",
+    "overlayVisibility": "visible",
+    "overflow": false,
+    "errors": []
+  },
+  {
+    "state": "before",
+    "width": 768,
+    "mainTop": 272,
+    "headerBottom": 152,
+    "slot": 96,
+    "alt": "",
+    "overlayVisibility": "visible",
+    "overflow": false,
+    "errors": []
+  },
+  {
+    "state": "before",
+    "width": 1440,
+    "mainTop": 212,
+    "headerBottom": 92,
+    "slot": 96,
+    "alt": "",
+    "overlayVisibility": "visible",
+    "overflow": false,
+    "errors": []
+  },
+  {
+    "state": "before",
+    "width": 1920,
+    "mainTop": 212,
+    "headerBottom": 92,
+    "slot": 96,
+    "alt": "",
+    "overlayVisibility": "visible",
+    "overflow": false,
+    "errors": []
+  },
+  {
+    "state": "after",
+    "width": 320,
+    "mainTop": 76,
+    "headerBottom": 76,
+    "slot": 0,
+    "alt": "",
+    "overlayVisibility": "visible",
+    "overflow": false,
+    "errors": []
+  },
+  {
+    "state": "after",
+    "width": 390,
+    "mainTop": 76,
+    "headerBottom": 76,
+    "slot": 0,
+    "alt": "",
+    "overlayVisibility": "visible",
+    "overflow": false,
+    "errors": []
+  },
+  {
+    "state": "after",
+    "width": 768,
+    "mainTop": 152,
+    "headerBottom": 152,
+    "slot": 0,
+    "alt": "",
+    "overlayVisibility": "visible",
+    "overflow": false,
+    "errors": []
+  },
+  {
+    "state": "after",
+    "width": 1440,
+    "mainTop": 92,
+    "headerBottom": 92,
+    "slot": 0,
+    "alt": "",
+    "overlayVisibility": "visible",
+    "overflow": false,
+    "errors": []
+  },
+  {
+    "state": "after",
+    "width": 1920,
+    "mainTop": 92,
+    "headerBottom": 92,
+    "slot": 0,
+    "alt": "",
+    "overlayVisibility": "visible",
+    "overflow": false,
+    "errors": []
+  }
+]
