@@ -69,7 +69,7 @@ class Files(paramiko.SFTPServerInterface):
 class Server:
     def __init__(self,base):
         self.base=Path(base);self.requests=[];self.no_replace=False;self.auth_attempts=[];self.renames=0;self.fail_rename_at=None
-        self.key=paramiko.RSAKey.generate(2048);self.transports=[];self.stop=threading.Event()
+        self.key=paramiko.RSAKey.generate(2048);self.transports=[];self.handlers=[];self.stop=threading.Event()
         self.sock=socket.socket();self.sock.bind(('127.0.0.1',0));self.sock.listen();self.sock.settimeout(.2)
         self.port=self.sock.getsockname()[1]
         self.known_hosts=f'[127.0.0.1]:{self.port} {self.key.get_name()} {self.key.get_base64()}\n'
@@ -81,9 +81,15 @@ class Server:
             except OSError:break
             t=paramiko.Transport(c);t.add_server_key(self.key);self.transports.append(t)
             t.set_subsystem_handler('sftp',paramiko.SFTPServer,Files,fixture=self)
-            try:t.start_server(server=Policy(self))
-            except (EOFError,paramiko.SSHException):t.close()
+            # Negotiate each accepted peer independently. A peer that closes early or
+            # stalls before its banner must not serialize all following connections.
+            handler=threading.Thread(target=self.negotiate,args=(t,),daemon=True)
+            self.handlers.append(handler);handler.start()
+    def negotiate(self,transport):
+        try:transport.start_server(server=Policy(self))
+        except (EOFError,OSError,paramiko.SSHException):transport.close()
     def close(self):
         self.stop.set();self.sock.close()
-        for t in self.transports:t.close()
         self.thread.join(timeout=2)
+        for t in self.transports:t.close()
+        for handler in self.handlers:handler.join(timeout=2)

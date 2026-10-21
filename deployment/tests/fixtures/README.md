@@ -1,0 +1,5 @@
+# Historical release evidence fixture
+
+`reviewed-3.8.25-release.json` is the original release manifest downloaded from successful main Tests run 39510023986, attempt 1, artifact 12305171480 (`tested-theme-b96a82d8ce36705d31666b624942896b691fe84b-1`). GitHub reports artifact-envelope digest `c247b6a1c517996c678fc625e46d8bc94762c4a2623f5ace923427007c8cc287`. The downloaded theme ZIP was independently checked against manifest ZIP SHA256 `331730079a6d1fb4a8f40990729461741bebad2975ac8ac1d57464197b4bd005`, matching the existing historical content review. This is previously generated evidence, not approval of a new release.
+
+The historical-review test checks that manifest's exact ZIP identity, file count and complete delta against the original content review. A separate build of current HEAD must still be rejected by the unreconciled production baseline. Future runtime changes must not rewrite this fixture or the historical review to claim approval. Production configuration, exact-release approval, drift, host trust and write gates remain unchanged.
