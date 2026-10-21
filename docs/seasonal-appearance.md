@@ -59,11 +59,11 @@ A CSS-only equivalent for the verified 3.8.25 assets is:
 
 ```css
 /* Keep the seasonal invitation out of reading flow when no gutter fits. */
-.seasonal-invitation-slot { display: contents; }
-.seasonal-overlay[data-docked]:not([hidden]) { display: none !important; }
+html .seasonal-invitation-slot { display: contents; }
+html .seasonal-overlay[data-docked]:not([hidden]) { display: none !important; }
 ```
 
-Through an already authorized Additional CSS/theme-edit workflow, append these rules after the existing seasonal CSS. It conceals only the docked fallback and removes the slot’s layout box and sibling gap; safe fixed positions and Appearance controls remain available. First save the existing custom CSS or exact edited file and verify the active theme and live asset hashes still match the above. Clear the existing cache and check anonymous desktop/mobile home and article pages, including menu activation and Undo. Roll back by removing exactly these added rules and clearing that cache again. This patch has not been published. Do not deploy other commits or provision SFTP/security permissions for it.
+Through an already authorized Additional CSS/theme-edit workflow, save these rules as Additional CSS (or append them after existing seasonal CSS in an authorized file edit). It conceals only the docked fallback and removes the slot’s layout box and sibling gap; safe fixed positions and Appearance controls remain available. First save the existing custom CSS or exact edited file and verify the active theme and live asset hashes still match the above. Clear the existing cache and check anonymous desktop/mobile home and article pages, including menu activation and Undo. Roll back by removing exactly these added rules and clearing that cache again. The CSS-only correction was published with explicit user approval on October 21, 2026. WordPress inserts this CSS before the seasonal stylesheet, so the `html` prefixes are necessary to win equal-specificity later rules. Do not deploy other commits or provision SFTP/security permissions for it.
 
 For the repository correction, publish only the reviewed controller/CSS and regenerated manifest/assets through the existing verified release workflow. The automated EasyWP workflow is disabled and its setup gates remain unresolved; see [deployment prerequisites](easywp-deployment.md). A full theme replacement requires a current installed snapshot and reconciliation first.
 
@@ -71,3 +71,5 @@ Review captures (same public HTML and local assets, remote WordPress scripts omi
 [desktop before](screenshots/seasonal-compact/before-1440.png) · [desktop after](screenshots/seasonal-compact/after-1440.png) · [mobile before](screenshots/seasonal-compact/before-390.png) · [mobile after](screenshots/seasonal-compact/after-390.png) · [measurements](screenshots/seasonal-compact/results.json).
 
 Chrome live desktop inspection succeeded, but its mobile viewport capability stalled and reset the tool session. Responsive screenshots above use the repository’s isolated Python Playwright path. No live mobile state or deployment is claimed from these previews. PHP suite was not run locally because Composer/vendor dependencies are absent; CI must complete it.
+
+Live verification after publication: WordPress reported Published; anonymous canonical homepage HTML delivered both html-prefixed rules. Chrome at 1442px and 390px reported slot display contents, slot height 0, docked overlay display none, and no horizontal overflow on the homepage and Halloween games article. Appearance activation set data-season=halloween and Restore original appearance removed it at both homepage widths. Canonical desktop main top is 125px, compared with 245px in the reproduced regression. Console inspection found no warnings/errors. Existing artwork and fingerprinted theme assets remain unchanged in production. PR #358 remains open and unmerged; package approval metadata remains unchanged. Rollback restores the previously empty Additional CSS setting and clears the normal site cache if necessary.
