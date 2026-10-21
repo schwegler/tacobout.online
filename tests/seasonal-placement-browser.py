@@ -7,7 +7,7 @@ from playwright.sync_api import sync_playwright
 
 ROOT = Path(__file__).resolve().parents[1]
 HTML = '''<!doctype html><html><head><meta name="viewport" content="width=device-width">
-<style>body{margin:0}header{height:80px}main{max-width:1000px;margin:auto}p{line-height:2}footer{height:100px}</style>
+<style>body{margin:0}header{height:80px;position:sticky;top:0;z-index:2}main{max-width:1000px;margin:auto}p{line-height:2}footer{height:100px}</style>
 <link rel="stylesheet" href="/seasonal/seasonal.css"></head><body>
 <header><button class="tacobout-theme-control">Theme</button></header>
 <main><h1>Reading without overlap</h1>''' + ('<p>Plain article text without links. ' + 'Reading space. ' * 60 + '</p>') * 20 + '''</main>
@@ -38,16 +38,22 @@ with sync_playwright() as p:
             assert page.locator('main').evaluate('n => n.getBoundingClientRect().top') == main_top
             assert page.locator('.seasonal-invitation-slot').count() == 0
             assert page.locator('.seasonal-character img').get_attribute('alt') == ''
-            assert overlay.is_visible() == (width >= 1440)
+            assert overlay.is_visible()
+            assert page.locator('.seasonal-character img').bounding_box()['width'] >= 44
             if reduced == 'reduce':
                 assert page.locator('.seasonal-character img').evaluate("n => getComputedStyle(n).animationName") == 'none'
             for scroll in [0, 500, 1500]:
                 page.evaluate('(y) => scrollTo(0,y)', scroll)
                 page.wait_for_timeout(80)
+                box = page.locator('.seasonal-character img').bounding_box()
+                assert box and box['y'] >= 0 and box['y'] + box['height'] <= 900, (width, scroll, box)
                 assert page.evaluate('''() => {
                     const o=document.querySelector('.seasonal-overlay'),a=o.getBoundingClientRect();
-                    if(getComputedStyle(o).visibility==='hidden')return true;
-                    return ![...document.querySelectorAll('main,header,footer')].some(n=>{
+                    if(o.dataset.docked==='true'){
+                        const h=o.closest('header').getBoundingClientRect();
+                        return a.top>=h.top&&a.bottom<=h.bottom&&![...document.querySelectorAll('header button,header a')].filter(n=>!o.contains(n)&&!n.closest('[hidden]')).some(n=>{const b=n.getBoundingClientRect();return b.width&&b.height&&a.left<b.right&&a.right>b.left&&a.top<b.bottom&&a.bottom>b.top;});
+                    }
+                    return ![...document.querySelectorAll('main,footer')].some(n=>{
                         const b=n.getBoundingClientRect();
                         return a.left<b.right&&a.right>b.left&&a.top<b.bottom&&a.bottom>b.top;
                     });
@@ -63,15 +69,17 @@ with sync_playwright() as p:
             assert page.locator('html').get_attribute('data-season') == 'halloween'
             dismiss = page.get_by_role('button', name='Dismiss Halloween character', exact=True)
             if overlay.is_visible():
+                page.get_by_role('button', name='Appearance', exact=True).click()
                 dismiss.focus()
                 page.keyboard.press('Enter')
             else:
                 # A concealed decoration must never cover reading content.
                 assert overlay.get_attribute('data-obscured') == 'true'
             assert overlay.is_hidden()
-            page.get_by_role('button', name='Appearance', exact=True).click()
+            if page.get_by_role('button', name='Appearance', exact=True).get_attribute('aria-expanded') != 'true':
+                page.get_by_role('button', name='Appearance', exact=True).click()
             page.get_by_role('button', name='Show Halloween character', exact=True).click()
-            assert overlay.is_visible() == (width >= 1440)
+            assert overlay.is_visible()
             page.get_by_role('button', name='Appearance', exact=True).click()
             page.get_by_role('button', name='Restore original appearance', exact=True).click()
             assert page.locator('html').get_attribute('data-season') is None
@@ -81,6 +89,8 @@ with sync_playwright() as p:
                 session = page.context.new_cdp_session(page)
                 session.send('Emulation.setPageScaleFactor', {'pageScaleFactor': 2})
                 page.wait_for_timeout(100)
+                box = page.locator('.seasonal-character img').bounding_box()
+                assert box and box['y'] >= 0 and box['y'] + box['height'] <= 900, (width, scroll, box)
                 assert page.evaluate('visualViewport.width') == 720
                 if overlay.is_visible():
                     box = overlay.bounding_box()
@@ -88,7 +98,7 @@ with sync_playwright() as p:
                 session.send('Emulation.setPageScaleFactor', {'pageScaleFactor': 1})
                 page.set_viewport_size({'width': 720, 'height': 900})
                 page.wait_for_timeout(100)
-                assert overlay.is_hidden()
+                assert overlay.is_visible()
             assert not errors, errors
             page.close()
             print(f'PASS {width}px motion={reduced}: clearance, activation, dismissal, restore, undo')

@@ -59,3 +59,11 @@ html[data-season="halloween"] .seasonal-appearance-panel,html[data-theme="dark"]
 .tacobout-theme-control span{display:none}.seasonal-appearance-panel .tacobout-theme-control span{display:inline;margin-left:8px;}
 
 .seasonal-overlay[data-measuring]:not([hidden]){display:grid!important}
+
+/* A visible compact invitation shares the existing Appearance control footprint. */
+.seasonal-controls:has(>.seasonal-overlay[data-docked]:not([hidden])){display:inline-flex;gap:4px;align-items:center}
+html .seasonal-controls:has(>.seasonal-overlay[data-docked]:not([hidden]))>.seasonal-appearance-toggle{width:44px;min-width:44px;height:44px;padding:0;font-size:24px}
+html .seasonal-controls>.seasonal-overlay[data-docked]:not([hidden]){display:grid!important;position:relative;left:auto!important;top:auto!important;margin:0;grid-template-columns:44px;gap:0;max-width:44px;width:44px;height:44px;z-index:1;overflow:visible}
+html .seasonal-controls>.seasonal-overlay[data-docked] :is(.seasonal-character,.seasonal-flight,img){width:44px;height:44px;min-width:44px;min-height:44px;padding:0;border:0;background:transparent}
+html .seasonal-controls>.seasonal-overlay[data-docked] img{animation:none}
+.tacobout-header:has(.seasonal-overlay[data-docked]:not([hidden])){transform:translateY(0)!important}

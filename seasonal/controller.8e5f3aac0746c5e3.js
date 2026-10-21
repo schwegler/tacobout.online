@@ -1,4 +1,4 @@
-/* Seasonal overlay contract v2. Safe gutters with a reserved fallback; no polling or animation loop. */
+/* Seasonal overlay contract v2. Safe gutters with a compact header fallback; no polling or animation loop. */
 (() => {
   const base = new URL('.', document.currentScript.src);
   const config = window.SchwegSeasonalConfig;
@@ -42,7 +42,8 @@
     const status=el('span','seasonal-status');status.setAttribute('role','status');status.setAttribute('aria-label','Seasonal appearance status');
     const existingMode=document.querySelector('.tacobout-theme-control');
     if(existingMode){existingMode.before(controls);panel.append(existingMode);}else{(document.querySelector('header .header-right')||document.querySelector('header')).append(controls);}
-    panel.append(toggle,undo,motion,effects,restoreInvite,reset,notice,status);controls.append(disclosure,panel);
+    dismiss.textContent=`Dismiss ${season.label} character`;
+    panel.append(toggle,undo,motion,effects,restoreInvite,dismiss,reset,notice,status);controls.append(disclosure,panel);
     const closeMenu=()=>{panel.hidden=true;disclosure.setAttribute('aria-expanded','false');};
     const placeMenu=()=>{controls.style.setProperty('--appearance-top',`${Math.max(8,Math.min(disclosure.getBoundingClientRect().bottom+8,innerHeight-260))}px`);};listen(window,'resize',placeMenu,{passive:true});
     disclosure.addEventListener('click',()=>{placeMenu();panel.hidden=!panel.hidden;disclosure.setAttribute('aria-expanded',String(!panel.hidden));});
@@ -57,7 +58,7 @@
       const view=window.visualViewport,width=view?.width||innerWidth,height=view?.height||innerHeight,offsetX=view?.offsetLeft||0,offsetY=view?.offsetTop||0;
       const style=getComputedStyle(overlay),safe=side=>parseFloat(style.getPropertyValue(`--seasonal-safe-${side}`))||0;
       // Measure fixed dimensions even on articles with an older mobile hiding rule.
-      overlay.dataset.measuring='true';
+      delete overlay.dataset.docked;document.body.append(overlay);overlay.dataset.measuring='true';
       const box=overlay.getBoundingClientRect(),pad=12;
       delete overlay.dataset.measuring;
       const left=offsetX+pad+safe('left'),right=offsetX+width-pad-safe('right')-box.width,top=offsetY+pad+safe('top'),bottom=offsetY+height-(width<=600?64:16)-safe('bottom')-box.height;
@@ -66,9 +67,12 @@
       let point=lastPosition&&clear(lastPosition)?lastPosition:null;
       if(!point){const headerBottom=Math.max(top,...[...document.querySelectorAll('header,nav')].map(n=>n.getBoundingClientRect()).filter(r=>r.width&&r.height&&r.top<offsetY+height*.25).map(r=>r.bottom+12));const ys=[bottom,bottom-(bottom-top)*.33,bottom-(bottom-top)*.66,headerBottom,top];for(const y of ys){for(const x of [right,left]){if(clear({x,y})){point={x,y};break;}}if(point)break;}}
       if(!point){
-        // Keep reading space unchanged; Appearance remains available without a safe gutter.
-        overlay.dataset.obscured='true';lastPosition=null;return;
+        // Share the existing header control footprint; never cover reading content.
+        overlay.dataset.docked='true';controls.prepend(overlay);
+        disclosure.textContent='⋯';disclosure.setAttribute('aria-label','Appearance');
+        delete overlay.dataset.obscured;lastPosition=null;return;
       }
+      disclosure.textContent='Appearance';disclosure.removeAttribute('aria-label');
       delete overlay.dataset.obscured;lastPosition=point;overlay.style.left=`${point.x}px`;overlay.style.top=`${point.y}px`;
     };
     const queue=()=>{if(expired)return;if(!frame)frame=requestAnimationFrame(position);};
