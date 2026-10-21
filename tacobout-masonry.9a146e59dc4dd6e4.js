@@ -62,7 +62,8 @@
 			const children = Array.from(grid.children).filter(el => getComputedStyle(el).display !== 'none');
 			const rail = tracks === 3 ? children.find(el => el.classList.contains('tacobout-grid-sidebar')) : null;
 			const columns = rail ? tracks - 1 : tracks;
-			const lead = document.body.matches('.home:not(.paged)') ? children.find(el => el.classList.contains('wp-block-post')) : null;
+			const newest = document.body.matches('.home:not(.paged)') ? children.find(el => el.classList.contains('wp-block-post')) : null;
+			const lead = newest?.classList.contains('tacobout-format-standard') ? newest : null;
 			const gap = parseFloat(style.getPropertyValue('--tacobout-masonry-gap')) || 30;
 			// All heights are read before row writes. Fixed widths are supplied by the fallback grid.
 			const items = children.filter(el => el !== rail);
