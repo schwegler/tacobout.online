@@ -1,4 +1,4 @@
-import base64, datetime as dt, io, json, os, stat, subprocess, sys, tempfile, unittest, zipfile
+import base64, datetime as dt, io, json, os, socket, stat, subprocess, sys, tempfile, unittest, zipfile
 from pathlib import Path
 from unittest.mock import patch
 sys.path.insert(0,str(Path(__file__).resolve().parents[1]))
@@ -30,14 +30,18 @@ class PolicyTests(unittest.TestCase):
         self.assertIsNone(baseline['files']);self.assertIsNone(baseline['approved_commit'])
         self.assertTrue(all('mode' not in meta for meta in evidence['files'].values()))
         self.assertGreater(version((root/'style.css').read_bytes()),version(('Version: '+evidence['theme_version']).encode()))
+        # Historical review describes the tested 3.8.25 artifact, not every future HEAD.
+        # Keep its exact identity/delta assertions; never refresh review hashes to pass CI.
+        reviewed=json.loads((root/'deployment/tests/fixtures/reviewed-3.8.25-release.json').read_bytes())
+        self.assertEqual(review['candidate_zip_sha256'],reviewed['zip_sha256'])
+        self.assertEqual(review['runtime_file_count'],len(reviewed['files']))
+        self.assertEqual(review['changes'],changes(evidence['files'],reviewed['files']))
+        self.assertTrue(all(p in evidence['files'] and p not in reviewed['files'] for p in review['preserved_snapshot_files']))
         with tempfile.TemporaryDirectory() as temp:
             manifest=build(root,temp)
             _,files=load(temp,manifest['source_commit'],manifest['zip_sha256'])
-            self.assertEqual(review['candidate_zip_sha256'],manifest['zip_sha256'])
-            self.assertEqual(review['changes'],changes(evidence['files'],describe(files)))
-            self.assertTrue(all(p in evidence['files'] and p not in files for p in review['preserved_snapshot_files']))
             before={p:(b'',0o644) for p in evidence['files']}
-            with self.assertRaises(Refused):
+            with self.assertRaisesRegex(Refused,'Live drift is unresolved'):
                 deploy_plan({'theme_root':ROOT},baseline,before,manifest,files,digest(describe(before)))
     def test_initial_policy_cannot_connect_or_write(self):
         with self.assertRaises(Refused):config_file('.github/deployment/production.json',True)
@@ -159,13 +163,23 @@ class SFTPTests(unittest.TestCase):
         cipher=seal(BEFORE,p,b'k'*32)
         return {'plan_sha256':sha(canonical(p)),'cipher_sha256':sha(cipher),'artifact_id':'12'},cipher
     def test_strict_host_key_rejects_missing_or_wrong_pin(self):
-        with self.assertRaises(Exception):
-            with self.connect('example.test ssh-rsa AAAA\n'):pass
+        missing=f'example.test {self.server.key.get_name()} {self.server.key.get_base64()}\n'
+        with self.assertRaisesRegex(paramiko.SSHException,'not found in known_hosts'):
+            with self.connect(missing):pass
         wrong=paramiko.RSAKey.generate(2048)
         hosts=f'[127.0.0.1]:{self.server.port} {wrong.get_name()} {wrong.get_base64()}\n'
         with self.assertRaises(paramiko.BadHostKeyException):
             with self.connect(hosts):pass
         self.assertEqual([],self.server.requests);self.assertEqual([],self.server.auth_attempts)
+    def test_stalled_unauthenticated_peer_cannot_block_host_key_check(self):
+        # An accepted connection without an SSH banner must not block the next peer.
+        with socket.create_connection(('127.0.0.1',self.server.port),timeout=2):
+            wrong=paramiko.RSAKey.generate(2048)
+            hosts=f'[127.0.0.1]:{self.server.port} {wrong.get_name()} {wrong.get_base64()}\n'
+            with self.assertRaises(paramiko.BadHostKeyException):
+                with self.connect(hosts):pass
+        self.assertEqual([],self.server.auth_attempts)
+        self.assertEqual([],self.server.requests)
     def test_snapshot_deploy_and_explicit_rollback_preserve_unknown_files(self):
         with self.connect() as sftp:
             remote=ThemeRemote(sftp,ROOT);self.assertEqual(BEFORE,remote.snapshot())
