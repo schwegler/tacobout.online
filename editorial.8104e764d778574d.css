@@ -267,3 +267,13 @@ html body .tacobout-magazine-grid .wp-block-post-content[data-feed-preview]>*{bo
 html body .tacobout-magazine-grid img{contain:none!important;contain-intrinsic-size:none!important}
 
 html body .tacobout-magazine-grid .wp-block-post-content[data-feed-preview] iframe{border:0}
+
+/* Link body media remains distinct from the hidden social featured image. */
+html body .tacobout-magazine-grid .tacobout-format-link .tacobout-link-media{display:flow-root;flex:0 0 100%;max-width:100%;margin-bottom:1rem}
+html body .tacobout-magazine-grid .tacobout-link-media figure{max-width:100%;margin:0}
+html body .tacobout-magazine-grid .tacobout-link-media img{display:block;max-width:100%!important;width:auto;height:auto!important;max-height:320px!important;object-fit:contain!important}
+html body .tacobout-magazine-grid .tacobout-link-media :is(.alignleft,.alignright){max-width:60%;margin:0}
+html body .tacobout-magazine-grid .tacobout-link-media .alignleft{float:left}
+html body .tacobout-magazine-grid .tacobout-link-media .alignright{float:right}
+html body .tacobout-magazine-grid .tacobout-link-media figcaption{position:static;background:none;color:var(--taco-muted);overflow-wrap:anywhere}
+@media(max-width:480px){html body .tacobout-magazine-grid .tacobout-link-media :is(.alignleft,.alignright){float:none;max-width:100%}}

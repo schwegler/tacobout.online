@@ -6,8 +6,27 @@ function tacobout_feed_jump( $post_id ) {
 	return '<p class="tacobout-card-jump"><a class="wp-block-post-excerpt__more-link" href="' . esc_url( get_permalink( $post_id ) ) . '">Read more<span class="screen-reader-text">: ' . esc_html( get_the_title( $post_id ) ) . '</span></a></p>';
 }
 
+/** Sanitize native image markup while retaining validated responsive candidates. */
+function tacobout_link_preview_media( $html ) {
+	$allowed = wp_kses_allowed_html( 'post' );
+	// Core's post allowlist omits responsive image attributes added during rendering.
+	$allowed['img']['sizes'] = true;
+	$allowed['img']['srcset'] = true;
+	$html = preg_replace_callback( '/\bsrcset="([^"]*)"/i', function ( $match ) {
+		foreach ( explode( ',', html_entity_decode( $match[1], ENT_QUOTES, 'UTF-8' ) ) as $candidate ) {
+			if ( ! preg_match( '~^\s*(?:https?://[^\s,]+|[^\s,:]+)(?:\s+\d+(?:\.\d+)?[wx])?\s*$~i', $candidate ) ) { return ''; }
+		}
+		return $match[0];
+	}, $html );
+	return wp_kses( $html, $allowed );
+}
+
 function tacobout_feed_preview( $html, $post_id, $format ) {
 	if ( ! in_array( $format, array( 'image', 'video', 'link' ), true ) || ! class_exists( 'DOMDocument' ) ) { return $html; }
+	// REST collections contain the full article; never select media below More.
+	if ( 'link' === $format ) {
+		$html = preg_split( '/<!--\s*more(?:\s[^>]*)?\s*-->|<(?:span|a)\b[^>]*(?:id=["\']more-\d+["\']|class=["\'][^"\']*\bmore-link\b)[^>]*>/i', $html, 2 )[0];
+	}
 	$dom = new DOMDocument();
 	$previous = libxml_use_internal_errors( true );
 	$dom->loadHTML( '<?xml encoding="utf-8" ?>' . $html );
@@ -21,7 +40,7 @@ function tacobout_feed_preview( $html, $post_id, $format ) {
 		$host = wp_parse_url( $url, PHP_URL_HOST );
 		if ( in_array( wp_parse_url( $url, PHP_URL_SCHEME ), array( 'http', 'https' ), true ) && $host && $host !== wp_parse_url( home_url(), PHP_URL_HOST ) ) { $source = $url; break; }
 	}
-	$selector = 'image' === $format ? './/img' : ( 'video' === $format ? './/video | .//iframe | .//object | .//embed' : './/blockquote | .//p[not(ancestor::figure)]' );
+	$selector = 'image' === $format ? './/img' : ( 'video' === $format ? './/video | .//iframe | .//object | .//embed' : './/blockquote | .//p[not(ancestor::figure) and normalize-space(.) != ""]' );
 	$primary = $xpath->query( $selector, $root )->item( 0 );
 	$content = '';
 	if ( $primary && 'link' !== $format ) {
@@ -34,6 +53,17 @@ function tacobout_feed_preview( $html, $post_id, $format ) {
 		$text = wp_trim_words( $primary->textContent, 55, '…' );
 		$tag = 'blockquote' === $primary->nodeName ? 'blockquote' : 'p';
 		$content = '<' . $tag . '>' . esc_html( $text ) . '</' . $tag . '>';
+	}
+	if ( 'link' === $format ) {
+		// Retain one authored body image, never the featured-image block or a player.
+		$image = $xpath->query( './/img[not(ancestor::*[contains(concat(" ",normalize-space(@class)," ")," wp-block-post-featured-image ")])]', $root )->item( 0 );
+		if ( $image ) {
+			$media = $image;
+			for ( $ancestor = $image->parentNode; $ancestor && $ancestor !== $root; $ancestor = $ancestor->parentNode ) {
+				if ( 'figure' === $ancestor->nodeName && 1 === $xpath->query( './/img', $ancestor )->length && 0 === $xpath->query( './/video | .//iframe | .//object | .//embed', $ancestor )->length ) { $media = $ancestor; break; }
+			}
+			$content = '<div class="tacobout-link-media">' . tacobout_link_preview_media( $dom->saveHTML( $media ) ) . '</div>' . $content;
+		}
 	}
 	if ( $source ) {
 		$host = preg_replace( '/^www\./', '', wp_parse_url( $source, PHP_URL_HOST ) );

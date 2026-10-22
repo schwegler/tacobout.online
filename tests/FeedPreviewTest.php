@@ -33,6 +33,45 @@ class FeedPreviewTest extends \PHPUnit\Framework\TestCase {
         $this->assertStringNotContainsString('My commentary',$out);
         $this->assertSame(1,substr_count($out,'wp-block-post-excerpt__more-link'));
     }
+    public function test_link_keeps_one_sanitized_native_image_above_more_only() {
+        $figure='<figure class="wp-block-image alignright is-resized"><a href="https://publication.test/article"><img src="body.jpg" width="160" height="120" alt="Different body image" srcset="body.jpg 160w, body-large.jpg 640w" sizes="160px"></a><figcaption>Authored caption</figcaption></figure>';
+        \Brain\Monkey\Functions\when('wp_kses_allowed_html')->justReturn(['img'=>[]]);
+        \Brain\Monkey\Functions\expect('wp_kses')->once()->with($figure, ['img'=>['sizes'=>true,'srcset'=>true]])->andReturn($figure);
+        $input='<div class="wp-block-post-content"><blockquote><p>Source quote</p></blockquote>'.$figure.'<figure><img src="extra.jpg"></figure><span id="more-25"></span><p>Private commentary</p><img src="below.jpg"></div>';
+        $out=tacobout_feed_preview($input,25,'link');
+        $this->assertStringContainsString($figure,$out);
+        $this->assertSame(1,substr_count($out,'<img'));
+        $this->assertStringContainsString('Source quote',$out);
+        $this->assertStringContainsString('Open source',$out);
+        foreach (['extra.jpg','below.jpg','Private commentary'] as $hidden) $this->assertStringNotContainsString($hidden,$out);
+    }
+    public function test_link_does_not_promote_images_or_quotes_below_native_more_boundaries() {
+        foreach (['<span id="more-26"></span>','<a class="more-link" href="/post#more-26">Continue</a>','<!--more-->'] as $marker) {
+            $out=tacobout_feed_preview('<div class="wp-block-post-content"><p>Above jump</p>'.$marker.'<img src="below.jpg"><blockquote>Below jump</blockquote></div>',26,'link');
+            $this->assertStringNotContainsString('below.jpg',$out);
+            $this->assertStringNotContainsString('Below jump',$out);
+            $this->assertStringContainsString('Above jump',$out);
+        }
+    }
+    public function test_link_rest_preview_stops_before_more_without_mutating_full_article() {
+        \Brain\Monkey\Functions\when('get_post_format')->justReturn('link');
+        \Brain\Monkey\Functions\when('wp_kses_allowed_html')->justReturn(['img'=>[]]);
+        \Brain\Monkey\Functions\when('wp_kses')->returnArg();
+        $article='<p><a href="https://publication.test/story">Source</a></p><figure class="wp-block-image alignleft"><img src="body.jpg" alt="Body"><figcaption>Caption</figcaption></figure><span id="more-402"></span><p>Full commentary</p><img src="below.jpg">';
+        $response=(object)['data'=>['content'=>['rendered'=>$article]]];
+        $request=new class { public function get_route(){ return '/wp/v2/posts'; } };
+        $result=tacobout_feed_rest_preview($response,(object)['ID'=>402],$request);
+        $this->assertStringContainsString('body.jpg',$result->data['tacobout_feed_content']);
+        $this->assertStringContainsString('alignleft',$result->data['tacobout_feed_content']);
+        $this->assertStringNotContainsString('below.jpg',$result->data['tacobout_feed_content']);
+        $this->assertStringNotContainsString('Full commentary',$result->data['tacobout_feed_content']);
+        $this->assertSame($article,$result->data['content']['rendered']);
+    }
+    public function test_responsive_candidates_reject_unsafe_protocols_before_kses() {
+        \Brain\Monkey\Functions\when('wp_kses_allowed_html')->justReturn(['img'=>[]]);
+        \Brain\Monkey\Functions\expect('wp_kses')->once()->with('<img src="body.jpg" >', ['img'=>['sizes'=>true,'srcset'=>true]])->andReturn('<img src="body.jpg">');
+        $this->assertSame('<img src="body.jpg">',tacobout_link_preview_media('<img src="body.jpg" srcset="/body.jpg 160w, javascript:alert(1) 640w">'));
+    }
     public function test_other_formats_and_single_article_remain_authored() {
         $html='<div class="wp-block-post-content"><p>Full essay</p></div>';
         foreach(['standard','status','audio','quote','gallery'] as $format) $this->assertSame($html,tacobout_feed_preview($html,23,$format));
