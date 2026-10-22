@@ -61,3 +61,22 @@ class ArtifactTests(unittest.TestCase):
             self.assertEqual(SLUG,metadata['theme'])
             self.assertTrue(metadata['package'].endswith('/v'+number+'/theme.zip'))
             with self.assertRaises(Refused):generate(temp,'v99.0.0')
+
+    def test_historical_reconciliation_evidence_remains_exact(self):
+        root=Path(__file__).resolve().parents[2]
+        evidence=json.loads((root/'.github/deployment/live-snapshot-content.json').read_bytes())
+        review=json.loads((root/'.github/deployment/release-content-review.json').read_bytes())
+        baseline=json.loads((root/'.github/deployment/production-baseline.json').read_bytes())
+        reviewed=json.loads((root/'deployment/tests/fixtures/reviewed-3.8.25-release.json').read_bytes())
+        self.assertEqual(212,len(evidence['files']))
+        self.assertFalse(evidence['permissions_verified'])
+        self.assertEqual('unreconciled',baseline['status'])
+        self.assertIsNone(baseline['files'])
+        self.assertIsNone(baseline['approved_commit'])
+        self.assertEqual(review['candidate_zip_sha256'],reviewed['zip_sha256'])
+        self.assertEqual(review['runtime_file_count'],len(reviewed['files']))
+        changes={p: {'from': evidence['files'].get(p, {}).get('sha256'), 'to': meta['sha256']}
+                 for p,meta in sorted(reviewed['files'].items())
+                 if evidence['files'].get(p, {}).get('sha256') != meta['sha256']}
+        self.assertEqual(review['changes'],changes)
+        self.assertTrue(all(p in evidence['files'] and p not in reviewed['files'] for p in review['preserved_snapshot_files']))
