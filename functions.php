@@ -8,6 +8,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; }
 
 require_once __DIR__ . '/inc/assets.php';
+require_once __DIR__ . '/inc/updates.php';
 require_once __DIR__ . '/inc/trove.php';
 require_once __DIR__ . '/inc/sidebar.php';
 require_once __DIR__ . '/inc/editorial.php';
