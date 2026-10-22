@@ -29,3 +29,9 @@ Use the existing native **Dashboard → Updates → Themes** checkbox for Tacobo
 `tests/native-theme-update-route.php` tests the real core sanitizer and `Theme_Upgrader` against checksum-pinned WordPress 6.8.3 sources. It reproduces the wrong-key “latest version” result and confirms the preserved slug selects the exact release package, stopping before any download, extraction or filesystem write. The same sanitizer remains in current WordPress development sources. Production request payload and update transient were not inspected; confirm the failed request used `action=update-theme` when diagnosing a particular installation.
 
 Sources: [AJAX theme update handler](https://developer.wordpress.org/reference/functions/wp_ajax_update_theme/), [core theme upgrader](https://developer.wordpress.org/reference/classes/theme_upgrader/bulk_upgrade/), [native bulk route](https://github.com/WordPress/WordPress/blob/6.8.3/wp-admin/update.php).
+
+### Verified production test: 3.8.29 → 3.8.30 (October 22, 2026)
+
+The first theme-card **Update Now** attempt returned “The theme is at the latest version” and left the installed theme at 3.8.29. After that failure, the normal **Dashboard → Updates → select only Tacobout Social → Update Themes** flow successfully downloaded and installed the published 3.8.30 release. Signed-in theme details confirmed active version 3.8.30, and the live feed displayed the new reading-link chevron.
+
+Post-update browser verification confirmed featured images, seasonal mascot, both enriched launch posts and their videos, the Facet 9/8c presentation and Trove cards remained healthy. No manual upload, SFTP, security-setting change or warning bypass was used. This completes the native server-side release discovery/download/installation test for 3.8.30. The discovery-cache correction in merged PR #364 is separate; its proposed 3.8.31 is not required to explain or repeat this successful bulk-form route and was not published by this test.
