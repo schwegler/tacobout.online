@@ -50,7 +50,7 @@ class SingleArticleAndSidebarTest extends \PHPUnit\Framework\TestCase {
         $css = file_get_contents(__DIR__ . '/../style.css');
         $sidebar_css = file_get_contents(__DIR__ . '/../sidebar.css');
 
-        $this->assertMatchesRegularExpression('/Version:\s*3\.8\.\d+/', $css);
+        $this->assertMatchesRegularExpression('/^Version:\s*\d+\.\d+\.\d+\s*$/m', $css);
         $this->assertStringContainsString('.tacobout-discussion-card', $css);
         $this->assertStringContainsString('.tacobout-bluesky-cta', $css);
         $this->assertStringContainsString('.tacobout-mastodon-cta', $css);

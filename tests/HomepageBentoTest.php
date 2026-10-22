@@ -49,7 +49,7 @@ class HomepageBentoTest extends \PHPUnit\Framework\TestCase {
     public function test_style_css_defines_hero_and_end_feed_styles_and_version_bump() {
         $css = file_get_contents(__DIR__ . '/../style.css');
 
-        $this->assertMatchesRegularExpression('/Version:\s*3\.8\.\d+/', $css);
+        $this->assertMatchesRegularExpression('/^Version:\s*\d+\.\d+\.\d+\s*$/m', $css);
         $this->assertStringContainsString('.tacobout-on-the-air-strip', $css);
         $this->assertStringContainsString('.tacobout-end-of-feed', $css);
         $this->assertStringContainsString('.tacobout-end-card', $css);

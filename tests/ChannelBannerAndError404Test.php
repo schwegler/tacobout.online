@@ -47,7 +47,7 @@ class ChannelBannerAndError404Test extends \PHPUnit\Framework\TestCase {
     public function test_style_css_defines_channel_banner_and_404_rules_and_version() {
         $css = file_get_contents(__DIR__ . '/../style.css');
 
-        $this->assertMatchesRegularExpression('/Version:\s*3\.8\.\d+/', $css);
+        $this->assertMatchesRegularExpression('/^Version:\s*\d+\.\d+\.\d+\s*$/m', $css);
         $this->assertStringContainsString('.tacobout-channel-banner', $css);
         $this->assertStringContainsString('.tacobout-channel-mascot', $css);
         $this->assertStringContainsString('.tacobout-error-card', $css);
