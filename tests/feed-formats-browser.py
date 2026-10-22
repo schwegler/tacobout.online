@@ -43,6 +43,16 @@ with sync_playwright() as p:
    assert page.locator('.post-999 img').count()==1
    assert page.locator('.post-999 .wp-block-post-content').count()==1
    assert page.locator('.post-999 .wp-block-post-excerpt__more-link').count()==1
+   # Reading affordance survives REST appends without adding spoken arrow text.
+   reading=page.locator('.post-999 .wp-block-post-excerpt__more-link')
+   assert reading.evaluate('n=>n.href')=='http://localhost/new'
+   assert reading.inner_text()=='Read more'
+   assert reading.evaluate('n=>getComputedStyle(n,"::after").content')=='""'
+   assert reading.evaluate('n=>getComputedStyle(n,"::after").borderRightWidth')=='2px'
+   assert reading.evaluate('n=>getComputedStyle(n,"::after").transform')=='matrix(0.707107, 0.707107, -0.707107, 0.707107, 0, 0)'
+   reading.evaluate('n=>n.dir="rtl"')
+   assert reading.evaluate('n=>getComputedStyle(n,"::after").transform')=='matrix(-0.707107, -0.707107, 0.707107, -0.707107, 0, 0)'
+   reading.evaluate('n=>n.removeAttribute("dir")')
    assert page.evaluate('document.documentElement.scrollWidth<=innerWidth'),(width,theme)
    # A newest video is a normal aligned feed card, never a viewport-wide essay lead.
    page.goto('http://localhost/video-first',wait_until='domcontentloaded')
