@@ -31,6 +31,16 @@ jobs:
       - name: Run Tests
         run: ./vendor/bin/phpunit
 
+      - name: Verify native dotted-slug update routes against pinned WordPress core
+        run: |
+          core="$RUNNER_TEMP/wordpress-contract"
+          mkdir -p "$core/wp-admin/includes"
+          curl -fsSL https://raw.githubusercontent.com/WordPress/WordPress/6.8.3/wp-admin/includes/ajax-actions.php -o "$core/wp-admin/includes/ajax-actions.php"
+          curl -fsSL https://raw.githubusercontent.com/WordPress/WordPress/6.8.3/wp-admin/includes/class-theme-upgrader.php -o "$core/wp-admin/includes/class-theme-upgrader.php"
+          echo "a43aa39a9e1ce89d6e47fc50e1b61f428d017a7ed28b1f94a845487bc16a3757  $core/wp-admin/includes/ajax-actions.php" | sha256sum -c -
+          echo "7ac1f9f8fc5389b61b8db6506d4cd431101d2ff22343ac514fe72915c7fc6956  $core/wp-admin/includes/class-theme-upgrader.php" | sha256sum -c -
+          php tests/native-theme-update-route.php "$core"
+
       - name: Check masonry JavaScript and packing regressions
         run: |
           node scripts/build-assets.cjs --check
