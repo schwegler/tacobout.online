@@ -128,6 +128,13 @@ class GitHub:
         command(['gh', 'release', 'upload', tag, str(file), '--repo', self.repo])
 
 
+    def verify_tag(self, tag, expected_commit):
+        numeric(tag)
+        hex_value(expected_commit, 40)
+        actual = self.get('git/ref/tags/' + tag).get('object', {})
+        require(actual.get('type') == 'commit' and actual.get('sha') == expected_commit,
+                'Remote release tag is missing or changed; never create or move it implicitly')
+
     def create_draft(self, tag, notes):
         request = notes.parent / 'draft-request.json'
         request.write_bytes(canonical({'tag_name': tag, 'name': 'Tacobout Social ' + tag[1:],
@@ -251,6 +258,7 @@ def ensure_assets(api, release, tag, artifacts, downloaded):
 
 def publish(repo, api, source, tag, candidate, artifacts, anchor, ci, root, verify_gate):
     root.mkdir(parents=True, exist_ok=True)
+    api.verify_tag(tag, candidate)
     releases = api.releases()
     matches = [r for r in releases if r['tag_name'] == tag]
     require(len(matches) <= 1, 'Duplicate release identity')
@@ -273,6 +281,7 @@ def publish(repo, api, source, tag, candidate, artifacts, anchor, ci, root, veri
     ensure_assets(api, release, tag, artifacts, root / 'downloaded')
     if release['draft']:
         verify_gate()
+        api.verify_tag(tag, candidate)
         require(api.get('releases/latest')['id'] == anchor['id'], 'Another stable release appeared; preserve draft and review ordering')
         api.publish_draft(tag)
     def visible_stable():

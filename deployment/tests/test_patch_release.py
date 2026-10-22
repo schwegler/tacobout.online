@@ -50,6 +50,14 @@ class PolicyTests(unittest.TestCase):
                 self.assertTrue(payload['draft'])
                 self.assertEqual('v3.9.1', payload['tag_name'])
 
+    def test_remote_tag_guard_refuses_missing_or_changed_commit_without_writes(self):
+        api = release.GitHub(REPO)
+        with patch.object(api, 'get', return_value={'object': {'type': 'commit', 'sha': SOURCE}}):
+            api.verify_tag('v3.9.1', SOURCE)
+        for target in [{'type': 'commit', 'sha': 'b' * 40}, {'type': 'tag', 'sha': SOURCE}, {}]:
+            with patch.object(api, 'get', return_value={'object': target}), self.assertRaises(Refused):
+                api.verify_tag('v3.9.1', SOURCE)
+
     def test_older_cli_paginated_json_streams_are_all_read(self):
         api = release.GitHub(REPO)
         with patch.object(release, 'command', return_value='[{"id":1}]\n [{"id":2}]'):
@@ -140,6 +148,10 @@ class MemoryGitHub:
         self.latest = {'id': 1, 'tag_name': 'v3.9.0'}
 
     def releases(self): return copy.deepcopy(self.items)
+
+    def verify_tag(self, tag, expected_commit):
+        release.numeric(tag)
+        release.hex_value(expected_commit, 40)
 
     def create_draft(self, tag, notes):
         self.items.append(dict(id=max([1] + [r['id'] for r in self.items]) + 1, tag_name=tag, draft=True, prerelease=False, assets=[], html_url='https://example.test/' + tag))
