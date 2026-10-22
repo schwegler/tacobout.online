@@ -32,6 +32,45 @@ class ThemeUpdatesTest extends \PHPUnit\Framework\TestCase {
         $this->assertSame('3.9.0',tacobout_check_theme_release(false,$headers,TACOBOUT_THEME_SLUG,[])['version']);
         $this->assertSame(3600,$ttl);
     }
+    public function test_pre_release_failure_hides_new_release_until_cache_is_refreshed() {
+        global $wp_version;
+        $wp_version='6.8';
+        $headers=['UpdateURI'=>TACOBOUT_UPDATE_URI,'Version'=>'3.8.29'];
+        $cache=false;$requests=0;$published=false;$deletions=[];
+        \Brain\Monkey\Functions\when('get_site_transient')->alias(function($key) use (&$cache) { return $cache; });
+        \Brain\Monkey\Functions\when('set_site_transient')->alias(function($key,$value,$seconds) use (&$cache) { $cache=$value; });
+        \Brain\Monkey\Functions\when('delete_site_transient')->alias(function($key) use (&$cache,&$deletions) { $deletions[]=$key;if ($key==='tacobout_public_release_v1') $cache=false; });
+        \Brain\Monkey\Functions\when('current_user_can')->alias(fn($cap)=>$cap==='update_themes');
+        \Brain\Monkey\Functions\when('wp_safe_remote_get')->alias(function() use (&$published,&$requests) { ++$requests;return ['code'=>$published?200:404,'body'=>$published?json_encode($this->metadata()):'missing']; });
+        \Brain\Monkey\Functions\when('is_wp_error')->justReturn(false);
+        \Brain\Monkey\Functions\when('wp_remote_retrieve_response_code')->alias(fn($r)=>$r['code']);
+        \Brain\Monkey\Functions\when('wp_remote_retrieve_body')->alias(fn($r)=>$r['body']);
+        $this->assertFalse(tacobout_check_theme_release(false,$headers,TACOBOUT_THEME_SLUG,[]));
+        $published=true;
+        $previous=$_GET;
+        try {
+            $_GET['force-check']='1';
+            // Core's query parameter alone does not invalidate our cached 404.
+            $this->assertFalse(tacobout_check_theme_release(false,$headers,TACOBOUT_THEME_SLUG,[]));
+            $this->assertSame(1,$requests);
+            tacobout_refresh_theme_release();
+            $this->assertSame(['tacobout_public_release_v1','update_themes'],$deletions);
+            $this->assertSame('3.9.0',tacobout_check_theme_release(false,$headers,TACOBOUT_THEME_SLUG,[])['version']);
+            $this->assertSame(2,$requests);
+        } finally { $_GET=$previous; }
+    }
+    public function test_refresh_requires_explicit_request_and_theme_update_capability() {
+        $previous=$_GET;$allowed=false;$deletions=[];
+        \Brain\Monkey\Functions\when('current_user_can')->alias(function() use (&$allowed) { return $allowed; });
+        \Brain\Monkey\Functions\when('delete_site_transient')->alias(function($key) use (&$deletions) { $deletions[]=$key; });
+        try {
+            unset($_GET['force-check']);$allowed=true;
+            tacobout_refresh_theme_release();
+            $_GET['force-check']='1';$allowed=false;
+            tacobout_refresh_theme_release();
+            $this->assertSame([],$deletions);
+        } finally { $_GET=$previous; }
+    }
     private function metadata() {
         return ['schema'=>1,'id'=>TACOBOUT_UPDATE_URI,'theme'=>TACOBOUT_THEME_SLUG,'version'=>'3.9.0','url'=>TACOBOUT_UPDATE_URI.'/releases/tag/v3.9.0','package'=>TACOBOUT_UPDATE_URI.'/releases/download/v3.9.0/theme.zip','requires'=>'6.4','requires_php'=>'8.0'];
     }
