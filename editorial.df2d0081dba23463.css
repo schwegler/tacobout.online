@@ -277,3 +277,10 @@ html body .tacobout-magazine-grid .tacobout-link-media .alignleft{float:left}
 html body .tacobout-magazine-grid .tacobout-link-media .alignright{float:right}
 html body .tacobout-magazine-grid .tacobout-link-media figcaption{position:static;background:none;color:var(--taco-muted);overflow-wrap:anywhere}
 @media(max-width:480px){html body .tacobout-magazine-grid .tacobout-link-media :is(.alignleft,.alignright){float:none;max-width:100%}}
+
+/* Native flow margins must not stack with the compact Link preview rhythm. */
+html body .tacobout-magazine-grid .tacobout-format-link .wp-block-post-content[data-feed-preview="link"]{gap:8px 20px;align-items:center}
+html body .tacobout-magazine-grid .tacobout-format-link .wp-block-post-content[data-feed-preview="link"]>*{margin-block:0!important}
+html body .tacobout-magazine-grid .tacobout-format-link .wp-block-post-content[data-feed-preview="link"]>:not(.tacobout-card-source):not(.tacobout-card-jump){flex:0 0 100%}
+html body .tacobout-magazine-grid .tacobout-format-link .wp-block-post-content[data-feed-preview="link"]>:is(.tacobout-card-source,.tacobout-card-jump){flex:0 1 auto;max-width:100%}
+html body .tacobout-magazine-grid .tacobout-format-link .wp-block-post-content[data-feed-preview="link"] .tacobout-link-source{margin:0;padding:0;box-sizing:border-box;line-height:1.4}

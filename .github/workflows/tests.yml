@@ -62,6 +62,8 @@ jobs:
           playwright install --with-deps chromium
       - name: Check mixed feed formats and inline playback
         run: python tests/feed-formats-browser.py
+      - name: Check compact Link spacing with native WordPress flow margins
+        run: python tests/link-spacing-browser.py
       - name: Check archive portrait video sizing
         run: python tests/video-sizing-browser.py
       - name: Check responsive author profile against native markup
