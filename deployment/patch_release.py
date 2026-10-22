@@ -45,15 +45,19 @@ def next_patch(base, source_version, tags):
 def gate(runs, repo, branch, commit, jobs):
     """Require the newest push run for every configured workflow and every required job."""
     latest = {}
+    pending = False
     for run in runs:
         path = run.get('path')
         if path not in REQUIRED or run.get('event') != 'push' or run.get('head_sha') != commit or run.get('head_branch') != branch:
             continue
         if run.get('head_repository', {}).get('full_name') != repo:
             continue
-        if path not in latest or (run['id'], run.get('run_attempt', 1)) > (latest[path]['id'], latest[path].get('run_attempt', 1)):
+        pending = pending or run.get('status') != 'completed' or run.get('conclusion') is None
+        def started(item):
+            return (item.get('run_started_at') or item.get('created_at') or '', item['id'], item.get('run_attempt', 1))
+        if path not in latest or started(run) > started(latest[path]):
             latest[path] = run
-    if set(latest) != set(REQUIRED) or any(r.get('status') != 'completed' or r.get('conclusion') is None for r in latest.values()):
+    if pending or set(latest) != set(REQUIRED):
         return 'pending', latest
     if any(r.get('conclusion') != 'success' for r in latest.values()):
         return 'failed', latest

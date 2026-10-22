@@ -50,6 +50,14 @@ class PolicyTests(unittest.TestCase):
         newer.update(status='completed', conclusion='failure')
         self.assertEqual('failed', release.gate(runs + [newer], REPO, 'main', SOURCE, jobs.get)[0])
 
+    def test_rerunning_an_older_run_id_cannot_hide_behind_a_newer_success(self):
+        runs, jobs = facts()
+        newer = dict(runs[0], id=9, run_started_at='2026-10-22T12:01:00Z')
+        runs[0].update(run_attempt=2, run_started_at='2026-10-22T12:03:00Z', conclusion='failure')
+        self.assertEqual('failed', release.gate(runs + [newer], REPO, 'main', SOURCE, jobs.get)[0])
+        runs[0].update(status='in_progress', conclusion=None, run_started_at='2026-10-22T12:00:00Z')
+        self.assertEqual('pending', release.gate(runs + [newer], REPO, 'main', SOURCE, jobs.get)[0])
+
     def test_fork_pr_wrong_branch_and_spoofed_workflow_do_not_authorize_publication(self):
         for change in [dict(event='pull_request'), dict(head_branch='feature'),
                        dict(head_repository={'full_name': 'fork/theme'}), dict(path='.github/workflows/spoof.yml')]:
