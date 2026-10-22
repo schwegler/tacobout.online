@@ -5,9 +5,10 @@ import os
 import re
 import subprocess
 import tempfile
+import time
 from pathlib import Path
 
-from theme_release import SLUG, build, canonical, hex_value, load, require, sha, version
+from theme_release import Refused, SLUG, build, canonical, hex_value, load, require, sha, version
 from update_metadata import generate
 
 REQUIRED = {
@@ -28,6 +29,17 @@ def command(args, cwd=None, env=None, quiet=True):
 
 def git(repo, *args, env=None):
     return command(['git', *args], repo, env)
+
+
+def observed(read, ready, label, attempts=24, delay=3):
+    """Retry only reads after a confirmed write; never repeat a mutation."""
+    for attempt in range(attempts):
+        value = read()
+        if ready(value):
+            return value
+        if attempt + 1 < attempts:
+            time.sleep(delay)
+    raise Refused(label + '; confirmed writes are preserved for a later retry')
 
 
 def numeric(tag):
@@ -88,10 +100,10 @@ class GitHub:
         self.repo = repo
 
     def get(self, path):
-        return json.loads(command(['gh', 'api', ('repos/' + self.repo + '/' + path).rstrip('/')]))
+        return json.loads(command(['gh', 'api', '-H', 'Cache-Control: no-cache', ('repos/' + self.repo + '/' + path).rstrip('/')]))
 
     def pages(self, path, key=None):
-        stream = command(['gh', 'api', '--paginate', 'repos/' + self.repo + '/' + path])
+        stream = command(['gh', 'api', '--paginate', '-H', 'Cache-Control: no-cache', 'repos/' + self.repo + '/' + path])
         pages = []
         decoder = json.JSONDecoder()
         while stream.strip():
@@ -117,8 +129,12 @@ class GitHub:
 
 
     def create_draft(self, tag, notes):
-        command(['gh', 'release', 'create', tag, '--repo', self.repo, '--verify-tag', '--draft',
-                 '--title', 'Tacobout Social ' + tag[1:], '--notes-file', str(notes)])
+        request = notes.parent / 'draft-request.json'
+        request.write_bytes(canonical({'tag_name': tag, 'name': 'Tacobout Social ' + tag[1:],
+                                       'draft': True, 'prerelease': False, 'body': notes.read_text()}))
+        # Keep the authoritative write response; an immediate list can be stale.
+        return json.loads(command(['gh', 'api', '--method', 'POST', 'repos/' + self.repo + '/releases',
+                                   '--input', str(request)]))
 
     def publish_draft(self, tag):
         command(['gh', 'release', 'edit', tag, '--repo', self.repo, '--draft=false', '--latest'])
@@ -244,9 +260,14 @@ def publish(repo, api, source, tag, candidate, artifacts, anchor, ci, root, veri
         links = '\n'.join('- ' + run['html_url'] for run in ci.values())
         notes.write_text('Automatic patch from merged commit `' + source + '`.\n\nExact-commit CI:\n' + links
                          + '\n\nOnly version/fingerprint metadata differs from the merged source. WordPress installation remains manual.\n')
-        api.create_draft(tag, notes)
-        matches = [r for r in api.releases() if r['tag_name'] == tag]
-        require(len(matches) == 1, 'Draft creation outcome unavailable; inspect before retrying')
+        created = api.create_draft(tag, notes)
+        require(created.get('tag_name') == tag and created.get('draft') is True and isinstance(created.get('id'), int), 'Unexpected draft creation response; preserve and inspect')
+        def visible_draft():
+            found = [r for r in api.releases() if r['tag_name'] == tag]
+            require(len(found) <= 1, 'Duplicate draft identity; preserve and inspect')
+            return found
+        matches = observed(visible_draft, lambda found: len(found) == 1 and found[0]['id'] == created['id'],
+                           'Confirmed draft ' + tag + ' (id ' + str(created['id']) + ') is not visible yet')
     release = matches[0]
     require(not release['prerelease'], 'Existing tag is a prerelease; review manually')
     ensure_assets(api, release, tag, artifacts, root / 'downloaded')
@@ -254,10 +275,16 @@ def publish(repo, api, source, tag, candidate, artifacts, anchor, ci, root, veri
         verify_gate()
         require(api.get('releases/latest')['id'] == anchor['id'], 'Another stable release appeared; preserve draft and review ordering')
         api.publish_draft(tag)
-    actual = api.get('releases/tags/' + tag)
-    require(not actual['draft'] and not actual['prerelease'], 'Stable publication not confirmed')
+    def visible_stable():
+        found = [r for r in api.releases() if r['tag_name'] == tag]
+        require(len(found) <= 1, 'Duplicate published identity')
+        return found[0] if found else None
+    actual = observed(visible_stable, lambda item: item is not None and not item['draft'] and not item['prerelease'],
+                      'Stable publication is not visible yet')
+    latest = observed(lambda: api.get('releases/latest'), lambda item: item['id'] == actual['id'],
+                      'Latest pointer has not reached the confirmed release or another publisher changed it')
     print('Verified published patch:', actual['html_url'], flush=True)
-    return api.get('releases/latest')
+    return latest
 
 
 def run(repo, api, execute=False):
