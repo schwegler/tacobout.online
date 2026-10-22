@@ -6,8 +6,8 @@ SLUG = 'tacobout.online-main'
 MAX_FILE = 32 * 1024 * 1024
 MAX_TOTAL = 128 * 1024 * 1024
 MAX_FILES = 5000
-FORBIDDEN = {'wp-config.php', 'uploads', 'plugins', '.git', '.env'}
-ROOT_FILES = {'functions.php', 'index.php', 'theme.json', 'asset-manifest.json', 'LICENSE', 'README.md', 'screenshot.png'}
+FORBIDDEN = {'wp-config.php', 'uploads', 'plugins', '.git', '.env', 'node_modules', 'tests', '__pycache__'}
+ROOT_FILES = {'functions.php', 'index.php', 'theme.json', 'asset-manifest.json', 'LICENSE', 'screenshot.png'}
 DIRECTORIES = {'assets', 'inc', 'parts', 'patterns', 'seasonal', 'templates'}
 
 class Refused(ValueError):
@@ -39,6 +39,7 @@ def relative(name, managed=False):
     require(not any(ord(x) < 32 or ord(x) == 127 for x in name), 'Control character in path')
     require(not any(x in FORBIDDEN or x.startswith('.tacobout-deploy-') for x in p.parts), 'Forbidden theme path')
     require(len(p.parts) <= 12, 'Theme path too deep')
+    require(p.suffix not in {'.map', '.pyc', '.ts', '.tsx', '.psd', '.zip'} and not any(x.startswith('.') for x in p.parts), 'Development payload rejected')
     if managed:
         require(re.fullmatch(r'[A-Za-z0-9_.\-/]+', name), 'Unsupported managed path characters')
         require(p.parts[0] in DIRECTORIES or (len(p.parts) == 1 and (name in ROOT_FILES or p.suffix in {'.css', '.js'})), 'Not a runtime theme path')
