@@ -52,3 +52,14 @@ function tacobout_check_theme_release( $update, $theme_data, $stylesheet, $local
 	return tacobout_release_update( $cached['metadata'] ?? null, $theme_data, $stylesheet );
 }
 add_filter( 'update_themes_github.com', 'tacobout_check_theme_release', 10, 4 );
+
+/** Honor the native Updates screen's explicit check before core runs its theme check. */
+function tacobout_refresh_theme_release() {
+	if ( empty( $_GET['force-check'] ) || ! current_user_can( 'update_themes' ) ) {
+		return;
+	}
+	delete_site_transient( 'tacobout_public_release_v1' );
+	// Core also throttles theme checks for one minute on this screen.
+	delete_site_transient( 'update_themes' );
+}
+add_action( 'load-update-core.php', 'tacobout_refresh_theme_release', 5 );
