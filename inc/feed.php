@@ -23,10 +23,6 @@ function tacobout_link_preview_media( $html ) {
 
 function tacobout_feed_preview( $html, $post_id, $format ) {
 	if ( ! in_array( $format, array( 'image', 'video', 'link' ), true ) || ! class_exists( 'DOMDocument' ) ) { return $html; }
-	// REST collections contain the full article; never select media below More.
-	if ( 'link' === $format ) {
-		$html = preg_split( '/<!--\s*more(?:\s[^>]*)?\s*-->|<(?:span|a)\b[^>]*(?:id=["\']more-\d+["\']|class=["\'][^"\']*\bmore-link\b)[^>]*>/i', $html, 2 )[0];
-	}
 	$dom = new DOMDocument();
 	$previous = libxml_use_internal_errors( true );
 	$dom->loadHTML( '<?xml encoding="utf-8" ?>' . $html );
@@ -39,6 +35,16 @@ function tacobout_feed_preview( $html, $post_id, $format ) {
 		$url = $link->getAttribute( 'href' );
 		$host = wp_parse_url( $url, PHP_URL_HOST );
 		if ( in_array( wp_parse_url( $url, PHP_URL_SCHEME ), array( 'http', 'https' ), true ) && $host && $host !== wp_parse_url( home_url(), PHP_URL_HOST ) ) { $source = $url; break; }
+	}
+	if ( 'link' === $format ) {
+		// REST includes the full article. Keep source discovery above, but stop preview
+		// text/media at native More markers, including markers nested in groups.
+		$boundary = $xpath->query( './/*[starts-with(@id,"more-")] | .//a[contains(concat(" ",normalize-space(@class)," ")," more-link ")] | .//comment()[starts-with(normalize-space(.),"more")]', $root )->item( 0 );
+		for ( $node = $boundary; $node && $node !== $root; $node = $parent ) {
+			while ( $node->nextSibling ) { $node->parentNode->removeChild( $node->nextSibling ); }
+			$parent = $node->parentNode;
+			if ( $node === $boundary ) { $parent->removeChild( $node ); }
+		}
 	}
 	$selector = 'image' === $format ? './/img' : ( 'video' === $format ? './/video | .//iframe | .//object | .//embed' : './/blockquote | .//p[not(ancestor::figure) and normalize-space(.) != ""]' );
 	$primary = $xpath->query( $selector, $root )->item( 0 );

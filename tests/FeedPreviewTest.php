@@ -57,7 +57,7 @@ class FeedPreviewTest extends \PHPUnit\Framework\TestCase {
         \Brain\Monkey\Functions\when('get_post_format')->justReturn('link');
         \Brain\Monkey\Functions\when('wp_kses_allowed_html')->justReturn(['img'=>[]]);
         \Brain\Monkey\Functions\when('wp_kses')->returnArg();
-        $article='<p><a href="https://publication.test/story">Source</a></p><figure class="wp-block-image alignleft"><img src="body.jpg" alt="Body"><figcaption>Caption</figcaption></figure><span id="more-402"></span><p>Full commentary</p><img src="below.jpg">';
+        $article='<p>Source introduction</p><figure class="wp-block-image alignleft"><img src="body.jpg" alt="Body"><figcaption>Caption</figcaption></figure><span id="more-402"></span><p>Full commentary <a href="https://later.test/story">Later source</a></p><img src="below.jpg">';
         $response=(object)['data'=>['content'=>['rendered'=>$article]]];
         $request=new class { public function get_route(){ return '/wp/v2/posts'; } };
         $result=tacobout_feed_rest_preview($response,(object)['ID'=>402],$request);
@@ -66,6 +66,7 @@ class FeedPreviewTest extends \PHPUnit\Framework\TestCase {
         $this->assertStringNotContainsString('below.jpg',$result->data['tacobout_feed_content']);
         $this->assertStringNotContainsString('Full commentary',$result->data['tacobout_feed_content']);
         $this->assertSame($article,$result->data['content']['rendered']);
+        $this->assertStringContainsString('https://later.test/story',$result->data['tacobout_feed_content']);
     }
     public function test_responsive_candidates_reject_unsafe_protocols_before_kses() {
         \Brain\Monkey\Functions\when('wp_kses_allowed_html')->justReturn(['img'=>[]]);

@@ -61,6 +61,9 @@
 		const title = card.querySelector('.wp-block-post-title')?.textContent.trim() || 'post';
 		const format = ['image', 'video', 'link'].find(type => card.classList.contains('tacobout-format-' + type));
 		if (format && content && !content.dataset.feedPreview) {
+			const source = Array.from(content.querySelectorAll('a[href]')).find(link => {
+				try { const url = new URL(link.href, location.href); return /^https?:$/.test(url.protocol) && url.hostname !== location.hostname; } catch { return false; }
+			});
 			if (format === 'link') {
 				const boundary = content.querySelector('[id^="more-"], a.more-link');
 				if (boundary) { const range = document.createRange(); range.setStartBefore(boundary); range.setEnd(content, content.childNodes.length); range.deleteContents(); }
@@ -73,9 +76,6 @@
 				media = document.createElement('div'); media.className = 'tacobout-link-media';
 				media.innerHTML = window.DOMPurify.sanitize(original.outerHTML, {USE_PROFILES: {html: true}});
 			}
-			const source = Array.from(content.querySelectorAll('a[href]')).find(link => {
-				try { const url = new URL(link.href, location.href); return /^https?:$/.test(url.protocol) && url.hostname !== location.hostname; } catch { return false; }
-			});
 			let primary = format === 'link' ? Array.from(content.querySelectorAll('blockquote, p:not(figure p)')).find(node => node.textContent.trim()) : content.querySelector(format === 'image' ? 'img' : 'video, iframe, object, embed');
 			if (primary && format !== 'link') primary = primary.closest('figure, .wp-block-embed, .wp-video') || primary;
 			if (primary && format === 'link') {
