@@ -19,3 +19,19 @@ WordPress updates replace the **whole theme directory**, unlike the old incremen
 Server fetching avoids browser upload limits but does not guarantee completion: outbound HTTPS, free disk space, filesystem permissions, PHP memory/execution limits, ZIP extraction and host quotas still apply. If extraction times out, ask hosting support to diagnose those limits or perform the one-time installation; this change does not alter hosting settings. Inactive themes may not load their own updater, so activate the bootstrap theme to discover releases.
 
 References: [WordPress Update URI introduction](https://make.wordpress.org/core/2022/10/06/introducing-update-uri-theme-header-in-wordpress-6-1/), [native update hook](https://developer.wordpress.org/reference/hooks/update_themes_hostname/).
+
+## Dotted directory names and the native installation route
+
+The stable directory `tacobout.online-main` contains periods. WordPress's theme-card AJAX `wp_ajax_update_theme()` removes periods from its posted slug, turning it into `tacoboutonline-main`. Discovery correctly stores the update under the original directory. `Theme_Upgrader::bulk_upgrade()` sees no response for the altered directory and returns its “up to date” sentinel without selecting or downloading a package. The AJAX handler displays “The theme is at the latest version” even though the installed version is older. Refreshing discovery cannot repair this mismatch.
+
+Use the existing native **Dashboard → Updates → Themes** checkbox for Tacobout Social, then **Update Themes**. That form goes through core's nonce/capability-protected `update-selected-themes` route, preserves the directory periods and selects the correct package. This is a native server-side theme update; no manual upload, custom installer or core patch is required. Do not rename the directory, alias the stripped slug into the update transient, or attempt theme-card Update Now again for this slug. The cache-refresh fix above addresses discovery only and does not fix WordPress's AJAX sanitizer.
+
+`tests/native-theme-update-route.php` tests the real core sanitizer and `Theme_Upgrader` against checksum-pinned WordPress 6.8.3 sources. It reproduces the wrong-key “latest version” result and confirms the preserved slug selects the exact release package, stopping before any download, extraction or filesystem write. The same sanitizer remains in current WordPress development sources. Production request payload and update transient were not inspected; confirm the failed request used `action=update-theme` when diagnosing a particular installation.
+
+Sources: [AJAX theme update handler](https://developer.wordpress.org/reference/functions/wp_ajax_update_theme/), [core theme upgrader](https://developer.wordpress.org/reference/classes/theme_upgrader/bulk_upgrade/), [native bulk route](https://github.com/WordPress/WordPress/blob/6.8.3/wp-admin/update.php).
+
+### Verified production test: 3.8.29 → 3.8.30 (October 22, 2026)
+
+The first theme-card **Update Now** attempt returned “The theme is at the latest version” and left the installed theme at 3.8.29. After that failure, the normal **Dashboard → Updates → select only Tacobout Social → Update Themes** flow successfully downloaded and installed the published 3.8.30 release. Signed-in theme details confirmed active version 3.8.30, and the live feed displayed the new reading-link chevron.
+
+Post-update browser verification confirmed featured images, seasonal mascot, both enriched launch posts and their videos, the Facet 9/8c presentation and Trove cards remained healthy. No manual upload, SFTP, security-setting change or warning bypass was used. This completes the native server-side release discovery/download/installation test for 3.8.30. The discovery-cache correction in merged PR #364 is separate; its proposed 3.8.31 is not required to explain or repeat this successful bulk-form route and was not published by this test.
