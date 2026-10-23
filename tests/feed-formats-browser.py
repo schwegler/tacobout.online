@@ -45,7 +45,8 @@ with sync_playwright() as p:
    assert link.locator('img').get_attribute('onerror') is None
    assert link.locator('img').bounding_box()['height']<=320
    assert link.locator('img').bounding_box()['width']<=160
-   assert link.locator('figure').evaluate('n=>getComputedStyle(n).float')==('none' if width<=480 else ('left' if theme=='dark' else 'right'))
+   assert link.locator('figure').evaluate('n=>getComputedStyle(n).float')==('none' if width<=480 else 'left')
+   assert abs(link.locator('img').bounding_box()['x']-link.locator('.tacobout-link-media').bounding_box()['x'])<1
    assert link.locator('img').bounding_box()['y']+link.locator('img').bounding_box()['height']<=link.locator('blockquote').bounding_box()['y']
    assert link.locator('[src="/below.svg"]').count()==0
    player=page.locator('.post-3 iframe');assert player.count()==1

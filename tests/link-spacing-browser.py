@@ -12,6 +12,7 @@ CORE_FLOW = '''
 :root :where(.is-layout-flow)>:last-child{margin-block-end:0}
 .wp-block-image img{box-sizing:border-box;height:auto;max-width:100%;vertical-align:bottom}
 .wp-block-image{margin:0 0 1em}.wp-block-image figcaption{margin-top:.5em;margin-bottom:1em}
+.is-layout-flow>.alignright{float:right;margin-inline-start:2em;margin-inline-end:0}
 body{margin:0;padding:24px}main{max-width:1240px;margin:auto}
 '''
 IMAGE = '<figure class="wp-block-image is-resized {align}" style="width:320px"><img src="/body.svg" width="480" height="320" style="width:320px;height:auto" alt="Friends gathered around a sofa">{caption}</figure>'
@@ -26,8 +27,8 @@ def card(number, *, caption=False, align='', server=False, image=True, host='pub
         content = f'<p><a href="{SOURCE}">{SUMMARY}</a></p>{media}<a class="more-link" href="/article-{number}#more">Continue</a><p>Hidden commentary</p>'
     return f'<li class="wp-block-post post-{number} tacobout-format-link"><div class="wp-block-group tacobout-card-inner is-layout-flow"><div class="wp-block-template-part"><div class="tacobout-post-meta">Links · October 22, 2026</div></div><h2 class="wp-block-post-title"><a href="/article-{number}">A review worth reading</a></h2><div class="entry-content wp-block-post-content is-layout-flow" {"data-feed-preview=link" if server else ""}>{content}</div></div></li>'
 
-CASES = card(101) + card(102, caption=True, align='alignright') + card(103, image=False) + card(104, server=True, align='alignleft') + card(105, server=True, image=False, host='a-very-long-publication-hostname-that-must-wrap.example.test')
-HTML = f'''<!doctype html><html><head><meta charset="utf-8"><title>Native Link spacing QA</title><meta name="viewport" content="width=device-width"><style>{CORE_FLOW}</style><link rel="stylesheet" href="/style.css"><link rel="stylesheet" href="/editorial.css"></head><body class="home"><main><ul class="tacobout-magazine-grid">{CASES}</ul><article id="single-control"><div class="wp-block-post-content is-layout-flow"><p>Single article paragraph</p><p>Another authored paragraph</p></div></article></main><script>window.tacoboutScroll={{enableLoading:false,totalPages:1,perPage:5}};</script><script src="/dompurify.min.js"></script><script src="/tacobout-infinite-scroll.js"></script><script src="/tacobout-alt-badge.js"></script></body></html>'''
+CASES = card(101) + card(102, caption=True, align='alignright') + card(103, image=False) + card(104, server=True, align='alignright') + card(105, server=True, image=False, host='a-very-long-publication-hostname-that-must-wrap.example.test')
+HTML = f'''<!doctype html><html><head><meta charset="utf-8"><title>Native Link spacing QA</title><meta name="viewport" content="width=device-width"><style>{CORE_FLOW}</style><link rel="stylesheet" href="/style.css"><link rel="stylesheet" href="/editorial.css"></head><body class="home"><main><ul class="tacobout-magazine-grid">{CASES}</ul><article id="single-control"><div class="wp-block-post-content is-layout-flow"><p>Single article paragraph</p><p>Another authored paragraph</p><figure class="wp-block-image alignright" style="width:160px"><img src="/body.svg" width="160" height="107" alt="Single article control"></figure></div></article></main><script>window.tacoboutScroll={{enableLoading:false,totalPages:1,perPage:5}};</script><script src="/dompurify.min.js"></script><script src="/tacobout-infinite-scroll.js"></script><script src="/tacobout-alt-badge.js"></script></body></html>'''
 PHOTO = '<svg xmlns="http://www.w3.org/2000/svg" width="480" height="320"><rect width="480" height="320" fill="#b78968"/></svg>'
 
 def bottom(box):
@@ -55,7 +56,7 @@ with sync_playwright() as p:
             capture = os.environ.get('CAPTURE_DIR')
             if capture and width in [320, 723]:
                 Path(capture).mkdir(parents=True, exist_ok=True)
-                page.locator('.post-101').screenshot(path=str(Path(capture) / f'link-{width}-{theme}.png'))
+                page.locator('.post-102').screenshot(path=str(Path(capture) / f'link-{width}-{theme}.png'))
             for number in range(101, 106):
                 item = page.locator(f'.post-{number}')
                 content = item.locator('.wp-block-post-content')
@@ -75,6 +76,9 @@ with sync_playwright() as p:
                     assert 0 <= summary_box['y'] - bottom(media_box) <= 16, 'image drifts away from summary'
                     assert item.locator('img').get_attribute('alt') == 'Friends gathered around a sofa'
                     assert item.locator('img').bounding_box()['height'] <= 320
+                    assert abs(item.locator('img').bounding_box()['x'] - media_box['x']) < 1, 'Link body image must lead from the left'
+                    if number in [102, 104]:
+                        assert 'alignright' in item.locator('figure').get_attribute('class'), 'authored alignment must remain intact'
                 if number == 101: assert item.locator('figcaption').count() == 0
                 if number == 102: assert item.locator('figcaption').inner_text() == 'Existing image credit'
                 # Actions share a row when they fit; otherwise wrap with a compact gap.
@@ -83,6 +87,7 @@ with sync_playwright() as p:
                 elif jump_box['y'] > source_box['y'] + 1:
                     assert 0 <= jump_box['y'] - bottom(source_box) <= 12
             assert page.locator('#single-control p').nth(1).evaluate('n=>getComputedStyle(n).marginTop') == '24px'
+            assert page.locator('#single-control figure').evaluate('n=>getComputedStyle(n).float') == 'right', 'single article alignment changed'
             assert page.evaluate('document.documentElement.scrollWidth<=innerWidth'), 'horizontal overflow'
             badge = page.locator('.post-101 .tacobout-alt-badge')
             badge.focus(); page.keyboard.press('Enter')
