@@ -28,6 +28,36 @@ def facts(commit=SOURCE):
 
 
 class PolicyTests(unittest.TestCase):
+    def test_read_visibility_retries_are_bounded_and_do_not_repeat_a_write(self):
+        values = iter([None, None, {'id': 7}])
+        with patch.object(release.time, 'sleep') as sleep:
+            self.assertEqual({'id': 7}, release.observed(lambda: next(values), lambda item: item is not None, 'visibility'))
+            self.assertEqual(2, sleep.call_count)
+        with patch.object(release.time, 'sleep') as sleep, self.assertRaises(Refused):
+            release.observed(lambda: None, bool, 'visibility', attempts=3)
+        self.assertEqual(2, sleep.call_count)
+
+    def test_draft_creation_retains_the_authoritative_api_response(self):
+        record = {'id': 77, 'tag_name': 'v3.9.1', 'draft': True, 'assets': []}
+        with tempfile.TemporaryDirectory() as temporary:
+            notes = Path(temporary) / 'notes.md'; notes.write_text('Verified source')
+            with patch.object(release, 'command', return_value=json.dumps(record)) as request:
+                self.assertEqual(record, release.GitHub(REPO).create_draft('v3.9.1', notes))
+                request.assert_called_once()
+                args = request.call_args.args[0]
+                self.assertEqual(['gh', 'api', '--method', 'POST'], args[:4])
+                payload = json.loads(Path(args[-1]).read_bytes())
+                self.assertTrue(payload['draft'])
+                self.assertEqual('v3.9.1', payload['tag_name'])
+
+    def test_remote_tag_guard_refuses_missing_or_changed_commit_without_writes(self):
+        api = release.GitHub(REPO)
+        with patch.object(api, 'get', return_value={'object': {'type': 'commit', 'sha': SOURCE}}):
+            api.verify_tag('v3.9.1', SOURCE)
+        for target in [{'type': 'commit', 'sha': 'b' * 40}, {'type': 'tag', 'sha': SOURCE}, {}]:
+            with patch.object(api, 'get', return_value={'object': target}), self.assertRaises(Refused):
+                api.verify_tag('v3.9.1', SOURCE)
+
     def test_older_cli_paginated_json_streams_are_all_read(self):
         api = release.GitHub(REPO)
         with patch.object(release, 'command', return_value='[{"id":1}]\n [{"id":2}]'):
@@ -119,8 +149,13 @@ class MemoryGitHub:
 
     def releases(self): return copy.deepcopy(self.items)
 
+    def verify_tag(self, tag, expected_commit):
+        release.numeric(tag)
+        release.hex_value(expected_commit, 40)
+
     def create_draft(self, tag, notes):
         self.items.append(dict(id=max([1] + [r['id'] for r in self.items]) + 1, tag_name=tag, draft=True, prerelease=False, assets=[], html_url='https://example.test/' + tag))
+        return copy.deepcopy(self.items[-1])
 
     def publish_draft(self, tag):
         item = next(r for r in self.items if r['tag_name'] == tag)
@@ -225,6 +260,60 @@ class CandidateTests(CandidateFixture):
             self.artifacts, anchor, {}, self.root / 'publish', verify_gate=lambda: None)
         self.assertTrue(self.api.items[0]['draft'])
         self.assertFalse(self.api.promotions)
+
+    def test_stale_draft_listing_does_not_recreate_the_confirmed_release(self):
+        original = self.api.releases
+        remaining = 2
+        def listing():
+            nonlocal remaining
+            if self.api.items and self.api.items[0]['draft'] and remaining:
+                remaining -= 1
+                return []
+            return original()
+        with patch.object(self.api, 'releases', side_effect=listing), patch.object(release.time, 'sleep') as sleep, \
+             patch.object(self.api, 'create_draft', wraps=self.api.create_draft) as create:
+            release.publish(self.repo, self.api, self.source, self.tag, self.candidate, self.artifacts,
+                self.api.latest, {}, self.root / 'draft-lag', verify_gate=lambda: None)
+            create.assert_called_once()
+            self.assertEqual(2, sleep.call_count)
+        self.assertEqual([self.tag], self.api.promotions)
+        self.assertEqual(4, len(self.api.uploads))
+
+    def test_visibility_timeout_preserves_draft_and_retry_reuses_it(self):
+        with patch.object(self.api, 'create_draft', wraps=self.api.create_draft) as create:
+            with patch.object(self.api, 'releases', return_value=[]), patch.object(release.time, 'sleep'), self.assertRaises(Refused):
+                release.publish(self.repo, self.api, self.source, self.tag, self.candidate, self.artifacts,
+                    self.api.latest, {}, self.root / 'not-visible', verify_gate=lambda: None)
+            self.assertEqual(1, len(self.api.items))
+            self.assertTrue(self.api.items[0]['draft'])
+            self.assertFalse(self.api.uploads)
+            release.publish(self.repo, self.api, self.source, self.tag, self.candidate, self.artifacts,
+                self.api.latest, {}, self.root / 'visible-retry', verify_gate=lambda: None)
+            create.assert_called_once()
+        self.assertEqual([self.tag], self.api.promotions)
+
+    def test_publication_and_latest_pointer_can_become_visible_later(self):
+        original_listing, original_get = self.api.releases, self.api.get
+        old_latest = copy.deepcopy(self.api.latest)
+        remaining = {'list': 2, 'latest': 2}
+        def listing():
+            result = original_listing()
+            if self.api.promotions and remaining['list']:
+                remaining['list'] -= 1
+                for item in result: item['draft'] = True
+            return result
+        def get(path):
+            if path == 'releases/latest' and self.api.promotions and remaining['latest']:
+                remaining['latest'] -= 1
+                return old_latest
+            return original_get(path)
+        with patch.object(self.api, 'releases', side_effect=listing), patch.object(self.api, 'get', side_effect=get), \
+             patch.object(release.time, 'sleep') as sleep:
+            release.publish(self.repo, self.api, self.source, self.tag, self.candidate, self.artifacts,
+                old_latest, {}, self.root / 'stable-lag', verify_gate=lambda: None)
+            self.assertEqual(4, sleep.call_count)
+        self.assertEqual([self.tag], self.api.promotions)
+        self.assertEqual(4, len(self.api.uploads))
 
     def test_ci_rerun_during_upload_prevents_stable_promotion(self):
         def changed_gate(): raise Refused('source CI restarted')

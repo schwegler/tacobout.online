@@ -52,6 +52,12 @@ Four assets are attached to a draft before publication:
 
 Every uploaded byte is downloaded and compared with the verified local build;
 the hosted ZIP and metadata are checked before the draft becomes stable/latest.
+Draft creation retains the authoritative API response. Bounded read-only retries
+allow GitHub’s draft listing, published listing and latest pointer to become
+visible after a confirmed write; creation/publication mutations are never
+repeated inside those retries. A visibility timeout preserves the confirmed
+release for later recovery.
+
 Tags never move and assets are never overwritten. An interrupted tag/draft for
 the same source resumes using its original version. Missing assets can be
 added to a draft; conflicting/unknown assets or an incomplete published release
