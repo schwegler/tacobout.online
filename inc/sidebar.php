@@ -43,12 +43,14 @@ function tacobout_trending_shortcode() {
 	$title = $trending ? __( 'Hot on the Wire', 'tacobout' ) : __( 'Latest Posts', 'tacobout' );
 	$caption = $trending ? __( 'Most read over the past 7 days', 'tacobout' ) : __( 'Recent posts while view stats are unavailable', 'tacobout' );
 
+	// Bolt: Avoid repeated string re-allocations in loop by collecting list item HTML into an array and using implode().
+	$items = array();
+	foreach ( $posts as $index => $post ) {
+		$items[] = '<li><a class="tacobout-trending-link" href="' . esc_url( get_permalink( $post ) ) . '"><span class="tacobout-trending-rank">' . esc_html( sprintf( '%02d', $index + 1 ) ) . '</span><span class="tacobout-trending-copy"><strong>' . esc_html( get_the_title( $post ) ) . '</strong><span class="tacobout-sidebar-meta">' . esc_html( get_the_date( '', $post ) ) . '</span></span>' . get_the_post_thumbnail( $post, 'thumbnail', array( 'class' => 'tacobout-trending-image', 'alt' => '', 'loading' => 'lazy' ) ) . '</a></li>';
+	}
 	$html = '<section class="tacobout-discovery-section"><div class="tacobout-sidebar-heading"><h3>' . $bolt_icon . ' ' . esc_html( $title ) . '</h3><img src="' . $mascot_hype . '" alt="" class="mascot-sticker tacobout-sidebar-mascot" /></div>';
 	$html .= '<p class="tacobout-sidebar-caption">' . esc_html( $caption ) . '</p><ol class="tacobout-sidebar-links tacobout-trending-list">';
-	foreach ( $posts as $index => $post ) {
-		$html .= '<li><a class="tacobout-trending-link" href="' . esc_url( get_permalink( $post ) ) . '"><span class="tacobout-trending-rank">' . esc_html( sprintf( '%02d', $index + 1 ) ) . '</span><span class="tacobout-trending-copy"><strong>' . esc_html( get_the_title( $post ) ) . '</strong><span class="tacobout-sidebar-meta">' . esc_html( get_the_date( '', $post ) ) . '</span></span>' . get_the_post_thumbnail( $post, 'thumbnail', array( 'class' => 'tacobout-trending-image', 'alt' => '', 'loading' => 'lazy' ) ) . '</a></li>';
-	}
-	return $html . '</ol></section>';
+	return $html . implode( '', $items ) . '</ol></section>';
 }
 
 /** Validate the public JSON contract before it can reach a stored snapshot. */
