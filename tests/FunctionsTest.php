@@ -98,6 +98,26 @@ class FunctionsTest extends \PHPUnit\Framework\TestCase {
         $this->assertTrue(true);
     }
 
+    public function test_tacobout_post_class_non_standard() {
+        \Brain\Monkey\Functions\expect('get_post_format')
+            ->once()
+            ->with(101)
+            ->andReturn('video');
+
+        $classes = tacobout_post_class(['post', 'type-post'], '', 101);
+        $this->assertEquals(['post', 'type-post', 'tacobout-format-video'], $classes);
+    }
+
+    public function test_tacobout_post_class_standard() {
+        \Brain\Monkey\Functions\expect('get_post_format')
+            ->once()
+            ->with(102)
+            ->andReturn(false);
+
+        $classes = tacobout_post_class(['post'], '', 102);
+        $this->assertEquals(['post', 'tacobout-format-standard'], $classes);
+    }
+
     public function test_tacobout_get_memoized_post_format() {
         \Brain\Monkey\Functions\expect('get_post_format')
             ->once()
