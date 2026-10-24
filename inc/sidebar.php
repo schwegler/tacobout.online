@@ -18,6 +18,13 @@ function tacobout_trending_posts() {
 		} );
 		set_transient( 'tacobout_trending_week', $rows, empty( $rows ) ? 300 : 1800 );
 	}
+	// Prime post caches in batch before looping to resolve N+1 get_post() query bottleneck.
+	$post_ids = array_values( array_unique( array_filter( array_map( function ( $row ) {
+		return isset( $row['post_id'] ) ? (int) $row['post_id'] : 0;
+	}, $rows ) ) ) );
+	if ( ! empty( $post_ids ) && function_exists( '_prime_post_caches' ) ) {
+		_prime_post_caches( $post_ids, false, false );
+	}
 	$posts = array();
 	foreach ( $rows as $row ) {
 		$post = get_post( (int) $row['post_id'] );
