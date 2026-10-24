@@ -17,6 +17,14 @@ require_once __DIR__ . '/inc/social.php';
 require_once __DIR__ . '/inc/avatars.php';
 require_once __DIR__ . '/inc/post-avatars.php';
 
+/** Public ownership proof supplied by Impact; this does not load a tracker. */
+function tacobout_impact_site_verification() {
+	if ( is_front_page() && ! is_paged() ) {
+		echo "<meta name='impact-site-verification' value='33fbb505-59f2-47a6-bcbe-8478f65ca72b'>\n";
+	}
+}
+add_action( 'wp_head', 'tacobout_impact_site_verification' );
+
 if ( ! function_exists( 'tacobout_support' ) ) :
 	function tacobout_support() {
 		// Load the public theme styles first for visual parity, then add a small
