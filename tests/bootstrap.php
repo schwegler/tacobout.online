@@ -126,7 +126,10 @@ if (!function_exists('is_admin')) {
     function is_admin() { return false; }
 }
 if (!function_exists('is_user_logged_in')) {
-    function is_user_logged_in() { return false; }
+    function is_user_logged_in() {
+        global $is_user_logged_in;
+        return isset($is_user_logged_in) ? (bool)$is_user_logged_in : false;
+    }
 }
 if (!function_exists('is_preview')) {
     function is_preview() { return false; }
@@ -158,3 +161,29 @@ if (!function_exists('wp_validate_redirect')) {
 }
 
 require_once __DIR__ . '/../functions.php';
+
+if (!class_exists('WP_Error')) {
+    class WP_Error {
+        public $code;
+        public $message;
+        public $data;
+
+        public function __construct($code = '', $message = '', $data = '') {
+            $this->code = $code;
+            $this->message = $message;
+            $this->data = $data;
+        }
+
+        public function get_error_code() {
+            return $this->code;
+        }
+
+        public function get_error_message() {
+            return $this->message;
+        }
+
+        public function get_error_data() {
+            return $this->data;
+        }
+    }
+}

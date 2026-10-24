@@ -310,4 +310,40 @@ class FunctionsTest extends \PHPUnit\Framework\TestCase {
         $this->assertStringContainsString('controls', $output);
     }
 
+
+    public function test_tacobout_restrict_rest_users() {
+        global $is_user_logged_in;
+
+        $response = ['data' => 'sample_user_data'];
+        $user = new \stdClass();
+
+        // 1. Unauthenticated request to /wp/v2/users returns WP_Error 401
+        $is_user_logged_in = false;
+        $request = \Mockery::mock();
+        $request->shouldReceive('get_route')->andReturn('/wp/v2/users');
+
+        $result = tacobout_restrict_rest_users($response, $user, $request);
+        $this->assertInstanceOf(\WP_Error::class, $result);
+        $this->assertEquals('rest_cannot_access', $result->get_error_code());
+        $this->assertEquals('Only authenticated users can list users.', $result->get_error_message());
+        $this->assertEquals(['status' => 401], $result->get_error_data());
+
+        // 2. Authenticated request to /wp/v2/users returns original response
+        $is_user_logged_in = true;
+        $request = \Mockery::mock();
+        $request->shouldReceive('get_route')->andReturn('/wp/v2/users');
+
+        $result = tacobout_restrict_rest_users($response, $user, $request);
+        $this->assertSame($response, $result);
+
+        // 3. Unauthenticated request to non-users route returns original response
+        $is_user_logged_in = false;
+        $request = \Mockery::mock();
+        $request->shouldReceive('get_route')->andReturn('/wp/v2/posts');
+
+        $result = tacobout_restrict_rest_users($response, $user, $request);
+        $this->assertSame($response, $result);
+
+        $is_user_logged_in = false;
+    }
 }
