@@ -7,14 +7,24 @@ class FunctionsTest extends \PHPUnit\Framework\TestCase {
         global $wp_styles_enqueued, $wp_scripts_enqueued;
         $wp_styles_enqueued = [];
         $wp_scripts_enqueued = [];
+        global $wp_scripts_deregistered;
+        $wp_scripts_deregistered = [];
         global $theme_supports_added, $editor_styles_added;
         $theme_supports_added = [];
         $editor_styles_added = [];
         $_GET = [];
+        unset($GLOBALS['is_user_logged_in']);
+        $GLOBALS['wp_is_admin'] = false;
+        $GLOBALS['wp_is_user_logged_in'] = false;
     }
 
     protected function tearDown(): void {
         $_GET = [];
+        unset($GLOBALS['is_user_logged_in']);
+        $GLOBALS['wp_is_admin'] = false;
+        $GLOBALS['wp_is_user_logged_in'] = false;
+        global $wp_scripts_deregistered;
+        $wp_scripts_deregistered = [];
         \Brain\Monkey\tearDown();
         parent::tearDown();
     }
@@ -354,7 +364,6 @@ class FunctionsTest extends \PHPUnit\Framework\TestCase {
         $this->assertStringContainsString('controls', $output);
     }
 
-
     public function test_tacobout_restrict_rest_users() {
         global $is_user_logged_in;
 
@@ -389,5 +398,35 @@ class FunctionsTest extends \PHPUnit\Framework\TestCase {
         $this->assertSame($response, $result);
 
         $is_user_logged_in = false;
+    }
+
+    public function test_tacobout_disable_frontend_heartbeat_deregisters_script_for_guest_visitors() {
+        global $wp_scripts_deregistered;
+        $GLOBALS['wp_is_admin'] = false;
+        $GLOBALS['wp_is_user_logged_in'] = false;
+
+        tacobout_disable_frontend_heartbeat();
+
+        $this->assertContains('heartbeat', $wp_scripts_deregistered);
+    }
+
+    public function test_tacobout_disable_frontend_heartbeat_does_not_deregister_in_admin() {
+        global $wp_scripts_deregistered;
+        $GLOBALS['wp_is_admin'] = true;
+        $GLOBALS['wp_is_user_logged_in'] = false;
+
+        tacobout_disable_frontend_heartbeat();
+
+        $this->assertNotContains('heartbeat', $wp_scripts_deregistered);
+    }
+
+    public function test_tacobout_disable_frontend_heartbeat_does_not_deregister_for_logged_in_users() {
+        global $wp_scripts_deregistered;
+        $GLOBALS['wp_is_admin'] = false;
+        $GLOBALS['wp_is_user_logged_in'] = true;
+
+        tacobout_disable_frontend_heartbeat();
+
+        $this->assertNotContains('heartbeat', $wp_scripts_deregistered);
     }
 }
