@@ -48,7 +48,13 @@ if (!function_exists('add_action')) {
 }
 
 if (!function_exists('wp_enqueue_script')) {
-    function wp_enqueue_script() {}
+    function wp_enqueue_script($handle, $src = '', $deps = array(), $ver = false, $in_footer = false) {
+        global $wp_scripts_enqueued;
+        if (!isset($wp_scripts_enqueued)) {
+            $wp_scripts_enqueued = [];
+        }
+        $wp_scripts_enqueued[$handle] = compact('src', 'deps', 'ver', 'in_footer');
+    }
 }
 
 if (!function_exists('get_theme_file_uri')) {

@@ -4,8 +4,9 @@ class FunctionsTest extends \PHPUnit\Framework\TestCase {
     protected function setUp(): void {
         parent::setUp();
         \Brain\Monkey\setUp();
-        global $wp_styles_enqueued;
+        global $wp_styles_enqueued, $wp_scripts_enqueued;
         $wp_styles_enqueued = [];
+        $wp_scripts_enqueued = [];
         global $theme_supports_added, $editor_styles_added;
         $theme_supports_added = [];
         $editor_styles_added = [];
@@ -16,6 +17,29 @@ class FunctionsTest extends \PHPUnit\Framework\TestCase {
         $_GET = [];
         \Brain\Monkey\tearDown();
         parent::tearDown();
+    }
+
+    public function test_tacobout_enqueue_seasonal_appearance() {
+        global $wp_styles_enqueued, $wp_scripts_enqueued;
+
+        tacobout_enqueue_seasonal_appearance();
+
+        $this->assertArrayHasKey('tacobout-seasonal', $wp_styles_enqueued);
+        $this->assertEquals('http://example.com/wp-content/themes/tacobout/seasonal/seasonal.css', $wp_styles_enqueued['tacobout-seasonal']['src']);
+        $this->assertEquals('1.0.0', $wp_styles_enqueued['tacobout-seasonal']['ver']);
+        $this->assertEquals([], $wp_styles_enqueued['tacobout-seasonal']['deps']);
+
+        $this->assertArrayHasKey('tacobout-seasonal-config', $wp_scripts_enqueued);
+        $this->assertEquals('http://example.com/wp-content/themes/tacobout/seasonal/season-config.js', $wp_scripts_enqueued['tacobout-seasonal-config']['src']);
+        $this->assertEquals('1.0.0', $wp_scripts_enqueued['tacobout-seasonal-config']['ver']);
+        $this->assertEquals([], $wp_scripts_enqueued['tacobout-seasonal-config']['deps']);
+        $this->assertTrue($wp_scripts_enqueued['tacobout-seasonal-config']['in_footer']);
+
+        $this->assertArrayHasKey('tacobout-seasonal', $wp_scripts_enqueued);
+        $this->assertEquals('http://example.com/wp-content/themes/tacobout/seasonal/controller.js', $wp_scripts_enqueued['tacobout-seasonal']['src']);
+        $this->assertEquals('1.0.0', $wp_scripts_enqueued['tacobout-seasonal']['ver']);
+        $this->assertEquals(['tacobout-seasonal-config'], $wp_scripts_enqueued['tacobout-seasonal']['deps']);
+        $this->assertTrue($wp_scripts_enqueued['tacobout-seasonal']['in_footer']);
     }
 
     public function test_tacobout_enqueue_styles() {
