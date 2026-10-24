@@ -45,7 +45,18 @@
 			const target = document.querySelector('main');
 			if (target) { target.setAttribute('tabindex', '-1'); target.focus({preventScroll: true}); }
 		});
-		const update = () => { fab.hidden = window.scrollY < 600; fab.classList.toggle('is-visible', !fab.hidden); };
-		window.addEventListener('scroll', update, {passive: true}); update();
+		// ⚡ Bolt: Throttle FAB visibility check with requestAnimationFrame to prevent layout thrashing on frequent scroll events.
+		let ticking = false;
+		const update = () => {
+			fab.hidden = window.scrollY < 600;
+			fab.classList.toggle('is-visible', !fab.hidden);
+			ticking = false;
+		};
+		window.addEventListener('scroll', () => {
+			if (!ticking) {
+				window.requestAnimationFrame(update);
+				ticking = true;
+			}
+		}, {passive: true}); update();
 	});
 })();
