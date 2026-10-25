@@ -6,50 +6,72 @@
         return;
     }
 
-    /**
-     * Scan for images with alt text and wrap them with an ALT badge + tooltip.
-     * Safe to call repeatedly (e.g. after infinite scroll appends new posts) —
-     * already-wrapped images are skipped via the .tacobout-alt-wrapper check.
-     */
-    function attachAltBadges() {
-        const images = document.querySelectorAll('.wp-block-post-content img[alt]:not([alt=""]), .wp-block-post-featured-image img[alt]:not([alt=""])');
+    function processImage(img) {
+        if (!img || img.closest('.tacobout-alt-wrapper')) return;
 
-        images.forEach(img => {
-            // Check if we already wrapped this image
-            if (img.closest('.tacobout-alt-wrapper')) return;
+        const altText = img.getAttribute('alt');
+        if (!altText) return;
 
-            // Skip if the alt text is just an emoji
-            const altText = img.getAttribute('alt');
-            const emojiRegex = /^[\p{Extended_Pictographic}\u{1F3FB}-\u{1F3FF}\u{200D}\u{FE0F}]+$/u;
-            if (emojiRegex.test(altText)) return;
+        // Skip if the alt text is just an emoji
+        const emojiRegex = /^[\p{Extended_Pictographic}\u{1F3FB}-\u{1F3FF}\u{200D}\u{FE0F}]+$/u;
+        if (emojiRegex.test(altText)) return;
 
-            const wrapper = document.createElement('div');
-            wrapper.className = 'tacobout-alt-wrapper';
+        const wrapper = document.createElement('div');
+        wrapper.className = 'tacobout-alt-wrapper';
 
-            // Insert wrapper and move image inside
+        // Insert wrapper and move image inside
+        if (img.parentNode) {
             img.parentNode.insertBefore(wrapper, img);
             wrapper.appendChild(img);
+        }
 
-            const badge = document.createElement('button');
-            badge.setAttribute('type', 'button');
-            badge.className = 'tacobout-alt-badge';
-            badge.textContent = 'ALT';
-            badge.setAttribute('aria-label', 'Toggle ALT text');
-            badge.setAttribute('aria-expanded', 'false');
+        const badge = document.createElement('button');
+        badge.setAttribute('type', 'button');
+        badge.className = 'tacobout-alt-badge';
+        badge.textContent = 'ALT';
+        badge.setAttribute('aria-label', 'Toggle ALT text');
+        badge.setAttribute('aria-expanded', 'false');
 
-            const tooltipId = 'alt-tooltip-' + Math.random().toString(36).substring(2, 11);
-            badge.setAttribute('aria-controls', tooltipId);
+        const tooltipId = 'alt-tooltip-' + Math.random().toString(36).substring(2, 11);
+        badge.setAttribute('aria-controls', tooltipId);
 
-            const tooltip = document.createElement('div');
-            tooltip.id = tooltipId;
-            tooltip.className = 'tacobout-alt-tooltip';
-            tooltip.textContent = img.getAttribute('alt');
-            tooltip.setAttribute('hidden', 'true');
-            tooltip.setAttribute('aria-hidden', 'true');
+        const tooltip = document.createElement('div');
+        tooltip.id = tooltipId;
+        tooltip.className = 'tacobout-alt-tooltip';
+        tooltip.textContent = altText;
+        tooltip.setAttribute('hidden', 'true');
+        tooltip.setAttribute('aria-hidden', 'true');
 
-            wrapper.appendChild(badge);
-            wrapper.appendChild(tooltip);
-        });
+        wrapper.appendChild(badge);
+        wrapper.appendChild(tooltip);
+    }
+
+    function processContainer(container) {
+        if (!container || container.nodeType !== 1) return;
+        if (container.classList && container.classList.contains('tacobout-alt-wrapper')) return;
+
+        if (container.tagName === 'IMG') {
+            if (container.closest('.wp-block-post-content, .wp-block-post-featured-image')) {
+                processImage(container);
+            }
+            return;
+        }
+
+        const images = container.querySelectorAll('.wp-block-post-content img[alt]:not([alt=""]), .wp-block-post-featured-image img[alt]:not([alt=""])');
+        images.forEach(processImage);
+    }
+
+    /**
+     * Scan for images with alt text and wrap them with an ALT badge + tooltip.
+     * Safe to call repeatedly (e.g. after infinite scroll appends new posts).
+     */
+    function attachAltBadges(root) {
+        if (root && root.nodeType === 1) {
+            processContainer(root);
+            return;
+        }
+        const images = document.querySelectorAll('.wp-block-post-content img[alt]:not([alt=""]), .wp-block-post-featured-image img[alt]:not([alt=""])');
+        images.forEach(processImage);
     }
 
     /**
@@ -126,21 +148,34 @@
     }
 
     // Create an observer to watch for new images added to the DOM (like via infinite scroll)
-    // ⚡ Bolt: Debounce MutationObserver to prevent main-thread blocking during rapid DOM
-    // mutations (e.g., infinite scrolling). This batches expensive querySelectorAll calls,
-    // significantly reducing CPU usage and layout thrashing.
+    // ⚡ Bolt: Process addedNodes in MutationObserver instead of re-scanning the entire document
+    // with querySelectorAll. This avoids O(N) full-document DOM traversals on infinite scroll inserts,
+    // significantly reducing CPU usage and main-thread execution time.
+    var pendingNodes = [];
     var debounceTimer;
+
+    function processPendingNodes() {
+        var nodesToProcess = pendingNodes;
+        pendingNodes = [];
+        for (var i = 0; i < nodesToProcess.length; i++) {
+            processContainer(nodesToProcess[i]);
+        }
+    }
+
     var observer = new MutationObserver(function (mutations) {
-        var shouldRun = false;
+        var hasNewNodes = false;
         for (var i = 0; i < mutations.length; i++) {
-            if (mutations[i].addedNodes.length) {
-                shouldRun = true;
-                break;
+            var added = mutations[i].addedNodes;
+            for (var j = 0; j < added.length; j++) {
+                if (added[j].nodeType === 1) {
+                    pendingNodes.push(added[j]);
+                    hasNewNodes = true;
+                }
             }
         }
-        if (shouldRun) {
+        if (hasNewNodes) {
             clearTimeout(debounceTimer);
-            debounceTimer = setTimeout(attachAltBadges, 100);
+            debounceTimer = setTimeout(processPendingNodes, 100);
         }
     });
 
