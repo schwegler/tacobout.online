@@ -94,7 +94,8 @@ html .tacobout-companion-vault-card{background:var(--taco-surface-2)!important;b
 html footer{border-top:1px solid var(--taco-border);background:transparent!important;color:var(--taco-muted)}html footer a{color:var(--taco-fg)}
 html .tacobout-end-card{background:transparent;border:0;border-top:1px solid var(--taco-border);border-radius:0;box-shadow:none;padding:25px 0}.tacobout-end-mascot{max-width:60px}
 @media(min-width:2000px){html body.home:not(.paged) main:has(.tacobout-grid-with-sidebar)>.wp-block-query{width:100%;max-width:1240px;padding-right:0}}
-@media(max-width:1099px){html .tacobout-grid-with-sidebar>.tacobout-grid-sidebar{grid-column:1/-1!important;grid-row:auto!important;order:10}.tacobout-grid-sidebar .tacobout-discovery-sidebar{border-left:0;padding-left:0;display:grid;grid-template-columns:1fr 1fr;gap:28px;border-top:1px solid var(--taco-border);padding-top:25px}}
+/* Keep source order: the one server-rendered sidebar separates the initial and appended batches. */
+@media(max-width:1099px){html .tacobout-grid-with-sidebar>.tacobout-grid-sidebar{grid-column:1/-1!important;grid-row:auto!important}.tacobout-grid-sidebar .tacobout-discovery-sidebar{border-left:0;padding-left:0;display:grid;grid-template-columns:1fr 1fr;gap:28px;border-top:1px solid var(--taco-border);padding-top:25px}}
 @media(max-width:759px){
  html .wp-site-blocks{--wp--style--root--padding-left:22px;--wp--style--root--padding-right:22px}.tacobout-header-row{padding-inline:0!important}.tacobout-primary-navigation{order:3;margin-left:0}.tacobout-utilities{margin-left:auto}
  html .wp-site-blocks>main{padding-top:26px!important}.tacobout-welcome-title{font-size:28px}.tacobout-welcome-note{display:none}.tacobout-on-the-air-mascot-wrap{flex-basis:53px!important}
