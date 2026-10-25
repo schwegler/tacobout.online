@@ -568,4 +568,74 @@ class FunctionsTest extends \PHPUnit\Framework\TestCase {
         $result = tacobout_rest_cache_control_headers($response, null, $request);
         $this->assertSame($response, $result);
     }
+
+    public function test_pre_render_hidden_blocks_ignores_non_target_blocks() {
+        $parsed_block = ['blockName' => 'core/paragraph'];
+        $parent_block = (object) ['context' => ['postId' => 123, 'queryId' => 1]];
+
+        $result = tacobout_pre_render_hidden_blocks('default_html', $parsed_block, $parent_block);
+        $this->assertSame('default_html', $result);
+    }
+
+    public function test_pre_render_hidden_blocks_returns_pre_render_when_no_post_id() {
+        \Brain\Monkey\Functions\expect('get_the_ID')->once()->andReturn(false);
+
+        $parsed_block = ['blockName' => 'core/post-content'];
+        $parent_block = (object) ['context' => []];
+
+        $result = tacobout_pre_render_hidden_blocks(null, $parsed_block, $parent_block);
+        $this->assertNull($result);
+    }
+
+    public function test_pre_render_hidden_blocks_falls_back_to_get_the_id_when_context_missing() {
+        \Brain\Monkey\Functions\expect('get_the_ID')->once()->andReturn(777);
+        \Brain\Monkey\Functions\expect('get_post_format')->once()->with(777)->andReturn('standard');
+
+        $parsed_block = ['blockName' => 'core/post-content'];
+        $parent_block = (object) ['context' => ['queryId' => 1]];
+
+        $result = tacobout_pre_render_hidden_blocks(null, $parsed_block, $parent_block);
+        $this->assertSame('', $result);
+    }
+
+    public function test_pre_render_hidden_blocks_preserves_post_excerpt_for_standard_format_in_query_loop() {
+        \Brain\Monkey\Functions\expect('get_post_format')->once()->with(501)->andReturn('standard');
+
+        $parsed_block = ['blockName' => 'core/post-excerpt'];
+        $parent_block = (object) ['context' => ['postId' => 501, 'queryId' => 1]];
+
+        $result = tacobout_pre_render_hidden_blocks('original_excerpt', $parsed_block, $parent_block);
+        $this->assertSame('original_excerpt', $result);
+    }
+
+    public function test_pre_render_hidden_blocks_preserves_post_content_for_non_standard_format_in_query_loop() {
+        \Brain\Monkey\Functions\expect('get_post_format')->once()->with(502)->andReturn('video');
+
+        $parsed_block = ['blockName' => 'core/post-content'];
+        $parent_block = (object) ['context' => ['postId' => 502, 'queryId' => 1]];
+
+        $result = tacobout_pre_render_hidden_blocks('video_content', $parsed_block, $parent_block);
+        $this->assertSame('video_content', $result);
+    }
+
+    public function test_pre_render_hidden_blocks_preserves_featured_image_for_standard_format() {
+        \Brain\Monkey\Functions\expect('get_post_format')->once()->with(503)->andReturn('standard');
+
+        $parsed_block = ['blockName' => 'core/post-featured-image'];
+        $parent_block = (object) ['context' => ['postId' => 503]];
+
+        $result = tacobout_pre_render_hidden_blocks('featured_img_html', $parsed_block, $parent_block);
+        $this->assertSame('featured_img_html', $result);
+    }
+
+    public function test_pre_render_hidden_blocks_preserves_existing_pre_render_string_when_not_hidden() {
+        \Brain\Monkey\Functions\expect('get_post_format')->once()->with(504)->andReturn('audio');
+        \Brain\Monkey\Functions\expect('get_post_field')->once()->with('post_content', 504)->andReturn('<p>Text with no media</p>');
+
+        $parsed_block = ['blockName' => 'core/post-featured-image'];
+        $parent_block = (object) ['context' => ['postId' => 504]];
+
+        $result = tacobout_pre_render_hidden_blocks('cached_html', $parsed_block, $parent_block);
+        $this->assertSame('cached_html', $result);
+    }
 }
