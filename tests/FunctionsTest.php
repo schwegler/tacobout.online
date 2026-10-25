@@ -484,6 +484,8 @@ class FunctionsTest extends \PHPUnit\Framework\TestCase {
         $parent = (object) ['context' => ['postId' => 907]];
         $block = ['blockName' => 'core/post-featured-image'];
         $this->assertSame('', tacobout_pre_render_hidden_blocks('original_pre_render', $block, $parent));
+    }
+
     public function test_pre_render_hidden_blocks_ignores_non_target_blocks() {
         $parsed_block = ['blockName' => 'core/paragraph'];
         $parent_block = (object) ['context' => ['postId' => 123, 'queryId' => 1]];
