@@ -21,7 +21,6 @@ function tacobout_verified_bluesky_url( $post_id, $uri ) {
 	$key = 'tacobout_bsky_v1_' . md5( $uri . '|' . $permalink );
 	$cached = get_transient( $key );
 	if ( false !== $cached ) { return 'verified' === $cached ? $url : ''; }
-	// ⚡ Bolt: Cache verification status in transients (12h for verified, 15m for unavailable) to prevent frequent blocking HTTP requests.
 	$response = wp_remote_get( 'https://public.api.bsky.app/xrpc/app.bsky.feed.getPosts?uris=' . rawurlencode( $uri ), array( 'timeout' => 3, 'redirection' => 0 ) );
 	$verified = false;
 	if ( ! is_wp_error( $response ) && 200 === wp_remote_retrieve_response_code( $response ) ) {
@@ -40,7 +39,7 @@ function tacobout_verified_bluesky_url( $post_id, $uri ) {
 			}
 		}
 	}
-	set_transient( $key, $verified ? 'verified' : 'unavailable', $verified ? 12 * HOUR_IN_SECONDS : 15 * 60 );
+	set_transient( $key, $verified ? 'verified' : 'unavailable', $verified ? 300 : 60 );
 	return $verified ? $url : '';
 }
 
