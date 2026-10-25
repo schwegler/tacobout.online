@@ -98,55 +98,6 @@
 		});
 	}
 
-	function prepareImageRatios(card) {
-		// Explicit intrinsic ratios also avoid the 1500px containment placeholder
-		// browsers can give WordPress lazy images with sizes="auto".
-		card.querySelectorAll('img').forEach(img => {
-			const sizes = img.getAttribute('sizes');
-			if (sizes?.startsWith('auto,')) img.setAttribute('sizes', sizes.replace(/^auto,\s*/, ''));
-			const sizeImage = () => {
-				const width = img.naturalWidth || Number(img.getAttribute('width'));
-				const height = img.naturalHeight || Number(img.getAttribute('height'));
-				if (width && height) img.style.setProperty('aspect-ratio', width + ' / ' + height, 'important');
-				layoutMasonryGrid();
-			};
-			sizeImage();
-			img.addEventListener('load', sizeImage);
-		});
-	}
-
-	function prepareVideoFrames(content) {
-		// Honor provider ratios, including portrait video, without squashing audio embeds.
-		content?.querySelectorAll('iframe').forEach(frame => {
-			const src = frame.getAttribute('src') || '';
-			if (!/youtube(?:-nocookie)?\.com|youtu\.be|vimeo\.com|videopress\.com/.test(src)) return;
-			const block = frame.closest('.wp-block-embed');
-			const ratioClass = block?.className.match(/wp-embed-aspect-(\d+)-(\d+)/);
-			const w = Number(frame.getAttribute('width'));
-			const h = Number(frame.getAttribute('height'));
-			const ratio = ratioClass ? Number(ratioClass[1]) / Number(ratioClass[2]) :
-				(/\/shorts\//.test(src) ? 9 / 16 : (w && h ? w / h : 16 / 9));
-			frame.classList.add('tacobout-video-frame');
-			frame.style.aspectRatio = String(ratio);
-			frame.loading = 'lazy';
-			if (!frame.title) frame.title = 'Video player';
-		});
-	}
-
-	function prepareMediaViewer(card, content) {
-		if (content && card.matches('.tacobout-format-gallery, .tacobout-format-image')) {
-			const images = Array.from(card.querySelectorAll('.wp-block-post-content img, .wp-block-post-featured-image img'));
-			if (images.length) {
-				const view = document.createElement('button');
-				view.type = 'button';
-				view.className = 'tacobout-view-media';
-				view.textContent = images.length > 1 ? 'View ' + images.length + ' photos ↗' : 'View image ↗';
-				view.addEventListener('click', () => openMedia(images));
-				content.append(view);
-			}
-		}
-	}
-
 	function prepareCards(cards) {
 		// ⚡ Bolt: Cache all posts array outside the loop to prevent O(N²) DOM queries
 		const allPosts = Array.from(grid.querySelectorAll('.wp-block-post'));
@@ -159,17 +110,53 @@
 			const featured = card.querySelector('.wp-block-post-featured-image');
 			const media = !card.classList.contains('tacobout-format-standard') && content?.querySelector('img, video, iframe, audio, .wp-block-gallery');
 			if (featured && media && !card.classList.contains('tacobout-format-standard')) featured.remove();
-
-			prepareImageRatios(card);
-
+			// Explicit intrinsic ratios also avoid the 1500px containment placeholder
+			// browsers can give WordPress lazy images with sizes="auto".
+			card.querySelectorAll('img').forEach(img => {
+				const sizes = img.getAttribute('sizes');
+				if (sizes?.startsWith('auto,')) img.setAttribute('sizes', sizes.replace(/^auto,\s*/, ''));
+				const sizeImage = () => {
+					const width = img.naturalWidth || Number(img.getAttribute('width'));
+					const height = img.naturalHeight || Number(img.getAttribute('height'));
+					if (width && height) img.style.setProperty('aspect-ratio', width + ' / ' + height, 'important');
+					layoutMasonryGrid();
+				};
+				sizeImage();
+				img.addEventListener('load', sizeImage);
+			});
 			const index = allPosts.indexOf(card);
 			const gallery = !card.classList.contains('tacobout-format-standard') && content?.querySelector('.wp-block-gallery, .gallery');
 			card.classList.toggle('tacobout-card-wide', !!gallery ||
 				(!!featured && (index === 0 || index % 7 === 4)));
 			card.classList.toggle('tacobout-card-horizontal', !!featured && !media);
 
-			prepareVideoFrames(content);
-			prepareMediaViewer(card, content);
+			// Honor provider ratios, including portrait video, without squashing audio embeds.
+			content?.querySelectorAll('iframe').forEach(frame => {
+				const src = frame.getAttribute('src') || '';
+				if (!/youtube(?:-nocookie)?\.com|youtu\.be|vimeo\.com|videopress\.com/.test(src)) return;
+				const block = frame.closest('.wp-block-embed');
+				const ratioClass = block?.className.match(/wp-embed-aspect-(\d+)-(\d+)/);
+				const w = Number(frame.getAttribute('width'));
+				const h = Number(frame.getAttribute('height'));
+				const ratio = ratioClass ? Number(ratioClass[1]) / Number(ratioClass[2]) :
+					(/\/shorts\//.test(src) ? 9 / 16 : (w && h ? w / h : 16 / 9));
+				frame.classList.add('tacobout-video-frame');
+				frame.style.aspectRatio = String(ratio);
+				frame.loading = 'lazy';
+				if (!frame.title) frame.title = 'Video player';
+			});
+
+			if (content && card.matches('.tacobout-format-gallery, .tacobout-format-image')) {
+				const images = Array.from(card.querySelectorAll('.wp-block-post-content img, .wp-block-post-featured-image img'));
+				if (images.length) {
+					const view = document.createElement('button');
+					view.type = 'button';
+					view.className = 'tacobout-view-media';
+					view.textContent = images.length > 1 ? 'View ' + images.length + ' photos ↗' : 'View image ↗';
+					view.addEventListener('click', () => openMedia(images));
+					content.append(view);
+				}
+			}
 		});
 		masonry?.refresh();
 	}

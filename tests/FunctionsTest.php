@@ -555,4 +555,24 @@ class FunctionsTest extends \PHPUnit\Framework\TestCase {
         $result = tacobout_pre_render_hidden_blocks('cached_html', $parsed_block, $parent_block);
         $this->assertSame('cached_html', $result);
     }
+
+    public function test_tacobout_pre_render_hidden_blocks_featured_image_media_patterns() {
+        $patterns = [
+            '<img src="photo.jpg">',
+            '<!-- wp:image -->',
+            '<!-- wp:embed -->',
+            '[embed]https://example.com/video[/embed]',
+            '<iframe src="https://example.com/player"></iframe>',
+        ];
+
+        $post_id = 820;
+        foreach ($patterns as $content) {
+            \Brain\Monkey\Functions\expect('get_post_format')->once()->with($post_id)->andReturn('image');
+            \Brain\Monkey\Functions\expect('get_post_field')->once()->with('post_content', $post_id)->andReturn($content);
+            $parent = (object) ['context' => ['postId' => $post_id]];
+            $block = ['blockName' => 'core/post-featured-image'];
+            $this->assertSame('', tacobout_pre_render_hidden_blocks('original', $block, $parent));
+            $post_id++;
+        }
+    }
 }

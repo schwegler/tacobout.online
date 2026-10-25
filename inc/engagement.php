@@ -8,28 +8,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-/** Process a single engagement row into the data array. */
-function tacobout_process_engagement_row( array &$data, object $row ) {
-	$type     = $row->comment_type;
-	$protocol = $row->protocol;
-	$count    = max( 0, (int) $row->total );
-	$is_reply = in_array( $type, array( '', 'comment' ), true );
-	if ( in_array( $type, array( 'pingback', 'trackback' ), true ) ) {
-		$data['other_comments'] += $count;
-	} elseif ( in_array( $protocol, array( 'activitypub', 'atproto' ), true ) ) {
-		$field = $is_reply ? 'replies' : ( array(
-			'like'   => 'likes',
-			'repost' => 'reposts',
-			'quote'  => 'quotes',
-		)[ $type ] ?? null );
-		if ( $field ) {
-			$data[ $protocol ][ $field ] += $count;
-		}
-	} elseif ( $is_reply ) {
-		$data[ '' === $protocol ? 'comments' : 'other_comments' ] += $count;
-	}
-}
-
 /** Normalize grouped, deduplicated local records; never claim global coverage. */
 function tacobout_normalize_engagement( $rows ) {
 	$data = array(
@@ -65,7 +43,24 @@ function tacobout_normalize_engagement( $rows ) {
 		),
 	);
 	foreach ( $rows as $row ) {
-		tacobout_process_engagement_row( $data, $row );
+		$type     = $row->comment_type;
+		$protocol = $row->protocol;
+		$count    = max( 0, (int) $row->total );
+		$is_reply = in_array( $type, array( '', 'comment' ), true );
+		if ( in_array( $type, array( 'pingback', 'trackback' ), true ) ) {
+			$data['other_comments'] += $count;
+		} elseif ( in_array( $protocol, array( 'activitypub', 'atproto' ), true ) ) {
+			$field = $is_reply ? 'replies' : ( array(
+				'like'   => 'likes',
+				'repost' => 'reposts',
+				'quote'  => 'quotes',
+			)[ $type ] ?? null );
+			if ( $field ) {
+				$data[ $protocol ][ $field ] += $count;
+			}
+		} elseif ( $is_reply ) {
+			$data[ '' === $protocol ? 'comments' : 'other_comments' ] += $count;
+		}
 	}
 	foreach ( array( 'replies', 'likes', 'reposts', 'quotes' ) as $field ) {
 		$data[ $field ] = $data['activitypub'][ $field ] + $data['atproto'][ $field ];
