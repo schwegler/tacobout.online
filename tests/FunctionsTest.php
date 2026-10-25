@@ -430,6 +430,145 @@ class FunctionsTest extends \PHPUnit\Framework\TestCase {
         $this->assertNotContains('heartbeat', $wp_scripts_deregistered);
     }
 
+    public function test_tacobout_rest_cache_control_headers_sets_cache_control_on_public_posts_get_request() {
+        $request = \Mockery::mock();
+        $request->shouldReceive('get_param')->with('context')->andReturn(null);
+        $request->shouldReceive('get_method')->andReturn('GET');
+        $request->shouldReceive('get_header')->with('authorization')->andReturn(null);
+        $request->shouldReceive('get_header')->with('x-wp-nonce')->andReturn(null);
+        $request->shouldReceive('get_route')->andReturn('/wp/v2/posts');
+
+        $response = \Mockery::mock();
+        $response->shouldReceive('get_status')->andReturn(200);
+        $response->shouldReceive('header')
+            ->once()
+            ->with('Cache-Control', 'public, max-age=60, s-maxage=120, must-revalidate');
+
+        $result = tacobout_rest_cache_control_headers($response, null, $request);
+        $this->assertSame($response, $result);
+    }
+
+    public function test_tacobout_rest_cache_control_headers_sets_cache_control_on_single_post_view_context() {
+        $request = \Mockery::mock();
+        $request->shouldReceive('get_param')->with('context')->andReturn('view');
+        $request->shouldReceive('get_method')->andReturn('GET');
+        $request->shouldReceive('get_header')->with('authorization')->andReturn(null);
+        $request->shouldReceive('get_header')->with('x-wp-nonce')->andReturn(null);
+        $request->shouldReceive('get_route')->andReturn('/wp/v2/posts/123');
+
+        $response = \Mockery::mock();
+        $response->shouldReceive('get_status')->andReturn(200);
+        $response->shouldReceive('header')
+            ->once()
+            ->with('Cache-Control', 'public, max-age=60, s-maxage=120, must-revalidate');
+
+        $result = tacobout_rest_cache_control_headers($response, null, $request);
+        $this->assertSame($response, $result);
+    }
+
+    public function test_tacobout_rest_cache_control_headers_skips_when_user_logged_in() {
+        $GLOBALS['wp_is_user_logged_in'] = true;
+
+        try {
+            $request = \Mockery::mock();
+            $request->shouldReceive('get_param')->with('context')->andReturn('view');
+            $request->shouldReceive('get_method')->andReturn('GET');
+
+            $response = \Mockery::mock();
+            $response->shouldReceive('header')->never();
+
+            $result = tacobout_rest_cache_control_headers($response, null, $request);
+            $this->assertSame($response, $result);
+        } finally {
+            $GLOBALS['wp_is_user_logged_in'] = false;
+        }
+    }
+
+    public function test_tacobout_rest_cache_control_headers_skips_non_get_method() {
+        $request = \Mockery::mock();
+        $request->shouldReceive('get_param')->with('context')->andReturn('view');
+        $request->shouldReceive('get_method')->andReturn('POST');
+
+        $response = \Mockery::mock();
+        $response->shouldReceive('header')->never();
+
+        $result = tacobout_rest_cache_control_headers($response, null, $request);
+        $this->assertSame($response, $result);
+    }
+
+    public function test_tacobout_rest_cache_control_headers_skips_authenticated_request_headers() {
+        // Case 1: authorization header present
+        $request1 = \Mockery::mock();
+        $request1->shouldReceive('get_param')->with('context')->andReturn('view');
+        $request1->shouldReceive('get_method')->andReturn('GET');
+        $request1->shouldReceive('get_header')->with('authorization')->andReturn('Bearer token123');
+
+        $response1 = \Mockery::mock();
+        $response1->shouldReceive('header')->never();
+
+        $result1 = tacobout_rest_cache_control_headers($response1, null, $request1);
+        $this->assertSame($response1, $result1);
+
+        // Case 2: x-wp-nonce header present
+        $request2 = \Mockery::mock();
+        $request2->shouldReceive('get_param')->with('context')->andReturn('view');
+        $request2->shouldReceive('get_method')->andReturn('GET');
+        $request2->shouldReceive('get_header')->with('authorization')->andReturn(null);
+        $request2->shouldReceive('get_header')->with('x-wp-nonce')->andReturn('nonce123');
+
+        $response2 = \Mockery::mock();
+        $response2->shouldReceive('header')->never();
+
+        $result2 = tacobout_rest_cache_control_headers($response2, null, $request2);
+        $this->assertSame($response2, $result2);
+    }
+
+    public function test_tacobout_rest_cache_control_headers_skips_non_200_status() {
+        $request = \Mockery::mock();
+        $request->shouldReceive('get_param')->with('context')->andReturn('view');
+        $request->shouldReceive('get_method')->andReturn('GET');
+        $request->shouldReceive('get_header')->with('authorization')->andReturn(null);
+        $request->shouldReceive('get_header')->with('x-wp-nonce')->andReturn(null);
+
+        $response = \Mockery::mock();
+        $response->shouldReceive('get_status')->andReturn(404);
+        $response->shouldReceive('header')->never();
+
+        $result = tacobout_rest_cache_control_headers($response, null, $request);
+        $this->assertSame($response, $result);
+    }
+
+    public function test_tacobout_rest_cache_control_headers_skips_non_view_context() {
+        $request = \Mockery::mock();
+        $request->shouldReceive('get_param')->with('context')->andReturn('edit');
+        $request->shouldReceive('get_method')->andReturn('GET');
+        $request->shouldReceive('get_header')->with('authorization')->andReturn(null);
+        $request->shouldReceive('get_header')->with('x-wp-nonce')->andReturn(null);
+
+        $response = \Mockery::mock();
+        $response->shouldReceive('get_status')->andReturn(200);
+        $response->shouldReceive('header')->never();
+
+        $result = tacobout_rest_cache_control_headers($response, null, $request);
+        $this->assertSame($response, $result);
+    }
+
+    public function test_tacobout_rest_cache_control_headers_skips_non_posts_route() {
+        $request = \Mockery::mock();
+        $request->shouldReceive('get_param')->with('context')->andReturn('view');
+        $request->shouldReceive('get_method')->andReturn('GET');
+        $request->shouldReceive('get_header')->with('authorization')->andReturn(null);
+        $request->shouldReceive('get_header')->with('x-wp-nonce')->andReturn(null);
+        $request->shouldReceive('get_route')->andReturn('/wp/v2/pages');
+
+        $response = \Mockery::mock();
+        $response->shouldReceive('get_status')->andReturn(200);
+        $response->shouldReceive('header')->never();
+
+        $result = tacobout_rest_cache_control_headers($response, null, $request);
+        $this->assertSame($response, $result);
+    }
+
     public function test_tacobout_pre_render_hidden_blocks_non_target_block() {
         $parent = (object) ['context' => ['postId' => 901]];
         $block = ['blockName' => 'core/paragraph'];
