@@ -72,6 +72,8 @@ jobs:
         run: python tests/author-banner-browser.py
       - name: Check post metadata avatars and REST-loaded cards
         run: python tests/post-avatars-browser.py
+      - name: Check sidebar placement across infinite-scroll batches
+        run: python tests/mobile-sidebar-browser.py
       - name: Check floating seasonal visibility and controls
         run: python tests/seasonal-placement-browser.py
 
