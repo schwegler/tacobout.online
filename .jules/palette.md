@@ -77,3 +77,6 @@
 ## 2024-11-20 - Tactile Feedback for Summary Elements
 **Learning:** `summary` elements used to toggle `details` blocks act as interactive buttons, but often lack tactile feedback beyond cursor changes. This leaves users unsure if their interaction registered, especially on touch devices or for keyboard users.
 **Action:** Always include `:hover`, `:focus-visible`, and `:active` states for custom `summary` elements to ensure tactile visual feedback (like color changes and scaling) during interactions, maintaining a consistent micro-UX across all interactive components.
+## 2026-10-27 - Tactile Feedback for Header Utilities and Profile Actions
+**Learning:** Custom interactive UI elements like the header utility buttons (Search, Theme Toggle) and Author Profile rail actions often have `:hover` and `:focus-visible` states, but lack an `:active` state. This omission prevents tactile visual feedback (like a "pressed" effect) during interactions, degrading the micro-UX, especially on touch devices.
+**Action:** Always include an `:active` state (e.g., `transform: scale(0.96)`) for custom interactive elements in addition to `:hover` and `:focus-visible` states to ensure tactile visual feedback during interactions.
