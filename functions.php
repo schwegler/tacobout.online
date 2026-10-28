@@ -292,7 +292,8 @@ function tacobout_security_headers() {
 		header( 'X-XSS-Protection: 0' );
 		header( 'Referrer-Policy: strict-origin-when-cross-origin' );
 		header( 'Strict-Transport-Security: max-age=31536000; includeSubDomains' );
-		header( 'Permissions-Policy: camera=(), microphone=(), geolocation=()' );
+		header( 'Permissions-Policy: camera=(), microphone=(), geolocation=(), payment=(), usb=(), autoplay=()' );
+		header( 'Content-Security-Policy: upgrade-insecure-requests;' );
 
 	}
 }
