@@ -1,6 +1,17 @@
 # Seasonal appearance and floating invitation
 
-The seasonal controller uses schema v2 configuration, explicit UTC date windows and an opt-in Appearance menu. Halloween 2026 runs October 18 through the exclusive November 1 boundary. The approved Telly vampire PNG is unchanged and decorative (`alt=""`); it must not gain an ALT badge. Activation, Undo, Show character, session dismissal and reduced-motion preferences remain supported. No artwork is generated or replaced.
+## Halloween retirement
+
+The Halloween 2026 pack is disabled (`enabled: false`), including during its original October 18–November 1 UTC window. Ordinary pages mount no seasonal invitation, Appearance controls, atmosphere or palette, including when a returning visitor has a saved Halloween preference. The controller, CSS, dated configuration and approved PNG remain available for reuse.
+
+To prepare another approved season, add its pack to `seasonal/season-config.js` with its own ID, explicit UTC window, display copy, approved artwork and enabled flag. Do not reuse Halloween dates or turn on an unapproved Christmas design. Run `node scripts/build-assets.cjs` and commit the source, generated fingerprint and manifest together.
+
+Browser coverage checks the shipped dormant config at desktop/mobile widths and explicitly enables the retained Halloween pack only in the test response for the existing placement, activation, Undo, dismissal and reduced-motion checks.
+
+Release notes: remove Halloween overlays from the default presentation; retain the seasonal framework and artwork. No Christmas design is introduced. Merge to main may publish an automatic patch after required CI; WordPress installation and HTML-cache refresh remain a separate deployment action. No release or production deployment is performed by preparing this branch/PR.
+
+
+The seasonal controller uses schema v2 configuration, explicit UTC date windows and an opt-in Appearance menu. The retained Halloween 2026 window is October 18 through the exclusive November 1 boundary; the pack is now disabled. The approved Telly vampire PNG is unchanged and decorative (`alt=""`); it must not gain an ALT badge. Activation, Undo, Show character, session dismissal and reduced-motion preferences remain supported. No artwork is generated or replaced.
 
 ## Current correction
 
