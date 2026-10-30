@@ -17,6 +17,27 @@ HTML = '''<!doctype html><html><head><meta name="viewport" content="width=device
 with sync_playwright() as p:
     executable = os.environ.get('CHROMIUM_EXECUTABLE')
     browser = p.chromium.launch(**({'executable_path': executable} if executable else {}))
+    # The shipped pack must stay dormant, even for returning Halloween visitors.
+    for width in [390, 1440]:
+        page = browser.new_page(viewport={'width': width, 'height': 900})
+        page.add_init_script("localStorage.setItem('seasonal-theme:v1', 'halloween')")
+        def ordinary_route(request):
+            path = request.request.url.split('http://localhost')[1]
+            if path == '/':
+                request.fulfill(body=HTML, content_type='text/html')
+            else:
+                request.fulfill(path=str(ROOT / path.lstrip('/')))
+        page.route('http://localhost/**', ordinary_route)
+        page.clock.set_fixed_time('2026-10-20T12:00:00Z')
+        page.goto('http://localhost/')
+        page.wait_for_timeout(1200)
+        assert page.locator('[data-seasonal-controls], .seasonal-overlay, .seasonal-atmosphere').count() == 0
+        assert page.locator('html').get_attribute('data-season') is None
+        evidence = ROOT / 'docs/screenshots/seasonal-retired'
+        evidence.mkdir(parents=True, exist_ok=True)
+        page.screenshot(path=str(evidence / f'ordinary-{width}.png'))
+        page.close()
+        print(f'PASS {width}px: shipped Halloween pack dormant with saved preference')
     for width in [320, 390, 768, 1440, 1920]:
         for reduced in ['reduce', 'no-preference']:
             page = browser.new_page(viewport={'width': width, 'height': 900}, reduced_motion=reduced)
@@ -26,6 +47,10 @@ with sync_playwright() as p:
                 path = request.request.url.split('http://localhost')[1]
                 if path == '/':
                     request.fulfill(body=HTML, content_type='text/html')
+                elif path == '/seasonal/season-config.js':
+                    # Explicit test-only activation preserves coverage of the reusable pack.
+                    config = (ROOT / path.lstrip('/')).read_text().replace('"enabled": false', '"enabled": true')
+                    request.fulfill(body=config, content_type='application/javascript')
                 else:
                     request.fulfill(path=str(ROOT / path.lstrip('/')))
             page.route('http://localhost/**', route)
