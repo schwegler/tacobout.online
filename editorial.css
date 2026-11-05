@@ -186,6 +186,9 @@ html .tacobout-profile-rail .activitypub-follow-me-block-wrapper.is-style-profil
 html .tacobout-profile-rail .activitypub-follow-me-block-wrapper.is-style-profile .activitypub-profile .wp-block-button__link{display:flex;align-items:center;justify-content:center;width:100%;min-height:44px;padding:10px 12px;border-radius:7px;background:var(--taco-accent-fill);color:#fff;font-size:14px;font-weight:600;line-height:1.4;text-decoration:none}
 html .tacobout-profile-copy{width:100%;min-height:44px;border:1px solid var(--taco-border);border-radius:7px;background:var(--taco-surface);color:var(--taco-fg);font-size:14px;font-weight:600;padding:10px 12px;margin:10px 0 0}
 html .tacobout-profile-copy[hidden]{display:none}
+html .tacobout-profile-copy:hover{background:var(--taco-surface-2);border-color:var(--taco-accent)}
+html .tacobout-profile-copy:focus-visible{outline:3px solid var(--taco-accent);outline-offset:4px}
+html .tacobout-profile-copy:active{transform:scale(0.96)}
 html .tacobout-profile-rail .activitypub-follow-me-block-wrapper.is-style-profile .activitypub-profile__bio,.tacobout-profile-bio{font-size:15px;line-height:1.6;margin-top:22px;width:100%}
 html .tacobout-profile-rail .activitypub-follow-me-block-wrapper.is-style-profile .activitypub-profile__stats{display:flex;flex-wrap:wrap;gap:16px;margin-top:20px;font-size:14px;color:var(--taco-muted)}
 html .tacobout-profile-rail .activitypub-follow-me-block-wrapper.is-style-profile .activitypub-profile__stats strong{color:var(--taco-fg)}
