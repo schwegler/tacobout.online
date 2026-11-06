@@ -25,6 +25,12 @@ function tacobout_impact_site_verification() {
 }
 add_action( 'wp_head', 'tacobout_impact_site_verification' );
 
+/** Public Mastodon ownership verification, available without JavaScript. */
+function tacobout_mastodon_site_verification() {
+	echo '<link rel="me" href="https://mastodon.social/@schwegler">' . "\n";
+}
+add_action( 'wp_head', 'tacobout_mastodon_site_verification' );
+
 if ( ! function_exists( 'tacobout_support' ) ) :
 	function tacobout_support() {
 		// Load the public theme styles first for visual parity, then add a small
