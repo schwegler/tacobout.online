@@ -43,7 +43,18 @@
     if(existingMode){existingMode.before(controls);panel.append(existingMode);}else{(document.querySelector('header .header-right')||document.querySelector('header')).append(controls);}
     panel.append(toggle,undo,motion,effects,restoreInvite,reset,notice,status);controls.append(disclosure,panel);
     const closeMenu=()=>{panel.hidden=true;disclosure.setAttribute('aria-expanded','false');};
-    const placeMenu=()=>{controls.style.setProperty('--appearance-top',`${Math.max(8,Math.min(disclosure.getBoundingClientRect().bottom+8,innerHeight-260))}px`);};listen(window,'resize',placeMenu,{passive:true});
+    const placeMenu=()=>{controls.style.setProperty('--appearance-top',`${Math.max(8,Math.min(disclosure.getBoundingClientRect().bottom+8,innerHeight-260))}px`);};
+    // ⚡ Bolt: Throttle placeMenu on resize using requestAnimationFrame to prevent layout thrashing
+    let menuTicking = false;
+    listen(window,'resize',()=>{
+      if(!menuTicking){
+        window.requestAnimationFrame(()=>{
+          placeMenu();
+          menuTicking = false;
+        });
+        menuTicking = true;
+      }
+    },{passive:true});
     disclosure.addEventListener('click',()=>{placeMenu();panel.hidden=!panel.hidden;disclosure.setAttribute('aria-expanded',String(!panel.hidden));});
     listen(document,'click',event=>{if(!controls.contains(event.target))closeMenu();});
     listen(document,'keydown',event=>{if(event.key==='Escape'&&controls.contains(document.activeElement)){closeMenu();disclosure.focus();event.preventDefault();}});
